@@ -1,9 +1,153 @@
 # Preface {.unnumbered}
 
 ::: {.callout-note style="color: blue;"}
-#### This is work in progress: Just started (about 4%).
+#### This is work in progress: Just started with the preface.
 :::
 
-This Quarto book collects my personal notes, trials and exercises of the
-[An Introduction to Bayesian Thinking: A Companion to the Statistics with R Course](https://statswithr.github.io/book/index.html) by Merlise Clyde, Mine Çetinkaya-Rundel
-, Colin Rundel, David Banks, Christine Chai and Lizzy Huang.
+## Content and Goals of this Book {.unnumbered}
+
+This Quarto book collects my personal notes, trials and exercises of
+[Statistics With R: Solving Problems Using Real-World
+Data](https://uk.sagepub.com/en-gb/eur/statistics-with-r/book253567) by
+Jenine K. Harris [@harris2020].
+
+::: my-resource
+::: my-resource-header
+Resources used for this Quarto book
+:::
+
+::: my-resource-container
+-   [Statistics With
+    R](https://uk.sagepub.com/en-gb/eur/statistics-with-r/book253567):
+    Website
+-   [R Code](https://edge.sagepub.com/system/files/r_code_1.zip):
+    Download
+-   [Datasets](https://edge.sagepub.com/system/files/datasets_7.zip):
+    Download
+:::
+:::
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT: This is my personal learning material and is therefore not an
+authoritative textbook!
+:::
+
+::: my-watch-out-container
+I wrote this book as a text for others to read because that forces me to
+be become explicit and explain all my learning outcomes more carefully.
+Please keep in mind that this text is not written by an expert but by a
+learner. In spite of replicating most of the content it may contain many
+mistakes. All the misapprehensions and errors are my responsibility.
+:::
+:::
+
+## Text passages
+
+My text consists mostly of quotes from the first edition of Harris’
+book. I converted my kindle book into a PDF file which I copied via the
+annotation system in [Zotero](https://www.zotero.org/) into my Quarto
+files.
+
+::: my-example
+::: my-example-header
+::: {#exm-preface-quote}
+: Quote
+:::
+:::
+
+::: my-example-container
+> “NA is a reserved “word” in R. In order to use NA, both letters must
+> be uppercase (Na or na does not work), and there can be no quotation
+> marks (R will treat “NA” as a character rather than a true missing
+> value)” ([Harris, 2020, p.
+> 121](zotero://select/groups/5254842/items/9N29QMJB))
+> ([pdf](zotero://open-pdf/groups/5254842/items/3NDRGBBW?page=121&annotation=XBYU53LG))
+:::
+:::
+
+\@#exm-preface-quote has links to my PDF and also to my annotation of
+the PDF. These links are a practical way for me to get the context of
+the quote. But as the linked PDF is saved locally at my hard disk these
+links do not work for you! (There is an option about [Zotero
+groups](https://www.zotero.org/groups) to share files, but the PDF is
+not free to use and so I can't offer this possibility.)
+
+Often I made minor editing (e.g., shorting the text) or put the content
+in my own wording. In this case I couldn't quote the text as it does not
+represent a specific annotation in my Zotero file. In this case I ended
+the paraphrase with `(Harris ibid.)`.
+
+In any case most of the text in this Quarto book is not mine but coming
+from different resources (Harris’ book, R help files, websites). Most of
+the time I have put my own personal notes into a notes box as shown in
+@exm-preface-note.
+
+::: my-example
+::: my-example-header
+::: {#exm-preface-note}
+: Personal note
+:::
+:::
+
+::: my-example-container
+::: my-note
+::: my-note-header
+::: {#cor-preface-note-example}
+: This is a personal note
+:::
+:::
+
+::: my-note-container
+In this kind of box I will write my personal thoughts and reflections.
+Usually this box will appear stand-alone (without the wrapping example
+box).
+:::
+:::
+:::
+:::
+
+In any case I am the only responsible person for this text, especially
+if I have used code from the resources wrongly or misunderstood a quoted
+text passage.
+
+## R Code and Datasets
+
+Harris provides R code and datasets via her [Github
+site](https://github.com/jenineharris/statistics-in-R-data-sets) but you
+can also download these files directly from the [Student
+Resources](https://edge.sagepub.com/harris1e/student-resources/datasets-and-r-code)
+of the publisher's SAGE website.
+
+Harris introduces and uses in the book [Google’s R Style
+Guide](https://google.github.io/styleguide/Rguide.html) with camelCase.
+The reference is pointing to a fork of the [Tidyverse Style
+Guide](https://style.tidyverse.org/). I am going to use underscore (`_`)
+or [snake case](https://en.wikipedia.org/wiki/Snake_case) to replace
+spaces as studies has shown that it is easier to read [@sharif2010]. But
+I will use the other Google modifications from the tidyverse style
+guide:
+
+-   Start the names of private functions with a dot.
+-   Don't use `attach()`.
+-   No right-hand assignments.
+-   Use explicit returns.
+-   Qualify namespace.
+
+Especially the last point (qualifying namespace) is important for
+learning. Besides preventing conflicts with functions of identical names
+from different packages it helps to learn (or remember) which function
+belongs to which package. I think this justifies the small overhead and
+helps to make R code chunks self-sufficient. (No previous package
+loading, or library calls in the setup chunk.) To foster learning the
+relation between function and package I embrace the package name with
+curly brakes and format it in bold.
+
+I am not using always the exact code snippets for my replications
+because I am not only replicating the code to see how it works but also
+to change the values of parameters to observe their influences.
+
+For educational reasons Harris develops code step by step and replicates
+the complete code including the previous — already explained —
+snippets. In these cases I use tabs as an organizing structure so that
+one can see (and compare) the piecemeal development.

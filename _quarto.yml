@@ -6,7 +6,7 @@ book:
   author: "Peter Baumgartner"
   date: last-modified
   date-format: YYYY-MM-DD HH:mm
-  favicon: "img/apple-touch-icon.png"
+  favicon: "img/favicon_io/apple-touch-icon.png"
   site-url: https://bookdown.org/pbaumgartner/swr-harris/
   repo-url: https://github.com/petzi53/swr-harris
   repo-branch: master
@@ -27,8 +27,8 @@ format:
      - glossary.css
     number-sections: true
     toc-depth: 5
-    toc-expand: 2
-    code-fold: false
+    toc-expand: 4
+    code-fold: true
     code-tools: true
     code-link: true
     code-overflow: scroll
@@ -40,7 +40,7 @@ knitr:
     R.options:
       knitr.graphics.auto_pdf: true
 
-editor: visual
+editor: source
 
 execute:
     freeze: auto
@@ -50,16 +50,20 @@ crossref:
   appendix-delim: ":"
 
 language:
-   crossref-fig-title: "Graph"
-   crossref-prp-title: "Procedure"
-   crossref-lem-title: "Solution"
-   crossref-cnj-title: "R Code"
+   crossref-fig-title: "Graph"       # replaces "Figure"
 
+   crossref-thm-title: "Theorem"
+   crossref-lem-title: "Solution"    # replaces "Lemma"
+   crossref-cor-title: "Note"        # replaces "Corollary"
+   crossref-prp-title: "Procedure"   # replaces "Proposition"
+   crossref-cnj-title: "R Code"      # replaces "Conjecture"
+   crossref-def-title: "Definition"
+   crossref-exm-title: "Example"
+   crossref-exr-title: "Exercise"
 
 # https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/language/_language.yml
-   callout-tip-title: "Tip"              # green
+   callout-tip-title: "Resource"         # green
    callout-note-title: "Note"            # blue
-   callout-warning-title: "Wach out!"    # orange
-   callout-important-title: "Procedure"  # red
-   callout-caution-title: "TODO"         # yellow
-
+   callout-warning-title: "Watch out!"    # orange
+   callout-important-title: "Important"  # red
+   callout-caution-title: "Typo"         # yellow

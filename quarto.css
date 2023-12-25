@@ -43,6 +43,78 @@
   border-bottom-right-radius: 10px;
 }
 
+
+/* ##############   Experiment   ############# */
+
+.my-experiment {
+  margin: 1em 0;
+  border: 2px solid #5D478B;
+  border-left: 10px solid #5D478B;
+  border-radius: 10px;
+}
+
+.my-experiment-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  5px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #e2d9f4;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/experiment-53.png");
+}
+
+.my-experiment-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+
+/* ##############   Note   ############# */
+
+.my-note {
+  margin: 1em 0;
+  border: 2px solid #2780e3;
+  border-left: 10px solid #2780e3;
+  border-radius: 10px;
+}
+
+.my-note-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  5px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #ecf4fd;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/note-48.png");
+}
+
+
+.my-note-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+
 /* ##############   Example   ############# */
 
 .my-example {
@@ -65,8 +137,9 @@
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/pencil-40.png");
+  background-image: url("img/icons8/example-64.png");
 }
+
 
 .my-example-container {
   padding-top: 5px;
@@ -111,14 +184,14 @@
 
 /* ##############   R Code   ############# */
 
-.r-code {
+.my-r-code {
   margin: 1em 0;
   border: 2px solid burlywood;
   border-left: 10px solid #8B7355;
   border-radius: 10px;
 }
 
-.r-code-header {
+.my-r-code-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  5px;
@@ -134,7 +207,7 @@
   background-image: url("img/icons8/r-code.png");
 }
 
-.r-code-container {
+.my-r-code-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -177,14 +250,14 @@
 
 /* ##############   Watch out!   ############# */
 
-.watch-out {
+.my-watch-out {
   margin: 1em 0;
   border: 2px solid #8B5A2B;
   border-left: 10px solid #CD853F;
   border-radius: 10px;
 }
 
-.watch-out-header {
+.my-watch-out-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  5px;
@@ -200,7 +273,7 @@
   background-image: url("img/icons8/eyes-94.png");
 }
 
-.watch-out-container {
+.my-watch-out-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -241,7 +314,7 @@
   border-bottom-right-radius: 10px;
 }
 
-/* ##############   Checklist   ############# */
+/* ##############   Checklist / ToDo  ############# */
 
 .my-checklist {
   margin: 1em 0;
@@ -278,8 +351,8 @@
 
 .my-objectives {
   margin: 1em 0;
-  border: 2px solid black;
-  border-left: 10px solid #8B2500;
+  border: 2px solid #548B54;
+  border-left: 10px solid #548B54;
   border-radius: 10px;
 }
 
@@ -289,7 +362,7 @@
   padding-top:  5px;
   padding-bottom: 0.1em;
   color: black;
-  background-color: #FF4500;
+  background-color: #eef9eb;
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
@@ -300,6 +373,172 @@
 }
 
 .my-objectives-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+/* ##############   Theorem   ############# */
+
+.my-theorem {
+  margin: 1em 0;
+  border: 2px solid #8B8B00;
+  border-left: 10px solid #8B8B00;
+  border-radius: 10px;
+}
+
+.my-theorem-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  5px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: yellow;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/formula-fx-48.png");
+}
+
+.my-theorem-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+/* ##############   Typo   ############# */
+
+.my-typo {
+  margin: 1em 0;
+  border: 2px solid #458B74;
+  border-left: 10px solid #458B74;
+  border-radius: 10px;
+}
+
+.my-typo-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  5px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: aquamarine;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/spelling-64.png");
+}
+
+.my-typo-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+/* ##############   Important   ############# */
+
+.my-important {
+  margin: 1em 0;
+  border: 2px solid #f90439;
+  border-left: 10px solid #f90439;
+  border-radius: 10px;
+}
+
+.my-important-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  5px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #fee9ee;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/double-exclamation-48.png");
+}
+
+.my-important-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+/* ##############   Definition   ############# */
+
+.my-definition {
+  margin: 1em 0;
+  border: 2px solid #8B3A62;
+  border-left: 10px solid #8B3A62;
+  border-radius: 10px;
+}
+
+.my-definition-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  5px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: hotpink;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/dictionary-64.png");
+}
+
+.my-definition-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Tip / Hint   ############# */
+
+.my-tip {
+  margin: 1em 0;
+  border: 2px solid#008B00;
+  border-left: 10px solid #008B00;
+  border-radius: 10px;
+}
+
+.my-tip-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  5px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #00CD00;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/tip-48.png");
+}
+
+.my-tip-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
