@@ -8,7 +8,7 @@
 ::: my-watch-out
 ::: my-watch-out-header
 WATCH OUT: This is my personal learning material and is therefore
-neither an accurate replication nor an authoritative textbook
+neither an accurate replication nor an authoritative textbook.
 :::
 
 ::: my-watch-out-container
