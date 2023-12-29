@@ -14,7 +14,7 @@ book:
 
   chapters:
     - index.qmd
-    - 01-intro.qmd
+    - 01-preparing-data.qmd
     - 95-references.qmd
 
 bibliography: references.bib
@@ -50,7 +50,7 @@ crossref:
   appendix-delim: ":"
 
 language:
-   crossref-fig-title: "Graph"       # replaces "Figure"
+#   crossref-fig-title: "Graph"       # replaces "Figure"
 
    crossref-thm-title: "Theorem"
    crossref-lem-title: "Solution"    # replaces "Lemma"

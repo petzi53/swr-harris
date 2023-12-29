@@ -1,8 +1,47 @@
 # Preface {.unnumbered}
 
 ::: {.callout-note style="color: blue;"}
-#### This is work in progress: Just started with the preface.
+#### This is work in progress: I just started, finished about 8%.
 :::
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT: This is my personal learning material and is therefore
+neither an accurate replication nor an authoritative textbook
+:::
+
+::: my-watch-out-container
+I wrote this book as a text for others to read because that forces me to
+become explicit and explain all my learning outcomes more carefully.
+Please keep in mind that this text is not written by an expert but by a
+learner.
+
+Text passages with content I am already familiar I have skipped. Section
+of the original text where I needed more in-depth knowledge I have
+elaborated and added my own comments resulted from my personal research.
+
+Be warned! In spite of replicating most of the content this Quarto book
+may contain many mistakes. All the misapprehensions and errors are of
+course my own responsibility.
+:::
+:::
+
+```{r}
+#| label: load-glossary
+#| attr-source: '#lst-load-glossary lst-cap="Load glossary"'
+#| include: false
+
+## after you have installed the {glossary} package
+library(glossary) 
+
+## If you have forked the repo of this quarto book 
+
+##  1. Download the `glossary.yml` file from 
+## https://github.com/petzi53/glossary-pb/blob/master/glossary.yml)
+## 2. Store the file on your hard disk 
+## 3. Change the following glossary path
+glossary_path("/Users/petzi/Documents/Meine-Repos/glossary-pb/glossary.yml")
+```
 
 ## Content and Goals of this Book {.unnumbered}
 
@@ -11,38 +50,47 @@ This Quarto book collects my personal notes, trials and exercises of
 Data](https://uk.sagepub.com/en-gb/eur/statistics-with-r/book253567) by
 Jenine K. Harris [@harris2020].
 
-::: my-resource
-::: my-resource-header
-Resources used for this Quarto book
-:::
+This introductory textbook for Statistics with R has three outstanding
+features:
 
-::: my-resource-container
--   [Statistics With
-    R](https://uk.sagepub.com/en-gb/eur/statistics-with-r/book253567):
-    Website
--   [R Code](https://edge.sagepub.com/system/files/r_code_1.zip):
-    Download
--   [Datasets](https://edge.sagepub.com/system/files/datasets_7.zip):
-    Download
-:::
-:::
+### Data Wrangling
 
-::: my-watch-out
-::: my-watch-out-header
-WATCH OUT: This is my personal learning material and is therefore not an
-authoritative textbook!
-:::
+The book applies real data sets with all their problems: missing data,
+inconsistent structure, not appropriate data types, not understandable
+labels, accompanying extensive code books etc. Data management is
+therefore a major part of the book, a subject often not taught. Many
+introductory textbooks work with already cleaned data and miss the
+necessity to guide students to bring messy data into an analyzable form.
 
-::: my-watch-out-container
-I wrote this book as a text for others to read because that forces me to
-be become explicit and explain all my learning outcomes more carefully.
-Please keep in mind that this text is not written by an expert but by a
-learner. In spite of replicating most of the content it may contain many
-mistakes. All the misapprehensions and errors are my responsibility.
-:::
-:::
+### Inclusion
+
+The author aims to support women and other underrepresented groups to
+pursue a data science career. By choosing a narrative style with three
+prototypical feminine characters the book discusses the approaches not
+only in details but also shows the effect of not optimal coding
+solutions. The solutions are developed step by step and each improvement
+replicates the code already written. These repetitions helps not only to
+compare the differences but shows that code has to be developed bit by
+bit, tested, improved, and tested again. Another interesting practice
+shown in the book is to try different approaches to the same problem and
+the re-usability of already written code. All these practices help to
+lower barriers and to facilitate learning statistics with R.
+
+### Compelling social science topics
+
+The three characters (Leslie a statistics student, who wants to learn R;
+Nancy an experienced data scientist and coding specialist; Kiara a data
+management guru worried especially about reproducibility) discuss
+real-world problem analysis from different angles. Every chapter starts
+with a short introduction about the background of the social problem the
+text is going to analyze. By introducing using publicly available data
+sources that have to be modified and cleaned one learns very important
+transferable skills. After working through the book it should be easy to
+work on his/her own research questions using public data sets.
 
 ## Text passages
+
+### Quotes and personal comments
 
 My text consists mostly of quotes from the first edition of Harris’
 book. I converted my kindle book into a PDF file which I copied via the
@@ -66,9 +114,9 @@ files.
 :::
 :::
 
-\@#exm-preface-quote has links to my PDF and also to my annotation of
-the PDF. These links are a practical way for me to get the context of
-the quote. But as the linked PDF is saved locally at my hard disk these
+@exm-preface-quote has links to my PDF and also to my annotation of the
+PDF. These links are a practical way for me to get the context of the
+quote. But as the linked PDF is saved locally at my hard disk these
 links do not work for you! (There is an option about [Zotero
 groups](https://www.zotero.org/groups) to share files, but the PDF is
 not free to use and so I can't offer this possibility.)
@@ -107,6 +155,43 @@ box).
 :::
 :::
 
+### Glossary
+
+I am also using links to overlaid glossary entries. If you hover with
+your mouse over the double underlined links it opens an window with the
+appropriate glossary text. Try this example: `r glossary("Centering")`.
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Glossary text not authorized by the author of SWR
+:::
+
+::: my-watch-out-container
+::: {layout="[10, 30]" layout-valign="center"}
+![](https://debruine.github.io/glossary/logo.png)
+
+I have added many of the glossary entries when I was working through
+other books either taking the text passage of these books I was reading
+or via an internet recherche from other resources. I have added the
+source of glossary entry. Sometimes I have used abbreviation, but I need
+still to provide a key what this short references mean.
+:::
+
+Jenine Harris has collected her own glossary. Where ever it is suitable
+for my learning path I have added her entries into my dictionary. To
+apply the glossary into this text I have used the {**glossary**} package
+by [Lisa DeBruine](https://debruine.github.io/glossary/index.html).
+:::
+:::
+
+If you fork the [repository of this quarto
+book](https://github.com/petzi53/swr-harris) then the glossary will not
+work out of the box. Load down the `glossary.yml` file from [my
+glossary-pb GitHub
+repo](https://github.com/petzi53/glossary-pb/blob/master/glossary.yml),
+store it on your hard disk and change the path in the code chunk
+@lst-load-glossary.
+
 In any case I am the only responsible person for this text, especially
 if I have used code from the resources wrongly or misunderstood a quoted
 text passage.
@@ -134,7 +219,7 @@ guide:
 -   Use explicit returns.
 -   Qualify namespace.
 
-Especially the last point (qualifying namespace) is important for
+Especially the last point (qualifying namespace) is important for my
 learning. Besides preventing conflicts with functions of identical names
 from different packages it helps to learn (or remember) which function
 belongs to which package. I think this justifies the small overhead and
@@ -143,11 +228,48 @@ loading, or library calls in the setup chunk.) To foster learning the
 relation between function and package I embrace the package name with
 curly brakes and format it in bold.
 
+I am using the package name also for the default installation of base R.
+This wouldn't be necessary but it helps me to understand where the base
+R functions come from. What follows is a list of base R packages of the
+system library included into every installation and attached (opened) by
+default:
+
+-   {**base**}: The R Base Package
+-   {**datsets**}: The R Datasets Package
+-   {**graphics**}: The R Graphics Package
+-   {**grDevices**}: The R Graphics Devices and Support for Colours and
+    Fonts
+-   {**methods**}: Formal Methods and Classes
+-   {**stats**}: The R Stats Package
+-   {**utils**}: The R Utils Package
+
 I am not using always the exact code snippets for my replications
 because I am not only replicating the code to see how it works but also
 to change the values of parameters to observe their influences.
 
+In "Statistics with R" there are all names of function arguments explicitly mentioned. This is also the case for function with just one argument, for instance `base::summary(object = <r object to summarize>)`. When it is clear then I will follow the advice from Hadley Wickham:
+
+> When you call a function, you typically omit the names of data arguments, because they are used so commonly. If you override the default value of an argument, use the full name ([tidyverse style guide](https://style.tidyverse.org/syntax.html)).
+
 For educational reasons Harris develops code step by step and replicates
-the complete code including the previous — already explained —
-snippets. In these cases I use tabs as an organizing structure so that
-one can see (and compare) the piecemeal development.
+the complete code including the previous — already explained — snippets.
+In these cases I use tabs as an organizing structure so that one can see
+(and compare) the piecemeal development.
+
+## Resources
+
+::: my-resource
+::: my-resource-header
+Resources used for this Quarto book
+:::
+
+::: my-resource-container
+-   [Statistics With
+    R](https://uk.sagepub.com/en-gb/eur/statistics-with-r/book253567):
+    Website
+-   [R Code](https://edge.sagepub.com/system/files/r_code_1.zip):
+    Download
+-   [Datasets](https://edge.sagepub.com/system/files/datasets_7.zip):
+    Download
+:::
+:::

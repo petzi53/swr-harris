@@ -1,0 +1,450 @@
+# Preparing Data
+
+::: my-objectives
+::: my-objectives-header
+Learning Objectives:
+:::
+
+::: my-objectives-container
+**SWR Objectives**
+
+1.  (~~Observations and variables~~)
+2.  Using reproducible research practices
+3.  (~~Understanding and changing data types~~)
+4.  (~~Entering or loading data into R~~)
+5.  Identifying and treating missing values
+6.  (~~Building a basic bar chart~~)
+
+I will skip the crossed out achievements in parenthesis as I know
+already these procedures. But I will add some other personal objectives
+for this chapter.
+
+**My Additional Objectives**
+
+1.  Registering [GSS Data Explorer](https://gssdataexplorer.norc.org/)
+2.  Find the appropriate variable names in the [GSS code
+    book](https://gssdataexplorer.norc.org/gssReports/2)
+3.  Extracting appropriate data
+4.  Preparing dataset to simulate SWR data
+:::
+:::
+
+## Using reproducible research practices
+
+### Script files
+
+SWR explains writing script files, but I am using
+`r glossary("Literate Programming")` with Quarto. This has the
+consequence that in addition to short comments inside code cells I have
+the possibility to write extensively in the other parts of the file
+about approach, code, results etc.
+
+A practical advice for scripts is to include a `r glossary("prolog")`.
+Possible prolog sections:
+
+-   Project name
+-   Project purpose
+-   Name(s) of data set(s) used in the project
+-   Location(s) of data set(s) used in the project
+-   Code author name (you!)
+-   Date code created
+-   Date last time code was edited
+
+Most of these information are naturally occurring in the writing process
+of Quarto books.
+
+::: my-resource
+::: my-resource-header
+Literate Statistical Programming
+:::
+
+::: my-resource-container
+-   Literate Programming:
+    ([Wikipedia](https://en.wikipedia.org/wiki/Literate_programming))
+-   Introduction to Literate Programming with Quarto ([Online
+    Slides](https://gesiscss.github.io/quarto-workshop/material/slides/01_introduction.html#/title-slide))
+-   Reproducibility and literate programming in R ([bookdown
+    course](https://exeter-data-analytics.github.io/LitProg/index.html))
+-   Introduction to Data Science in R for Biologists (Module on
+    [Literate Statistical Programming and
+    Quarto](https://mbutler808.github.io/rclass/posts/2023-01-26-intro-quarto/index.html))
+-   Let’s build a blog with Quarto [Literate programming in
+    Quarto](https://ivelasq.quarto.pub/building-a-blog-with-quarto/workflow/write-docs/))
+    by Isabella Velásquez. The site has other material (for Quarto
+    blogs) as well: [Migrate from R
+    Markdown](https://ivelasq.quarto.pub/building-a-blog-with-quarto/learn-more/migrate-blog/),
+    [Additional
+    resources](https://ivelasq.quarto.pub/building-a-blog-with-quarto/learn-more/resources/)
+-   Introduction to literate programming with Quarto and Markdown by
+    Gesis
+    ([Slides](https://gesiscss.github.io/quarto-workshop/material/slides/01_introduction.html#/title-slide))
+:::
+:::
+
+### Naming objects
+
+I am used to apply the [tidyverse style
+guide](https://style.tidyverse.org/). It requires to use underlines
+("snake_code") as separators in object names. (In contrast to
+"camelCase" code style). But reading the book I thought it might be a
+good idea to use special additional styles for certain specific objects.
+
+-   **Naming constants**: Prefix name of constants with `k_`.
+-   **Naming variables**: Standard snake code.
+-   **Naming functions**: Prefix name of private functions with a dot
+    `.`. I had already experienced that didn't know from which package a
+    function was. Only to learn after looking around for minutes that it
+    was a function I wrote myself!
+-   **Naming data frames**: Prefix name with `df_` for data.frame and
+    `dt_` for tibble. I might also use a suffix to refer to the status
+    e.g., `_raw` (raw data), `_clean` (cleaned data), `_v2` (version
+    number).
+-   **Naming files**: It could be helpful to add at the start the
+    chapter number e.g. `chap02_`. And maybe also --- as in naming data
+    frames --- the status as suffix.
+
+## Import data frames from outside resources
+
+R has many possibilities to import data from other statistical packages.
+I will not go into the import details here.
+
+### Some common file extensions
+
+-   **.csv**: comma separated values
+-   **.txt**: text file
+-   **.xls or .xlsx**: Excel file
+-   **.sav**: SPSS file
+-   **.sasb7dat**: SAS file
+-   **.xpt**: SAS transfer file
+-   **.dta**: Stata file
+
+### Some packages for import data sources
+
+-   {**readr**}: Read Rectangular Text Data, part of {**tidyverse**}
+-   {**vroom**}: Read and Write Rectangular Text Data Quickly
+-   {**haven**}: Import and Export 'SPSS', 'Stata' and 'SAS' Files
+-   {**foreign**}: Read Data Stored by 'Minitab', 'S', 'SAS', 'SPSS',
+    'Stata', 'Systat', 'Weka', 'dBase', ...
+-   {**readxl**}: Read Excel Files
+-   {**openxslx**}: Read, Write and Edit xslx Files
+-   {**readODS**}: Read and Write ODS Files (e.g. LibreOffice)
+-   {**clipr**}: Read and Write from the System Clipboard
+
+### Importing data from General Social Survey (GSS)
+
+> “While the GSS data can be read into R directly from the GSS website,
+> Kiara had experienced this and knew that it could be frustrating.”
+> ([Harris, 2020](zotero://select/groups/5254842/items/9N29QMJB))
+> ([pdf](zotero://open-pdf/groups/5254842/items/3NDRGBBW?page=107&annotation=SFD9FHQD))
+
+I have found several resources helping to work with the
+`r glossary("GSS")`.
+
+::: my-resource
+::: my-resource-header
+Working with the GSS
+:::
+
+::: my-resource-container
+## gssr {.unnumbered}
+
+[GSSR Package](https://kjhealy.github.io/gssr/): The General Social
+Survey Cumulative Data (1972-2022) and Panel Data files packaged for
+easy use in R. {**gssr**} is a data package, developed and maintained by
+[Kieran Healy](https://kieranhealy.org/), the author of [Data
+Visualization](https://kieranhealy.org/publications/dataviz/). The
+package bundles several datasets into a convenient format. Because of
+its large size {**gssr**} is not hosted on CRAN but as a [GitHub
+repository](https://github.com/kjhealy/gssr/).
+
+Instead of browsing and examining the complex dataset with the [GSS Data
+Explorer](https://gssdataexplorer.norc.org/) or [download datasets
+directly](https://gss.norc.org/Get-The-Data) from the The National
+Opinion Research Center ([NORC](http://norc.org/)) you can now just work
+inside R. The current package 0.4 (see: [gssr
+Update](https://kieranhealy.org/blog/archives/2023/12/02/gssr-update/))
+provides the GSS Cumulative Data File (1972-2022), three GSS Three Wave
+Panel Data Files (for panels beginning in 2006, 2008, and 2010,
+respectively), and the 2020 panel file.
+
+Version 0.40 also integrates survey code book information about
+variables directly into R’s help system, allowing them to be accessed
+via the help browser or from the console with ?, as if they were
+functions or other documented objects.
+
+## asdfree {.unnumbered}
+
+[Analyze Survey Data for Free](http://asdfree.com/) is a bookdown
+website by [Anthony
+Damico](https://www.youtube.com/@anthonyjosephdamico/playlists) with
+currently 64 locations to grab free survey data. As expected it features
+also a [description of the
+GSS](http://asdfree.com/general-social-survey-gss.html) including
+analysis examples with the {**survey**} package and {**lodown**}, a
+[package on GitHub]() to facilitate data imports. (See the section
+[Prerequisites](http://asdfree.com/prerequisites.html))
+:::
+:::
+
+::: my-example
+::: my-example-header
+::: {#exm-chap01-get-gss-data}
+: Get the GSS data
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### Register
+
+::: my-procedure
+::: my-procedure-header
+::: {#prp-chap01-gss-account}
+: Register for the GSS Data Explorer
+:::
+:::
+
+To use all the facilities of the GSS Data Explorer (tagging, tabulating,
+data extracting) you need to register for a free account. The good thing
+is: This is a onetime procedure.
+
+::: my-procedure-container
+1.  Create a free account for the [GSS Data
+    Explorer](https://gssdataexplorer.norc.org/), a tool that allows to
+    browse the data that have been collected in the surveys.
+    -   Fill out the form
+    -   Wait for an email with the verification code
+    -   Confirm the registration with the verification code
+2.  Go for the tour to learn the interface (Link "Tour Guide")
+:::
+:::
+
+###### Explore
+
+::: my-procedure
+::: my-procedure-header
+::: {#prp-chap01-explore}
+: Exploring the `r glossary("General Social Survey")` with the GSS Data
+Explorer
+:::
+:::
+
+::: my-procedure-container
+1.  **Click Link**: [Search GSS
+    Variables](https://gssdataexplorer.norc.org/variables/)
+2.  **Specify Period**: "Select specific years" did not work for me. I
+    always got the full dataset of the selected variable. I had to write
+    "2016" in both year fields to filter the search successfully.
+3.  **Type keyword**: in the filter field. For instance "marijuana",
+    "grass" or "age" and choose from the appearing drop down list or
+    enter return and inspect the resulting page. You will get several
+    variables with your search name in it. Read the short description on
+    the right side from the green variable name or open "Associated
+    Questions" to inspect the survey questions
+4.  **Add to myGSS**: Click the line of the appropriate variable into "+
+    Add to myGSS".
+5.  If you have added all wanted variable to "myGSS" open it with a
+    click at the top menu "myGSS" and
+6.  **Create extract**: If you have stored all required variables click
+    at the right green button "+ Extracts" and when the menu opens click
+    at "Create Extract". This opens now a form "Create Extract".
+7.  **Name the extract**: Describe it if necessary and confirm with
+    "Next".
+8.  **Build the extract** Add your desired variables, in our case "age"
+    and "grass". The ID number of the respondent is added automatically.
+9.  **Choose output option**: Besides that you have here again the
+    possibility to choose the years you can select the output format.
+10. **Click "Create Extract"**: This opens a new page where you can see
+    the queue of all your extracts that GSS is going to process. After
+    some seconds click "Refresh" to see if the extract is finished. You
+    extract should now be listed under "Completed".
+11. **Download extract**: Select your new extract and choose "Download"
+    from the "Actions" menu. (Choose "Export" if you want to transfer
+    the extract into [Google Drive](https://drive.google.com/drive/home)
+    or [Dropbox](https://www.dropbox.com/home).)
+:::
+:::
+
+As one can see this is a somewhat cumbersome procedure to download the
+desired data. It seems to me much easier to export the complete data, to
+load the gigantic file into R. After this is onetime process and then
+the complete dataset is always available.
+
+But using the GSS Data Explorer is very helpful to *explore* the
+dataset. Apply the first three steps of the above list to find the
+correct variable names, to read the exact wording of the question asked
+and to inspect the different codes that are used for the variable.
+Otherwise you have to skim the more than 700 pages of the GSS codebook.
+🤬
+
+###### Download
+
+Another approach is to download the complete dataset (or all variables
+of those years you are interested in) and --- after importing the full
+dataset into R --- manage the data in such a way that it can be easily
+used for your research question. This action is often called "data
+wrangling" and all to frequent not taught in statistics. It is one of
+the major virtues of "Statistics with R" the building up of these
+important skills are addressed.
+
+
+```{r}
+#| label: load-full-gss
+#| lst-label: lst-chap01-load-full-gss
+#| lst-cap: "Load the full GSS Cumulative Data Set (cross-sectional samples 1972-2022)"
+#| eval: false
+#| cache: true
+
+
+## do not run
+gss_1972_2022_full <- haven::read_dta("data-raw/gss7222_r2.dta")
+saveRDS(gss_1972_2022_full, file = "data-raw/gss_1972_2022_full.rds" )
+```
+
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap01-load-full-gss}
+: Import the Cumulative Data Set (cross-sectional samples from all years) into R
+::::::
+:::
+::::{.my-procedure-container}
+1.  I visited <https://gss.norc.org/Get-The-Data> and chose under the
+    section "Download the Data" the "STATA" format. I read elsewhere
+    that this is the preferred format to convert the data into R with
+    the {**haven**} package.
+2.  From the [STATA-page](https://gss.norc.org/get-the-data/stata) I
+    chose the link under "Cumulative Data Set (cross-sectional samples
+    from all years)". It was Release 2 from November 2023 and was
+    downloaded in about 5-10 seconds.
+3.  After I unzipped `GSS_stata.zip` (42.3MB) I received a folder
+    `GSS_stata` (557.9MB) with four files:
+    -   `GSS 2022 Codebook.pdf` with 759 page(!).
+    -   `gss722_r2.dta` (554.9MB). After loading into R I discovered
+        that it contains 72,390 rows with 6693 columns.
+    -   `ReadMe.txt` with the short message to read the documentation
+        carefully because of methodological changes in this round.
+    -   `Release Notes 7222.pdf` with some notes (5 pages) about issues
+        in the previous release (r1) and fixes in the current release
+        (r2).
+4.  It took my about 2-3 minutes to load the gigantic dataset into
+    `gss_1972_2022_full`. It used 3.6 GB of my computer memory.
+5.  I chose the `base::saveRDS()` option (and not `base::save()`)
+    because when later reading into R again with `base::readRDS()` it
+    does not overwrite a variable with the same name respectively I can
+    assign the file to another variable name. It took me about 10-15
+    seconds to save a compressed version of the data file (38.7MB) and
+    about 5 second to load it via `base::readRDS()`.
+::::
+:::::
+
+
+After I have saved the data to do some data wrangling. To get the data structure for the book Figure 1.2 I need to:
+- reduce the dataset to the year 2016
+- select only the variables `age` and `grass`
+- drop all NA’s
+- convert `grass` into factor
+- recode `grass` from "1! and "2" to "Yes" and "No"
+- convert `age` from double to numeric
+- divide `age` into appropriate age intervals and label them accordingly
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-age-grass-2016-v1}
+: Get the data structure for the book Figure 1.2
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: gss-2016-v1
+
+gss_age_grass_2016 <- base::readRDS("data-raw/gss_1972_2022_full.rds")
+
+gss_age_grass_2016_v1  <- gss_age_grass_2016 |> 
+    haven::zap_labels() |> 
+    dplyr::filter(year == 2016) |> 
+    dplyr::select(grass, age) |>
+    tidyr::drop_na() |>
+    dplyr::mutate(grass = forcats::as_factor(grass)) |> 
+    dplyr::mutate(grass = 
+          forcats::fct_recode(grass, Yes = "1", No = "2")) |> 
+    dplyr::mutate(age = base::as.numeric(age)) |> 
+    dplyr::mutate(age_cut = cut(age,
+                  breaks = c(-Inf, 29, 59, 74, Inf),
+                  labels = c("< 30", "30 - 59", "60 - 74", "75+")))
+
+base::summary(gss_age_grass_2016_v1)
+```
+
+
+::::
+:::::
+
+###### gssr
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-age-grass-2016-v1}
+: Get the data structure for the book Figure 1.2
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: gss-2016-v2
+
+gss_age_grass_2016_v2 <- gssr::gss_get_yr(year = 2016) |> 
+    haven::zap_labels() |> 
+    dplyr::select(grass, age) |>
+    tidyr::drop_na() |>
+    dplyr::mutate(grass = forcats::as_factor(grass)) |> 
+    dplyr::mutate(grass = 
+          forcats::fct_recode(grass, Yes = "1", No = "2")) |> 
+    dplyr::mutate(age = base::as.numeric(age)) |> 
+    dplyr::mutate(age_cut = cut(age,
+                  breaks = c(-Inf, 29, 59, 74, Inf),
+                  labels = c("< 30", "30 - 59", "60 - 74", "75+")))
+
+base::summary(gss_age_grass_2016_v2)
+```
+::::
+:::::
+
+
+:::
+
+
+:::
+:::
+
+# I STOPPED HERE
+
+------------------------------------------------------------------------
+
+```{r}
+gss_grass_age_2016 <- readxl::read_xlsx(
+    path = "data-raw/gss-grass-age-2016.xlsx"
+    )
+```
+
+::: {#lst-chap01-load-my-data}
+```{r}
+#| label: chap01-load-my-data
+
+
+gss_marijuana_age <- readxl::read_xlsx(
+    path = "data-raw/gss-marijuana-age.xlsx"
+    )
+
+chap01_gss_marijuana_age_2016 <- 
+    gss_marijuana_age |> 
+    dplyr::filter(year == 2016) |> 
+    dplyr::select(grass, age)
+
+set.seed(2016)
+bayr::as_tbl_obs(chap01_gss_marijuana_age_2016)
+```
+
+Load my version of marijuana data
+:::
