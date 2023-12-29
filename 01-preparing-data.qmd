@@ -2,34 +2,32 @@
 
 ::: my-objectives
 ::: my-objectives-header
-Learning Objectives:
+Achievements:
 :::
 
 ::: my-objectives-container
-**SWR Objectives**
+**SwR Achievements**
 
-1.  (~~Observations and variables~~)
-2.  Using reproducible research practices
-3.  (~~Understanding and changing data types~~)
-4.  (~~Entering or loading data into R~~)
-5.  Identifying and treating missing values
-6.  (~~Building a basic bar chart~~)
+-   (~~Observations and variables~~)
+-   Using reproducible research practices (@sec-chap01-reproducibility)
+-   (~~Understanding and changing data types~~)
+-   Entering or loading data into R (@sec-chap01-import-data)
+-   Identifying and treating missing values
+-   Building a basic bar chart
 
-I will skip the crossed out achievements in parenthesis as I know
-already these procedures. But I will add some other personal objectives
-for this chapter.
+I will skip the crossed out learning objectives in parenthesis as I know
+already these procedures. However I will elaborate some of these
+achievements. Especially the section about the import of a GSS dataset
+is enriched by different downloading strategies. Additionally I will add
+another personal objectives for this chapter.
 
-**My Additional Objectives**
+**My Additional Objective**
 
-1.  Registering [GSS Data Explorer](https://gssdataexplorer.norc.org/)
-2.  Find the appropriate variable names in the [GSS code
-    book](https://gssdataexplorer.norc.org/gssReports/2)
-3.  Extracting appropriate data
-4.  Preparing dataset to simulate SWR data
+-   Replicating book Figure 1.2
 :::
 :::
 
-## Using reproducible research practices
+## Using reproducible research practices {#sec-chap01-reproducibility}
 
 ### Script files
 
@@ -103,10 +101,9 @@ good idea to use special additional styles for certain specific objects.
     chapter number e.g. `chap02_`. And maybe also --- as in naming data
     frames --- the status as suffix.
 
-## Import data frames from outside resources
+## Import data frames from outside resources {#sec-chap01-import-data}
 
 R has many possibilities to import data from other statistical packages.
-I will not go into the import details here.
 
 ### Some common file extensions
 
@@ -130,12 +127,26 @@ I will not go into the import details here.
 -   {**readODS**}: Read and Write ODS Files (e.g. LibreOffice)
 -   {**clipr**}: Read and Write from the System Clipboard
 
+I will not go into the import details of all the different packages
+here, because my focus is on the GSS data.
+
 ### Importing data from General Social Survey (GSS)
 
 > “While the GSS data can be read into R directly from the GSS website,
 > Kiara had experienced this and knew that it could be frustrating.”
 > ([Harris, 2020](zotero://select/groups/5254842/items/9N29QMJB))
 > ([pdf](zotero://open-pdf/groups/5254842/items/3NDRGBBW?page=107&annotation=SFD9FHQD))
+
+I am very interested how to get `r glossary("GSS")` data directly from
+the GSS website, so that I could work on interesting research questions
+myself. @exm-chap01-get-gss-data features five different strategies to
+download GSS data:
+
+1.  Download extract by using the GSS Data Explorer --- Tab: "Explorer"
+2.  Download files manually --- Tab: "by hand"
+3.  Download files programmatically --- Tab: "automated"
+4.  Download via the {**lodown**} package --- Tab: "lodown"
+5.  Download via the {**gssr**} package --- Tab: "gssr"
 
 I have found several resources helping to work with the
 `r glossary("GSS")`.
@@ -180,11 +191,18 @@ Damico](https://www.youtube.com/@anthonyjosephdamico/playlists) with
 currently 64 locations to grab free survey data. As expected it features
 also a [description of the
 GSS](http://asdfree.com/general-social-survey-gss.html) including
-analysis examples with the {**survey**} package and {**lodown**}, a
-[package on GitHub]() to facilitate data imports. (See the section
+analysis examples with the {**survey**} package and --- especially
+important for my purpose here --- {**lodown**}, a [package on GitHub]()
+to facilitate data imports from many sites with survey data. (For
+details see the section
 [Prerequisites](http://asdfree.com/prerequisites.html))
 :::
 :::
+
+
+# I STOPPED HERE
+
+***
 
 ::: my-example
 ::: my-example-header
@@ -195,20 +213,20 @@ analysis examples with the {**survey**} package and {**lodown**}, a
 
 ::: my-example-container
 ::: panel-tabset
-###### Register
+###### Explorer
 
 ::: my-procedure
 ::: my-procedure-header
-::: {#prp-chap01-gss-account}
-: Register for the GSS Data Explorer
+::: {#prp-chap01-explore}
+: Downloading data extracts with the GSS Data Explorer
 :::
 :::
 
+::: my-procedure-container
 To use all the facilities of the GSS Data Explorer (tagging, tabulating,
 data extracting) you need to register for a free account. The good thing
 is: This is a onetime procedure.
 
-::: my-procedure-container
 1.  Create a free account for the [GSS Data
     Explorer](https://gssdataexplorer.norc.org/), a tool that allows to
     browse the data that have been collected in the surveys.
@@ -216,52 +234,16 @@ is: This is a onetime procedure.
     -   Wait for an email with the verification code
     -   Confirm the registration with the verification code
 2.  Go for the tour to learn the interface (Link "Tour Guide")
-:::
-:::
+3.  Now you are ready to follow the advises in the slides. If you prefer you can view the slide show in a [standalone browser](https://petzi53.quarto.pub/gss-data-explorer/#/title-slide).
 
-###### Explore
+***
 
-::: my-procedure
-::: my-procedure-header
-::: {#prp-chap01-explore}
-: Exploring the `r glossary("General Social Survey")` with the GSS Data
-Explorer
-:::
-:::
+<iframe 
+ width="650"
+ height= "400"
+class="slide-deck" src="https://petzi53.quarto.pub/gss-data-explorer/#/title-slide"></iframe>
 
-::: my-procedure-container
-1.  **Click Link**: [Search GSS
-    Variables](https://gssdataexplorer.norc.org/variables/)
-2.  **Specify Period**: "Select specific years" did not work for me. I
-    always got the full dataset of the selected variable. I had to write
-    "2016" in both year fields to filter the search successfully.
-3.  **Type keyword**: in the filter field. For instance "marijuana",
-    "grass" or "age" and choose from the appearing drop down list or
-    enter return and inspect the resulting page. You will get several
-    variables with your search name in it. Read the short description on
-    the right side from the green variable name or open "Associated
-    Questions" to inspect the survey questions
-4.  **Add to myGSS**: Click the line of the appropriate variable into "+
-    Add to myGSS".
-5.  If you have added all wanted variable to "myGSS" open it with a
-    click at the top menu "myGSS" and
-6.  **Create extract**: If you have stored all required variables click
-    at the right green button "+ Extracts" and when the menu opens click
-    at "Create Extract". This opens now a form "Create Extract".
-7.  **Name the extract**: Describe it if necessary and confirm with
-    "Next".
-8.  **Build the extract** Add your desired variables, in our case "age"
-    and "grass". The ID number of the respondent is added automatically.
-9.  **Choose output option**: Besides that you have here again the
-    possibility to choose the years you can select the output format.
-10. **Click "Create Extract"**: This opens a new page where you can see
-    the queue of all your extracts that GSS is going to process. After
-    some seconds click "Refresh" to see if the extract is finished. You
-    extract should now be listed under "Completed".
-11. **Download extract**: Select your new extract and choose "Download"
-    from the "Actions" menu. (Choose "Export" if you want to transfer
-    the extract into [Google Drive](https://drive.google.com/drive/home)
-    or [Dropbox](https://www.dropbox.com/home).)
+
 :::
 :::
 
@@ -274,10 +256,10 @@ But using the GSS Data Explorer is very helpful to *explore* the
 dataset. Apply the first three steps of the above list to find the
 correct variable names, to read the exact wording of the question asked
 and to inspect the different codes that are used for the variable.
-Otherwise you have to skim the more than 700 pages of the GSS codebook.
-🤬
+Otherwise you have to skim the more than 700 pages of the GSS
+codebook.😭
 
-###### Download
+###### by hand
 
 Another approach is to download the complete dataset (or all variables
 of those years you are interested in) and --- after importing the full
@@ -286,7 +268,6 @@ used for your research question. This action is often called "data
 wrangling" and all to frequent not taught in statistics. It is one of
 the major virtues of "Statistics with R" the building up of these
 important skills are addressed.
-
 
 ```{r}
 #| label: load-full-gss
@@ -301,14 +282,15 @@ gss_1972_2022_full <- haven::read_dta("data-raw/gss7222_r2.dta")
 saveRDS(gss_1972_2022_full, file = "data-raw/gss_1972_2022_full.rds" )
 ```
 
-
-:::::{.my-procedure}
-:::{.my-procedure-header}
-:::::: {#prp-chap01-load-full-gss}
-: Import the Cumulative Data Set (cross-sectional samples from all years) into R
-::::::
+::: my-procedure
+::: my-procedure-header
+::: {#prp-chap01-load-full-gss}
+: Import the Cumulative Data Set (cross-sectional samples from all
+years) into R
 :::
-::::{.my-procedure-container}
+:::
+
+::: my-procedure-container
 1.  I visited <https://gss.norc.org/Get-The-Data> and chose under the
     section "Download the Data" the "STATA" format. I read elsewhere
     that this is the preferred format to convert the data into R with
@@ -335,27 +317,132 @@ saveRDS(gss_1972_2022_full, file = "data-raw/gss_1972_2022_full.rds" )
     assign the file to another variable name. It took me about 10-15
     seconds to save a compressed version of the data file (38.7MB) and
     about 5 second to load it via `base::readRDS()`.
-::::
-:::::
+:::
+:::
+
+###### automated
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-get-gss2016-data}
+: Get individual year 2016 gss data set
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: get-gss2016-data
+#| cache: true
+#| eval: false
+
+## do not run
+temp <- base::tempfile()
+utils::download.file("https://gss.norc.org/documents/stata/2016_stata.zip",temp)
+gss_2016_raw <- haven::read_dta(unz(temp, "GSS2016.dta"))
+unlink(temp)
+saveRDS(gss_2016, file = "data-raw/gss_2016_raw.rds" )
+```
+:::
+:::
 
 
-After I have saved the data to do some data wrangling. To get the data structure for the book Figure 1.2 I need to:
-- reduce the dataset to the year 2016
-- select only the variables `age` and `grass`
-- drop all NA’s
-- convert `grass` into factor
-- recode `grass` from "1! and "2" to "Yes" and "No"
-- convert `age` from double to numeric
-- divide `age` into appropriate age intervals and label them accordingly
+
+###### lodown
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap01-age-grass-2016-v1}
-: Get the data structure for the book Figure 1.2
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
 ::::::
 :::
 ::::{.my-r-code-container}
 
+
+```{r}
+#| label: get-gss-catalog
+#| eval: false
+#| cache: true
+
+## do not run
+my_folder <- paste0(here::here(), "/data-raw")
+
+# retrieve a listing of all available extracts for the GSS data
+gss_cat <- lodown::get_catalog(data_name = "gss",
+                               output_dir = my_folder,
+                               "GSS") |>
+    # limit the catalog to the year 2016
+    filter(output_filename == paste0(my_folder, "/2016.rds")) 
+    
+# download the GSS microdata
+lodown::lodown("gss" , gss_cat)
+```
+
+
+::::
+:::::
+
+
+
+###### gssr
+
+::: my-r-code
+::: my-r-code-header
+
+: Get the data structure for the book Figure 1.2
+
+:::
+
+::: my-r-code-container
+```{r}
+#| label: gss-2016-v2
+
+gss_age_grass_2016_v2 <- gssr::gss_get_yr(year = 2016) |> 
+    haven::zap_labels() |> 
+    dplyr::select(grass, age) |>
+    tidyr::drop_na() |>
+    dplyr::mutate(grass = forcats::as_factor(grass)) |> 
+    dplyr::mutate(grass = 
+          forcats::fct_recode(grass, Yes = "1", No = "2")) |> 
+    dplyr::mutate(age = base::as.numeric(age)) |> 
+    dplyr::mutate(age_cut = cut(age,
+                  breaks = c(-Inf, 29, 59, 74, Inf),
+                  labels = c("< 30", "30 - 59", "60 - 74", "75+")))
+
+base::summary(gss_age_grass_2016_v2)
+```
+
+:::
+
+::::
+:::::
+
+
+:::
+:::
+
+
+
+
+After I have saved the data to do some data wrangling. To get the data
+structure for the book Figure 1.2 I need to:
+
+-   filter the dataset to the year 2016
+-   select only the variables `age` and `grass`
+-   drop all NA’s
+-   convert `grass` into factor
+-   recode `grass` labels
+-   convert `age` from double to numeric
+-   divide `age` into appropriate age intervals and label them
+    accordingly
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-age-grass-2016-v1}
+: Get the data structure for the book Figure 1.2
+:::
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: gss-2016-v1
 
@@ -377,48 +464,35 @@ gss_age_grass_2016_v1  <- gss_age_grass_2016 |>
 base::summary(gss_age_grass_2016_v1)
 ```
 
-
-::::
-:::::
-
-###### gssr
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-age-grass-2016-v1}
-: Get the data structure for the book Figure 1.2
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
 ```{r}
-#| label: gss-2016-v2
+#| label: clean-imported-data
+#| results: hold
 
-gss_age_grass_2016_v2 <- gssr::gss_get_yr(year = 2016) |> 
-    haven::zap_labels() |> 
+gss_2016_raw <- base::readRDS("data-raw/gss_2016_raw.rds")
+
+gss_2016_clean <- gss_2016_raw |> 
+    # haven::zap_labels() |> 
     dplyr::select(grass, age) |>
     tidyr::drop_na() |>
     dplyr::mutate(grass = forcats::as_factor(grass)) |> 
-    dplyr::mutate(grass = 
-          forcats::fct_recode(grass, Yes = "1", No = "2")) |> 
+    dplyr::mutate(grass = forcats::fct_drop(grass)) |>
+    # base::droplevels() |> 
+    # dplyr::mutate(grass = 
+    #       forcats::fct_recode(grass, Yes = "1", No = "2")) |> 
     dplyr::mutate(age = base::as.numeric(age)) |> 
     dplyr::mutate(age_cut = cut(age,
                   breaks = c(-Inf, 29, 59, 74, Inf),
                   labels = c("< 30", "30 - 59", "60 - 74", "75+")))
 
-base::summary(gss_age_grass_2016_v2)
+base::summary(gss_2016_clean)
+
+
+saveRDS(gss_2016_clean, file = "data-clean/gss_2016_clean.rds" )
 ```
-::::
-:::::
 
-
-:::
-
-
-:::
-:::
-
-# I STOPPED HERE
 
 ------------------------------------------------------------------------
 
@@ -448,3 +522,22 @@ bayr::as_tbl_obs(chap01_gss_marijuana_age_2016)
 
 Load my version of marijuana data
 :::
+
+------------------------------------------------------------------------
+
+
+locally downloading gss
+
+'http://gss.norc.org//Documents/spss/2016_spss.zip' cached in
+'/var/folders/sd/g6yc4rq1731\_\_gh38rw8whvc0000gq/T//33ae817c3c2204f4bc040ba58bee1d81.Rcache'
+copying to
+'/var/folders/sd/g6yc4rq1731\_\_gh38rw8whvc0000gq/T//RtmpLdD3gJ/file11157926ddaf'
+
+gss catalog entry 1 of 1 stored at
+'/Users/petzi/Documents/Meine-Repos/swr-harris/data-raw/2016.rds'
+
+gss local download completed
+
+
+***
+

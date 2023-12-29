@@ -1,8 +1,9 @@
 # Preface {.unnumbered}
 
 ::: {.callout-note style="color: blue;"}
-#### This is work in progress: I just started, finished about 8%.
+#### This is work in progress: I just started, and have only finished part of chapter 1 (about 8% of the book)
 :::
+
 
 ::: my-watch-out
 ::: my-watch-out-header
@@ -26,10 +27,12 @@ course my own responsibility.
 :::
 :::
 
+
 ```{r}
 #| label: load-glossary
-#| attr-source: '#lst-load-glossary lst-cap="Load glossary"'
-#| include: false
+#| lst-label: lst-preview-load-glossary
+#| lst-cap: "Load glossary"
+
 
 ## after you have installed the {glossary} package
 library(glossary) 
@@ -42,6 +45,7 @@ library(glossary)
 ## 3. Change the following glossary path
 glossary_path("/Users/petzi/Documents/Meine-Repos/glossary-pb/glossary.yml")
 ```
+
 
 ## Content and Goals of this Book {.unnumbered}
 
@@ -190,7 +194,7 @@ work out of the box. Load down the `glossary.yml` file from [my
 glossary-pb GitHub
 repo](https://github.com/petzi53/glossary-pb/blob/master/glossary.yml),
 store it on your hard disk and change the path in the code chunk
-@lst-load-glossary.
+@lst-preview-load-glossary.
 
 In any case I am the only responsible person for this text, especially
 if I have used code from the resources wrongly or misunderstood a quoted
