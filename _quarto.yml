@@ -2,7 +2,7 @@ project:
   type: book
 
 book:
-  title: "Notes on Statistics with R (SWR)"
+  title: "Notes on Statistics with R (SwR)"
   author: "Peter Baumgartner"
   date: last-modified
   date-format: YYYY-MM-DD HH:mm
@@ -33,6 +33,9 @@ format:
     code-link: true
     code-overflow: scroll
     df-print: default
+
+filters:
+   - include-code-files
 
 knitr:
   opts_chunk:

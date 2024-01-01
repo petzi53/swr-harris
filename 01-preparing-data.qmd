@@ -1,5 +1,7 @@
 # Preparing Data
 
+{{< include "../_common.qmd" >}}
+
 ::: my-objectives
 ::: my-objectives-header
 Achievements:
@@ -139,14 +141,7 @@ here, because my focus is on the GSS data.
 
 I am very interested how to get `r glossary("GSS")` data directly from
 the GSS website, so that I could work on interesting research questions
-myself. @exm-chap01-get-gss-data features five different strategies to
-download GSS data:
-
-1.  Download extract by using the GSS Data Explorer --- Tab: "Explorer"
-2.  Download files manually --- Tab: "by hand"
-3.  Download files programmatically --- Tab: "automated"
-4.  Download via the {**lodown**} package --- Tab: "lodown"
-5.  Download via the {**gssr**} package --- Tab: "gssr"
+myself. 
 
 I have found several resources helping to work with the
 `r glossary("GSS")`.
@@ -200,33 +195,122 @@ details see the section
 :::
 
 
-# I STOPPED HERE
+@exm-chap01-get-gss-data features six different strategies to
+download GSS data:
+
+0.  Download Excel file provided by the book’s companion website --- Tab: "Book"
+1.  Download extract by using the GSS Data Explorer --- Tab: "Explorer"
+2.  Download files manually --- Tab: "by hand"
+3.  Download files programmatically --- Tab: "automated"
+4.  Download via the {**lodown**} package --- Tab: "lodown"
+5.  Download via the {**gssr**} package --- Tab: "gssr"
+
+
+
+
 
 ***
 
 ::: my-example
 ::: my-example-header
 ::: {#exm-chap01-get-gss-data}
-: Get the GSS data
+: Get the General Social Survey (GSS) data
 :::
 :::
-
 ::: my-example-container
 ::: panel-tabset
-###### Explorer
+
+###### Book
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-import-csv-data}
+: Import the .csv file provided by book, summarize and glance at the data. 
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap01-import-csv-file}
+```{r}
+#| label: import-csv-file
+
+gss_2016_book <- readr::read_csv(
+    file = "data-harris/legal_weed_age_GSS2016_ch1.csv",
+    show_col_types = FALSE)
+
+summary(gss_2016_book)
+
+gss_2016_book |>
+    dplyr::select(c(age, grass)) |> 
+    glance_data(N = 8, seed = 2016)
+```
+
+Import the .csv file provided by book and glance at the data. 
+:::
+
+***
+**Some comments**
+
+1. In contrast to `base::read.csv()` in the book I used with `readr::read_csv()` a function from the {**tidyverse**} package collection.
+2. I added the `show_col_types = FALSE` argument to prevent a message about the column specification.
+3. In addition to the base::summary() command I developed a private function `glance_data()` to provide a first impression about the data.
+
+
+::::
+:::::
+
+
+In @lst-chap01-import-csv-file I have used the function `glance_data()` that I wrote myself. It prints first and last row of the dataset and adds between randomly at the maximum 8 other rows. Additionally it provides the row number of the data (`obs`stands for "observation"). The idea of this function is to get a first impression of the dataset. Other printing methods show just the first (or last) rows. This could be misleading, giving a wrong impression about the typical data.
+
+::: {#lst-chap01-show-function-glance-data}
+```{r}
+#| label: show-function-glance-data
+#| code-fold: show
+#| eval: false
+
+glance_data <- function(df, N, seed){
+    df_temp <- first_and_last_row(df)
+    
+    set.seed(seed)
+    df |> 
+    dplyr::mutate(obs = dplyr::row_number()) |> 
+    dplyr::relocate(obs) |> 
+    dplyr::slice_sample(n = N) |> 
+    dplyr::bind_rows(df_temp) |> 
+    dplyr::arrange(obs)
+} 
+
+first_and_last_row <-  function(df) {
+    df |> 
+    dplyr::mutate(obs = dplyr::row_number()) |>
+    dplyr::filter(dplyr::row_number() %in% base::c(1, dplyr::n()))
+}
+
+```
+
+My private function `glance_date()`
+
+:::
+
+
+
+
+
+###### Explore
+
+To use all the facilities of the GSS Data Explorer (tagging, tabulating,
+data extracting) you need to register for a free account. The good thing
+is: This is a onetime procedure.
+
 
 ::: my-procedure
 ::: my-procedure-header
-::: {#prp-chap01-explore}
+::: {#prp-chap01-get-gss-data-explorer}
 : Downloading data extracts with the GSS Data Explorer
 :::
 :::
 
 ::: my-procedure-container
-To use all the facilities of the GSS Data Explorer (tagging, tabulating,
-data extracting) you need to register for a free account. The good thing
-is: This is a onetime procedure.
-
 1.  Create a free account for the [GSS Data
     Explorer](https://gssdataexplorer.norc.org/), a tool that allows to
     browse the data that have been collected in the surveys.
@@ -236,7 +320,9 @@ is: This is a onetime procedure.
 2.  Go for the tour to learn the interface (Link "Tour Guide")
 3.  Now you are ready to follow the advises in the slides. If you prefer you can view the slide show in a [standalone browser](https://petzi53.quarto.pub/gss-data-explorer/#/title-slide).
 
-***
+:::
+:::
+
 
 <iframe 
  width="650"
@@ -244,15 +330,8 @@ is: This is a onetime procedure.
 class="slide-deck" src="https://petzi53.quarto.pub/gss-data-explorer/#/title-slide"></iframe>
 
 
-:::
-:::
-
 As one can see this is a somewhat cumbersome procedure to download the
-desired data. It seems to me much easier to export the complete data, to
-load the gigantic file into R. After this is onetime process and then
-the complete dataset is always available.
-
-But using the GSS Data Explorer is very helpful to *explore* the
+desired data. Following the proposed strategies in the other tabs are much easier for importing GSS data. But using the GSS Data Explorer is very helpful to *explore* the
 dataset. Apply the first three steps of the above list to find the
 correct variable names, to read the exact wording of the question asked
 and to inspect the different codes that are used for the variable.
@@ -262,120 +341,76 @@ codebook.😭
 ###### by hand
 
 Another approach is to download the complete dataset (or all variables
-of those years you are interested in) and --- after importing the full
-dataset into R --- manage the data in such a way that it can be easily
-used for your research question. This action is often called "data
-wrangling" and all to frequent not taught in statistics. It is one of
-the major virtues of "Statistics with R" the building up of these
-important skills are addressed.
-
-```{r}
-#| label: load-full-gss
-#| lst-label: lst-chap01-load-full-gss
-#| lst-cap: "Load the full GSS Cumulative Data Set (cross-sectional samples 1972-2022)"
-#| eval: false
-#| cache: true
-
-
-## do not run
-gss_1972_2022_full <- haven::read_dta("data-raw/gss7222_r2.dta")
-saveRDS(gss_1972_2022_full, file = "data-raw/gss_1972_2022_full.rds" )
-```
+of those years you are interested in) and manage the data in such a way that it can be easily used for your research question. (See @sec-chap01-data-wrangling)
 
 ::: my-procedure
 ::: my-procedure-header
-::: {#prp-chap01-load-full-gss}
-: Import the Cumulative Data Set (cross-sectional samples from all
-years) into R
+::: {#prp-chap01-get-gss-data-manually}
+: Download GSS individual year data sets (cross-section only)
+
 :::
 :::
 
 ::: my-procedure-container
-1.  I visited <https://gss.norc.org/Get-The-Data> and chose under the
+1.  Visit <https://gss.norc.org/Get-The-Data> and choose under the
     section "Download the Data" the "STATA" format. I read elsewhere
     that this is the preferred format to convert the data into R with
     the {**haven**} package.
-2.  From the [STATA-page](https://gss.norc.org/get-the-data/stata) I
-    chose the link under "Cumulative Data Set (cross-sectional samples
-    from all years)". It was Release 2 from November 2023 and was
-    downloaded in about 5-10 seconds.
-3.  After I unzipped `GSS_stata.zip` (42.3MB) I received a folder
-    `GSS_stata` (557.9MB) with four files:
-    -   `GSS 2022 Codebook.pdf` with 759 page(!).
-    -   `gss722_r2.dta` (554.9MB). After loading into R I discovered
-        that it contains 72,390 rows with 6693 columns.
-    -   `ReadMe.txt` with the short message to read the documentation
-        carefully because of methodological changes in this round.
-    -   `Release Notes 7222.pdf` with some notes (5 pages) about issues
-        in the previous release (r1) and fixes in the current release
-        (r2).
-4.  It took my about 2-3 minutes to load the gigantic dataset into
-    `gss_1972_2022_full`. It used 3.6 GB of my computer memory.
-5.  I chose the `base::saveRDS()` option (and not `base::save()`)
-    because when later reading into R again with `base::readRDS()` it
-    does not overwrite a variable with the same name respectively I can
-    assign the file to another variable name. It took me about 10-15
-    seconds to save a compressed version of the data file (38.7MB) and
-    about 5 second to load it via `base::readRDS()`.
+2.  From the [STATA-page](https://gss.norc.org/get-the-data/stata) 
+    choose the appropriate link (`2016` in our case) under the section "Individual Year Data Sets (cross-section only)" and download the file `2016_stata.zip` (994 MB) into your preferred folder on your hard disk. After you extract the .zip file you will get the STAT file `GSS2016.dta` (4.4 MB).
+3.  You can now apply @cnj-chap01-import-stata-data. 
 :::
 :::
-
-###### automated
-
-::: my-r-code
-::: my-r-code-header
-::: {#cnj-chap01-get-gss2016-data}
-: Get individual year 2016 gss data set
-:::
-:::
-
-::: my-r-code-container
-```{r}
-#| label: get-gss2016-data
-#| cache: true
-#| eval: false
-
-## do not run
-temp <- base::tempfile()
-utils::download.file("https://gss.norc.org/documents/stata/2016_stata.zip",temp)
-gss_2016_raw <- haven::read_dta(unz(temp, "GSS2016.dta"))
-unlink(temp)
-saveRDS(gss_2016, file = "data-raw/gss_2016_raw.rds" )
-```
-:::
-:::
-
-
-
-###### lodown
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-ID-text}
-: Numbered R Code Title
+:::::: {#cnj-chap01-import-stata-data}
+: Import STATA GSS 2016 file into R using (**haven**)
 ::::::
 :::
 ::::{.my-r-code-container}
 
 
+
+::: {#lst-chap01-import-stata-2016-file}
 ```{r}
-#| label: get-gss-catalog
-#| eval: false
+#| label: import-stata-2016-file
 #| cache: true
 
-## do not run
-my_folder <- paste0(here::here(), "/data-raw")
+gss_2016_man <- haven::read_dta("data-raw/GSS2016.dta")
+saveRDS(gss_2016_man, file = "data-raw/gss_2016_man.rds" )
 
-# retrieve a listing of all available extracts for the GSS data
-gss_cat <- lodown::get_catalog(data_name = "gss",
-                               output_dir = my_folder,
-                               "GSS") |>
-    # limit the catalog to the year 2016
-    filter(output_filename == paste0(my_folder, "/2016.rds")) 
-    
-# download the GSS microdata
-lodown::lodown("gss" , gss_cat)
+gss_2016_man |>
+    dplyr::select(c(age, grass)) |> 
+    glance_data(N = 8, seed = 2016)
+
 ```
+
+
+Import STATA GSS 2016 file into R using (**haven**) and glance at the data
+
+:::
+
+:::::{.my-important}
+:::{.my-important-header}
+{**haven**} imports data as labelled vectors
+:::
+::::{.my-important-container}
+The data structure we have found here is very different from the Excel data file provided with the book.
+::::
+:::::
+
+
+Labelled vectors is a completely new feature for me. I learned that value labels and other metadata tags that are commonly seen when working with other statistical software like SAS, STATA or SPSS (cf. [Survey Research and Datasets in R](https://socialresearchcentre.github.io/r_survey_datasets/), here section 3 [Labelled Data](https://socialresearchcentre.github.io/r_survey_datasets/labelled-data.html))
+
+> A labelled vector is a common data structure in other statistical environments, allowing you to assign text labels to specific values. This class makes it possible to import such labelled vectors in to R without loss of fidelity. ([Create a labelled vector](https://haven.tidyverse.org/reference/labelled.html))
+
+I will go into more details in @sec-chap01-data-wrangling. The important thing here is to notice that the variable `grass` has labelled values that explain the short code. Code `1` represents the respondent option that marijuana should be legalized and `2`
+the opposite. We also learn that there is with `NA i` a special kind of `NA` value: 
+
+> .i: Inapplicable (IAP). Respondents who are not asked to answer a specific question are assigned to IAP. (See [Alert on the STATA download page](https://gss.norc.org/get-the-data/stata))
+
+On the website we see under the "Alert" section that there other kind of NA’s as well. And the 2022 GSS Codebook describes still other, less common missing values.
 
 
 ::::
@@ -383,7 +418,238 @@ lodown::lodown("gss" , gss_cat)
 
 
 
+**Additional comments**
+
+I chose for file saving the `base::saveRDS()` option (and not `base::save()`)
+    because when later reading into R again with `base::readRDS()` it
+    does not overwrite a variable with the same name respectively I can
+    assign the file to another variable name. 
+    
+
+###### automated
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-get-gss2016-data}
+: Get year 2016 of GSS data set with `base::download.file()`
+:::
+:::
+
+::: my-r-code-container
+
+::: {#lst-chap01-get-gss2016-automated}
+```{r}
+#| label: get-gss2016-automated
+#| code-fold: show
+#| cache: true
+#| eval: false
+
+## run only once (manually)
+temp <- base::tempfile()
+utils::download.file("https://gss.norc.org/documents/stata/2016_stata.zip",temp)
+gss_2016_aut <- haven::read_dta(base::unz(temp, "GSS2016.dta"))
+base::unlink(temp)
+base::saveRDS(gss_2016_aut, file = "data-raw/gss_2016_aut.rds" )
+```
+
+Get year 2016 of GSS data set with `base::download.file()`
+
+:::
+
+This time we have the file downloaded programmatically which is much better in term of reproducibility. We don't need now to import the data {**haven**} but can call base::readRDS().
+
+
+::: {#lst-chap01-read-rds-data}
+```{r}
+#| label: read-rds-data
+
+gss_2016_aut <- base::readRDS("data-raw/gss_2016_aut.rds")
+
+gss_2016_aut |> 
+    dplyr::select(c(age, grass)) |> 
+    glance_data(N = 8, seed = 2016)
+
+```
+
+Read previously saved `.rds` file into R and glance at the data
+:::
+
+
+
+:::
+:::
+
+Data now have a more R like appearance, even if the variable classes with <hvn_lbll> "*`r class(gss_2016_aut$age)`*" are unfamiliar. But we have now lost some information, especially we have to consult the codebook to know what the codes `1` and `2` mean.
+
+
+###### lodown
+
+The following strategy I have taken from the bookdown book [Analyze Survey Data for Free](http://asdfree.com/) (asdf.com) It gives step by step instructions to explore public `r glossary("Microdata")`. Here I refer to the `r glossary("General Social Survey")` (GSS) section of the book.
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap01-get-gss2016-lodown}
+: Get the GSS data with the {**lodown**} package and glance at the data
+::::::
+:::
+::::{.my-procedure-container}
+
+Working with {**lodown**} is a three step procedure:
+
+1. Retrieve a listing of all available extracts for the GSS data.
+2. Choose what files you want to download. In our case data for the year 2016.
+3. Download the specified dataset in the offered SPSS file format, but {**lodown**} produces with `.rds` a native R file format with the name `2016.rds`.
+
+::::
+:::::
+
+The second step has to be done manually but I have the result of my inspection already integrated in @lst-chap01-get-gss2016-lodown.
+
+As additional steps I renamed the downloaded file, so that I can it distinguish from similar files of the other approaches. Finally I glanced at the `grass` and `age` data.
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-get-gss2016-lodown}
+: Get GSS data via {**lodown**} package
+::::::
+:::
+::::{.my-r-code-container}
+
+
+::: {#lst-chap01-get-gss2016-lodown}
+```{r}
+#| label: get-gss2016-lodown
+#| eval: true
+#| cache: false
+#| warning: false
+#| message: false
+
+## run only once (manually)
+my_folder <- base::paste0(here::here(), "/data-raw")
+
+# (1) retrieve a listing of all available extracts for the GSS data
+gss_cat <- lodown::get_catalog(data_name = "gss",
+                               output_dir = my_folder,
+                               "GSS") |> 
+## (2) choose the catalog part to download
+    dplyr::filter(
+        output_filename == base::paste0(my_folder, "/2016.rds"))
+
+## (3) download the GSS microdata as 2016.rds
+lodown::lodown("gss" , gss_cat)
+
+## rename dataset to distinguish from other download approaches
+old_filename <- base::paste0(my_folder, "/2016.rds")
+new_filename <- base::paste0(my_folder, "/gss_2016_cat.rds")
+base::file.rename(from = old_filename, to = new_filename)
+
+## load and glance at data
+gss_2016_cat <- base::readRDS("data-raw/gss_2016_cat.rds")
+gss_2016_cat |> 
+    dplyr::select(c(age, grass)) |> 
+    glance_data(N = 8, seed = 2016)
+```
+
+Get GSS data for the year 2016 via the {**lodown**} package
+:::
+::::
+:::::
+
+The result is to a pure `.rds` file, but where the columns are still of class "*`r class(gss_2016_cat$grass)`*" as in @lst-chap01-read-rds-data.
+
+
 ###### gssr
+
+Finally I will download the 2016 data with the help of the {**gssr**} package. This takes some minutes. At first I missed the vignette, so I had to download the package again with the additional argument `build_vignettes = TRUE`. Whereas the vignette explains how to analyse data the GitHub is very helpful how to get the desired data. 
+
+> You can quickly get the data for any single GSS year by using `gssr::gss_get_yr()` to download the data file from NORC and put it directly into a tibble.
+
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-get-gss2016-gssr}
+: Get GSS 2016 Year Data Set (cross-section only)
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap01-get-gss2016-gssr}
+```{r}
+#| label: get-gss2016-gssr
+#| cache: true
+#| eval: false
+#| code-fold: show
+
+## run only once (manually)
+gss_2016_gssr <- gssr::gss_get_yr(year = 2016)
+base::saveRDS(gss_2016_gssr, file = "data-raw/gss_2016_gssr.rds" )
+```
+
+Get GSS 2016 Year Data Set (cross-section only)
+
+:::
+
+
+::::
+:::::
+
+After downloaded the file we can --- as in the other tabs already done --- load the file and glance at the grass/age data.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-}
+: Glance at the 2016 grass/age data downloaded via {**gssr**}
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap01-glance-2016-gssr-data}
+```{r}
+#| label: glance-2016-gssr-data
+
+## load and glance at data
+gss_2016_gssr <- base::readRDS("data-raw/gss_2016_gssr.rds")
+gss_2016_gssr |> 
+    dplyr::select(c(age, grass)) |> 
+    glance_data(N = 8, seed = 2016)
+```
+
+Glance at the 2016 grass/age data downloaded via {**gssr**}
+
+:::
+
+This is exactly the same format as in listing @lst-chap01-import-stata-2016-file from the manual download. But it has now the advantages from the {**gssr**} package. For instance with the integrated help it is much easier to
+
+- find the variables 
+- to read the question text of the variable
+- to see in which year the questions was asked
+- what the code - including the different types of NA’s mean
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+
+:::::{.my-important}
+:::{.my-important-header}
+Six different approaches to get the GSS data
+:::
+::::{.my-important-container}
+Using the {**gssr**} packages seems to me by far the best approach.
+::::
+:::::
+
+
+# I STOPPED HERE
+
+## Data Wrangling {#sec-chap01-data-wrangling}
 
 ::: my-r-code
 ::: my-r-code-header
@@ -395,6 +661,7 @@ lodown::lodown("gss" , gss_cat)
 ::: my-r-code-container
 ```{r}
 #| label: gss-2016-v2
+#| eval: false
 
 gss_age_grass_2016_v2 <- gssr::gss_get_yr(year = 2016) |> 
     haven::zap_labels() |> 
@@ -411,17 +678,8 @@ gss_age_grass_2016_v2 <- gssr::gss_get_yr(year = 2016) |>
 base::summary(gss_age_grass_2016_v2)
 ```
 
-:::
-
 ::::
 :::::
-
-
-:::
-:::
-
-
-
 
 After I have saved the data to do some data wrangling. To get the data
 structure for the book Figure 1.2 I need to:
@@ -445,6 +703,7 @@ structure for the book Figure 1.2 I need to:
 ::: my-r-code-container
 ```{r}
 #| label: gss-2016-v1
+#| eval: false
 
 gss_age_grass_2016 <- base::readRDS("data-raw/gss_1972_2022_full.rds")
 
@@ -470,6 +729,7 @@ base::summary(gss_age_grass_2016_v1)
 ```{r}
 #| label: clean-imported-data
 #| results: hold
+#| eval: false
 
 gss_2016_raw <- base::readRDS("data-raw/gss_2016_raw.rds")
 
@@ -498,7 +758,7 @@ saveRDS(gss_2016_clean, file = "data-clean/gss_2016_clean.rds" )
 
 ```{r}
 gss_grass_age_2016 <- readxl::read_xlsx(
-    path = "data-raw/gss-grass-age-2016.xlsx"
+    path = "data-raw/gss_2016_exp.xlsx"
     )
 ```
 
@@ -526,6 +786,12 @@ Load my version of marijuana data
 ------------------------------------------------------------------------
 
 
+***
+
+
+
+# TEXTBAUSTEINE
+
 locally downloading gss
 
 'http://gss.norc.org//Documents/spss/2016_spss.zip' cached in
@@ -538,6 +804,109 @@ gss catalog entry 1 of 1 stored at
 
 gss local download completed
 
+***
+
+This action is often called "data
+wrangling" and all to frequent not taught in statistics. It is one of
+the major virtues of "Statistics with R" the building up of these
+important skills are addressed.
 
 ***
+
+```{r}
+#| label: load-full-gss
+#| lst-label: lst-chap01-load-full-gss
+#| lst-cap: "Load the full GSS Cumulative Data Set (cross-sectional samples 1972-2022)"
+#| eval: false
+#| cache: true
+
+
+## do not run
+gss_1972_2022_full <- haven::read_dta("data-raw/gss7222_r2.dta")
+saveRDS(gss_1972_2022_full, file = "data-raw/gss_1972_2022_full.rds" )
+```
+
+***
+
+: Import the Cumulative Data Set (cross-sectional samples from all
+years) into R
+
+
+    "Cumulative Data Set (cross-sectional samples
+    from all years)". It was Release 2 from November 2023 and was
+    downloaded in about 5-10 seconds.
+3.  After I unzipped `GSS_stata.zip` (42.3MB) I received a folder
+    `GSS_stata` (557.9MB) with four files:
+    -   `GSS 2022 Codebook.pdf` with 759 page(!).
+    -   `gss722_r2.dta` (554.9MB). After loading into R I discovered
+        that it contains 72,390 rows with 6693 columns.
+    -   `ReadMe.txt` with the short message to read the documentation
+        carefully because of methodological changes in this round.
+    -   `Release Notes 7222.pdf` with some notes (5 pages) about issues
+        in the previous release (r1) and fixes in the current release
+        (r2).
+4.  It took my about 2-3 minutes to load the gigantic dataset into
+    `gss_1972_2022_full`. It used 3.6 GB of my computer memory.
+
+It took me about 10-15
+    seconds to save a compressed version of the data file (38.7MB) and
+    about 5 second to load it via `base::readRDS()`.
+    
+    
+***
+
+```{r}
+#| label: different-data-views
+#| eval: false
+
+# attributes(gss_2016_man$grass)
+# attributes(gss_2016_man$age)
+
+gss_2016_man |> 
+    dplyr::select(c(age, grass)) |> 
+    utils::str()
+
+gss_2016_man |> 
+    dplyr::select(c(age, grass)) |> 
+    base::summary()
+
+gss_2016_man |> 
+    dplyr::select(c(age, grass)) |> 
+    dplyr::glimpse()
+
+set.seed(2016)
+gss_2016_man |>   
+    dplyr::select(c(age, grass)) |> 
+    bayr::as_tbl_obs() 
+
+
+gss_2016_temp <- gss_2016_man |>   
+    dplyr::select(c(age, grass)) |>
+    dplyr::mutate(obs = dplyr::row_number()) |>
+    dplyr::filter(dplyr::row_number() %in% base::c(1, dplyr::n()))
+
+set.seed(2016)
+gss_2016_man |> 
+    dplyr::select(c(age, grass)) |> 
+    dplyr::mutate(obs = dplyr::row_number()) |> 
+    dplyr::relocate(obs, age, grass) |> 
+    dplyr::slice_sample(n = 8) |> 
+    dplyr::bind_rows(gss_2016_temp) |> 
+    dplyr::arrange(obs)
+
+gss_2016_man |> 
+    dplyr::select(c(age, grass)) |>
+    utils::head()
+
+gss_2016_man |> 
+    dplyr::select(c(age, grass)) |>
+    base::print()
+
+gss_2016_man |> 
+    dplyr::count(grass)
+
+
+head(gss_2016_man$age)
+head(gss_2016_man$grass)
+```
 
