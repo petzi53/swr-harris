@@ -51,18 +51,26 @@ execute:
 crossref:
   appendix-title: "Appendix"
   appendix-delim: ":"
+  custom:
+    - kind: float
+      reference-prefix: Important
+      key: imp
+    - kind: float
+      reference-prefix: Commitment
+      key: com
 
 language:
-#   crossref-fig-title: "Graph"       # replaces "Figure"
-
-   crossref-thm-title: "Theorem"
-   crossref-lem-title: "Solution"    # replaces "Lemma"
-   crossref-cor-title: "Note"        # replaces "Corollary"
-   crossref-prp-title: "Procedure"   # replaces "Proposition"
    crossref-cnj-title: "R Code"      # replaces "Conjecture"
-   crossref-def-title: "Definition"
+   crossref-cor-title: "Note"        # replaces "Corollary"
+   crossref-def-title: "Experiment"  # replaces "Definition"
    crossref-exm-title: "Example"
    crossref-exr-title: "Exercise"
+   crossref-fig-title: "Graph"       # replaces "Figure"
+   crossref-lem-title: "Solution"    # replaces "Lemma"
+   crossref-lst-title: "Listing"
+   crossref-prp-title: "Procedure"   # replaces "Proposition"
+   crossref-tbl-title: "Table"
+   crossref-thm-title: "Theorem"
 
 # https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/language/_language.yml
    callout-tip-title: "Resource"         # green

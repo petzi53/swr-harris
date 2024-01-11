@@ -1,9 +1,8 @@
 # Preface {.unnumbered}
 
 ::: {.callout-note style="color: blue;"}
-#### This is work in progress: I just started, and have only finished part of chapter 1 (about 8% of the book)
+#### This is work in progress: I just started, and have only finished the text part of chapter 1 (about 10% of the book).
 :::
-
 
 ::: my-watch-out
 ::: my-watch-out-header
@@ -26,8 +25,6 @@ may contain many mistakes. All the misapprehensions and errors are of
 course my own responsibility.
 :::
 :::
-
-
 
 ## Content and Goals of this Book {.unnumbered}
 
@@ -143,31 +140,30 @@ box).
 
 ### Glossary
 
-I am using the {**glossary**} package to create links to glossary entries. 
+I am using the {**glossary**} package to create links to glossary
+entries.
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-load-glossary}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-load-glossary}
 : Load glossary
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
-
-```{.r  include="../_my-glossary.R"}
-
+::: my-r-code-container
+::: {#lst-preview-load-glossary}
+``` {.r include="../_my-glossary.R"}
 ```
 
+Install and load the glossary package with the appropriate glossary.yml
+file
+:::
+:::
+:::
 
-
-::::
-:::::
-
-
-
-If you hover with
-your mouse over the double underlined links it opens an window with the
-appropriate glossary text. Try this example: `r glossary("Centering")`.
+If you hover with your mouse over the double underlined links it opens
+an window with the appropriate glossary text. Try this example:
+`r glossary("Centering")`.
 
 ::: my-watch-out
 ::: my-watch-out-header
@@ -222,7 +218,7 @@ I will use the other Google modifications from the tidyverse style
 guide:
 
 -   Start the names of private functions with a dot.
--   Don't use `attach()`.
+-   Don't use `base::attach()`.
 -   No right-hand assignments.
 -   Use explicit returns.
 -   Qualify namespace.
@@ -255,9 +251,16 @@ I am not using always the exact code snippets for my replications
 because I am not only replicating the code to see how it works but also
 to change the values of parameters to observe their influences.
 
-In "Statistics with R" there are all names of function arguments explicitly mentioned. This is also the case for function with just one argument, for instance `base::summary(object = <r object to summarize>)`. When it is clear then I will follow the advice from Hadley Wickham:
+In "Statistics with R" there are all names of function arguments
+explicitly mentioned. This is also the case for function with just one
+argument, for instance
+`base::summary(object = <r object to summarize>)`. When it is clear then
+I will follow the advice from Hadley Wickham:
 
-> When you call a function, you typically omit the names of data arguments, because they are used so commonly. If you override the default value of an argument, use the full name ([tidyverse style guide](https://style.tidyverse.org/syntax.html)).
+> When you call a function, you typically omit the names of data
+> arguments, because they are used so commonly. If you override the
+> default value of an argument, use the full name ([tidyverse style
+> guide](https://style.tidyverse.org/syntax.html)).
 
 For educational reasons Harris develops code step by step and replicates
 the complete code including the previous — already explained — snippets.
@@ -281,8 +284,3 @@ Resources used for this Quarto book
     Download
 :::
 :::
-
-
-
-
-

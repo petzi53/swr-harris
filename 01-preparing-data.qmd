@@ -14,18 +14,25 @@ Achievements:
 -   Using reproducible research practices (@sec-chap01-reproducibility)
 -   (~~Understanding and changing data types~~)
 -   Entering or loading data into R (@sec-chap01-import-data)
--   Identifying and treating missing values
--   Building a basic bar chart
+-   Identifying and treating missing values (Data wrangling)
+    (@sec-chap01-data-wrangling)
+-   Building a basic bar chart (Replicate Figure 1.1 and 1.2)
+    (@sec-chap01-repr-bar-charts)
 
 I will skip the crossed out learning objectives in parenthesis as I know
-already these procedures. However I will elaborate some of these
-achievements. Especially the section about the import of a GSS dataset
-is enriched by different downloading strategies. Additionally I will add
-another personal objectives for this chapter.
+already these procedures. However I will modify and elaborate some of
+these achievements as mentioned in the parentheses.
 
-**My Additional Objective**
+I will add other objectives that resulted from questions that arose
+during reading the book.
 
--   Replicating book Figure 1.2
+**Questions that resulted to additional objectives**
+
+-   How to download data directly from the
+    `r glossary("General Social Survey")` (GSS) web page?
+    {@sec-chap01-get-gss-data}
+-   How to use labelled data created during the import of foreign file
+    formats with {**haven**}? {@sec-chap01-labelled-data}
 :::
 :::
 
@@ -33,7 +40,7 @@ another personal objectives for this chapter.
 
 ### Script files
 
-SWR explains writing script files, but I am using
+SwR explains writing script files, but I am using
 `r glossary("Literate Programming")` with Quarto. This has the
 consequence that in addition to short comments inside code cells I have
 the possibility to write extensively in the other parts of the file
@@ -130,18 +137,447 @@ R has many possibilities to import data from other statistical packages.
 -   {**clipr**}: Read and Write from the System Clipboard
 
 I will not go into the import details of all the different packages
-here, because my focus is on the GSS data.
+here, because my focus is on the `r glossary("General Social Survey")`
+(GSS) data.
 
-### Importing data from General Social Survey (GSS)
+### Import data with a .csv file
 
 > “While the GSS data can be read into R directly from the GSS website,
 > Kiara had experienced this and knew that it could be frustrating.”
 > ([Harris, 2020](zotero://select/groups/5254842/items/9N29QMJB))
 > ([pdf](zotero://open-pdf/groups/5254842/items/3NDRGBBW?page=107&annotation=SFD9FHQD))
 
+The author therefore offers for this chapter a
+`r glossary("CSV", ".csv")` file with the data. In later chapters
+learner can choose to use the provided files from the [SAGE
+webpage](https://edge.sagepub.com/harris1e/student-resources/datasets-and-r-code).
+Even if these data files are not yet cleaned, it is a kind of cheating,
+because it bypasses downloading data from the original source.
+
+::: my-example
+::: my-example-header
+::: {#exm-chap01-read-csv-show-data}
+: Read data from a .csv file into R
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### summary()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-code-name-a}
+: Read .csv file and show data summary
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap01-read-csv-show-summary}
+```{r}
+#| label: read-csv-show-summary
+
+gss_2016_book <- readr::read_csv(
+    file = "data-harris/legal_weed_age_GSS2016_ch1.csv",
+    show_col_types = FALSE)
+
+summary(gss_2016_book)
+```
+
+Read the provided dataset as a .csv file into R and show
+`base::summary()`
+:::
+
+------------------------------------------------------------------------
+
+**Some comments**
+
+1.  In contrast to `base::read.csv()` in the book I used with
+    `readr::read_csv()` a function from the {**tidyverse**} package
+    collection.
+2.  I added the `show_col_types = FALSE` argument to prevent a message
+    about the column specification.
+:::
+:::
+
+The output of `base::summary` is in this case not very informative.
+Looking around for appropriate reporting function I developed with
+`glance_data()` my private command. (See
+@lst-chap01-read-csv-glance-data in next tab.)
+
+###### glance_data()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-code-name-b}
+Look at data with my private function `glance_data()`
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap01-read-csv-glance-data}
+```{r}
+#| label: glance-data
+
+gss_2016_book |>
+    dplyr::select(c(age, grass)) |> 
+    glance_data(N = 8, seed = 2016)
+```
+
+Display 8 randomly chosen rows in addition to the first and last row
+:::
+:::
+:::
+
+I developed a private function `glance_data()` to provide a first
+impression about the data. The function prints the first and last row of
+the dataset, so you know implicitly how many rows the dataset has.
+Between the first and last row the function adds randomly `N` other rows
+(default is 8). Additionally it provides the row number of the data in a
+separate column. (The column header `obs` stands for "observation".) For
+reproducibility purposes you can also add a number for the `set.seed()`
+command.
+
+The idea of `glance_data()` is to get a first impression of the dataset.
+Other printing methods show only the first (or last) rows of the
+dataset. This could be misleading, giving a wrong impression about
+typical data.
+
+###### glance_data
+
+Maybe you are interested to use `glance_data()` yourself? It isn't
+available through a package, but you can copy the source code from the
+next R chunk.
+
+I have saved the function in a `.qmd` file one level higher as this book
+(and all my other R projects). With `{{< include "../_common.qmd" >}}` I
+have the code integrated in this book. (For the `include` shortcode see
+the section [Includes](https://quarto.org/docs/authoring/includes.html)
+of the Quarto documentation.)
+
+::: {#lst-chap01-show-function-glance-data}
+```{r}
+#| label: show-function-glance-data
+#| code-fold: show
+#| eval: false
+
+### function glance_data ##############
+glance_data <- function(df, N = 8, seed = 42){
+    df_temp <- first_and_last_row(df)
+    
+    set.seed(seed)
+    df |> 
+    dplyr::mutate(obs = dplyr::row_number()) |> 
+    dplyr::relocate(obs) |> 
+    dplyr::slice_sample(n = N) |> 
+    dplyr::bind_rows(df_temp) |> 
+    dplyr::arrange(obs)
+} 
+
+first_and_last_row <-  function(df) {
+    df |> 
+    dplyr::mutate(obs = dplyr::row_number()) |>
+    dplyr::filter(dplyr::row_number() %in% base::c(1, dplyr::n()))
+}
+
+```
+
+Code of my private function `glance_date()`
+:::
+:::
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Data Wrangling {#sec-chap01-data-wrangling}
+
+### ToDo List
+
+After we saved the data we need to do some data wrangling. To replicate
+the data structure for the book Figure 1.2 we need to:
+
+-   filter the dataset to the year 2016 (in the case you work with the
+    full GSS dataset 1972-2022, which we won't)
+-   select only the variables `age` and `grass` to work with
+-   drop all NA’s
+-   convert `grass` into factor
+-   recode `grass` labels
+-   convert `age` from double to numeric
+-   divide `age` into appropriate age intervals and label them
+    accordingly
+
+------------------------------------------------------------------------
+
+::: {#fig-chap01-bar-charts layout-ncol="2"}
+![Support for marijuana legalization among participants in the 2016
+General Social Survey (Figure 1.1)](img/fig-01-01-min.png){#fig-01-01}
+
+![Support for marijuana legalization by age group among participants in
+the 2016 General Social Survey (Figure
+1.2)](img/fig-01-02-min.png){#fig-01-02}
+
+We will replicate these two bar charts (Figure 1.1 and Figure 1.2 in the
+book)
+:::
+
+------------------------------------------------------------------------
+
+### Replicating data structure for bar charts
+
+::: my-example
+::: my-example-header
+::: {#exm-chap01-repl-data-bar-charts}
+: Replicate data structure for bar charts
+:::
+:::
+
+::: my-example-container
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-repl-data-fig-book}
+: Replicate data structure for Figures 1.1 and 1.2 (Book)
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: replicate-data-fig-1-1-book
+#| results: hold
+
+gss_2016_book <- readr::read_csv(
+    file = "data-harris/legal_weed_age_GSS2016_ch1.csv",
+    show_col_types = FALSE)
+
+
+gss_2016_book_clean <- gss_2016_book |> 
+
+#### (A) rework grass ##################
+## convert grass to factor
+  dplyr::mutate(grass = forcats::as_factor(grass))  |> 
+
+## change DK and IAP to NA
+  dplyr::mutate(grass = dplyr::na_if(x = grass, y = "DK")) |> 
+  dplyr::mutate(grass = dplyr::na_if(x = grass, y = "IAP")) |> 
+
+## drop unused levels "DK" and "IAP"
+  dplyr::mutate(grass = forcats::fct_drop(grass)) |> 
+    
+## convert to factor and recode it
+  dplyr::mutate(grass = forcats::fct_recode(
+      grass, "Yes" = "LEGAL", "No" = "NOT LEGAL")) |> 
+
+#### (B) rework age #########################
+## change data types and recode
+
+## turn character type of age into factor and recode "89 OR OLDER" to "89"
+  # dplyr::mutate(age = dplyr::recode(age, "89 OR OLDER" = "89")) |> 
+  dplyr::mutate(age = dplyr::case_match(age, 
+                                 "89 OR OLDER" ~ "89",
+                                 .default = age)) |> 
+
+## convert data type of age from factor to numeric
+  dplyr::mutate(age = base::as.numeric(age)) |> 
+
+## cut age into several defined age groups
+  dplyr::mutate(age.cat = base::cut(age, 
+                       breaks = c(-Inf, 29, 59, 74, Inf),
+                       labels = c("< 30", "30 - 59", "60 - 74", "75+" ))) |>  
+
+## drop NA's
+    tidyr::drop_na()
+
+## (C) check result #########
+
+## summarize
+print("************************   SUMMARY   ****************************")
+base::summary(gss_2016_book_clean)
+
+## glance at the data
+print("*******************   GLANCE AT SOME DATA  **********************")
+gss_2016_book_clean |>
+    dplyr::select(c(age.cat, grass)) |> 
+    glance_data(N = 8, seed = 2016)
+```
+
+------------------------------------------------------------------------
+
+The somewhat strange cut decision for age groups was motivated by the
+question if there is a difference between young and old voters about
+marijuana legalization.
+
+Compare the result of the recoding with the original data structure in
+@lst-chap01-read-csv-show-summary.
+:::
+:::
+
+**Some comments**
+
+1.  I have included all data wrangling changes for the Figure 1.1 even
+    if they appeared in the book section where the graph is prepared.
+2.  I have used `|>` form the native R pipe instead of `%>%` exported
+    into tidyverse from the {**magrittr**} package.
+3.  Otherwise whenever possible I have used {**tidyverse**} code. For
+    `base::as.numeric()` and `base::cut()` I couldn't find
+    {**tidyverse**} equivalents.
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Difference between `forcats::fct_recode()` and
+`dplyr::recode()`. Use `dplyr::case_match()`!
+:::
+
+::: my-watch-out-container
+To recode `age` from "89 OR OLDER" to "89" I used at first
+`forcats::fct_recode()`. But this function changes the 72 *levels* of
+the factor `age` and resulted --- after I changed `age` to numeric in
+the next line --- in a data frame where `age` ranged from 1 to 72!
+
+After I noticed the problem and wanted to replace the {**forcats**}-line
+with `dplyr::mutate(age = dplyr::recode(age, "89 OR OLDER" = "89"))` I
+saw in the help file that
+
+> `recode()` is superseded in favor of `case_match()`, which handles the
+> most important cases of `recode()` with a more elegant interface.
+> ([Recode values](https://dplyr.tidyverse.org/reference/recode.html))
+> and
+
+> \[`dplyr::case_match()`\] allows you to vectorise multiple switch()
+> statements. Each case is evaluated sequentially and the first match
+> for each element determines the corresponding value in the output
+> vector. If no cases match, the .default is used. ([A general
+> verctorized
+> switch()](https://dplyr.tidyverse.org/reference/case_match.html))
+:::
+:::
+:::
+:::
+
+## Reproducing bar charts {#sec-chap01-repr-bar-charts}
+
+::: my-example
+::: my-example-header
+::: {#exm-chap01-repr-bar-charts}
+: Reproducing bar charts
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### Figure 1.1
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-fig-chap01-repr-fig-1-1}
+a: Reproducing bar chart Figure 1.1 using `geom_bar()`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-chap01-repr-fig-1-1
+#| fig-cap: Support for marijuana legalization among participants in the 2016 General Social Survey (Figure 1.1)
+#| fig-width: 4
+#| fig-height: 4
+
+## create figure 1.1 #######
+bar_fig_1_1 <- gss_2016_book_clean |> 
+  ggplot2::ggplot(ggplot2::aes(x = grass,
+             y = 100 * ggplot2::after_stat(count) / 
+                 base::sum(ggplot2::after_stat(count)),
+             fill = grass)) +
+  ggplot2::geom_bar() +
+  ggplot2::theme_minimal() +
+  ggplot2::scale_fill_manual(values = c("#79a778", '#7662aa'),
+                    guide = "none") +
+  ggplot2::labs(x = "Should marijuana be legal?",
+       y = "Percent of responses")
+
+# show the chart
+bar_fig_1_1
+
+
+```
+
+------------------------------------------------------------------------
+
+I changed the code slightly because of two warnings. Newer versions of
+{**gplot2**} have deprecated some older functions:
+
+-   Warning: The dot-dot notation (`..count..`) was deprecated in
+    ggplot2 3.4.0. Please use `after_stat(count)` instead.
+-   Warning: The `guide` argument in `scale_*()` cannot be `FALSE`. This
+    was deprecated in ggplot2 3.3.4. Please use "none" instead.
+-   
+:::
+:::
+
+Compare the reproduction with the original @fig-01-01.
+
+###### Figure 1.2
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-fig-chap01-repr-fig-1-2}
+b: Reproducing bar chart Figure 1.2 using `geom_col()`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-chap01-repr-fig-1-2
+#| fig-cap: Support for marijuana legalization by age group among participants in the 2016 General Social Survey (Figure 1.2)
+
+## create figure 1.2 ########
+bar_fig_1_2 <- gss_2016_book_clean |> 
+  dplyr::group_by(grass, age.cat) |> 
+  dplyr::count() |> 
+  dplyr::group_by(age.cat) |> 
+  dplyr::mutate(perc_grass = 100 * n / base::sum(n)) |> 
+  ggplot2::ggplot(ggplot2::aes(x = age.cat, fill = grass,
+             y = perc_grass)) +
+  ggplot2::geom_col(position = 'dodge') +
+  ggplot2::theme_minimal() +
+  ggplot2::scale_fill_manual(values = c('#79a778', '#7662aa'),
+                    name = "Should marijuana\nbe legal?") +
+  ggplot2::labs(x = "Age group (in years)",
+       y = "Percent of responses in age group")
+
+## show the cart
+bar_fig_1_2
+```
+
+------------------------------------------------------------------------
+
+@fig-chap01-repr-fig-1-1 uses `ggplot2::geom_bar()` whereas this figure
+here calls the `ggplot2::geom_col()` function.
+
+> There are two types of bar charts: `geom_bar()` and `geom_col()`.
+> `geom_bar()` makes the height of the bar proportional to the number of
+> cases in each group … . If you want the heights of the bars to
+> represent values in the data, use `geom_col()` instead. `geom_bar()`
+> uses `stat_count()` by default: it counts the number of cases at each
+> x position. `geom_col()` uses `stat_identity()`: it leaves the data as
+> is. ([Bar
+> charts](https://ggplot2.tidyverse.org/reference/geom_bar.html) with
+> {**ggplot2**})
+:::
+:::
+
+Compare the reproduction with the original @fig-01-02.
+:::
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Get the GSS data {#sec-chap01-get-gss-data}
+
+### Working with the GSS
+
 I am very interested how to get `r glossary("GSS")` data directly from
 the GSS website, so that I could work on interesting research questions
-myself. 
+myself.
 
 I have found several resources helping to work with the
 `r glossary("GSS")`.
@@ -194,114 +630,31 @@ details see the section
 :::
 :::
 
+@def-chap01-get-gss-data features five different strategies to download
+GSS data:
 
-@exm-chap01-get-gss-data features six different strategies to
-download GSS data:
-
-0.  Download Excel file provided by the book’s companion website --- Tab: "Book"
 1.  Download extract by using the GSS Data Explorer --- Tab: "Explorer"
 2.  Download files manually --- Tab: "by hand"
 3.  Download files programmatically --- Tab: "automated"
 4.  Download via the {**lodown**} package --- Tab: "lodown"
 5.  Download via the {**gssr**} package --- Tab: "gssr"
 
+### Five strategies to get GSS data
 
-
-
-
-***
-
-::: my-example
-::: my-example-header
-::: {#exm-chap01-get-gss-data}
-: Get the General Social Survey (GSS) data
+::: my-experiment
+::: my-experiment-header
+::: {#def-chap01-get-gss-data}
+: How to get the General Social Survey (GSS) data
 :::
 :::
-::: my-example-container
+
+::: my-experiment-container
 ::: panel-tabset
-
-###### Book
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-import-csv-data}
-: Import the .csv file provided by book, summarize and glance at the data. 
-::::::
-:::
-::::{.my-r-code-container}
-
-::: {#lst-chap01-import-csv-file}
-```{r}
-#| label: import-csv-file
-
-gss_2016_book <- readr::read_csv(
-    file = "data-harris/legal_weed_age_GSS2016_ch1.csv",
-    show_col_types = FALSE)
-
-summary(gss_2016_book)
-
-gss_2016_book |>
-    dplyr::select(c(age, grass)) |> 
-    glance_data(N = 8, seed = 2016)
-```
-
-Import the .csv file provided by book and glance at the data. 
-:::
-
-***
-**Some comments**
-
-1. In contrast to `base::read.csv()` in the book I used with `readr::read_csv()` a function from the {**tidyverse**} package collection.
-2. I added the `show_col_types = FALSE` argument to prevent a message about the column specification.
-3. In addition to the base::summary() command I developed a private function `glance_data()` to provide a first impression about the data.
-
-
-::::
-:::::
-
-
-In @lst-chap01-import-csv-file I have used the function `glance_data()` that I wrote myself. It prints first and last row of the dataset and adds between randomly at the maximum 8 other rows. Additionally it provides the row number of the data (`obs`stands for "observation"). The idea of this function is to get a first impression of the dataset. Other printing methods show just the first (or last) rows. This could be misleading, giving a wrong impression about the typical data.
-
-::: {#lst-chap01-show-function-glance-data}
-```{r}
-#| label: show-function-glance-data
-#| code-fold: show
-#| eval: false
-
-glance_data <- function(df, N, seed){
-    df_temp <- first_and_last_row(df)
-    
-    set.seed(seed)
-    df |> 
-    dplyr::mutate(obs = dplyr::row_number()) |> 
-    dplyr::relocate(obs) |> 
-    dplyr::slice_sample(n = N) |> 
-    dplyr::bind_rows(df_temp) |> 
-    dplyr::arrange(obs)
-} 
-
-first_and_last_row <-  function(df) {
-    df |> 
-    dplyr::mutate(obs = dplyr::row_number()) |>
-    dplyr::filter(dplyr::row_number() %in% base::c(1, dplyr::n()))
-}
-
-```
-
-My private function `glance_date()`
-
-:::
-
-
-
-
-
 ###### Explore
 
 To use all the facilities of the GSS Data Explorer (tagging, tabulating,
 data extracting) you need to register for a free account. The good thing
 is: This is a onetime procedure.
-
 
 ::: my-procedure
 ::: my-procedure-header
@@ -318,36 +671,36 @@ is: This is a onetime procedure.
     -   Wait for an email with the verification code
     -   Confirm the registration with the verification code
 2.  Go for the tour to learn the interface (Link "Tour Guide")
-3.  Now you are ready to follow the advises in the slides. If you prefer you can view the slide show in a [standalone browser](https://petzi53.quarto.pub/gss-data-explorer/#/title-slide).
-
+3.  Now you are ready to follow the advises in the slides. If you prefer
+    you can view the slide show in a [standalone
+    browser](https://petzi53.quarto.pub/gss-data-explorer/#/title-slide).
 :::
 :::
 
+<iframe width="650" height="400" class="slide-deck" src="https://petzi53.quarto.pub/gss-data-explorer/#/title-slide">
 
-<iframe 
- width="650"
- height= "400"
-class="slide-deck" src="https://petzi53.quarto.pub/gss-data-explorer/#/title-slide"></iframe>
-
+</iframe>
 
 As one can see this is a somewhat cumbersome procedure to download the
-desired data. Following the proposed strategies in the other tabs are much easier for importing GSS data. But using the GSS Data Explorer is very helpful to *explore* the
-dataset. Apply the first three steps of the above list to find the
-correct variable names, to read the exact wording of the question asked
-and to inspect the different codes that are used for the variable.
-Otherwise you have to skim the more than 700 pages of the GSS
-codebook.😭
+desired data. Following the proposed strategies in the other tabs are
+much easier for importing GSS data. But using the GSS Data Explorer is
+very helpful to *explore* the dataset. Apply the first three steps of
+the above list to find the correct variable names, to read the exact
+wording of the question asked and to inspect the different codes that
+are used for the variable. Otherwise you have to skim the more than 700
+pages of the GSS codebook.😭
 
 ###### by hand
 
 Another approach is to download the complete dataset (or all variables
-of those years you are interested in) and manage the data in such a way that it can be easily used for your research question. (See @sec-chap01-data-wrangling)
+of those years you are interested in) and manage the data in such a way
+that it can be easily used for your research question. (See
+@sec-chap01-data-wrangling)
 
 ::: my-procedure
 ::: my-procedure-header
 ::: {#prp-chap01-get-gss-data-manually}
 : Download GSS individual year data sets (cross-section only)
-
 :::
 :::
 
@@ -356,22 +709,24 @@ of those years you are interested in) and manage the data in such a way that it 
     section "Download the Data" the "STATA" format. I read elsewhere
     that this is the preferred format to convert the data into R with
     the {**haven**} package.
-2.  From the [STATA-page](https://gss.norc.org/get-the-data/stata) 
-    choose the appropriate link (`2016` in our case) under the section "Individual Year Data Sets (cross-section only)" and download the file `2016_stata.zip` (994 MB) into your preferred folder on your hard disk. After you extract the .zip file you will get the STAT file `GSS2016.dta` (4.4 MB).
-3.  You can now apply @cnj-chap01-import-stata-data. 
+2.  From the [STATA-page](https://gss.norc.org/get-the-data/stata)
+    choose the appropriate link (`2016` in our case) under the section
+    "Individual Year Data Sets (cross-section only)" and download the
+    file `2016_stata.zip` (994 MB) into your preferred folder on your
+    hard disk. After you extract the .zip file you will get the STAT
+    file `GSS2016.dta` (4.4 MB).
+3.  You can now apply @cnj-chap01-import-stata-data.
 :::
 :::
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-import-stata-data}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-import-stata-data}
 : Import STATA GSS 2016 file into R using (**haven**)
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
-
-
+::: my-r-code-container
 ::: {#lst-chap01-import-stata-2016-file}
 ```{r}
 #| label: import-stata-2016-file
@@ -386,45 +741,57 @@ gss_2016_man |>
 
 ```
 
-
-Import STATA GSS 2016 file into R using (**haven**) and glance at the data
-
+Import STATA GSS 2016 file into R using (**haven**) and glance at the
+data
 :::
 
-:::::{.my-important}
-:::{.my-important-header}
+::: my-important
+::: my-important-header
 {**haven**} imports data as labelled vectors
 :::
-::::{.my-important-container}
-The data structure we have found here is very different from the Excel data file provided with the book.
-::::
-:::::
 
+::: my-important-container
+The data structure we have found here is very different from the Excel
+data file provided with the book.
+:::
+:::
 
-Labelled vectors is a completely new feature for me. I learned that value labels and other metadata tags that are commonly seen when working with other statistical software like SAS, STATA or SPSS (cf. [Survey Research and Datasets in R](https://socialresearchcentre.github.io/r_survey_datasets/), here section 3 [Labelled Data](https://socialresearchcentre.github.io/r_survey_datasets/labelled-data.html))
+Labelled vectors is a completely new feature for me. I learned that
+value labels and other metadata tags that are commonly seen when working
+with other statistical software like SAS, STATA or SPSS (cf. [Survey
+Research and Datasets in
+R](https://socialresearchcentre.github.io/r_survey_datasets/), here
+section 3 [Labelled
+Data](https://socialresearchcentre.github.io/r_survey_datasets/labelled-data.html))
 
-> A labelled vector is a common data structure in other statistical environments, allowing you to assign text labels to specific values. This class makes it possible to import such labelled vectors in to R without loss of fidelity. ([Create a labelled vector](https://haven.tidyverse.org/reference/labelled.html))
+> A labelled vector is a common data structure in other statistical
+> environments, allowing you to assign text labels to specific values.
+> This class makes it possible to import such labelled vectors in to R
+> without loss of fidelity. ([Create a labelled
+> vector](https://haven.tidyverse.org/reference/labelled.html))
 
-I will go into more details in @sec-chap01-data-wrangling. The important thing here is to notice that the variable `grass` has labelled values that explain the short code. Code `1` represents the respondent option that marijuana should be legalized and `2`
-the opposite. We also learn that there is with `NA i` a special kind of `NA` value: 
+I will go into more details in @sec-chap01-labelled-data. The important
+thing here is to notice that the variable `grass` has labelled values
+that explain the short code. Code `1` represents the respondent option
+that marijuana should be legalized and `2` the opposite. We also learn
+that there is with `NA i` a special kind of `NA` value:
 
-> .i: Inapplicable (IAP). Respondents who are not asked to answer a specific question are assigned to IAP. (See [Alert on the STATA download page](https://gss.norc.org/get-the-data/stata))
+> .i: Inapplicable (IAP). Respondents who are not asked to answer a
+> specific question are assigned to IAP. (See [Alert on the STATA
+> download page](https://gss.norc.org/get-the-data/stata))
 
-On the website we see under the "Alert" section that there other kind of NA’s as well. And the 2022 GSS Codebook describes still other, less common missing values.
-
-
-::::
-:::::
-
-
+On the website we see under the "Alert" section that there other kind of
+NA’s as well. And the 2022 GSS Codebook describes still other, less
+common missing values.
+:::
+:::
 
 **Additional comments**
 
-I chose for file saving the `base::saveRDS()` option (and not `base::save()`)
-    because when later reading into R again with `base::readRDS()` it
-    does not overwrite a variable with the same name respectively I can
-    assign the file to another variable name. 
-    
+I chose for file saving the `base::saveRDS()` option (and not
+`base::save()`) because when later reading into R again with
+`base::readRDS()` it does not overwrite a variable with the same name
+respectively I can assign the file to another variable name.
 
 ###### automated
 
@@ -436,7 +803,6 @@ I chose for file saving the `base::saveRDS()` option (and not `base::save()`)
 :::
 
 ::: my-r-code-container
-
 ::: {#lst-chap01-get-gss2016-automated}
 ```{r}
 #| label: get-gss2016-automated
@@ -453,11 +819,11 @@ base::saveRDS(gss_2016_aut, file = "data-raw/gss_2016_aut.rds" )
 ```
 
 Get year 2016 of GSS data set with `base::download.file()`
-
 :::
 
-This time we have the file downloaded programmatically which is much better in term of reproducibility. We don't need now to import the data {**haven**} but can call base::readRDS().
-
+This time we have the file downloaded programmatically which is much
+better in term of reproducibility. We don't need now to import the data
+{**haven**} but can call base::readRDS().
 
 ::: {#lst-chap01-read-rds-data}
 ```{r}
@@ -473,57 +839,64 @@ gss_2016_aut |>
 
 Read previously saved `.rds` file into R and glance at the data
 :::
-
-
-
 :::
 :::
 
-Data now have a more R like appearance, even if the variable classes with <hvn_lbll> "*`r class(gss_2016_aut$age)`*" are unfamiliar. But we have now lost some information, especially we have to consult the codebook to know what the codes `1` and `2` mean.
-
+Data now have a more R like appearance, even if the variable classes
+with <hvn_lbll> "*`r class(gss_2016_aut$age)`*" are unfamiliar. But we
+have now lost some information, especially we have to consult the
+codebook to know what the codes `1` and `2` mean.
 
 ###### lodown
 
-The following strategy I have taken from the bookdown book [Analyze Survey Data for Free](http://asdfree.com/) (asdf.com) It gives step by step instructions to explore public `r glossary("Microdata")`. Here I refer to the `r glossary("General Social Survey")` (GSS) section of the book.
+The following strategy I have taken from the bookdown book [Analyze
+Survey Data for Free](http://asdfree.com/) (asdf.com) It gives step by
+step instructions to explore public `r glossary("Microdata")`. Here I
+refer to the `r glossary("General Social Survey")` (GSS) section of the
+book.
 
-:::::{.my-procedure}
-:::{.my-procedure-header}
-:::::: {#prp-chap01-get-gss2016-lodown}
+::: my-procedure
+::: my-procedure-header
+::: {#prp-chap01-get-gss2016-lodown}
 : Get the GSS data with the {**lodown**} package and glance at the data
-::::::
 :::
-::::{.my-procedure-container}
+:::
 
+::: my-procedure-container
 Working with {**lodown**} is a three step procedure:
 
-1. Retrieve a listing of all available extracts for the GSS data.
-2. Choose what files you want to download. In our case data for the year 2016.
-3. Download the specified dataset in the offered SPSS file format, but {**lodown**} produces with `.rds` a native R file format with the name `2016.rds`.
-
-::::
-:::::
-
-The second step has to be done manually but I have the result of my inspection already integrated in @lst-chap01-get-gss2016-lodown.
-
-As additional steps I renamed the downloaded file, so that I can it distinguish from similar files of the other approaches. Finally I glanced at the `grass` and `age` data.
-
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-get-gss2016-lodown}
-: Get GSS data via {**lodown**} package
-::::::
+1.  Retrieve a listing of all available extracts for the GSS data.
+2.  Choose what files you want to download. In our case data for the
+    year 2016.
+3.  Download the specified dataset in the offered SPSS file format, but
+    {**lodown**} produces with `.rds` a native R file format with the
+    name `2016.rds`.
 :::
-::::{.my-r-code-container}
+:::
 
+The second step has to be done manually but I have the result of my
+inspection already integrated in @lst-chap01-get-gss2016-lodown.
 
+As additional steps I renamed the downloaded file, so that I can
+distinguish it from similar files of the other approaches. Finally I
+glanced at the `grass` and `age` data.
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-get-gss2016-lodown}
+: Get GSS data via {**lodown**} package
+:::
+:::
+
+::: my-r-code-container
 ::: {#lst-chap01-get-gss2016-lodown}
 ```{r}
 #| label: get-gss2016-lodown
 #| eval: true
-#| cache: false
-#| warning: false
-#| message: false
+#| cache: true
+#| results: hold
+
+## can't suppress messages, tried several options
 
 ## run only once (manually)
 my_folder <- base::paste0(here::here(), "/data-raw")
@@ -553,110 +926,922 @@ gss_2016_cat |>
 
 Get GSS data for the year 2016 via the {**lodown**} package
 :::
-::::
-:::::
+:::
+:::
 
-The result is to a pure `.rds` file, but where the columns are still of class "*`r class(gss_2016_cat$grass)`*" as in @lst-chap01-read-rds-data.
-
+The result is a pure `.rds` file where the columns are still of class
+"*`r class(gss_2016_cat$grass)`*" as in @lst-chap01-read-rds-data.
 
 ###### gssr
 
-Finally I will download the 2016 data with the help of the {**gssr**} package. This takes some minutes. At first I missed the vignette, so I had to download the package again with the additional argument `build_vignettes = TRUE`. Whereas the vignette explains how to analyse data the GitHub is very helpful how to get the desired data. 
+Finally I will download the 2016 data with the help of the {**gssr**}
+package. This takes some minutes. At first I missed the vignette, so I
+had to download the package again with the additional argument
+`build_vignettes = TRUE`. Whereas the vignette explains how to analyse
+data the GitHub is very helpful how to get the desired data.
 
-> You can quickly get the data for any single GSS year by using `gssr::gss_get_yr()` to download the data file from NORC and put it directly into a tibble.
+> You can quickly get the data for any single GSS year by using
+> `gssr::gss_get_yr()` to download the data file from NORC and put it
+> directly into a tibble.
 
-
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-get-gss2016-gssr}
-: Get GSS 2016 Year Data Set (cross-section only)
-::::::
-:::
-::::{.my-r-code-container}
-
-::: {#lst-chap01-get-gss2016-gssr}
-```{r}
-#| label: get-gss2016-gssr
-#| cache: true
-#| eval: false
-#| code-fold: show
-
-## run only once (manually)
-gss_2016_gssr <- gssr::gss_get_yr(year = 2016)
-base::saveRDS(gss_2016_gssr, file = "data-raw/gss_2016_gssr.rds" )
-```
-
-Get GSS 2016 Year Data Set (cross-section only)
-
-:::
-
-
-::::
-:::::
-
-After downloaded the file we can --- as in the other tabs already done --- load the file and glance at the grass/age data.
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-}
-: Glance at the 2016 grass/age data downloaded via {**gssr**}
-::::::
-:::
-::::{.my-r-code-container}
-
-::: {#lst-chap01-glance-2016-gssr-data}
-```{r}
-#| label: glance-2016-gssr-data
-
-## load and glance at data
-gss_2016_gssr <- base::readRDS("data-raw/gss_2016_gssr.rds")
-gss_2016_gssr |> 
-    dplyr::select(c(age, grass)) |> 
-    glance_data(N = 8, seed = 2016)
-```
-
-Glance at the 2016 grass/age data downloaded via {**gssr**}
-
-:::
-
-This is exactly the same format as in listing @lst-chap01-import-stata-2016-file from the manual download. But it has now the advantages from the {**gssr**} package. For instance with the integrated help it is much easier to
-
-- find the variables 
-- to read the question text of the variable
-- to see in which year the questions was asked
-- what the code - including the different types of NA’s mean
-
-::::
-:::::
-
-
-:::
-
-::::
-:::::
-
-
-:::::{.my-important}
-:::{.my-important-header}
-Six different approaches to get the GSS data
-:::
-::::{.my-important-container}
-Using the {**gssr**} packages seems to me by far the best approach.
-::::
-:::::
-
-
-# I STOPPED HERE
-
-## Data Wrangling {#sec-chap01-data-wrangling}
+After downloaded the file we can --- as in the other tabs already done
+--- load the file and glance at the grass/age data.
 
 ::: my-r-code
 ::: my-r-code-header
+::: {#cnj-chap01-get-gss2016-gssr}
+: Get GSS 2016 Year Data Set (cross-section only) and glance at the data
+:::
+:::
 
-: Get the data structure for the book Figure 1.2
+::: my-r-code-container
+::: {#lst-chap01-get-gss2016-gssr-and-glance-at-data}
+```{r}
+#| label: get-gss2016-gssr-and-glance-at-data
+#| cache: true
+
+## run only once (manually) ####################
+# gss_2016_gssr <- gssr::gss_get_yr(year = 2016)
+# gss_2016_gssr <- gss_2016_gssr |>
+#    dplyr::select(c(age, grass))
+# base::saveRDS(gss_2016_gssr, file = "data-raw/gss_2016_gssr.rds" )
+
+## load data ####################
+gss_2016_gssr <- base::readRDS("data-raw/gss_2016_gssr.rds")
+
+## glance at data
+gss_2016_gssr |> 
+    glance_data(N = 8, seed = 2016)
+```
+
+Get GSS 2016 Year Data Set (cross-section only) and glance at the data
+:::
+:::
+:::
+
+Downloading data with {**gssr**} results in exactly the same format as
+in listing @lst-chap01-import-stata-2016-file from the manual download.
+But it has now the advantages from the {**gssr**} package. For instance
+with the integrated help it is much easier to
+
+-   find the variables
+-   to read the question text of the variable
+-   to see in which year the questions was asked
+-   what the code - including the different types of NA’s mean
+:::
+:::
+:::
+
+::: :::
+
+::: my-important
+::: my-important-header
+Six different approaches to get the GSS data
+:::
+
+::: my-important-container
+Using the {**gssr**} packages seems to me by far the best approach.
+:::
+:::
+
+## Working with Labelled Data {#sec-chap01-labelled-data}
+
+### How to work with labelled data? --- Resources
+
+During downloading GSS data I mentioned that {**haven**} imports data as
+labelled vectors. As a completely new feature for me I looked at the
+Internet for their advantages and how to work with them. I found four
+important resources:
+
+::: my-resource
+::: my-resource-header
+How to work with labelled data?
+:::
+
+::: my-resource-container
+{**haven**}: [Import and Export 'SPSS', 'Stata' and 'SAS'
+Files](https://haven.tidyverse.org/index.html)
+
+{**haven**} enables R to read and write various data formats used by
+other statistical packages. Currently it supports
+[SAS](https://www.sas.com/en_us/home.html),
+[SPSS](https://www.ibm.com/spss) and [STATA](https://www.stata.com/).
+{**haven**} output object has four important features:
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](https://haven.tidyverse.org/logo.png)
+
+(1) It creates `tibbles::tibble()` which a better print method for very
+    long and very wide files.
+(2) Dates and times are converted to R date/time classes.
+(3) Character vectors are not converted to factors.
+(4) Value labels are translated into a new `haven::labelled()` class,
+    which preserves the original semantics and can easily be coerced to
+    factors with `haven::as_factor()`. Special missing values are
+    preserved. See details in the vignette [Conversion
+    semantics](https://haven.tidyverse.org/articles/semantics.html).
+:::
+
+I am here interested especially in the fourth feature.
+
+------------------------------------------------------------------------
+
+{**labelled**}: [Manipulating Labelled
+Data](https://larmarange.github.io/labelled/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](https://larmarange.github.io/labelled/reference/figures/labelled.png)
+
+Work with labelled data imported from [IBM
+SPSS](https://www.ibm.com/spss) or [STATA](https://www.stata.com/) with
+{**haven**} or {**foreign**}. This package provides useful functions to
+deal with "haven_labelled" and "haven_labelled_spss" classes introduced
+by {**haven**} package. (With the free [gnu
+PSPP](https://www.gnu.org/software/pspp/) exists also a SPSS like open
+source version.) See details in the vignette [Introduction to
+labelled](https://larmarange.github.io/labelled/articles/intro_labelled.html)
+and the [GitHub website for
+labelled](https://larmarange.github.io/labelled/). There are other
+vignettes as well and a [cheat sheet as PDF for
+download](https://github.com/larmarange/labelled/raw/main/cheatsheet/labelled_cheatsheet.pdf).
+:::
+
+------------------------------------------------------------------------
+
+{**sjlabelled**}: [Labelled Data Utility
+Functions](https://strengejacke.github.io/sjlabelled/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-sjlabelled2-min.png){width="176"}
+
+Basically, this package covers reading and writing data between other
+statistical packages (like ‘SPSS’) and R, based on the haven and foreign
+packages; hence, this package also includes functions to make working
+with labelled data easier. This includes easy ways to get, set or change
+value and variable label attributes, to convert labelled vectors into
+factors or numeric (and vice versa), or to deal with multiple declared
+missing values.
+:::
+
+The prefix `sj` in {**sjlabelled**} (= in German Strenge Jacke, "strict
+jacket") refers to other work of [Daniel
+Lüdecke](https://www.uke.de/kliniken-institute/institute/medizinische-soziologie/team/profil_daniel_luedecke_ims.html),
+who has developed many R packages. His packages are divided in two
+approaches:
+
+-   One is the project
+    [EasyStats](https://easystats.github.io/easystats/), that provides
+    with 11 packages "An R Framework for Easy Statistical Modeling,
+    Visualization, and Reporting", similar to the {**tidyverse**}
+    collection. The {**easystats**} collection is orientated more to
+    statistics, whereas {**tidyverse**} is more directed to data
+    science.
+-   The other line of package development supports labelled data in
+    combination with different R task like
+    -   [Data and Variable Transformation
+        Functions](https://cran.r-project.org/web/packages/sjmisc/index.html)
+        {**sjmisc**},
+    -   [Data Visualization for Statistics in Social
+        Science](https://cran.r-project.org/web/packages/sjPlot/index.html)
+        {**sjPlot**} and a
+    -   [Collection of Convenient Functions for Common Statistical
+        Computations](https://cran.r-project.org/web/packages/sjstats/index.html)
+        {**sjStats**}. -Additionally there exists {**sjtable2df**} a
+        package to [Convert 'sjPlot' HTML-Tables to R
+        'data.frame'](https://cran.r-project.org/web/packages/sjtable2df/index.html).
+
+All the `sj`-packages support labelled data.
+
+------------------------------------------------------------------------
+
+[Survey Research Datasets and
+R](https://socialresearchcentre.github.io/r_survey_datasets/)
+
+A book accompanying a workshop delivered for the 7th Biennial
+`r glossary("ACSPRI")` Social Science Methodology Conference. It
+provides a practical demonstration of several packages for accessing and
+working with survey data, associated metadata and official statistics in
+R. The short book demonstrates
+
+-   Working with external data sources from common statistical packages
+    (SPSS, SAS, Stata, Excel) and their quirks
+-   Easily working with categorical data in R with the {**labelled**} R
+    package
+-   Accessing external databases in an R native way using {**DBI**} and
+    {**dbplyr**} (The [DBI package](https://dbi.r-dbi.org/) helps
+    connecting R to database management systems (DBMS).
+    [dbplyr](https://dbplyr.tidyverse.org/) is a {**dplyr**} backend for
+    data bases)
+-   Accessing publicly available data in R scripts via the web
+-   Resources for accessing official statistics data in R
+
+Here I am interested only in the first two demonstration. I will refer
+especially to the section on [Labelled
+data](https://socialresearchcentre.github.io/r_survey_datasets/labelled-data.html).
+
+------------------------------------------------------------------------
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! {**labelled**} and {**sjlabelled**} have similar purposes and
+functions
+:::
+
+::: my-watch-out-container
+{**labelled**} and {**sjlabelled**} are very similar. As far as I
+understand is the main difference that {**sjlabelled**} supports not
+only working with labelled data but also offers functions to benefit
+from these features. {**labelled**} in contrast manipulates labelled
+data only as an intermediate data structure that should be converted to
+common R classes, loosing these kind of meta-data.
+:::
+:::
+:::
+:::
+
+### Displaying data including labelled vectors
+
+To get comfortable with labelled data @def-chap01-show-labelled-data I
+will show how labelled data appear in different viewing functions. To
+inspect the possibilities of the {**labelled**} package see
+@def-chap01-use-labelled-haven-package.
+
+::: my-experiment
+::: my-experiment-header
+::: {#def-chap01-show-labelled-data}
+: Different types of data views with labelled data
+:::
+:::
+
+::: my-experiment-container
+::: panel-tabset
+###### str()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-str-labelled-data}
+: Display the internal structure of labelled data
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: str-labelled-data
+
+utils::str(gss_2016_gssr)
+```
+:::
+:::
+
+###### attributes()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-attributes-labelled-data}
+: Show attributes of labelled data
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: attributes-labelled-data
+
+base::attributes(gss_2016_gssr$grass)
+```
+
+This works only with vectors (variables), but not with data frames. You
+can display specific list values with numbers (e.g.,
+`attributes(gss_2016_gssr$grass)[[4]]`) or names (e.g.,
+`attributes(gss_2016_gssr$grass)[["labels"]]`).
+:::
+:::
+
+###### head()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-head-labelled-data}
+: Show first six records of the labelled variable
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap01-head-labelled-data}
+```{r}
+#| label: head-labelled-data
+
+head(gss_2016_gssr$grass)
+```
+
+Use `head()` to show the first six records of the labelled variable.
+:::
+
+------------------------------------------------------------------------
+
+This works only with labelled vectors (variables), but not with data
+frames.
+:::
+:::
+
+###### tibble()
+
+> One immediate advantage of labelled vectors is that value labels are
+> used in data frame printing when using
+> [tibble](https://tibble.tidyverse.org/) (and by extension the wider
+> tidyverse) and other packages using the
+> [pillar](https://cran.r-project.org/web/packages/pillar/index.html)
+> printing methods. ([Survey Research Datasets and
+> R](https://socialresearchcentre.github.io/r_survey_datasets/what-is-labelled-data.html))
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-tibble-labelled-data}
+: Using `tibble` resp. `pillar` printing methods
+:::
+:::
+
+::: my-r-code-container
+
+::: {#lst-chap01-tibble-labelled-data}
+```{r}
+#| label: tibble-labelled-data
+
+gss_2016_gssr |> 
+    dplyr::count(grass)
+```
+
+Using `tibble` resp. `pillar` printing methods to display NA's
+:::
 
 :::
+:::
+
+###### glimpse()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-glimpse-labelled-data}
+: Get a glimpse of labelled data
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: glimpse-labelled-data
+
+dplyr::glimpse(gss_2016_gssr)
+```
+:::
+:::
+
+###### print()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-print-labelled-data}
+: Print values as `tibble()` with labelled data
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: print-labelled-data
+
+base::print(gss_2016_gssr)
+```
+:::
+:::
+
+###### glance_data()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-glance-labelled-data}
+: Glance randomly at some records with labelled data
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: glance-labelled-data
+#| 
+gss_2016_gssr |>
+    glance_data(N = 8, seed = 2016)
+
+```
+:::
+:::
+
+###### RStudio
+
+In RStudio you can see part of the labels by supplying additional
+information about NAs in R code chunks and variable labels in the
+RStudio viewer.
+
+::: {#fig-rstudio-labelled-data layout-ncol="2"}
+![Labelled data as a R code chunk result in
+RStudio](img/rstudio-r-chunk-labelled-data-min.png){#fig-rstudio-chunk}
+
+![Labelled data in RStudio data
+viewer](img/rstudio-viewer-labelled-data-min.png){#fig-rstudio-viewer}
+
+RStudio display of labelled data
+:::
+:::
+:::
+:::
+
+`base::summary()` with data frames that contain labelled data generates
+an error when {**haven**} is not loaded:
+
+> ! `summary.haven_labelled()` not implemented.
+
+::: my-important
+::: my-important-header
+Labelled meta data not visible in most viewing functions
+:::
+
+::: my-important-container
+With the exception of `base::str()` labelled meta data are not visible
+when viewing at the printed data.
+
+And even more important: You can't see the different types of NA's without specialized functions. "Tagged" (labelled) missing values behaves exactly like regular R missing values. For more information see @def-chap01-use-labelled-haven-package.
+:::
+:::
+
+### Working with labelled data
+
+#### Two different approaches
+
+> The purpose of the labelled package is to provide functions to
+> manipulate metadata as variable labels, value labels and defined
+> missing values using the `haven_labelled` and `haven_labelled_spss`
+> classes introduced in haven package. ([Introduction to
+> labelled](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html))
+
+Until now I have not worked in this book with `haven_labelled_spss`
+classes. This class comes from imports of SPSS data files via the
+{**haven**} package.
+
+> This class is only used when `user_na = TRUE` in `read_sav()`. It is
+> similar to the `labelled()` class but it also models SPSS's
+> user-defined missings, which can be up to three distinct values, or
+> for numeric vectors a range. ([Labelled vector for
+> SPSS](https://haven.tidyverse.org/reference/labelled_spss.html))
+> [^01-preparing-data-1]
+
+[^01-preparing-data-1]: To prevent conflict with the labelled class from
+    the {**Hmisc**} package {**haven**} has changed with version 2.0.0
+    its label class names from `labelled` and `labelled_spss` to
+    `haven_labelled` and `haven_labelled_spss`. (See [GitHub Issue
+    #329](https://github.com/tidyverse/haven/issues/329).)
+
+As user-defined missing values are not important here I will stick with
+STATA imports.
+
+My main interest with @def-chap01-use-labelled-haven-package is to prepare
+and/or use the labelled data to work with R. There are principal two
+approaches:
+
+::: my-procedure
+::: my-procedure-header
+::: {#prp-chap01-labelled-data-in-r}
+: Two different procedures to work in R with labelled data
+:::
+:::
+
+::: my-procedure-container
+**Approach A**
+
+> In approach A, `haven_labelled` vectors are converted into factors or
+> into numeric/character vectors just after data import, using
+> `unlabelled()`, `to_factor()` or `unclass()`. Then, data cleaning,
+> recoding and analysis are performed using classic R vector types.
+
+1.  Data import
+2.  *Conversion to factor / numeric*
+3.  Data cleaning / data recoding
+4.  Data analysis
+
+**Approach B**
+
+> In approach B, `haven_labelled` vectors are kept for data cleaning and
+> coding, allowing to preserved original recoding, in particular if data
+> should be reexported after that step. Functions provided by labelled
+> will be useful for managing value labels. However, as in approach A,
+> `haven_labelled` vectors will have to be converted into classic
+> factors or numeric vectors before data analysis (in particular
+> modeling) as this is the way categorical and continuous variables
+> should be coded for analysis functions. ([Introduction to
+> labelled](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html))
+
+1.  Data import
+2.  Data cleaning / data recoding (-\> Data export to SPSS / SAS / STATA
+    )
+3.  *Conversion to factor / numeric*
+4.  Data analysis
+
+
+[![Two different approaches to work in R with labelled
+data](img/labelled-approaches-min.png){#fig-chap01-two-approaches-with-labelled-data}](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)
+
+:::
+:::
+
+
+#### Inspecting labelled data
+
+::: my-experiment
+::: my-experiment-header
+::: {#def-chap01-use-labelled-haven-package}
+: Inspecting labelled data
+:::
+:::
+
+::: my-experiment-container
+::: panel-tabset
+###### var_label()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-labelled-var-label}
+: Get variable labels of a labelled data frame
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap01-labelled-var-label}
+```{r}
+#| label: labelled-var-label
+
+labelled::var_label(gss_2016_gssr) 
+```
+
+Use `labelled::var_label()` to get variables labels of a data frame
+:::
+
+The labels of the two variable specifies in more detail their content. For the `grass` variable we get the question asked in the survey. This is very helpful and saves consulting the codebook. 
+
+------------------------------------------------------------------------
+
+:::
+:::
+
+I am using here the short form with `labelled::var_label()` but there
+exist also with `labelled::get_variable_labels()` a long form which has
+with it plural form a more consistent syntax.
+
+###### val_labels()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-labelled-val-labels}
+: Get value labels of data frame variables
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap01-labelled-val-labels}
+```{r}
+#| label: labelled-val-labels
+
+labelled::val_labels(gss_2016_gssr)
+```
+
+Use `labelled::val_labels()` to get value labels of data frame variables
+:::
+
+
+:::
+:::
+
+Important is the start of the list of value labels.
+
+- **age**: It shows that the value `89` of variable `age` includes values of
+`89 and older`. This is important for the analysis and saves the work of
+recoding as done in @cnj-chap01-repl-data-fig-book.
+
+- **grass**: For the `grass` variable we learn that `1` stands for the opinion that Marijuana "should be legal" and two for the opposite.
+
+What follows is a comprehensive list of NA values used in the survey, even if many of these values are not used for the two variables considered here.
+
+We know from @cnj-chap01-tibble-labelled-data that the `grass` variable has 1024 NA's, but we do not know their composition of different NA values. See @lst-chap01-haven-na-tag how to get this information.
+
+------------------------------------------------------------------------
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Inconsistency in the function names
+:::
+::::{.my-watch-out-container}
+There is an inconsistency in the singular vs. plural form between `labelled::var_label()` and `labelled::val_labels()`. Both functions show a *list of values* (= plural) if there are more than one label available.
+
+For value labels exist also a singular version with `labelled::val_label()` to get a specific value label of a variable.
+
+::::
+:::::
+
+
+
+
+
+###### head()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-labelled-head}
+: Using `utils::head()` on a labelled variable after {**labelled**} is loaded
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: labelled-head
+
+## {**labelled**} is loaded through a call in the previous chunk
+utils::head(gss_2016_gssr$grass, 10)
+```
+
+------------------------------------------------------------------------
+
+
+Using `utils::head()` on a variable when {**labelled**} is loaded prints a
+nicely formatted summary of the attached metadata, excluding formats. It shows all NA value labels in the data frame used in the survey, even only some of them is used here. (See @lst-chap01-haven-na-tag to get type of NA's used for a variable.)
+
+We see in the first 10 records of the variable `grass` 
+
+- three `1` ("should be legal")
+- three `2` ("should not be legal") and
+- four `NA(i)` ("iap")
+
+Until now it is not clear what "iap" for the `NA(i)` type means. If we want [download (STATA) files directly from the GSS website](https://gss.norc.org/get-the-data/stata) we see on the right side a note about the most important `NA` types. It explains the the abbreviation "iap" stands for "inapplicable".
+
+[![GSS Information about the most important NA
+types](img/na-gss-website-note-min.png){#fig-chap01-gss-na-note
+fig-alt="An \"Alerts\" explains that there are three main missing values in the data; \".i\": Inapplicable (IAP). Respondents whor are not asked to answer a specific question are assigned to IAP.\".d\": Don't know (DK). \".n\": No answer (NA)."
+fig-align="center"}](https://gss.norc.org/get-the-data/stata)
+
+:::::{.my-note}
+:::{.my-note-header}
+Two different meanings of "NA"
+:::
+::::{.my-note-container}
+With the `NA(n)` type of missing value "NA" does not mean "Not Applicable" but "No answer".
+::::
+:::::
+
+Returning only the `NA(i)` type of a missing value does not mean that there aren't any other NA types in the data. (See @lst-chap01-labelled-print-unique-tagged to get the types of tagged NA's of a variable.)
+
+
+:::
+:::
+
+This formatted result of labelled data is better readable as with
+@lst-chap01-labelled-val-labels, because category and value are in the
+same line. Compare the result of this code ({**labelled**} is loaded)
+with @lst-chap01-head-labelled-data ({**labelled**} is not loaded).
+
+:::::{.my-note}
+:::{.my-note-header}
+haven::print_labels() as equivalent of head() with {**labelled**} loaded
+:::
+::::{.my-note-container}
+With the exception of the specified rows in the `head()` function, you can get the same nicely formatted list of NA types with `haven::print_labels()`. (See next tab "Print labels".)
+::::
+:::::
+
+###### Print labels
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-haven-print-labels}
+: Print labels
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: haven-print-labels
+
+haven::print_labels(gss_2016_gssr$grass)
+```
+
+::::
+:::::
+
+For a detailed explication see previous tab "head()".
+
+
+###### Unique NA's
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-labelled-print-unique-tagged}
+: Print unique tagged NA's
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap01-labelled-print-unique-tagged}
+```{r}
+#| label: labelled-print-unique-tagged
+
+labelled::unique_tagged_na(gss_2016_gssr$grass) |> 
+    labelled::sort_tagged_na() |> 
+    haven::print_tagged_na()
+```
+
+Show the unique types of NA's of a variable
+:::
+
+***
+
+We see that variable `grass` has three types of NA's:
+
+`NA(d)`: Don't know.
+`NA(i)`: Inapplicable, e.g., these respondents were not asked the marijuana question.
+`NA(n)`: No answer
+
+Here I have used `haven::print_tagged_na()` to format tagged NA's as `NA(a)`, `NA(b)`, etc.  (See ["Tagged" missing values](https://haven.tidyverse.org/reference/tagged_na.html))
+
+::::
+:::::
+
+It would be interesting to know the composition of these different NA types. One could reason that there is a big difference between "question not asked" and "no answer". (See @lst-chap01-haven-na-tag to get the composition of the NA types.)
+
+###### NA composition
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-haven-na-tag}
+: Get the composition of the different types of tagged NA's
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap01-haven-na-tag}
+```{r}
+#| label: haven-na-tagged
+
+gss_2016_gssr |>
+  dplyr::count(
+    grass,
+    haven::na_tag(grass)
+  )
+```
+
+Get the composition of the different types of tagged NA's
+
+:::
+
+***
+
+We already know from @lst-chap01-tibble-labelled-data that the variable `grass` has 1024 NA's. Now we know also the type composition of these NA's.
+
+::::
+:::::
+
+I could not find a similar function in {**labelled**}, so I have used here `haven::na_tag()`.
+
+
+
+:::
+
+:::
+:::
+
+#### Working with labelled data
+
+There are two ways to work with labelled data in R:
+
+> The goal of haven is not to provide a labelled vector that you can use everywhere in your analysis. The goal is to provide an intermediate datastructure that you can convert into a regular R data frame. You can do this by either converting to a factor or stripping the labels ({**Haven**} vignette [Conversion semantics](https://haven.tidyverse.org/articles/semantics.html))
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-conversion-labelled-data}
+: How to convert labelled data for data analysis in R
+::::::
+:::
+::::{.my-experiment-container}
+
+The second variable `grass` is the labelled original variable. The third variable (last column to the right) is the modified `grass` variable.
+
+::: {.panel-tabset}
+
+###### as_factor()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-haven-as-factor}
+: Convert labelled vectors to factors
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: haven-as-factor
+
+gss_2016_grass <- gss_2016_gssr |> 
+    dplyr::select(grass)
+
+gss_2016_grass |> 
+    dplyr::mutate(grass_factor = haven::as_factor(grass)) |> 
+    glance_data(N = 8, seed = 42)
+```
+
+Here I am using `haven::as_factor()`. This function also knows how to re-label missing values.
+
+::::
+:::::
+
+
+###### zap_labels()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-haven-zap-labels}
+: Remove labels
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: haven-zap-labels
+
+gss_2016_grass |> 
+    dplyr::mutate(grass_unlabelled = haven::zap_labels(grass)) |> 
+    glance_data(N = 8, seed = 42)
+
+```
+
+::::
+:::::
+
+###### zap_missing()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-haven-zap-missing}
+: Convert special missings to regular R missings
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: haven-zap-missing
+
+gss_2016_grass |> 
+    dplyr::mutate(grass_rgular_na = haven::zap_missing(grass)) |> 
+    glance_data(N = 8, seed = 42)
+```
+
+::::
+:::::
+
+###### zap_label()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-haven-zap-label}
+: Remove variable labels from a data frame
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: haven-zap-label
+#| results: hold
+
+
+
+
+print("*******   Original data frame   ********")
+labelled::var_label(gss_2016_gssr)
+
+print("*******   Data frame after variable zapped   *******")
+gss_2016_gssr |> 
+    haven::zap_label() |> 
+    labelled::var_label()
+
+```
+
+::::
+:::::
+
+
+:::
+
+You can combine all three zap-commands.
+
+::::
+:::::
+
+
+***
+
+# I STOPPED HERE
+
+::: my-r-code
+::: my-r-code-header
+: Get the data structure for the book Figure 1.2
+:::
+
+#### GSS 2016 V2
 
 ::: my-r-code-container
 ```{r}
@@ -677,21 +1862,8 @@ gss_age_grass_2016_v2 <- gssr::gss_get_yr(year = 2016) |>
 
 base::summary(gss_age_grass_2016_v2)
 ```
-
-::::
-:::::
-
-After I have saved the data to do some data wrangling. To get the data
-structure for the book Figure 1.2 I need to:
-
--   filter the dataset to the year 2016
--   select only the variables `age` and `grass`
--   drop all NA’s
--   convert `grass` into factor
--   recode `grass` labels
--   convert `age` from double to numeric
--   divide `age` into appropriate age intervals and label them
-    accordingly
+:::
+:::
 
 ::: my-r-code
 ::: my-r-code-header
@@ -699,6 +1871,8 @@ structure for the book Figure 1.2 I need to:
 : Get the data structure for the book Figure 1.2
 :::
 :::
+
+#### GSS 2016 V1
 
 ::: my-r-code-container
 ```{r}
@@ -722,9 +1896,10 @@ gss_age_grass_2016_v1  <- gss_age_grass_2016 |>
 
 base::summary(gss_age_grass_2016_v1)
 ```
+:::
+:::
 
-:::
-:::
+#### Clean imported data
 
 ```{r}
 #| label: clean-imported-data
@@ -753,10 +1928,12 @@ base::summary(gss_2016_clean)
 saveRDS(gss_2016_clean, file = "data-clean/gss_2016_clean.rds" )
 ```
 
-
 ------------------------------------------------------------------------
 
 ```{r}
+#| label: read-excelsheet
+
+
 gss_grass_age_2016 <- readxl::read_xlsx(
     path = "data-raw/gss_2016_exp.xlsx"
     )
@@ -785,10 +1962,7 @@ Load my version of marijuana data
 
 ------------------------------------------------------------------------
 
-
-***
-
-
+------------------------------------------------------------------------
 
 # TEXTBAUSTEINE
 
@@ -804,14 +1978,13 @@ gss catalog entry 1 of 1 stored at
 
 gss local download completed
 
-***
+------------------------------------------------------------------------
 
-This action is often called "data
-wrangling" and all to frequent not taught in statistics. It is one of
-the major virtues of "Statistics with R" the building up of these
-important skills are addressed.
+This action is often called "data wrangling" and all to frequent not
+taught in statistics. It is one of the major virtues of "Statistics with
+R" the building up of these important skills are addressed.
 
-***
+------------------------------------------------------------------------
 
 ```{r}
 #| label: load-full-gss
@@ -826,15 +1999,17 @@ gss_1972_2022_full <- haven::read_dta("data-raw/gss7222_r2.dta")
 saveRDS(gss_1972_2022_full, file = "data-raw/gss_1972_2022_full.rds" )
 ```
 
-***
+------------------------------------------------------------------------
 
 : Import the Cumulative Data Set (cross-sectional samples from all
 years) into R
 
+```         
+"Cumulative Data Set (cross-sectional samples
+from all years)". It was Release 2 from November 2023 and was
+downloaded in about 5-10 seconds.
+```
 
-    "Cumulative Data Set (cross-sectional samples
-    from all years)". It was Release 2 from November 2023 and was
-    downloaded in about 5-10 seconds.
 3.  After I unzipped `GSS_stata.zip` (42.3MB) I received a folder
     `GSS_stata` (557.9MB) with four files:
     -   `GSS 2022 Codebook.pdf` with 759 page(!).
@@ -848,12 +2023,10 @@ years) into R
 4.  It took my about 2-3 minutes to load the gigantic dataset into
     `gss_1972_2022_full`. It used 3.6 GB of my computer memory.
 
-It took me about 10-15
-    seconds to save a compressed version of the data file (38.7MB) and
-    about 5 second to load it via `base::readRDS()`.
-    
-    
-***
+It took me about 10-15 seconds to save a compressed version of the data
+file (38.7MB) and about 5 second to load it via `base::readRDS()`.
+
+------------------------------------------------------------------------
 
 ```{r}
 #| label: different-data-views
@@ -910,3 +2083,46 @@ head(gss_2016_man$age)
 head(gss_2016_man$grass)
 ```
 
+Testing different zap function after downloading gss data via
+@lst-chap01-get-gss2016-gssr-and-glance-at-data
+
+```{r}
+#| label: different-zap-functions
+#| eval: false
+
+# ## test zap functions ########
+# gss_2016_gssr |> 
+#     dplyr::select(c(age, grass))
+# 
+# ## without zap
+# gss_2016_gssr |> 
+#     glance_data(N = 8, seed = 2016)
+# 
+# head(gss_2016_gssr)
+# 
+# head(gss_2016_gssr$age)
+# head(gss_2016_gssr$grass)
+# 
+# gss_2016_gssr
+# 
+# base::summary(gss_2016_gssr)
+
+## zap_missing ############
+gss_2016_gssr |> 
+    dplyr::select(grass) |> 
+    dplyr::mutate(no_na = haven::zap_missing(grass)) |> 
+    dplyr::mutate(no_var_label = haven::zap_label(grass)) |> 
+    dplyr::mutate(no_val_label = haven::zap_labels(grass)) 
+
+## zap_label ############
+gss_2016_gssr |> 
+    haven::zap_label() |> 
+    glance_data(N = 8, seed = 2016)
+
+## zap_labels ############
+gss_2016_gssr |> 
+    haven::zap_labels() |> 
+    glance_data(N = 8, seed = 2016)
+
+
+```
