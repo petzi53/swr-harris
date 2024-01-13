@@ -310,11 +310,11 @@ the data structure for the book Figure 1.2 we need to:
 
 ::: {#fig-chap01-bar-charts layout-ncol="2"}
 ![Support for marijuana legalization among participants in the 2016
-General Social Survey (Figure 1.1)](img/fig-01-01-min.png){#fig-01-01}
+General Social Survey (Figure 1.1)](img/chap01/fig-01-01-min.png){#fig-01-01}
 
 ![Support for marijuana legalization by age group among participants in
 the 2016 General Social Survey (Figure
-1.2)](img/fig-01-02-min.png){#fig-01-02}
+1.2)](img/chap01/fig-01-02-min.png){#fig-01-02}
 
 We will replicate these two bar charts (Figure 1.1 and Figure 1.2 in the
 book)
@@ -379,7 +379,7 @@ gss_2016_book_clean <- gss_2016_book |>
   dplyr::mutate(age = base::as.numeric(age)) |> 
 
 ## cut age into several defined age groups
-  dplyr::mutate(age.cat = base::cut(age, 
+  dplyr::mutate(age_cat = base::cut(age, 
                        breaks = c(-Inf, 29, 59, 74, Inf),
                        labels = c("< 30", "30 - 59", "60 - 74", "75+" ))) |>  
 
@@ -395,7 +395,7 @@ base::summary(gss_2016_book_clean)
 ## glance at the data
 print("*******************   GLANCE AT SOME DATA  **********************")
 gss_2016_book_clean |>
-    dplyr::select(c(age.cat, grass)) |> 
+    dplyr::select(c(age_cat, grass)) |> 
     glance_data(N = 8, seed = 2016)
 ```
 
@@ -501,13 +501,13 @@ bar_fig_1_1
 ------------------------------------------------------------------------
 
 I changed the code slightly because of two warnings. Newer versions of
-{**gplot2**} have deprecated some older functions:
+{**ggplot2**} have deprecated some older functions:
 
 -   Warning: The dot-dot notation (`..count..`) was deprecated in
-    ggplot2 3.4.0. Please use `after_stat(count)` instead.
+    {**ggplot2**} version 3.4.0. Please use `after_stat(count)` instead.
 -   Warning: The `guide` argument in `scale_*()` cannot be `FALSE`. This
-    was deprecated in ggplot2 3.3.4. Please use "none" instead.
--   
+    was deprecated in {**ggplot2**} version 3.3.4. Please use "none" instead.
+(I have slightly edited both warnings) 
 :::
 :::
 
@@ -529,11 +529,11 @@ b: Reproducing bar chart Figure 1.2 using `geom_col()`
 
 ## create figure 1.2 ########
 bar_fig_1_2 <- gss_2016_book_clean |> 
-  dplyr::group_by(grass, age.cat) |> 
+  dplyr::group_by(grass, age_cat) |> 
   dplyr::count() |> 
-  dplyr::group_by(age.cat) |> 
+  dplyr::group_by(age_cat) |> 
   dplyr::mutate(perc_grass = 100 * n / base::sum(n)) |> 
-  ggplot2::ggplot(ggplot2::aes(x = age.cat, fill = grass,
+  ggplot2::ggplot(ggplot2::aes(x = age_cat, fill = grass,
              y = perc_grass)) +
   ggplot2::geom_col(position = 'dodge') +
   ggplot2::theme_minimal() +
@@ -542,7 +542,7 @@ bar_fig_1_2 <- gss_2016_book_clean |>
   ggplot2::labs(x = "Age group (in years)",
        y = "Percent of responses in age group")
 
-## show the cart
+## show the chart
 bar_fig_1_2
 ```
 
@@ -1028,7 +1028,7 @@ other statistical packages. Currently it supports
 {**haven**} output object has four important features:
 
 ::: {layout="[10, 30]" layout-valign="center"}
-![](https://haven.tidyverse.org/logo.png)
+![](img/chap01/logoi/logo-labelled-min.png){width="176"}
 
 (1) It creates `tibbles::tibble()` which a better print method for very
     long and very wide files.
@@ -1049,7 +1049,7 @@ I am here interested especially in the fourth feature.
 Data](https://larmarange.github.io/labelled/)
 
 ::: {layout="[10, 30]" layout-valign="center"}
-![](https://larmarange.github.io/labelled/reference/figures/labelled.png)
+![](img/chap01/logoi/logo-labelled-min.png){width="176"}
 
 Work with labelled data imported from [IBM
 SPSS](https://www.ibm.com/spss) or [STATA](https://www.stata.com/) with
@@ -1071,7 +1071,7 @@ download](https://github.com/larmarange/labelled/raw/main/cheatsheet/labelled_ch
 Functions](https://strengejacke.github.io/sjlabelled/)
 
 ::: {layout="[10, 30]" layout-valign="center"}
-![](img/logoi/logo-sjlabelled2-min.png){width="176"}
+![](img/chap01/logoi/logo-sjlabelled-min.png){width="176"}
 
 Basically, this package covers reading and writing data between other
 statistical packages (like ‘SPSS’) and R, based on the haven and foreign
@@ -1260,7 +1260,6 @@ frames.
 :::
 
 ::: my-r-code-container
-
 ::: {#lst-chap01-tibble-labelled-data}
 ```{r}
 #| label: tibble-labelled-data
@@ -1271,7 +1270,6 @@ gss_2016_gssr |>
 
 Using `tibble` resp. `pillar` printing methods to display NA's
 :::
-
 :::
 :::
 
@@ -1339,10 +1337,10 @@ RStudio viewer.
 
 ::: {#fig-rstudio-labelled-data layout-ncol="2"}
 ![Labelled data as a R code chunk result in
-RStudio](img/rstudio-r-chunk-labelled-data-min.png){#fig-rstudio-chunk}
+RStudio](img/chap01/rstudio-r-chunk-labelled-data-min.png){#fig-rstudio-chunk}
 
 ![Labelled data in RStudio data
-viewer](img/rstudio-viewer-labelled-data-min.png){#fig-rstudio-viewer}
+viewer](img/chap01/rstudio-viewer-labelled-data-min.png){#fig-rstudio-viewer}
 
 RStudio display of labelled data
 :::
@@ -1364,7 +1362,10 @@ Labelled meta data not visible in most viewing functions
 With the exception of `base::str()` labelled meta data are not visible
 when viewing at the printed data.
 
-And even more important: You can't see the different types of NA's without specialized functions. "Tagged" (labelled) missing values behaves exactly like regular R missing values. For more information see @def-chap01-use-labelled-haven-package.
+And even more important: You can't see the different types of NA's
+without specialized functions. "Tagged" (labelled) missing values
+behaves exactly like regular R missing values. For more information see
+@def-chap01-use-labelled-haven-package.
 :::
 :::
 
@@ -1398,9 +1399,9 @@ classes. This class comes from imports of SPSS data files via the
 As user-defined missing values are not important here I will stick with
 STATA imports.
 
-My main interest with @def-chap01-use-labelled-haven-package is to prepare
-and/or use the labelled data to work with R. There are principal two
-approaches:
+My main interest with @def-chap01-use-labelled-haven-package is to
+prepare and/or use the labelled data to work with R. There are principal
+two approaches:
 
 ::: my-procedure
 ::: my-procedure-header
@@ -1440,13 +1441,10 @@ approaches:
 3.  *Conversion to factor / numeric*
 4.  Data analysis
 
-
 [![Two different approaches to work in R with labelled
-data](img/labelled-approaches-min.png){#fig-chap01-two-approaches-with-labelled-data}](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)
-
+data](img/chap01/labelled-approaches-min.png){#fig-chap01-two-approaches-with-labelled-data}](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)
 :::
 :::
-
 
 #### Inspecting labelled data
 
@@ -1479,10 +1477,11 @@ labelled::var_label(gss_2016_gssr)
 Use `labelled::var_label()` to get variables labels of a data frame
 :::
 
-The labels of the two variable specifies in more detail their content. For the `grass` variable we get the question asked in the survey. This is very helpful and saves consulting the codebook. 
+The labels of the two variable specifies in more detail their content.
+For the `grass` variable we get the question asked in the survey. This
+is very helpful and saves consulting the codebook.
 
 ------------------------------------------------------------------------
-
 :::
 :::
 
@@ -1509,47 +1508,52 @@ labelled::val_labels(gss_2016_gssr)
 
 Use `labelled::val_labels()` to get value labels of data frame variables
 :::
-
-
 :::
 :::
 
 Important is the start of the list of value labels.
 
-- **age**: It shows that the value `89` of variable `age` includes values of
-`89 and older`. This is important for the analysis and saves the work of
-recoding as done in @cnj-chap01-repl-data-fig-book.
+-   **age**: It shows that the value `89` of variable `age` includes
+    values of `89 and older`. This is important for the analysis and
+    saves the work of recoding as done in
+    @cnj-chap01-repl-data-fig-book.
 
-- **grass**: For the `grass` variable we learn that `1` stands for the opinion that Marijuana "should be legal" and two for the opposite.
+-   **grass**: For the `grass` variable we learn that `1` stands for the
+    opinion that Marijuana "should be legal" and two for the opposite.
 
-What follows is a comprehensive list of NA values used in the survey, even if many of these values are not used for the two variables considered here.
+What follows is a comprehensive list of NA values used in the survey,
+even if many of these values are not used for the two variables
+considered here.
 
-We know from @cnj-chap01-tibble-labelled-data that the `grass` variable has 1024 NA's, but we do not know their composition of different NA values. See @lst-chap01-haven-na-tag how to get this information.
+We know from @cnj-chap01-tibble-labelled-data that the `grass` variable
+has 1024 NA's, but we do not know their composition of different NA
+values. See @lst-chap01-haven-na-tag how to get this information.
 
 ------------------------------------------------------------------------
 
-:::::{.my-watch-out}
-:::{.my-watch-out-header}
+::: my-watch-out
+::: my-watch-out-header
 WATCH OUT! Inconsistency in the function names
 :::
-::::{.my-watch-out-container}
-There is an inconsistency in the singular vs. plural form between `labelled::var_label()` and `labelled::val_labels()`. Both functions show a *list of values* (= plural) if there are more than one label available.
 
-For value labels exist also a singular version with `labelled::val_label()` to get a specific value label of a variable.
+::: my-watch-out-container
+There is an inconsistency in the singular vs. plural form between
+`labelled::var_label()` and `labelled::val_labels()`. Both functions
+show a *list of values* (= plural) if there are more than one label
+available.
 
-::::
-:::::
-
-
-
-
+For value labels exist also a singular version with
+`labelled::val_label()` to get a specific value label of a variable.
+:::
+:::
 
 ###### head()
 
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-chap01-labelled-head}
-: Using `utils::head()` on a labelled variable after {**labelled**} is loaded
+: Using `utils::head()` on a labelled variable after {**labelled**} is
+loaded
 :::
 :::
 
@@ -1563,35 +1567,44 @@ utils::head(gss_2016_gssr$grass, 10)
 
 ------------------------------------------------------------------------
 
+Using `utils::head()` on a variable when {**labelled**} is loaded prints
+a nicely formatted summary of the attached metadata, excluding formats.
+It shows all NA value labels in the data frame used in the survey, even
+only some of them is used here. (See @lst-chap01-haven-na-tag to get
+type of NA's used for a variable.)
 
-Using `utils::head()` on a variable when {**labelled**} is loaded prints a
-nicely formatted summary of the attached metadata, excluding formats. It shows all NA value labels in the data frame used in the survey, even only some of them is used here. (See @lst-chap01-haven-na-tag to get type of NA's used for a variable.)
+We see in the first 10 records of the variable `grass`
 
-We see in the first 10 records of the variable `grass` 
+-   three `1` ("should be legal")
+-   three `2` ("should not be legal") and
+-   four `NA(i)` ("iap")
 
-- three `1` ("should be legal")
-- three `2` ("should not be legal") and
-- four `NA(i)` ("iap")
-
-Until now it is not clear what "iap" for the `NA(i)` type means. If we want [download (STATA) files directly from the GSS website](https://gss.norc.org/get-the-data/stata) we see on the right side a note about the most important `NA` types. It explains the the abbreviation "iap" stands for "inapplicable".
+Until now it is not clear what "iap" for the `NA(i)` type means. If we
+want [download (STATA) files directly from the GSS
+website](https://gss.norc.org/get-the-data/stata) we see on the right
+side a note about the most important `NA` types. It explains the the
+abbreviation "iap" stands for "inapplicable".
 
 [![GSS Information about the most important NA
-types](img/na-gss-website-note-min.png){#fig-chap01-gss-na-note
+types](img/chap01/na-gss-website-note-min.png){#fig-chap01-gss-na-note
 fig-alt="An \"Alerts\" explains that there are three main missing values in the data; \".i\": Inapplicable (IAP). Respondents whor are not asked to answer a specific question are assigned to IAP.\".d\": Don't know (DK). \".n\": No answer (NA)."
 fig-align="center"}](https://gss.norc.org/get-the-data/stata)
 
-:::::{.my-note}
-:::{.my-note-header}
+::: my-note
+::: my-note-header
 Two different meanings of "NA"
 :::
-::::{.my-note-container}
-With the `NA(n)` type of missing value "NA" does not mean "Not Applicable" but "No answer".
-::::
-:::::
 
-Returning only the `NA(i)` type of a missing value does not mean that there aren't any other NA types in the data. (See @lst-chap01-labelled-print-unique-tagged to get the types of tagged NA's of a variable.)
+::: my-note-container
+With the `NA(n)` type of missing value "NA" does not mean "Not
+Applicable" but "No answer".
+:::
+:::
 
-
+Returning only the `NA(i)` type of a missing value does not mean that
+there aren't any other NA types in the data. (See
+@lst-chap01-labelled-print-unique-tagged to get the types of tagged NA's
+of a variable.)
 :::
 :::
 
@@ -1600,46 +1613,48 @@ This formatted result of labelled data is better readable as with
 same line. Compare the result of this code ({**labelled**} is loaded)
 with @lst-chap01-head-labelled-data ({**labelled**} is not loaded).
 
-:::::{.my-note}
-:::{.my-note-header}
+::: my-note
+::: my-note-header
 haven::print_labels() as equivalent of head() with {**labelled**} loaded
 :::
-::::{.my-note-container}
-With the exception of the specified rows in the `head()` function, you can get the same nicely formatted list of NA types with `haven::print_labels()`. (See next tab "Print labels".)
-::::
-:::::
+
+::: my-note-container
+With the exception of the specified rows in the `head()` function, you
+can get the same nicely formatted list of NA types with
+`haven::print_labels()`. (See next tab "Print labels".)
+:::
+:::
 
 ###### Print labels
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-haven-print-labels}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-haven-print-labels}
 : Print labels
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: haven-print-labels
 
 haven::print_labels(gss_2016_gssr$grass)
 ```
-
-::::
-:::::
+:::
+:::
 
 For a detailed explication see previous tab "head()".
 
-
 ###### Unique NA's
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-labelled-print-unique-tagged}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-labelled-print-unique-tagged}
 : Print unique tagged NA's
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ::: {#lst-chap01-labelled-print-unique-tagged}
 ```{r}
 #| label: labelled-print-unique-tagged
@@ -1652,31 +1667,34 @@ labelled::unique_tagged_na(gss_2016_gssr$grass) |>
 Show the unique types of NA's of a variable
 :::
 
-***
+------------------------------------------------------------------------
 
 We see that variable `grass` has three types of NA's:
 
-`NA(d)`: Don't know.
-`NA(i)`: Inapplicable, e.g., these respondents were not asked the marijuana question.
-`NA(n)`: No answer
+`NA(d)`: Don't know. `NA(i)`: Inapplicable, e.g., these respondents were
+not asked the marijuana question. `NA(n)`: No answer
 
-Here I have used `haven::print_tagged_na()` to format tagged NA's as `NA(a)`, `NA(b)`, etc.  (See ["Tagged" missing values](https://haven.tidyverse.org/reference/tagged_na.html))
+Here I have used `haven::print_tagged_na()` to format tagged NA's as
+`NA(a)`, `NA(b)`, etc. (See ["Tagged" missing
+values](https://haven.tidyverse.org/reference/tagged_na.html))
+:::
+:::
 
-::::
-:::::
-
-It would be interesting to know the composition of these different NA types. One could reason that there is a big difference between "question not asked" and "no answer". (See @lst-chap01-haven-na-tag to get the composition of the NA types.)
+It would be interesting to know the composition of these different NA
+types. One could reason that there is a big difference between "question
+not asked" and "no answer". (See @lst-chap01-haven-na-tag to get the
+composition of the NA types.)
 
 ###### NA composition
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-haven-na-tag}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-haven-na-tag}
 : Get the composition of the different types of tagged NA's
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ::: {#lst-chap01-haven-na-tag}
 ```{r}
 #| label: haven-na-tagged
@@ -1689,22 +1707,19 @@ gss_2016_gssr |>
 ```
 
 Get the composition of the different types of tagged NA's
-
 :::
 
-***
+------------------------------------------------------------------------
 
-We already know from @lst-chap01-tibble-labelled-data that the variable `grass` has 1024 NA's. Now we know also the type composition of these NA's.
-
-::::
-:::::
-
-I could not find a similar function in {**labelled**}, so I have used here `haven::na_tag()`.
-
-
-
+We already know from @lst-chap01-tibble-labelled-data that the variable
+`grass` has 1024 NA's. Now we know also the type composition of these
+NA's.
+:::
 :::
 
+I could not find a similar function in {**labelled**}, so I have used
+here `haven::na_tag()`.
+:::
 :::
 :::
 
@@ -1712,29 +1727,35 @@ I could not find a similar function in {**labelled**}, so I have used here `have
 
 There are two ways to work with labelled data in R:
 
-> The goal of haven is not to provide a labelled vector that you can use everywhere in your analysis. The goal is to provide an intermediate datastructure that you can convert into a regular R data frame. You can do this by either converting to a factor or stripping the labels ({**Haven**} vignette [Conversion semantics](https://haven.tidyverse.org/articles/semantics.html))
+> The goal of haven is not to provide a labelled vector that you can use
+> everywhere in your analysis. The goal is to provide an intermediate
+> datastructure that you can convert into a regular R data frame. You
+> can do this by either converting to a factor or stripping the labels
+> ({**Haven**} vignette [Conversion
+> semantics](https://haven.tidyverse.org/articles/semantics.html))
 
-:::::{.my-experiment}
-:::{.my-experiment-header}
-:::::: {#def-conversion-labelled-data}
+::: my-experiment
+::: my-experiment-header
+::: {#def-conversion-labelled-data}
 : How to convert labelled data for data analysis in R
-::::::
 :::
-::::{.my-experiment-container}
+:::
 
-The second variable `grass` is the labelled original variable. The third variable (last column to the right) is the modified `grass` variable.
+::: my-experiment-container
+The second variable `grass` is the labelled original variable. The third
+variable (last column to the right) is the modified `grass` variable.
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ###### as_factor()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-haven-as-factor}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-haven-as-factor}
 : Convert labelled vectors to factors
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: haven-as-factor
 
@@ -1746,21 +1767,21 @@ gss_2016_grass |>
     glance_data(N = 8, seed = 42)
 ```
 
-Here I am using `haven::as_factor()`. This function also knows how to re-label missing values.
-
-::::
-:::::
-
+Here I am using `haven::as_factor()`. This function also knows how to
+re-label missing values.
+:::
+:::
 
 ###### zap_labels()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-haven-zap-labels}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-haven-zap-labels}
 : Remove labels
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: haven-zap-labels
 
@@ -1769,19 +1790,19 @@ gss_2016_grass |>
     glance_data(N = 8, seed = 42)
 
 ```
-
-::::
-:::::
+:::
+:::
 
 ###### zap_missing()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-haven-zap-missing}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-haven-zap-missing}
 : Convert special missings to regular R missings
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: haven-zap-missing
 
@@ -1789,19 +1810,19 @@ gss_2016_grass |>
     dplyr::mutate(grass_rgular_na = haven::zap_missing(grass)) |> 
     glance_data(N = 8, seed = 42)
 ```
-
-::::
-:::::
+:::
+:::
 
 ###### zap_label()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap01-haven-zap-label}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-haven-zap-label}
 : Remove variable labels from a data frame
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: haven-zap-label
 #| results: hold
@@ -1818,6 +1839,627 @@ gss_2016_gssr |>
     labelled::var_label()
 
 ```
+:::
+:::
+:::
+
+You can combine all three zap-commands.
+:::
+:::
+
+## Exercises
+
+::: my-objectives
+::: my-objectives-header
+Exercises for the Coder & Hacker edition
+:::
+
+::: my-objectives-container
+**SwR objectives**
+
+1.  Visit the NHANES website and find the online codebook for the
+    2013–2014 data (@sec-visit-nhanes-website)
+2.  Open the 2013–2014 NHANES data file saved as `nhanes_2013_ch1.csv`
+    with the book materials at
+    [edge.sagepub.com/harris1e](https://edge.sagepub.com/harris1e)
+    (Achievement 1) (@sec-chap01-import-clean-data in tab "read_csv()")
+3.  Examine the data types for DUQ200, RIDAGEYR, and RIAGENDR, and fix
+    data types if needed based on the NHANES codebook (Achievements 2
+    and 3) (@sec-chap01-import-clean-data in tab "View data" and tab "Codebook")
+4.  Based on the online NHANES codebook, code missing values
+    appropriately for DUQ200, RIDAGEYR, and RIAGENDR 
+    (Achievement 4) (@sec-chap01-import-clean-data in tab "Data cleaning")
+5.  Create a bar chart showing the percentage of NHANES participants
+    answering yes and no to marijuana use 
+    (Achievement 5) (@sec-chap01-bar-chart-grass in tab "Solution")
+6.  Recode age into a new variable called `age_cat` with 4 categories:
+    18–29, 30–39, 40–49, 50–59 
+    (Achievement 7) (@sec-chap01-grass-age-sex in tab "Numbers")
+7.  Create a bar chart of marijuana use by age group
+(Achievement 6) (@sec-chap01-grass-age-sex in tab "Age")
+8.  ~~Add a prolog and comments to your code (Achievement 1)~~ (I am
+    using `r glossary("literate programming")` in writing this book.)
+9.  Create a bar chart of marijuana use by age group and sex with side-by-side bars (Achievement 5) (@sec-chap01-grass-age-sex in tab "Age and sex")
+10. Following the R code in your code file, use comments to describe
+    what you found. Given what you found and the information in the
+    chapter, what do you predict will happen with marijuana legalization
+    in the next 10 years? Discuss how the omission of older people from
+    the marijuana use question for NHANES influenced your prediction.
+    Write your prediction and discussion in comments at the end of your
+    code file. (Achievement 1)
+
+**My own additional exercises**
+
+11. Download and work with SAS .xpt file data (Demo)
+    {@sec-download-xpt-file}
+12. Show table of frequencies and percentages (@sec-chap01-bar-chart-grass in Tab "Numbers")
+12. Make bars thinner (@sec-chap01-bar-chart-grass in Tab "Thin bars") 
+13. Make bars thinner and adjust spacing accordingly (@sec-chap01-bar-chart-grass in Tab "Solution")
+:::
+:::
+
+### Visiting the NHANES website {#sec-visit-nhanes-website}
+
+Use the National Health and Nutrition Examination Survey
+(`r glossary("NHANES")`) data to examine marijuana use in the United
+States. Spend a few minutes looking through the NHANES website
+(https://www.cdc.gov/nchs/nhanes/index.htm) before you begin, including
+finding the online codebook for the 2013–2014 data. Complete the
+following tasks to explore whether age is related to marijuana use in
+the United States.
+
+The 2013–2014 codebook is on the page [NHANES
+2013-2014](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?BeginYear=2013).
+On this page are the links to different types of data, documentations or
+codebooks.
+
+You You can choose from
+
+::: {#tbl-NAHNES-data-sections}
+-   Demographics Data
+-   Dietary Data
+-   Examination Data
+-   Laboratory Data
+-   Questionnaire Data
+-   Limited Access Data
+
+NHANES has six different data sections
+:::
+
+Clicking of one of these links opens a page where a table contains the
+following information:
+
+::: {#tbl-NHANES-data-pages}
+-   Data File Name
+-   Doc File
+-   Data File
+-   Data Published
+
+NHANES data pages has download links for documentation and data files
+:::
+
+[Datasets and
+Documentation](https://wwwn.cdc.gov/nchs/nhanes/tutorials/Datasets.aspx)
+and [Frequently Asked Questions
+(FAQs)](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/faq.aspx) are
+important introductory pages.
+
+NHANES data are saved in a [SAS transport (.XPT)
+file](https://www.loc.gov/preservation/digital/formats/fdd/fdd000464.shtml).
+These file can be read with `foreign::read.xport()` and
+`haven::read_xpt()`. There is also a [page with example
+code](https://wwwn.cdc.gov/nchs/nhanes/tutorials/Datasets.aspx) to
+download/import NHANES data files. I will use {**haven**} instead of the
+recommended {**foreign**} package.
+
+### Download NHANES SAS .xpt file data (Demo) {#sec-download-xpt-file}
+
+::: my-experiment
+::: my-experiment-header
+::: {#def-chap01-xpt-file-download}
+: Download and work with NHANES SAS .xpt file data (Demo)
+:::
+:::
+
+::: my-experiment-container
+::: panel-tabset
+###### Get .xpt file
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-save-xpt-file-demo}
+: Save a SAS transport (.xpt) file from the NHANES site for demo
+purposes and display the structure of the file
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: save-xpt-file-demo
+#| cache: true
+#| eval: false
+
+
+## download only once (manually)
+utils::download.file(
+    "https://wwwn.cdc.gov/Nchs/Nhanes/2017-2018/P_BPXO.XPT",
+    tf <- base::tempfile(),
+    mode = "wb"
+)
+blood_pressure_demo <- haven::read_xpt(tf)
+saveRDS(blood_pressure_demo, file = "data-raw/blood_pressure_demo.rds")
+```
+
+(*This code chunk has no visible output*)
+
+With the exception of using (**haven**) instead of {**foreign**}, I
+followed the instruction from the [NHANES
+recommendation](https://wwwn.cdc.gov/nchs/data/tutorials/file_download_import_R.R).
+We see labelled data as it was expected from the import with
+{**haven**}.
+
+In @lst-chap01-get-gss2016-automated I have already used the
+`utils::download.file()` function: There are some differences:
+
+-   @lst-chap01-get-gss2016-automated downloaded a STATA `.zip` file,
+    therefore I used `unz()` to unzip the file and to read
+    `haven::read_dta()` instead `haven::read_xpt()`.
+-   More important however was the `base::unlink(temp)` command to
+    unlink the temporary file, which is not done here.
+-   Another difference was using the argument `mode = "wb"` for writing
+    binary files. As I understood this is only important for Windows
+    user. On my Mac I could stick with the default value `mode = "w"`.
+    But for reproducibility it would be better to use in the future the
+    more general option with `mode = "wb"`.
+:::
+:::
+
+###### str()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-str-blood-pressure-demo}
+: Show data summary of three blood pressure variables with
+`utils::str()` (Demo)
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: str-blood-pressure-demo
+
+blood_pressure_demo <- base::readRDS("data-raw/blood_pressure_demo.rds")
+
+blood_pressure_demo |> 
+    dplyr::select(c(2, 4, 5)) |> 
+    utils::str()
+```
+:::
+:::
+
+###### summary()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-summary-blood-pressure-demo}
+: Show data summary of three blood pressure variables with `summary()`
+(Demo)
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: summary-blood-pressure-demo
+
+blood_pressure_demo |> 
+    dplyr::select(c(2, 4, 5)) |> 
+    base::summary()
+```
+:::
+:::
+
+###### skim()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-skim-blood-pressure-demo}
+: Show data summary of three blood pressure variables with `skim()`
+(Demo)
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: skim-blood-pressure-demo
+
+blood_pressure_demo |> 
+    dplyr::select(c(2, 4, 5)) |> 
+    skimr::skim()
+```
+:::
+:::
+
+###### glance_data()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-show-random-blood-pressure-demo}
+: Show some blood pressure data with my private function `glance_data()`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: show-random-blood-pressure-demo
+
+blood_pressure_demo <- base::readRDS("data-raw/blood_pressure_demo.rds")
+
+## display some values
+blood_pressure_demo |> 
+    dplyr::select(c(2, 4, 5)) |> 
+    dplyr::rename(arm_selected = BPAOARM) |> 
+    dplyr::rename(systolic = BPXOSY1) |> 
+    dplyr::rename(diastolic = BPXODI1) |> 
+    glance_data()
+```
+:::
+:::
+:::
+:::
+:::
+
+### Import & clean data {#sec-chap01-import-clean-data}
+
+::: my-exercise
+::: my-exercise-header
+::: {#exr-chap01-read-nhanes-csv}
+: Coder exercises: Import & clean data
+:::
+:::
+
+::: my-exercise-container
+::: panel-tabset
+###### read_csv()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap01-read-nhanes-csv}
+: Open the 2013–2014 NHANES data file that comes with the book
+:::
+:::
+
+::: my-r-code-container
+
+```{r}
+#| label: read-nhanes-csv
+#| eval: false
+
+## load and save it only once (manually) ########
+nhanes_2013_ch1 <- readr::read_csv("data-harris/nhanes_2013_ch1.csv")
+saveRDS(nhanes_2013_ch1, file = "data-raw/nhanes_2013_ch1.rds" )
+```
+
+
+(*This R Code chunk has no visible output.*)
+:::
+:::
+
+###### View data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-NHANES-view-data}
+: Look at the data with `utils::str()` and `skimr::skim()`
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap01-NHANES-view-data}
+```{r}
+#| label: NHANES-view-data
+
+nhanes_2013_ch1 <- readRDS("data-raw/nhanes_2013_ch1.rds")
+
+base::summary(nhanes_2013_ch1)
+utils::str(nhanes_2013_ch1)
+skimr::skim(nhanes_2013_ch1)
+```
+
+Look at the data with `utils::str()` and `skimr::skim()`
+:::
+::::
+:::::
+
+
+###### Codebook
+
+Unfortunately the .csv files does not include labelled data. Therefore I
+had to look for the variable names in all different NHANES sections as
+outlined in @tbl-NAHNES-data-sections. Inspecting the accompanying
+NHANES download pages (see: @tbl-NHANES-data-pages) I could look for the
+variable names in the download links for the documentation.
+
+-   [DUQ200](https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/DUQ_H.htm#DUQ200):
+    Ever used marijuana or hashish
+-   [RIAGENDR](https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/DEMO_H.htm#RIAGENDR):
+    Gender
+-   [RIDAGEYR](https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/DEMO_H.htm#RIDAGEYR):
+    Age in years at screening
+
+There is an additional column `...1` (see @lst-chap01-NHANES-view-data) providing row numbers. Maybe this column works as an ID, a kind sequence number, so that one could merge other data files identified by this number. (See [SEQN](https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/DEMO_H.htm#SEQN): Respondent Sequence Number). Why this column has lost its name, I do not know. Perhaps it has to do with the data import done by the book author?
+
+To facilitate the work I made screenshots from these four variables:
+
+![](img/chap01/codebook-NHANES-DUQ200-marijuana-min.png)
+
+![](img/chap01/codebook-NHANES-RIAGENDR-RIDAGEYR-gender-age-min.png)
+
+
+![](img/chap01/codebook-NHANES-SEQN-sequence-number-min.png)
+
+###### Data cleaning
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-NHANES-data-cleaning}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: NHANES-data-cleaning
+
+nhanes_2013_ch1 <- readRDS("data-raw/nhanes_2013_ch1.rds")
+
+chap01_nhanes_2013 <- nhanes_2013_ch1 |> 
+    dplyr::rename(nr = ...1) |> 
+    dplyr::rename(
+        gender = RIAGENDR,
+        age = RIDAGEYR,
+        grass = DUQ200
+        ) |> 
+    dplyr::mutate(grass =
+          dplyr::na_if(x = grass, y = 7)) |> 
+    dplyr::mutate(grass =
+          dplyr::na_if(x = grass, y = 9)) |>
+    tidyr::drop_na() |> 
+    dplyr::mutate(gender = forcats::as_factor(gender)) |> 
+    dplyr::mutate(grass = forcats::as_factor(grass)) |> 
+    dplyr::mutate(grass = 
+          forcats::fct_recode(grass, 
+          "Yes" = "1", "No" = "2")) |> 
+    dplyr::mutate(gender = 
+          forcats::fct_recode(gender, 
+          "Male" = "1", "Female" = "2"))
+    
+base::summary(chap01_nhanes_2013)
+skimr::skim(chap01_nhanes_2013)
+```
+
+:::::{.my-note}
+:::{.my-note-header}
+My learning from the above procedure of data cleaning
+:::
+::::{.my-note-container}
+
+1. It is wrong to put the column name `...1` into accents.
+2. There exists a shortcut for several `dplyr::rename()` but not for `dplyr::na_if()` and `forcats::as_factor()` because here we need to change the column values with the command.
+3. Sequence of commands is important: 
+    - Start with the renaming of variables, This is not mandatory but it helps to address the correct column in the following commands.
+    - Recode different missing values to NA’s with `dplyr::na_if()`
+    - Then drop (all) NA’s with `tidyr::drop_na()`.
+4. `forcats::as_factor()` needs to rewrite the column as factor with `dplyr::mutate()` 
+
+::::
+:::::
+
+::::
+:::::
+
+
+:::
+:::
+:::
+
+### Bar chart for marijuana use {#sec-chap01-bar-chart-grass}
+
+:::::{.my-exercise}
+:::{.my-exercise-header}
+:::::: {#exr-chap01-bar-chart-grass-percentage}
+: Bar chart (with different bar width ans space) showing the percentage of NHANES participants answering yes and no to marijuana use
+::::::
+:::
+::::{.my-exercise-container}
+
+::: {.panel-tabset}
+
+###### Numbers
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-compute-grass-percentage}
+: Show frequencies and percentages of NHANES participants answering yes and no to "Ever used marijuana or hashish"
+::::::
+:::
+::::{.my-r-code-container}
+
+
+```{r}
+#| label: compute-grass-percentage
+
+tibble::enframe(table(chap01_nhanes_2013$grass)) |> 
+    dplyr::rename(`Ever used grass or hash` = name, Freq = value) |> 
+    dplyr::mutate(Perc = round(100 * Freq / sum(Freq), 2))
+```
+
+***
+
+Instead of using `name` and `value` I could have used the position of the column numbers `1` and `2` (all names without the \`-sign.)
+
+::::
+:::::
+
+This is a manual calculation using the {**tidyverse**} approach: I am sure there are some packages that may facilitate this computation (e.g., {**Janitor**} or {**DescTools**}), but I had difficulties to apply the appropriate functions.
+
+###### Standard
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-grass-bar-chart-percentage}
+: Percentage of NHANES participants answering yes and no to marijuana use
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-grass-bar-chart-percentage-standard
+#| fig-cap: "Proportion of marijuana use of the participant in the NHANES 2013 survey"
+#| fig-width: 4
+#| fig-height: 4
+
+ggplot2::ggplot(chap01_nhanes_2013,
+    ggplot2::aes(grass, 
+         y = 100 * ggplot2::after_stat(count) /
+             base::sum(ggplot2::after_stat(count)),
+             fill = grass
+        )) +
+    ggplot2::geom_bar() + 
+    ggplot2::theme_minimal() +
+    ggplot2::scale_fill_manual(values = c("darkgreen", 'darkred'),
+                    guide = "none") +
+    ggplot2::scale_y_continuous(
+        breaks = base::seq(0, 50, by = 10),
+        labels = scales::label_percent(scale = 1)) +
+    ggplot2::labs(x = "Did you ever use marijuana or hashish?",
+       y = "Percent of responses") 
+    
+```
+
+
+
+
+
+
+::::
+:::::
+
+The bars are very thick. I tried with `ggplot2::geom_bar(width = 0.5)` to make them thinner. But I failed. (See @lst-chap01-grass-bar-chart-width)
+
+###### Thin bars
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-grass-bar-chart-thin-bars}
+: Percentage of NHANES participants answering yes and no to marijuana use
+::::::
+:::
+::::{.my-r-code-container}
+
+
+::: {#lst-chap01-grass-bar-chart-width}
+```{r}
+#| label: fig-grass-bar-chart-thin-bars
+#| fig-cap: "Proportion of marijuana use of the participant in the NHANES 2013 survey"
+#| fig-width: 4
+#| fig-height: 4
+
+ggplot2::ggplot(chap01_nhanes_2013,
+    ggplot2::aes(grass, 
+         y = 100 * ggplot2::after_stat(count) /
+             base::sum(ggplot2::after_stat(count)),
+             fill = grass
+        )) +
+    
+    ## provide thinner bars, standard = 0.9
+    ggplot2::geom_bar(width = 0.5) + 
+    
+    ggplot2::theme_minimal() +
+    ggplot2::scale_fill_manual(values = c("darkgreen", 'darkred'),
+                    guide = "none") +
+    ggplot2::scale_y_continuous(
+        breaks = base::seq(0, 50, by = 10),
+        labels = scales::label_percent(scale = 1)) +
+    ggplot2::labs(x = "Did you ever use marijuana or hashish?",
+       y = "Percent of responses") 
+    
+```
+
+Reducing the thickness of the bars
+
+:::
+
+
+
+::::
+:::::
+
+The bars are now thin but the space between didn't change. I tried several options with the position argument to [adjust bar width *and* spacing](https://r-graphics.org/recipe-bar-graph-adjust-width):
+
+> Dodging preserves the vertical position of an geom while adjusting the horizontal position. position_dodge() requires the grouping variable to be be specified in the global or geom_* layer. Unlike position_dodge(), position_dodge2() works without a grouping variable in a layer. position_dodge2() works with bars and rectangles, but is particulary useful for arranging box plots, which can have variable widths.
+
+All my trials with `position_dodge()` and `position_dodge2()` failed. The only two strategies I could reduce the spacing was:
+
+- reducing the width of the graphic (and adapting the title of the graphic to fit into the smaller space)
+- using ggplot2::theme(aspect.ratio = 3/1) as shown in @lst-fig-chap01-grass-bar-chart-solution.
+
+
+###### Solution
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-grass-bar-chart-solution}
+: Percentage of NHANES participants answering yes and no to marijuana use
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-fig-chap01-grass-bar-chart-solution}
+```{r}
+#| label: fig-grass-bar-chart-solution
+#| fig-cap: "Proportion of marijuana use of the participant in the NHANES 2013 survey"
+#| fig-width: 4
+#| fig-height: 4
+
+ggplot2::ggplot(chap01_nhanes_2013,
+    ggplot2::aes(grass, 
+         y = 100 * ggplot2::after_stat(count) /
+             base::sum(ggplot2::after_stat(count)),
+             fill = grass
+        )) +
+    ggplot2::geom_bar() + 
+    ggplot2::theme_minimal() +
+    ggplot2::scale_fill_manual(values = c("darkgreen", 'darkred'),
+                    guide = "none") +
+    ggplot2::scale_y_continuous(
+        # n.breaks = 10, 
+        breaks = base::seq(0, 50, by = 5),
+        labels = scales::label_percent(scale = 1)) +
+    ggplot2::labs(x = "Did you ever use marijuana or hashish?",
+       y = "Percent of responses") +
+    ggplot2::theme(aspect.ratio = 3/1)
+    
+```
+
+My solution for creating a bar chart showing the percentage of NHANES participants answering yes and no to marijuana use
+
+:::
+
+:::::{.my-note}
+:::{.my-note-header}
+What I learned from creating the bar chart
+:::
+::::{.my-note-container}
+
+Even with this simple example of a bar chart I learned some new options:
+
+1. Use `ggplot2::after_stat()` inside the aesthetics of the first layer to convert frequencies to percentages.
+2. Adding breaks with `n.breaks = <number>` or `breaks = base::seq(from, to, by = <number>)` inside the appropriate scale.
+3. Use the {**scales**} package to add the `%`-sign after the values. As I have already calculated the percentages I need to reduce the default value of `scale = 100` to `scale = 1`.
+4. Use `ggplot2::theme(aspect.ratio = <number>/1)` creating thinner bars *and* reducing the spacing between the bars accordingly. In my case I changed the aspect ratio to `3/1`. A bigger front number compresses the graph, a smaller front number extends it. Aspect ratio of `1/1` is the standard (= no change).
+
+::::
+:::::
 
 ::::
 :::::
@@ -1825,11 +2467,146 @@ gss_2016_gssr |>
 
 :::
 
-You can combine all three zap-commands.
 
 ::::
 :::::
 
 
+### Marijuana use per age and sex {#sec-chap01-grass-age-sex}
+
+:::::{.my-exercise}
+:::{.my-exercise-header}
+:::::: {#exr-chap01-bar-chart-grass-age-group}
+: Bar chart showing the percentage of NHANES participants per age group and sex answering yes or no to marijuana use
+::::::
+:::
+::::{.my-exercise-container}
+
+::: {.panel-tabset}
+
+###### Numbers
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-compute-grass-age-group-percentage}
+: Show frequencies and percentages of NHANES participants answering yes and no to "Ever used marijuana or hashish"
+::::::
+:::
+::::{.my-r-code-container}
+
+
+```{r}
+#| label: compute-grass-age-group-percentage
+
+chap01_nhanes_age_groups_2013 <- chap01_nhanes_2013 |> 
+
+    ## cut age into several defined age groups
+    dplyr::mutate(age_cat = base::cut(age,
+                   breaks = c(-Inf, 29, 39, 49, 59),
+                   labels = c("18 - 29", "30 - 39", "40 - 49", "50 - 59"))) |>  
+
+    # dplyr::select(grass, age_cat) |> 
+    dplyr::group_by(grass)
+
+tibble::enframe(table(chap01_nhanes_age_groups_2013$age_cat)) |>  
+    dplyr::rename(`Ever used grass or hash` = 1, Freq = 2) |> 
+    dplyr::mutate(Perc = round(100 * Freq / sum(Freq), 2))
+```
+
 ***
+
+Instead of using `1` and `2` I could have used the position of the column numbers `name` and `value` (all names without the \`-sign.)
+
+::::
+:::::
+
+This is a manual calculation using the {**tidyverse**} approach: I am sure there are some packages that may facilitate this computation (e.g., {**Janitor**} or {**DescTools**}), but I had difficulties to apply the appropriate functions.
+
+###### Age
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-grass-bar-chart-age-group}
+: Percentage of NHANES participants by age group answering yes and no to marijuana use
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-grass-bar-chart-age-group
+#| fig-cap: "Proportion of marijuana use of the participant by age group in the NHANES 2013 survey"
+
+
+## age groups bar chart ########
+chap01_nhanes_age_groups_2013 |> 
+  dplyr::group_by(grass, age_cat) |>
+  dplyr::count() |> 
+  dplyr::group_by(age_cat) |> 
+  dplyr::mutate(perc_grass = 100 * n / base::sum(n)) |> 
+  ggplot2::ggplot(ggplot2::aes(x = age_cat, fill = grass,
+             y = perc_grass)) +
+  ggplot2::geom_col(position = 'dodge') +
+  ggplot2::theme_minimal() +
+  ggplot2::scale_fill_manual(values = c('darkgreen', 'darkred'),
+                    name = "Ever used\ngrass or hash?") +
+  ggplot2::labs(x = "Age group (in years)",
+       y = "Percent of responses in age group")
+```
+
+
+
+
+
+
+::::
+:::::
+
+###### Age and sex 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-grass-bar-chart-age-sex}
+: Percentage of NHANES participants by age group and sex answering yes and no to marijuana use
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-grass-bar-chart-age-sex
+#| fig-cap: "Proportion of marijuana use of the participant by age group and sex in the NHANES 2013 survey"
+
+## age and sex bar chart ########
+chap01_nhanes_age_groups_2013 |> 
+  dplyr::group_by(grass, age_cat, gender) |> 
+  dplyr::count() |> 
+  dplyr::group_by(age_cat, gender) |> 
+  dplyr::mutate(perc_grass_2 = 100 * n / base::sum(n)) |> 
+  ggplot2::ggplot(ggplot2::aes(
+      x = age_cat, 
+      y = perc_grass_2,
+      fill = gender)) +
+  ggplot2::geom_col(position = 'dodge') +
+  ggplot2::theme_minimal() +
+  ggplot2::scale_fill_manual(values = c('darkgreen', 'darkred'),
+                             name = "Gender") +
+  ggplot2::labs(
+          x = "Age group (in years)",
+          y = "Percent used marijuana or hashish"
+      )
+```
+
+
+
+
+
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
 
