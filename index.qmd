@@ -141,7 +141,7 @@ box).
 ### Glossary
 
 I am using the {**glossary**} package to create links to glossary
-entries.
+entries.\]
 
 ::: my-r-code
 ::: my-r-code-header
