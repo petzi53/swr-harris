@@ -58,6 +58,9 @@ crossref:
     - kind: float
       reference-prefix: Commitment
       key: com
+    - kind: float
+      reference-prefix: Interpretation
+      key: int
 
 language:
    crossref-cnj-title: "R Code"      # replaces "Conjecture"
@@ -71,9 +74,10 @@ language:
    crossref-prp-title: "Procedure"   # replaces "Proposition"
    crossref-tbl-title: "Table"
    crossref-thm-title: "Theorem"
+   crossref-int-title: "Interpretation"
 
 # https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/language/_language.yml
-   callout-tip-title: "Resource"         # green
+   callout-tip-title: "Interpretation"         # green
    callout-note-title: "Note"            # blue
    callout-warning-title: "Watch out!"    # orange
    callout-important-title: "Important"  # red
