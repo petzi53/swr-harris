@@ -3787,14 +3787,33 @@ grass_legal2 |>
 :::::
 
 
+## Glossary {.unnumbered}
+
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
 
 
 
+## Session Info {.unnumbered}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+Session Info
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
 
 
-
-
-
-
-
+::::
+:::::
 
