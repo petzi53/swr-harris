@@ -15,9 +15,14 @@ book:
   chapters:
     - index.qmd
     - 01-preparing-data.qmd
+    - 02-descriptive-statistics.qmd
     - 95-references.qmd
 
-bibliography: references.bib
+bibliography:
+    - references.bib
+# reference-section-title: References
+# citeproc: true
+
 
 format:
   html:
@@ -36,6 +41,7 @@ format:
 
 filters:
    - include-code-files
+#   - section-bibliographies
 
 knitr:
   opts_chunk:
@@ -47,6 +53,10 @@ editor: source
 
 execute:
     freeze: auto
+
+lightbox: true
+
+
 
 crossref:
   appendix-title: "Appendix"
@@ -61,6 +71,18 @@ crossref:
     - kind: float
       reference-prefix: Interpretation
       key: int
+    - kind: float
+      reference-prefix: Resource
+      key: res
+    - kind: float
+      reference-prefix: Package Profile
+      key: pak
+    - kind: float
+      reference-prefix: Bullet List
+      key: bul
+
+pak-cap-location: top
+bul-cap-location: top
 
 language:
    crossref-cnj-title: "R Code"      # replaces "Conjecture"

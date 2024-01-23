@@ -1,0 +1,1204 @@
+# Descriptive statistics {#sec-chap02}
+
+```{r}
+#| label: setup
+#| include: false
+
+base::source(file = "../_glance_data.R")
+```
+
+## Achievements to unlock
+
+::: my-objectives
+::: my-objectives-header
+Objectives
+:::
+
+::: my-objectives-container
+**SwR Achievements**
+
+-   **Achievement 1**: (~~Understanding variable types and data types~~)
+    (@sec-variable-data-types). As I already know this information I
+    will skip this achievement. This empty section is only mentioned to
+    get the same section numbering as in the book.
+-   **Achievement 2**: Choosing and conducting descriptive analyses for
+    categorical (factor) 
+    variables (@sec-chap02-describe-categorical-variables)
+-   **Achievement 3**: Choosing and conducting descriptive analyses for
+    continuous (numeric) variables
+-   **Achievement 4**: Developing clear tables for reporting descriptive
+    statistics
+:::
+:::
+
+## The transgender health care problem
+
+Subject of this chapter is the transgender health care problem.
+
+-   `r glossary("Transgender")` people are people whose biological sex
+    is not consistent with their gender.
+-   `r glossary("Cisgender")` people are people whose gender identity
+    matches their biological sex.
+
+The rationale of this chapter is the fact, that prior to examining
+statistical relationships among variables, published studies in academic
+journals usually present descriptive statistics. The following
+screenshot from [@narayan2017a, p.876] demonstrates how such a
+`r glossary("Table 1")` statistics might look:
+
+[![Screenshot of Table 1, "Transgender Survey Participants Demographics"
+from Narayan et. al.
+(2017)](img/chap02/table1-example-min.png){#fig-transgender-table1
+fig-alt="Screenshot of Table 1, \"Transgender Survey Participants Demographics\" from Narayan et. al. (2017)"}](https://link.springer.com/article/10.1007/s10549-017-4461-8)
+
+## Data, codebook, and R packages
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for learning about descriptive statistics
+:::
+
+::: my-resource-container
+
+**Data**
+
+There are two options:
+
+1.  Download the clean data file `transgender_hc_ch2.csv` from
+    <https://edge.sagepub.com/harris1e>.
+2.  Get the data file from the `r glossary("BRFSS")` website. (See
+    @lst-chap02-get-brfss-2014-data).
+    -   The page with the 2014 data is at
+        <https://www.cdc.gov/brfss/annual_data/annual_2014.html>.
+    -   The URL for the SAS transport file is at
+        <http://www.cdc.gov/brfss/annual_data/2014/files/LLCP2014XPT.zip>.
+
+The ZIP-file is with 69 MB pretty big. Unzipped it will have almost 1
+GB! --- I will only work with this second option.
+
+**Codebook**
+
+Again there are two options:
+
+1.  Download `brfss_2014_codebook.pdf` from
+    <https://edge.sagepub.com/harris1e>.
+2.  Download the codebook as PDF from the BRFSS webpage.
+    -   The location of the codebook is the same as above:
+        <https://www.cdc.gov/brfss/annual_data/annual_2014.html>.
+    -   The PDF codebook (2.74 MB) can be found at
+        [https://www.cdc.gov/brfss/annual_data/2014/pdf/CODEBOOK14_LLCP.pdf](https://www.cdc.gov/brfss/annual_data/annual_2014.html)
+
+**Packages**
+
+1. Packages used with the book (sorted alphabetically):
+   
+    - descr (@pak-descr)
+    - haven (@pak-haven)
+    - kableExtra
+    - knitr
+    - tidyverse (@pak-tidyverse)
+        - dplyr (@pak-dplyr)
+        - ggplot2 (@pak-ggplot2)
+        - forcats (@pak-forcats)
+        - tidyr (@pak-tidyr)
+    - tableone
+    - semTools 
+    - qualvar 
+    - labelled (@pak-labelled)
+    - Hmisc (@pak-hmisc)
+    
+2. My additional packages (sorted alphabetically)
+
+    - gtsummary (See @pak-gtsummary)
+    - skimr (See @pak-skimr)
+
+
+
+:::
+:::
+
+## Understanding variable types and data types {#sec-variable-data-types}
+
+To know about variable and data types is essential as different types
+require different approaches for the analysis.
+
+The two most commonly used and reported descriptive statistics for
+categorical (or factor) data types are frequencies and percentages.
+
+But before we are going to work with the data we have do download it form the `r glossary("BRFSS")` website. 
+
+
+
+::: {.callout-warning}
+Downloading the huge file (69 MB as ZIP and 1 GB unzipped) will take
+some minutes. So be patient!
+:::
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+Download the SAS transport file data from the BRFSS website and save
+dataframe with selected variables as R object
+:::
+::::{.my-r-code-container}
+
+
+::: {#lst-chap02-get-brfss-2014-data}
+```{r}
+#| label: get-brfss-2014-data
+#| eval: false
+#| cache: true
+
+## run this code chunk only once (manually)
+
+url <- "http://www.cdc.gov/brfss/annual_data/2014/files/LLCP2014XPT.zip"
+
+utils::download.file(
+    url = url,
+    destfile = tf <- base::tempfile(),
+    mode = "wb"
+)
+
+brfss_2014 <- haven::read_xpt(tf)
+
+brfss_tg_2014 <- brfss_2014 |> 
+    dplyr::select(
+        TRNSGNDR, 
+        `_AGEG5YR`, 
+        `_RACE`, 
+        `_INCOMG`, 
+        `_EDUCAG`, 
+        HLTHPLN1, 
+        HADMAM, 
+        `_AGE80`, 
+        PHYSHLTH)
+
+data_folder <- base::paste0(here::here(), "/data/")
+if (!base::file.exists(data_folder)) 
+    {base::dir.create(data_folder)}
+
+chap02_folder <- base::paste0(here::here(), "/data/chap02/")
+if (!base::file.exists(chap02_folder)) 
+    {base::dir.create(chap02_folder)}
+
+base::saveRDS(object = brfss_tg_2014, 
+        file = paste0(chap02_folder, "/brfss_tg_2014_raw.rds"))
+```
+
+Download and save the transgender data 2014 from the BRFSS website
+:::
+
+The original file has 279 variables and 464664 observations. After selecting
+only 9 variable the file is with 31.9 MB (memory usage) and stored
+compressed (2.2 MB) much smaller.
+
+::: my-note
+::: my-note-header
+Four observations about the code
+:::
+
+::: my-note-container
+1.  It is not possible to download the file with
+    `haven::read_xpt(<URL>)` directly. At first one has to create a
+    temporary file to store the zipped file.
+2.  Whenever you meet a variable / row name with a forbidden R syntax
+    surround the name with `r glossary("backtick", "backticks")` ([grave
+    accents](https://en.wikipedia.org/wiki/Grave_accent)).
+3.  Instead of exporting the R object into a `r glossary("CSV", ".csv")`
+    file I save the data as a compressed R object that can loaded easily
+    again into the computer memory with the `base::readRDS()` function.
+4.  With regard to the `base::saveRDS()` function I have to remind
+    myself that the first argument is the R object *without* quotes. I
+    committed this error several times.
+:::
+:::
+
+
+
+
+::::
+:::::
+
+
+
+## Descriptive analyses for categorical (factor) variables {#sec-chap02-describe-categorical-variables}
+
+The goal of this section is to summarize and interpret the categorical variable `TRNSGNDR`. In contrast to the book I will work with a dataframe consisting only of the variable which I will recode to `transgender`. The tabs of 
+
+
+### Interpret categorical variables
+
+::: my-example
+::: my-example-header
+::: {#exm-chap02-interpret-categorical-variables}
+: Recode, summarize and interpret categorical variables
+:::
+:::
+
+::: my-example-container
+
+::: panel-tabset
+
+###### select()
+
+```{r}
+#| label: select-transgender
+
+chap02_folder <- base::paste0(here::here(), "/data/chap02/")
+transgender_pb <- 
+    base::readRDS(base::paste0(chap02_folder, 
+           "brfss_tg_2014_raw.rds")) |> 
+    dplyr::select(TRNSGNDR)
+
+base::saveRDS(object = transgender_pb, 
+        file = base::paste0(chap02_folder, "transgender_pb.rds"))
+```
+
+
+
+###### str()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap02-str-transgender}
+: Show structure of the `transgender` data with `utils::str()`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: str-transgender
+#| cache: true
+
+utils::str(transgender_pb)
+```
+
+{**haven**} has imported `r glossary("labelled data")` for the variables. We can use these labels to find the appropriate passages in the 126 pages of the
+codebook. Just copy the variable label and search this string in
+the PDF of the codebook.
+
+------------------------------------------------------------------------
+
+![Behavior Risk Factor Surveillance Systems (BRFSS) Codebook Report,
+2014 Land-Line and Cell-Phone
+data](img/chap02/transgender-codebook-min.png){#fig-chap02-codebook-transgender
+fig-alt="The table displays the sexual orientation and gender identity as an answer of the question 'Do you consider yourself to be transgender?' - The answers were: Yes, male-to-female: 363; Yes, female-to-male: 212; Yes, gender nonconforming: 116; No: 150,765; Don't know / Not sure: 1,138; Refused: 1,468; Not asked or missing: 310,602."}
+:::
+:::
+
+Note that variable labels are restricted to 40 characters. I think
+this is an import limitation of {**haven**} because there is no such
+restriction using `haven::labelled()`. But we need to recode the data
+anyway, especially as there are no value labels available.
+
+###### summary()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap02-summary-transgender}
+: Summarize `transgender` data with `base::summary()`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: summary-transgender
+#| cache: true
+
+base::summary(transgender_pb)
+```
+:::
+:::
+
+###### skim()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap02-skim-transgender}
+: Summarize transgender data with `skimr::skim()`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: skim-transgender
+#| cache: true
+
+skimr::skim(transgender_pb)
+```
+:::
+:::
+
+###### gtsummary()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap02-gtsummary-transgender}
+: Summarize and display transgender data with `gtsummary::tbl_summary()`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: tbl-gtsummary-transgender
+#| tbl-cap: "A firt approach to produce a 'Table 1' statistics with {gtsummary} using labelled data"
+#| cache: true
+
+gtsummary::tbl_summary(transgender_pb)
+```
+
+------------------------------------------------------------------------
+
+{**gtsummary**} uses here the labelled data imported with {**haven**}.
+Not bad, isn't it? Just a one-liner produces this first trial for a pbulic ready
+`r glossary("Table 1")` statistics. This first attempt of table would be
+even better if the data had also value labels. 
+
+For more
+information how to work with with labelled data see the full
+@sec-chap01-labelled-data with all its sub-sections. You will find
+some functions how to adapt @tbl-gtsummary-transgender to get a better
+descriptive in @sec-chap01-intro-gtsummary. But follow also this chapter
+along!
+:::
+:::
+
+:::
+
+:::
+:::
+
+### Data management
+
+We need to manipulate data to provide a table with all its required
+features as they are:
+
+***
+
+::: {#bul-chap02-table-features}
+
+***
+1. A main title indicating what is in the table, including
+    -   the overall sample size
+    -   key pieces of information that describe the data such as the year of data collection and the data source
+2. Clear column and row labels that have 
+    - logical row and column names
+    - a clear indication of what the data are, such as means or frequencies
+    - row and column sample sizes when they are different from overall
+    sample sizes [@harris2020].
+    
+Required features of a table
+:::
+
+***
+
+::: my-example
+::: my-example-header
+::: {#exm-ID-text}
+: Numbered Example Title
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### table()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-code-name-a}
+a: Numbered R Code Title (Original)
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: table-transgender
+
+## load transgender_pb ##########
+chap02_folder <- base::paste0(here::here(), "/data/chap02/")
+transgender_pb <- 
+    base::readRDS(base::paste0(chap02_folder, "transgender_pb.rds"))
+
+base::table(transgender_pb$TRNSGNDR)
+```
+
+------------------------------------------------------------------------
+
+Compare the values with the screenshot from the codebook in
+@fig-chap02-codebook-transgender.
+:::
+:::
+
+###### class()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-class-transgender}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: class-transgender
+
+class(transgender_pb$TRNSGNDR)
+```
+
+
+::::
+:::::
+
+
+###### as_factor
+
+```{r}
+#| label: factor-transgender
+
+transgender_pb$TRNSGNDR <- 
+    forcats::as_factor(transgender_pb$TRNSGNDR)
+class(transgender_pb$TRNSGNDR)
+```
+
+
+###### fct_recode()
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap02-recode-transgender}
+b: Numbered R Code Title (Tidyverse)
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: recode-transgender
+
+transgender_clean <- transgender_pb |> 
+    dplyr::mutate(TRNSGNDR = forcats::fct_recode(TRNSGNDR,
+        "Male to female" = '1',
+        "Female to male" = '2',
+        "Gender nonconforming" = '3',
+        "Not transgender" = '4',
+        "Don’t know/Not sure" = '7',
+        "Refused" = '9'
+    )) 
+
+chap02_folder <- base::paste0(here::here(), "/data/chap02/")
+base::saveRDS(object = transgender_clean, 
+        file = base::paste0(chap02_folder, "transgender_clean.rds"))
+
+base::summary(transgender_clean)
+```
+:::
+:::
+
+Harris explains in the book the superseded function `dplyr::recode_factor()`. It's new equivalent is now `forcats::fct_recode()`.
+
+###### describe()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-describe-transgender}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: describe-transgender
+
+## load transgender_clean ##########
+chap02_folder <- base::paste0(here::here(), "/data/chap02/")
+transgender_clean <- 
+    base::readRDS(base::paste0(chap02_folder, "transgender_clean.rds"))
+
+Hmisc::describe(transgender_clean)
+```
+***
+
+`Hmisc::describe()` is a completely new function for me. Sometimes I met in my reading the {**Hmisc**} package, but I have never applied functions independently. 
+
+***
+
+::: {#pak-hmisc}
+
+***
+
+{**Hmisc**}: [Harrell Miscellaneous](https://hbiostat.org/r/hmisc/)
+
+There is no hexagon sticker available for {**Hmisc**}.
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](https://www.fharrell.com/profile.jpg){width="176"}
+
+
+
+Contains many functions useful for 
+
+- data analysis, 
+- high-level graphics, 
+- utility operations, 
+- computing sample size and power, 
+- simulation, 
+- importing and annotating datasets,
+- imputing missing values, 
+- advanced table making, 
+- variable clustering,
+- character string manipulation, 
+- conversion of R objects to {{< latex >}} and HTML code,
+- recoding variables, 
+- caching, 
+- simplified parallel computing, 
+- encrypting and decrypting data using a safe workflow, 
+- general moving window statistical estimation, 
+- assistance in interpreting principal component analysis [@Hmisc]
+
+
+:::
+
+This is big variety of functions. In contrast to other packages that are specific directed to solve one problem {**Hmisc**} seems to be an all-in-one-solution.
+
+
+Package for miscellaneous functions for data analysis and related tasks
+
+:::
+
+To learn more about I should visit Frank E. Harrell's Jr [Hmisc startig page](https://hbiostat.org/r/hmisc/) and read especially his [book on workflow](https://hbiostat.org/rflow/) that seems to me very interesting.
+
+***
+
+
+
+
+::::
+:::::
+
+###### freq()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-freq-transgender}
+: Using the {desc} package
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap02-freq-transgender}
+
+```{r}
+#| label: freq-transgender
+
+descr::freq(transgender_clean$TRNSGNDR, plot = FALSE)
+```
+
+Using `descr::freq()` to calculate values with and without NA's
+:::
+
+This is the first time that I used the {**descr**} package. Searching for more information on CRAN I noticed that there are at least 10 other packages for facilitate descriptive statistics!
+
+::::
+:::::
+
+***
+
+::: {#pak-descr}
+
+***
+
+{**descr**}: [Descriptive Statistics](https://github.com/jalvesaq/descr)
+
+There is no logo available for {**descr**}
+
+
+Weighted frequency and contingency tables of categorical variables and of the comparison of the mean value of a numerical variable by the levels of a factor, and methods to produce xtable objects of the tables and to plot them. There are also functions to facilitate the character encoding conversion of objects, to quickly convert fixed width files into csv ones, and to export a data.frame to a text file with the necessary R and SPSS codes to reread the data. [@descr]
+
+Package for Descriptive Statistics
+:::
+
+***
+
+
+
+###### {dplyr}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-dplyr-transgender}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: dplyr-transgender
+
+transgender_clean |> 
+    dplyr::group_by(TRNSGNDR) |> 
+    dplyr::summarize(n = dplyr::n()) |> 
+    dplyr::mutate(perc = n / sum(n) * 100)
+```
+
+
+::::
+:::::
+
+###### {report}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-report-transgender}
+Using `report::report_table()` to summarize the result
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: report-transgender
+#| comment: ''
+#| results: markup
+
+report::report_table(transgender_clean)
+```
+
+I just learned about the existence of {**report**}. It is specialized to facilitate reporting of results and statistical models. In this example I have used the `report::report_table()` function because the result of the standard `report::report()` is rather underwhelming as you can see: 
+
+***
+
+`r report::report(transgender_clean)`
+
+***
+
+Compare this to the example of the book:
+
+::: {#int-chap02-transgender1}
+::: {.callout-tip style="color: darkgreen;"}
+The 2014 BRFSS had a total of 464,664 participants. Of these, 310,602 (66.8%) were not asked or were otherwise missing a response to the `r glossary("transgender")` status question. A few participants refused to answer (n = 1,468; 0.32%), and a small number were unsure of their status (n = 1,138; 0.24%). Most reported being not transgender (n = 150,765; 32.4%), 116 were `r glossary("gender nonconforming", "gender non-conforming")` (0.03%), 212 were female to male (0.05%), and 363 were male to female (0.08%).
+:::
+
+Do you consider yourself to be transgender? (Figures with missing values)
+
+:::
+
+(There is another report of the `TRNSGNDR` without the many `NA`s: See @int-chap02-transgender2 for a comparison.)
+
+But it seems to me that with more complex results (e.g., from models) it seems to me that {**report**} quite usable. Following the book I will try it out and compare with the book’s reports.
+
+***
+
+Another thought: I have filed an issue because I think that it would be a great idea to provide a markdown compatible table so that Quarto resp. pandoc could interpret as a table and visualizing it accordingly. The table above would then appear as the following (copied and slightly edited) example:
+
+
+Variable |                Level |  n_Obs | percentage_Obs
+---------|----------------------|--------|----------------
+TRNSGNDR |       Male to female |    363 |           0.08
+TRNSGNDR |       Female to male |    212 |           0.05
+TRNSGNDR | Gender nonconforming |    116 |           0.02
+TRNSGNDR |      Not transgender | 150765 |          32.45
+TRNSGNDR |  Don’t know/Not sure |   1138 |           0.24
+TRNSGNDR |              Refused |   1468 |           0.32
+TRNSGNDR |              missing | 310602 |          66.84
+
+: Slightly modified {**report**} table to get a Markdown compatible table
+
+::::
+:::::
+
+***
+
+::: {#pak-report}
+
+***
+
+{**report**}: [Automated Reporting of Results and Statistical Models](URL to package)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap02/logoi/logo-report-min.png){width="176"}
+
+The primary goal of {**report**} is to bridge the gap between R’s output and the formatted results contained in your manuscript. It automatically produces reports of models and data frames according to best practices guidelines (e.g., APA’s style), ensuring standardization and quality in results reporting.
+
+:::
+
+Package for Automated Reporting of Results and Statistical Models
+:::
+
+<Other text not included in the reference>
+
+***
+
+###### na.omit()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-na-omit-transgender}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: na-omit-transgender
+
+transgender_clean |> 
+    dplyr::group_by(TRNSGNDR) |> 
+    dplyr::summarize(n = dplyr::n()) |> 
+    dplyr::mutate(perc_all = 100 * (n / sum(n))) |> 
+    dplyr::mutate(perc_valid = 100 * (n / sum(n[na.omit(TRNSGNDR)])))
+```
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Wrong `perc_valid` cell value in `NA` row
+:::
+::::{.my-watch-out-container}
+
+I have the same logic used as in the book. But the result is not the same as in @lst-chap02-freq-transgender. The `perc_valid` cell value in the `NA` row should be empty, but it shows the value 202 (rounded).
+:::::
+::::
+
+###### full_join()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-full-join-transgender}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: full-join-transgender
+
+tg1 <- transgender_clean |> 
+    dplyr::group_by(TRNSGNDR) |> 
+    dplyr::summarize(n = dplyr::n()) |> 
+    dplyr::mutate(perc_all = 100 * (n / sum(n)))
+
+tg2 <- transgender_clean |> 
+    dplyr::group_by(TRNSGNDR) |> 
+    tidyr::drop_na() |> 
+    dplyr::summarize(n = dplyr::n()) |> 
+    dplyr::mutate(perc_valid = 100 * (n / sum(n)))
+
+dplyr::full_join(tg1, tg2, by = dplyr::join_by(TRNSGNDR, n))
+
+```
+
+Although this code with packages from the {**tidayverse**} collection is more verbose than @lst-chap02-freq-transgender using {**descr**} it has the advantage that one does not need to install and learn a new package.
+
+
+::::
+:::::
+
+::: {#int-chap02-transgender2}
+::: {.callout-tip style="color: darkgreen;"}
+The 2014 BRFSS had a total of 464,664 participants. Of these, 310,602 (66.8%) were not asked or were otherwise missing a response to the `r glossary("transgender")` status question. Of the 33.2% who responded, some refused to answer (n = 1,468; 0.95%), and a small number were unsure of their status (n = 1,138, 0.74%). Most reported being not transgender (n = 150,765; 97.9%), 116 were `r glossary("gender nonconforming", "gender non-conforming")`  (0.08%), 212 were female to male (0.14%), and 363 were male to female (0.24%).
+:::
+
+Do you consider yourself to be transgender? (Figures without missing values)
+
+:::
+
+Compare with @int-chap02-transgender1.
+
+:::
+
+
+:::
+:::
+
+
+
+### Achievement 2: Report frequencies for a factorial variable {#sec-chap02-achievement2}
+
+> Use one of the methods shown to create a table of the frequencies for the HADMAM variable, which indicates whether or not each survey participant had a mammogram. Review the question and response options in the codebook and recode to ensure that the correct category labels show up in the table before you begin.
+
+#### Details of the procedure
+
+I will comply the following procedure
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-report-fct-variable}
+Report frequencies and proportions for the HADMAM variable
+::::::
+:::
+::::{.my-procedure-container}
+
+1. **Codebook**: Get the appropriate information from the [codebook](https://www.cdc.gov/brfss/annual_data/2014/pdf/CODEBOOK14_LLCP.pdf).
+    - Select variable
+    - Look with `utils::str()` into the attributes to see the labelled variable value
+    - Find with this information the passage in the codebook
+2. **Recode** the variable
+    - Convert the numeric to a categorical variable
+    - Recode levels (include levels for missing values)
+3. **Prepare** recoded variable for table output
+    - Summarize absolute and percentage values with missing data
+    - Summarize absolute and percentage values with missing data
+    - Join both information into a data frame
+
+***
+
+In addition to check my understand for achievement 2  I will try to show the descriptive statistics as a `r glossary("Table 1")`, produced with {**kable**} but also with {**gtsummary**}. The table should contain all the features mentioned in @bul-chap02-table-features. I know that this looking ahead of achievement 4, but just let's try it for fun. 
+
+4. **Display 1** result with {**knitr**}
+5. **Display 1** result with {**kableExtra**}
+6. **Display 1** result with {**gt**}
+7. **Display 2** result with {**gtsummary**}
+
+***
+
+Finally I have summarized the `HADMAM` variable.
+
+8. **Report 1**: A manual description with copy & paste, always changing between table and document. A method that is very error prone!
+9. **Report 2**: R inline reporting as an R markdown report with the `gtsummary::inline_text()` function. This method results into reproducible reports, an important part of good practices.
+::::
+:::::
+
+#### My solution
+
+:::::{.my-exercise}
+:::{.my-exercise-header}
+:::::: {#exr-chap02-achievement2}
+Achievement 2
+::::::
+:::
+::::{.my-exercise-container}
+
+::: {.panel-tabset}
+
+###### Codebook
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-find-codebook}
+Find the codebook
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: find-codebook
+
+## read brfss_tg_2014 data #######
+brfss_tg_2014 <-  
+    base::readRDS("data/chap02/brfss_tg_2014_raw.rds")
+
+## create hadmam_lab ######
+hadmam_lab <- brfss_tg_2014 |> 
+    dplyr::select(HADMAM)
+
+str(hadmam_lab)
+
+```
+***
+
+In this case the name of the variable HADMAM would have been enough to find the correct passage in the codebook. But this is not always the case. Often the variable name is used many times and it is not often --- like it was the case here --- that the first appearance is the sought one.
+
+::::
+:::::
+
+![Have You Ever Had a
+Mammogram?](/img/chap02/mammogram-codebook-min.png){#fig-mammogram-codebook
+fig-alt="Table from the Breast and Cervical Cancer Screening. The question asked was: 'A mammogram is an x-ray of each breast to look for breast cancer. Have you ever had a mammogram?'. 
+- Yes: 204705 (79.86% resp. 65.86% weighted)
+- No: 51067 (19.92% / 13.86%)
+- Don't know: 253 (0.10% / 0.14%)
+- Refused: 317 (0.12% / 0.14%)
+- Not asked or missing: 208322" fig-align="center"}
+
+
+###### Recode
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-recode-hadmam}
+Recode the `HADMAM` variable
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: recode-hadmam
+
+## create hadmam_tbl1 #######
+hadmam_tbl1 <- hadmam_lab |> 
+    dplyr::mutate(HADMAM = forcats::as_factor(HADMAM)) |> 
+    dplyr::mutate(HADMAM = forcats::fct_recode(HADMAM,
+        Yes = '1',
+        No = '2',
+        "Don't know/Not sure" = '7',
+        Refused = '9'
+    ))
+
+summary(hadmam_tbl1)
+```
+
+::::
+:::::
+
+###### Prepare
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-prepare-hadmam}
+
+Prepare recoded variable `HADMAM` for table output
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: prepare-hadmam
+
+mam1 <- hadmam_tbl1 |> 
+    dplyr::group_by(HADMAM) |> 
+    dplyr::summarize(freq = dplyr::n()) |> 
+    dplyr::mutate(perc = 100 * (base::round(freq / base::sum(freq), 4)))
+
+mam2 <- hadmam_tbl1 |> 
+    tidyr::drop_na() |> 
+    dplyr::group_by(HADMAM) |> 
+    dplyr::summarize(freq = dplyr::n()) |> 
+    dplyr::mutate(perc_valid = 100 * (base::round(freq / base::sum(freq), 4)))
+
+## create hadmam_tbl2 ########
+hadmam_tbl2 <- 
+    dplyr::full_join(mam1, mam2, 
+        dplyr::join_by(HADMAM, freq))
+    
+names(hadmam_tbl2) <- c("Response", "n", "% with NA's", "% without NA's")
+
+hadmam_tbl2
+```
+
+
+::::
+:::::
+
+###### Display 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-display-kable-hadmam}
+
+Display HADMAM variable as descriptive statistics with {**kable**}
+
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-display-kable-hadmam
+#| tbl-cap: "Have you ever had a mammogram? N = 464664"
+
+knitr::kable(hadmam_tbl2)
+```
+***
+
+To get a table with `knitr::kable()` it by far the easiest way: Just put the R dataframe object into the `kable()` function and --- Voilà. And it doesn't look bad!
+
+
+
+::::
+:::::
+
+###### Display 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-display-kableextra-hadmam}
+
+Display HADMAM variable as descriptive statistics with {**kableExtra**}
+
+::::::
+:::
+::::{.my-r-code-container}
+
+
+
+
+```{r}
+#| label: tbl-display-kableextra-hadmam
+#| tbl-cap: "Have you ever had a mammogram? N = 464664"
+
+hadmam_tbl2 |> 
+    kableExtra::kbl() |> 
+    kableExtra::kable_classic() |>
+    kableExtra::row_spec(row = 0, bold = TRUE)
+```
+***
+
+{**kableExtra**} need more lines to get a similar result as @tbl-display-kable-hadmam. But {**kableExtra**} has many more styling options for HTML but also for {{< latex >}} as you can see in the [extensive documentation](https://haozhu233.github.io/kableExtra/). For instance scroll down the [HTML options page](https://haozhu233.github.io/kableExtra/awesome_table_in_html.html) to get an impression about available features.
+
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+I don't know how to reduce the size of this HTML table and to get rid of the horizontal scroll bar.
+:::
+:::::
+
+::::
+:::::
+
+###### Display 3
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-display-gt-hadmam}
+
+Display HADMAM variable as descriptive statistics with {**gt**}
+
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-display-gt-hadmam
+
+hadmam_tbl2 |> 
+    gt::gt() |>
+    gt::tab_caption("Have you ever had a mammogram? N = 464664") |> 
+    gt::tab_style(
+        style = gt::cell_text(weight = "bold"),
+        locations = gt::cells_column_labels(
+            columns = gt::everything())
+        ) |> 
+    gt::tab_style(
+        style = gt::cell_text(align = "left"),
+        locations = gt::cells_body(
+            columns = Response
+        )
+    )
+    
+```
+
+***
+
+This is the first time that I used the {**gt**} package. The table looks nice but the construction was super complex: Every change had to be defined in several steps:
+
+(1) what type of change (e.g., table style)
+(2) what type of style (e.g., text of cells)
+(3) what kind of change (e.g., bold)
+(4) where in the table (location e.g., cell body, column labels)
+(5) what element (e.g., everything, a few or just a specific one).
+
+
+::::
+:::::
+
+###### Display 4
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-display2-hadmam}
+
+Display HADMAM variable as descriptive statistics with {**gtsummary**}
+
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-display-gtsummary-hadmam
+#| tbl-cap: "Have you ever had a mammogram? N = 464664"
+
+m1 <- hadmam_tbl1 |> 
+    dplyr::mutate(HADMAM = forcats::as_factor(HADMAM) |> 
+        forcats::fct_na_value_to_level(
+            level = "(Missing)")) |>
+    gtsummary::tbl_summary(
+        digits = HADMAM ~ c(0, 2)
+    )
+
+m2 <- hadmam_tbl1 |> 
+    tidyr::drop_na() |> 
+    gtsummary::tbl_summary(
+        digits = HADMAM ~ c(0, 2)
+    )
+
+gtsummary::tbl_merge(
+    list(m1, m2),
+    tab_spanner = c("**All values**", "**Without missing values**")
+    )
+
+```
+
+***
+
+Tables with {**gtsummary**} play in another league. They are not constructed for `r glossary("data tables")` but for `r glossary("display tables")`, especially for generating a so-called `r glossary("Table 1")`. I could therefore not apply my prepared dataset `hadmam_tbl2` but had to use as input the labelled raw data in `hadmam_lab`.
+
+
+::::
+:::::
+
+###### Report 1
+
+
+
+::: {#int-chap02-mammogram1}
+::: { .callout-tip style="color: darkgreen;"}
+
+The 2014 phone survey of the `r glossary("BRFSS")` (Behavioral Risk Factor Surveillance System) was taken via land-line and cell-phone data. From 464,664 participants were 208,322 (44.83%) people not asked or failed otherwise to respond to the question "Have You Ever Had a Mammogram?". Of the 256,342 participants that answered affirmed the vast majority (n = 204,705; 79.86%) the question but still almost one fifth (n = 51,067; 19.92%) never had a mammogram. Some women (n = 253; 0.10%) were not sure or refused an answer (n = 317; 0.12%).
+:::
+
+Have You Ever Had a Mammogram? (Written with copy & paste)
+
+
+:::
+
+Compare my report with the description of a similar structured categorical variable of the same survey: @int-chap02-transgender2.
+
+###### Report 2
+
+::: {#int-chap02-mammogram2}
+::: { .callout-tip style="color: darkgreen;"}
+
+The 2014 phone survey of the `r glossary("BRFSS")` (Behavioral Risk Factor Surveillance System) was taken via land-line and cell-phone data. From `r base::format(m1$N, big.mark = ",", scientific = FALSE)` participants were `r gtsummary::inline_text(m1, variable = HADMAM, level = "(Missing)")` people not asked or failed otherwise to respond to the question "Have You Ever Had a Mammogram?". The vast majority of the 256,342 participants affirmed the question  `r gtsummary::inline_text(m2, variable = HADMAM, level = "Yes")`, but still `r gtsummary::inline_text(m2, variable = HADMAM, level = "No")` --- that is almost one fifth --- never had a mammogram. A small amount of women `r gtsummary::inline_text(m2, variable = HADMAM, level = "Don't know/Not sure")` were not sure  and some women `r gtsummary::inline_text(m2, variable = HADMAM, level = "Refused")` refused an answer.
+:::
+
+Have You Ever Had a Mammogram? (Written with `gtsummary::inline_text()`)
+
+
+:::
+
+I had to reformulate some text part, because the replacement was always `<absolute number> (<percent number>%)`. But that was not a big deal. The advantage of `gtsummary::inline_text()` summaries are reproducible reports that prevents errors in copy & paste *and* are adapted automatically if the figures of the table changes!
+
+Compare this report with the copy & paste description from @int-chap02-mammogram1.
+:::
+
+::::
+:::::
+
+***
+
+
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+## Session Info {.unnumbered}
+
+::: my-r-code
+::: my-r-code-header
+Session Info
+:::
+
+::: my-r-code-container
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+:::
+:::
+
