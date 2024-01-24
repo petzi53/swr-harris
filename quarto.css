@@ -526,32 +526,32 @@ iframe {
   border-bottom-right-radius: 10px;
 }
 
-/* ##############   Commitment   ############# */
+/* ##############   Assessment   ############# */
 
-.my-commitment {
+.my-assessment {
   margin: 1em 0;
-  border: 2px solid #8B3A62;
-  border-left: 10px solid #8B3A62;
+  border: 2px solid #2F4F4F;
+  border-left: 10px solid #2F4F4F;
   border-radius: 10px;
 }
 
-.my-commitment-header {
+.my-assessment-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  5px;
   padding-bottom: 0.1em;
   color: black;
-  background-color: hotpink;
+  background-color: #8DEEEE;
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/dictionary-64.png");
+  background-image: url("img/icons8/check-64.png");
 }
 
-.my-commitment-container {
+.my-assessment-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;

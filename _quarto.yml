@@ -69,8 +69,8 @@ crossref:
       reference-prefix: Commitment
       key: com
     - kind: float
-      reference-prefix: Interpretation
-      key: int
+      reference-prefix: Report
+      key: rep
     - kind: float
       reference-prefix: Resource
       key: res
@@ -86,7 +86,7 @@ bul-cap-location: top
 
 language:
    crossref-cnj-title: "R Code"      # replaces "Conjecture"
-   crossref-cor-title: "Note"        # replaces "Corollary"
+   crossref-cor-title: "Assessment"  # replaces "Corollary"
    crossref-def-title: "Experiment"  # replaces "Definition"
    crossref-exm-title: "Example"
    crossref-exr-title: "Exercise"
@@ -96,11 +96,11 @@ language:
    crossref-prp-title: "Procedure"   # replaces "Proposition"
    crossref-tbl-title: "Table"
    crossref-thm-title: "Theorem"
-   crossref-int-title: "Interpretation"
+#   crossref-int-title: "Interpretation"
 
 # https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/language/_language.yml
-   callout-tip-title: "Interpretation"         # green
+   callout-tip-title: "Report"           # green
    callout-note-title: "Note"            # blue
-   callout-warning-title: "Watch out!"    # orange
+   callout-warning-title: "Watch out!"   # orange
    callout-important-title: "Important"  # red
    callout-caution-title: "Typo"         # yellow

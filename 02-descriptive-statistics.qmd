@@ -105,7 +105,7 @@ Again there are two options:
     - semTools 
     - qualvar 
     - labelled (@pak-labelled)
-    - Hmisc (@pak-hmisc)
+    - Hmisc (@pak-Hmisc)
     
 2. My additional packages (sorted alphabetically)
 
@@ -393,8 +393,8 @@ Required features of a table
 
 ::: my-example
 ::: my-example-header
-::: {#exm-ID-text}
-: Numbered Example Title
+::: {#exm-chap02-data-wrnagling-categorical}
+: Data management with categorical variable
 :::
 :::
 
@@ -405,7 +405,7 @@ Required features of a table
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-code-name-a}
-a: Numbered R Code Title (Original)
+: Using table() to count factor levels
 :::
 :::
 
@@ -427,6 +427,8 @@ Compare the values with the screenshot from the codebook in
 @fig-chap02-codebook-transgender.
 :::
 :::
+
+Normally `table()` is used for cross-classifying factors to build a contingency table of the counts at each combination of factor levels. But here I have only one variable.
 
 ###### class()
 
@@ -520,7 +522,7 @@ Hmisc::describe(transgender_clean)
 
 ***
 
-::: {#pak-hmisc}
+::: {#pak-Hmisc}
 
 ***
 
@@ -559,7 +561,7 @@ Contains many functions useful for
 This is big variety of functions. In contrast to other packages that are specific directed to solve one problem {**Hmisc**} seems to be an all-in-one-solution.
 
 
-Package for miscellaneous functions for data analysis and related tasks
+Hmisc a package for miscellaneous functions for data analysis and related tasks
 
 :::
 
@@ -670,7 +672,7 @@ I just learned about the existence of {**report**}. It is specialized to facilit
 
 Compare this to the example of the book:
 
-::: {#int-chap02-transgender1}
+::: {#rep-chap02-transgender1}
 ::: {.callout-tip style="color: darkgreen;"}
 The 2014 BRFSS had a total of 464,664 participants. Of these, 310,602 (66.8%) were not asked or were otherwise missing a response to the `r glossary("transgender")` status question. A few participants refused to answer (n = 1,468; 0.32%), and a small number were unsure of their status (n = 1,138; 0.24%). Most reported being not transgender (n = 150,765; 32.4%), 116 were `r glossary("gender nonconforming", "gender non-conforming")` (0.03%), 212 were female to male (0.05%), and 363 were male to female (0.08%).
 :::
@@ -679,7 +681,7 @@ Do you consider yourself to be transgender? (Figures with missing values)
 
 :::
 
-(There is another report of the `TRNSGNDR` without the many `NA`s: See @int-chap02-transgender2 for a comparison.)
+(There is another report of the `TRNSGNDR` without the many `NA`s: See @rep-chap02-transgender2 for a comparison.)
 
 But it seems to me that with more complex results (e.g., from models) it seems to me that {**report**} quite usable. Following the book I will try it out and compare with the book’s reports.
 
@@ -718,7 +720,7 @@ The primary goal of {**report**} is to bridge the gap between R’s output and t
 
 :::
 
-Package for Automated Reporting of Results and Statistical Models
+Report Package for Automated Reporting of Results and Statistical Models
 :::
 
 <Other text not included in the reference>
@@ -791,7 +793,7 @@ Although this code with packages from the {**tidayverse**} collection is more ve
 ::::
 :::::
 
-::: {#int-chap02-transgender2}
+::: {#rep-chap02-transgender2}
 ::: {.callout-tip style="color: darkgreen;"}
 The 2014 BRFSS had a total of 464,664 participants. Of these, 310,602 (66.8%) were not asked or were otherwise missing a response to the `r glossary("transgender")` status question. Of the 33.2% who responded, some refused to answer (n = 1,468; 0.95%), and a small number were unsure of their status (n = 1,138, 0.74%). Most reported being not transgender (n = 150,765; 97.9%), 116 were `r glossary("gender nonconforming", "gender non-conforming")`  (0.08%), 212 were female to male (0.14%), and 363 were male to female (0.24%).
 :::
@@ -800,7 +802,7 @@ Do you consider yourself to be transgender? (Figures without missing values)
 
 :::
 
-Compare with @int-chap02-transgender1.
+Compare with @rep-chap02-transgender1.
 
 :::
 
@@ -977,7 +979,7 @@ hadmam_tbl2
 ::::
 :::::
 
-###### Display 1
+###### Display 1 
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1137,7 +1139,7 @@ Tables with {**gtsummary**} play in another league. They are not constructed for
 
 
 
-::: {#int-chap02-mammogram1}
+::: {#rep-chap02-mammogram1}
 ::: { .callout-tip style="color: darkgreen;"}
 
 The 2014 phone survey of the `r glossary("BRFSS")` (Behavioral Risk Factor Surveillance System) was taken via land-line and cell-phone data. From 464,664 participants were 208,322 (44.83%) people not asked or failed otherwise to respond to the question "Have You Ever Had a Mammogram?". Of the 256,342 participants that answered affirmed the vast majority (n = 204,705; 79.86%) the question but still almost one fifth (n = 51,067; 19.92%) never had a mammogram. Some women (n = 253; 0.10%) were not sure or refused an answer (n = 317; 0.12%).
@@ -1148,11 +1150,11 @@ Have You Ever Had a Mammogram? (Written with copy & paste)
 
 :::
 
-Compare my report with the description of a similar structured categorical variable of the same survey: @int-chap02-transgender2.
+Compare my report with the description of a similar structured categorical variable of the same survey: @rep-chap02-transgender2.
 
 ###### Report 2
 
-::: {#int-chap02-mammogram2}
+::: {#rep-chap02-mammogram2}
 ::: { .callout-tip style="color: darkgreen;"}
 
 The 2014 phone survey of the `r glossary("BRFSS")` (Behavioral Risk Factor Surveillance System) was taken via land-line and cell-phone data. From `r base::format(m1$N, big.mark = ",", scientific = FALSE)` participants were `r gtsummary::inline_text(m1, variable = HADMAM, level = "(Missing)")` people not asked or failed otherwise to respond to the question "Have You Ever Had a Mammogram?". The vast majority of the 256,342 participants affirmed the question  `r gtsummary::inline_text(m2, variable = HADMAM, level = "Yes")`, but still `r gtsummary::inline_text(m2, variable = HADMAM, level = "No")` --- that is almost one fifth --- never had a mammogram. A small amount of women `r gtsummary::inline_text(m2, variable = HADMAM, level = "Don't know/Not sure")` were not sure  and some women `r gtsummary::inline_text(m2, variable = HADMAM, level = "Refused")` refused an answer.
@@ -1165,7 +1167,7 @@ Have You Ever Had a Mammogram? (Written with `gtsummary::inline_text()`)
 
 I had to reformulate some text part, because the replacement was always `<absolute number> (<percent number>%)`. But that was not a big deal. The advantage of `gtsummary::inline_text()` summaries are reproducible reports that prevents errors in copy & paste *and* are adapted automatically if the figures of the table changes!
 
-Compare this report with the copy & paste description from @int-chap02-mammogram1.
+Compare this report with the copy & paste description from @rep-chap02-mammogram1.
 :::
 
 ::::
@@ -1173,7 +1175,200 @@ Compare this report with the copy & paste description from @int-chap02-mammogram
 
 ***
 
+## Descriptive analyses for continuous (numeric) variables {#sec-chap02-describe-numeric-variables}
 
+### Skewness
+
+`r glossary("Skewness")` is a measure of the extent to which a distribution is skewed.
+
+$$
+skewness_x = \frac{1}{n}\sum_{i=1}^{n}(\frac{x_i - m_x}{s_x})^3
+$$ {#eq-chap02-skewness}
+
+The mean of $x$, $m_x$, is subtracted from each observation $x_i$. These differences between the mean and each observed value are called `r glossary("deviation scores")`. Each deviation score is divided by the `r glossary("standard deviation")`, $s$, and the result is cubed. Finally, sum the cubed values and divide by the number of cubed values (which is taking the mean) to get the `r glossary("skewness")` of $x$. The resulting value is usually negative when the skew is to the left and usually positive when the skew is toward the right. Skewness is strongly impacted by the sample size, therefore the value of skew that is considered too skewed differs depending on sample size.
+
+There are many packages to compute the skewness of a distribution. (Type `??skewness` into the console to get a list. Harris recommends the `skew()` function from the {**semTools**} package. 
+
+***
+
+::: {#pak-semTools}
+
+***
+
+{**semTools**}: [Useful Tools for Structural Equation Modeling](https://github.com/simsem/semTools/wiki)
+
+(For {**semTools**} there is currently no logo available.)
+
+Provides tools for structural equation modeling, many of which extend the {**lavaan**} package; for example, to pool results from multiple imputations, probe latent interactions, or test measurement invariance.
+***
+
+{**semTools**}: A Package for Useful Tools for Structural Equation Modeling
+:::
+
+This is a very specialized package. I believe I will not use it at the moment besides the function `semTools::skew()` and `semTools::kurtosis()`.
+
+***
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-check-skew}
+: Using the `skew()` function from {**semTools**}
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap02-check-skewness}
+
+```{r}
+#| label: check-skew
+
+salaries <- c(25000, 62000, 41000, 96000, 41000)
+salaries_gates <- c(salaries, 11500000000)
+
+semTools::skew(salaries)
+semTools::skew(salaries_gates)
+
+```
+
+Using the `skew()` function from {**semTools**}
+
+:::
+
+***
+
+- **skew (g1)**: `r glossary("Skewness")`
+- **se**: `r glossary("Standard error")`
+- **z**: `r glossary("Z-score")`
+- **p**: `r glossary("p-value")`
+
+::::
+:::::
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap02-skewness}
+: Assessment of skewness
+::::::
+:::
+::::{.my-assessment-container}
+
+| Sample Size    |       Z-values Range      | Comment                         |
+|----------------|:-------------------------:|---------------------------------|
+| n < 50         |    under -2 or over +2    | Problem!                        |
+| n > 50 & < 300 | under -3.29 or over +3.29 | Problem!                        |
+| n > 300        |     under -7 or over 7    | Problem but visual recommended! |
+: Skewness assessment {#tbl-chap02-skewness} {.striped .hover}
+
+***
+
+Harris referenced [@kim2013] for the assessment table above. I noticed that there are many [short articles about different types of test.](https://synapse.koreamed.org/advanced/index.php). Just put the search string "Statistical[ALL] AND notes[ALL] AND clinical[ALL] AND researchers[ALL]" into the Kamje search engine.
+
+The z result of code @lst-chap02-check-skewness from the `salaries_gates` vector is 2.45, i.e., over 2 and therefore we have a skewness problem. The other vector, without the salary of Bill Gates is not excessively skewed.
+
+::::
+:::::
+
+### Data management for numerical variable
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap02-data-wrangling-numerical}
+: Data management for numerical variable
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Codebook
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-codebook-physical-health}
+Find numerical variable `PHYSHLTH` in codebook 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: select-physical-health
+
+brfss_tg_2014 <- base::readRDS("data/chap02/brfss_tg_2014_raw.rds")
+
+physical_health <- brfss_tg_2014 |> 
+    dplyr::select(PHYSHLTH)
+
+str(physical_health)
+```
+
+***
+
+![How many days during the past 30 days was your physical health not good?](img/chap02/physical-health-codebook-min.png){#fig-physical-health-codebook
+fig-alt="Table about health status from BEHAVIORAL RISK FACTOR SURVEILLANCE SYSTEM
+CODEBOOK REPORT (BRFSS), 2014" fig-align="center"}
+
+***
+
+::::
+:::::
+
+
+###### Recode
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-recode-physical-health}
+Recode numerical variable `PHYSHLTH`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: recode-physical-health
+
+physical_health_clean <- physical_health |> 
+    dplyr::mutate(PHYSHLTH = dplyr::case_match(PHYSHLTH, 
+                 77 ~ NA,
+                 99 ~ NA,
+                 88 ~ 0,
+                 .default = PHYSHLTH))
+
+skimr::skim(physical_health_clean)
+```
+
+::::
+:::::
+
+###### Histogram
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-histogram-physical-health}
+: Plot histogram of numerical variable `PHYSHLTH`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: histogram-physical-health
+
+physical_health_clean |> 
+    ggplot2::ggplot(ggplot2::aes(PHYSHLTH)) +
+    ggplot2::geom_histogram()
+            
+```
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
+***
 
 ## Glossary
 

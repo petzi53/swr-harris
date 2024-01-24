@@ -1788,7 +1788,7 @@ To distinguish the sex colors in @fig-grass-age-sex from the Yes/No colors in @f
 ### Data interpretation {#sec-chap01-data-interpretation}
 
 
-::: {#int-chap01-gss-nhanes .callout-tip}
+::: {#rep-chap01-gss-nhanes .callout-tip}
 
 ###### Marijuana usage and opinions to legalize it (`r glossary("GSS")` and `r glossary("NHANES")` data)
 
