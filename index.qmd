@@ -1,7 +1,7 @@
 # Preface {.unnumbered}
 
 ::: {.callout-note style="color: blue;"}
-#### This is work in progress: I just started, and have only finished chapter 1 (about 10% of the book), but with many experiments and own additional exercises.
+#### This is work in progress: I just started, and have only finished chapter 1 and some parts of chapter 2 (about 14% of the book), but with many experiments and own additional exercises.
 :::
 
 ::: my-watch-out
@@ -11,7 +11,7 @@ neither an accurate replication nor an authoritative textbook.
 :::
 
 ::: my-watch-out-container
-I wrote this book as a text for others to read because that forces me to
+I am writing this book as a text for others to read because that forces me to
 become explicit and explain all my learning outcomes more carefully.
 Please keep in mind that this text is not written by an expert but by a
 learner.

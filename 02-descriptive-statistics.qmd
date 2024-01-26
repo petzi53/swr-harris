@@ -119,15 +119,36 @@ Again there are two options:
 
 ## Understanding variable types and data types {#sec-variable-data-types}
 
-To know about variable and data types is essential as different types
-require different approaches for the analysis.
+### Introduction
 
-The two most commonly used and reported descriptive statistics for
-categorical (or factor) data types are frequencies and percentages.
+To know about variable and data types is essential as different types
+require different approaches for the analysis. 
+
+The following outline of the next sections is slightly adapted from the book. Harris has some measures of categorical variables (mode and index of qualitative variation) explained in the section on numeric variables.
+
+- **Categorical variables**: 
+    - **Central tendency**: The two most commonly used and reported descriptive statistics for categorical (or factor) data types are `r glossary("frequencies")` and `r glossary("percentages")`. Sometimes also the `r glossary("mode xy", "mode")` is used to identify the most common (or typical) category of a factor variable. 
+    - **Spread / Variety**: is for for categorical variables not often reported. Harris mentions the `r glossary("index of qualitative variation")`, which quantifies how much the observations are spread across the categories of a categorical variable.
+- **Numerical variables**: 
+    - **Central tendency**: The most important measures are the `r glossary("arithmetic mean", "mean")`, `r glossary("median")` and `r glossary("mode xy", "mode")`.
+    - **Spread**: 
+        - in relation to the mean: the `r glossary("variance var", "variance")` and `r glossary("standard deviation")`
+        - in relation to the median: `r glossary("range")`, `r glossary("IQR", "interquartile range")` (IQR) and `r glossary("quantile")`.
+
+For the decision if one should report mean or median in numerical variables the measures for `r glossary("skewness")` and `r glossary("kurtosis")` are helpful. Another issue with numerical variables is usage of `r glossary("scientific notation")`.
+
+I will explain explicitly only to those subjects where I am not firm. This is 
+
+- index of qualitative variation (@sec-index-variation)
+- skewness (@sec-chap02-skewness)
+- kurtosis
+
+But I will address all measures in the examples resp. exercises.
+
+
+### Get the data
 
 But before we are going to work with the data we have do download it form the `r glossary("BRFSS")` website. 
-
-
 
 ::: {.callout-warning}
 Downloading the huge file (69 MB as ZIP and 1 GB unzipped) will take
@@ -222,15 +243,15 @@ Four observations about the code
 
 ## Descriptive analyses for categorical (factor) variables {#sec-chap02-describe-categorical-variables}
 
-The goal of this section is to summarize and interpret the categorical variable `TRNSGNDR`. In contrast to the book I will work with a dataframe consisting only of the variable which I will recode to `transgender`. The tabs of 
+The goal of this section is to summarize and interpret the categorical variable `TRNSGNDR`. In contrast to the book I will work with a dataframe consisting only of the variable which I will recode to `transgender`.
 
 
-### Interpret categorical variables
+### Summarize categorical variables without recoding
 
 ::: my-example
 ::: my-example-header
 ::: {#exm-chap02-interpret-categorical-variables}
-: Recode, summarize and interpret categorical variables
+: Summarize categorical variables without recoding
 :::
 :::
 
@@ -244,6 +265,9 @@ The goal of this section is to summarize and interpret the categorical variable 
 #| label: select-transgender
 
 chap02_folder <- base::paste0(here::here(), "/data/chap02/")
+
+## create transgender_pb ########
+## as intermediate data
 transgender_pb <- 
     base::readRDS(base::paste0(chap02_folder, 
            "brfss_tg_2014_raw.rds")) |> 
@@ -253,7 +277,7 @@ base::saveRDS(object = transgender_pb,
         file = base::paste0(chap02_folder, "transgender_pb.rds"))
 ```
 
-
+(*This code chunk has no visible output.*)
 
 ###### str()
 
@@ -271,6 +295,8 @@ base::saveRDS(object = transgender_pb,
 
 utils::str(transgender_pb)
 ```
+
+***
 
 {**haven**} has imported `r glossary("labelled data")` for the variables. We can use these labels to find the appropriate passages in the 126 pages of the
 codebook. Just copy the variable label and search this string in
@@ -306,6 +332,11 @@ anyway, especially as there are no value labels available.
 
 base::summary(transgender_pb)
 ```
+
+***
+
+If categories have no labels for their levels, then the `summary()` function is useless.
+
 :::
 :::
 
@@ -320,11 +351,14 @@ base::summary(transgender_pb)
 
 ::: my-r-code-container
 ```{r}
-#| label: skim-transgender
+#| label: skim-transgender_pb
 #| cache: true
 
 skimr::skim(transgender_pb)
 ```
+
+Again: As long as the categorical variable is of numeric class all the statistics about the distribution of the level values are pointless.
+
 :::
 :::
 
@@ -367,34 +401,31 @@ along!
 :::
 :::
 
-### Data management
 
-We need to manipulate data to provide a table with all its required
-features as they are:
+To summarize a categorical variable without recoding is generally not purposeful. An exception is `utils::str()` as it display the internal structure including attributes. With `utils::str()` one can detect for example if the data are labelled. If this is the case a quick glance at the data with `gtsummary::tbl_summary()` could be sensible.
 
-***
+### Convert numerical variable to factor and recode its level
 
-::: {#bul-chap02-table-features}
-
-***
-1. A main title indicating what is in the table, including
-    -   the overall sample size
-    -   key pieces of information that describe the data such as the year of data collection and the data source
-2. Clear column and row labels that have 
-    - logical row and column names
-    - a clear indication of what the data are, such as means or frequencies
-    - row and column sample sizes when they are different from overall
-    sample sizes [@harris2020].
-    
-Required features of a table
+:::::{.my-procedure}
+:::{.my-procedure-header}
+Categorical variable: Four steps to get sensible values for reporting data
 :::
+::::{.my-procedure-container}
 
-***
+1. To print a basic `table()` is always a useful first try.
+2. Check the `class()` of the variable. For a categorical variable is has to be `factor`.
+3. It this not the case then you have to recode the variable `as_factor`.
+4. Finally you can now recode the levels of the factor variable with `fct_recode()` to match the description in the codebook.
+
+::::
+:::::
+
+
 
 ::: my-example
 ::: my-example-header
 ::: {#exm-chap02-data-wrnagling-categorical}
-: Data management with categorical variable
+: Convert numerical variable to factor and recode its level
 :::
 :::
 
@@ -404,8 +435,8 @@ Required features of a table
 
 ::: my-r-code
 ::: my-r-code-header
-::: {#cnj-code-name-a}
-: Using table() to count factor levels
+::: {#cnj-code-chap02-table-transgender}
+: Using `base::table()` to count factor levels
 :::
 :::
 
@@ -435,7 +466,7 @@ Normally `table()` is used for cross-classifying factors to build a contingency 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap02-class-transgender}
-: Numbered R Code Title
+: Check class of categorical variable `TRNSGNDR```
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -450,16 +481,27 @@ class(transgender_pb$TRNSGNDR)
 ::::
 :::::
 
+###### as_factor()
 
-###### as_factor
-
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-as-factor-transgender}
+: Convert numerical variable TRNSGNDR to categorical variable
+::::::
+:::
+::::{.my-r-code-container}
 ```{r}
-#| label: factor-transgender
+#| label: as-factor-transgender
 
 transgender_pb$TRNSGNDR <- 
     forcats::as_factor(transgender_pb$TRNSGNDR)
 class(transgender_pb$TRNSGNDR)
 ```
+
+Instead of `base::as.factor()` I am using `as_factor()` from the {**forcats**} package which is part of the {**tidyverse**} collection. See @pak-forcats.
+
+::::
+:::::
 
 
 ###### fct_recode()
@@ -467,14 +509,17 @@ class(transgender_pb$TRNSGNDR)
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-chap02-recode-transgender}
-b: Numbered R Code Title (Tidyverse)
+: Recode the `TRNSGNDR` variable to match the codebook levels
 :::
 :::
 
 ::: my-r-code-container
+
+::: {#lst-chap02-recode-transgender}
 ```{r}
 #| label: recode-transgender
 
+## create transgender_clean #########
 transgender_clean <- transgender_pb |> 
     dplyr::mutate(TRNSGNDR = forcats::fct_recode(TRNSGNDR,
         "Male to female" = '1',
@@ -485,23 +530,82 @@ transgender_clean <- transgender_pb |>
         "Refused" = '9'
     )) 
 
+base::summary(transgender_clean)
+
+## saving the variable is useful in the developing stage
+## it helps to work with individual code chunks separately
 chap02_folder <- base::paste0(here::here(), "/data/chap02/")
 base::saveRDS(object = transgender_clean, 
         file = base::paste0(chap02_folder, "transgender_clean.rds"))
-
-base::summary(transgender_clean)
 ```
+
+Recoded `TRNSGNDR` variable to match the codebook levels
+
+:::
+
 :::
 :::
 
 Harris explains in the book the superseded function `dplyr::recode_factor()`. It's new equivalent is now `forcats::fct_recode()`.
+
+
+:::
+
+
+:::
+:::
+
+
+### Data management
+
+After recoding `TRNSGNDR` we have in @lst-chap02-recode-transgender printed the resulted tibble. The output summarizes already understandable the essence of the variable. But we are still missing some information:
+
+1. Besides the frequencies we need also the percentages to better understand the data.
+2. As there is a huge amount of missing data, we need to calculate these percentages with and without NA's.
+
+In the following example we discuss functions of different packages to get the desired result.
+
+
+::: my-example
+::: my-example-header
+::: {#exm-chap02-data-wrangling-categorical}
+: Data management to display categorical variable for reports 
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+
+###### skim()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-skim-transgender-clean}
+: Display summary of the `TRNSGNDR` variable with `skimr::skim()`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: skim-transgender-clean
+
+
+ 
+skimr::skim(transgender_clean)
+```
+***
+
+The result of `skimr::skim()` for categorical variable is somewhat disappointing. It does not report the levels of the variable. The abbreviations of the top counts (4 levels of 6) are not understandable.
+::::
+:::::
+
+
 
 ###### describe()
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap02-describe-transgender}
-: Numbered R Code Title
+: Display summary of the `TRNSGNDR` variable with `Hmisc::describe()`
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -516,9 +620,17 @@ transgender_clean <-
 
 Hmisc::describe(transgender_clean)
 ```
+
 ***
 
-`Hmisc::describe()` is a completely new function for me. Sometimes I met in my reading the {**Hmisc**} package, but I have never applied functions independently. 
+`Hmisc::describe()` is a completely new function for me. Sometimes I met in my reading the {**Hmisc**} package, but I have never applied functions independently.
+
+In contrast to other methods it does not list the levels vertically but horizontally. This is unfortunately not super readable and one needs --- at least in this case --- to use the horizontal scroll bar.
+
+But is has the advantage to display not only the frequencies but also the percentages.
+
+::::
+:::::
 
 ***
 
@@ -530,13 +642,7 @@ Hmisc::describe(transgender_clean)
 
 There is no hexagon sticker available for {**Hmisc**}.
 
-::: {layout="[10, 30]" layout-valign="center"}
-![](https://www.fharrell.com/profile.jpg){width="176"}
-
-
-
-Contains many functions useful for 
-
+The {**Hmisc::} has it names from Frank Harrell Jr. It contains many functions useful for 
 - data analysis, 
 - high-level graphics, 
 - utility operations, 
@@ -556,8 +662,6 @@ Contains many functions useful for
 - assistance in interpreting principal component analysis [@Hmisc]
 
 
-:::
-
 This is big variety of functions. In contrast to other packages that are specific directed to solve one problem {**Hmisc**} seems to be an all-in-one-solution.
 
 
@@ -565,91 +669,17 @@ Hmisc a package for miscellaneous functions for data analysis and related tasks
 
 :::
 
-To learn more about I should visit Frank E. Harrell's Jr [Hmisc startig page](https://hbiostat.org/r/hmisc/) and read especially his [book on workflow](https://hbiostat.org/rflow/) that seems to me very interesting.
+To learn more about I should visit Frank E. Harrell's Jr [Hmisc start page](https://hbiostat.org/r/hmisc/). Especially his [book on R Workflow for Reproducible Data Analysis and Reporting](https://hbiostat.org/rflow/) seems to me very interesting!
 
 ***
 
-
-
-
-::::
-:::::
-
-###### freq()
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap02-freq-transgender}
-: Using the {desc} package
-::::::
-:::
-::::{.my-r-code-container}
-
-::: {#lst-chap02-freq-transgender}
-
-```{r}
-#| label: freq-transgender
-
-descr::freq(transgender_clean$TRNSGNDR, plot = FALSE)
-```
-
-Using `descr::freq()` to calculate values with and without NA's
-:::
-
-This is the first time that I used the {**descr**} package. Searching for more information on CRAN I noticed that there are at least 10 other packages for facilitate descriptive statistics!
-
-::::
-:::::
-
-***
-
-::: {#pak-descr}
-
-***
-
-{**descr**}: [Descriptive Statistics](https://github.com/jalvesaq/descr)
-
-There is no logo available for {**descr**}
-
-
-Weighted frequency and contingency tables of categorical variables and of the comparison of the mean value of a numerical variable by the levels of a factor, and methods to produce xtable objects of the tables and to plot them. There are also functions to facilitate the character encoding conversion of objects, to quickly convert fixed width files into csv ones, and to export a data.frame to a text file with the necessary R and SPSS codes to reread the data. [@descr]
-
-Package for Descriptive Statistics
-:::
-
-***
-
-
-
-###### {dplyr}
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap02-dplyr-transgender}
-: Numbered R Code Title
-::::::
-:::
-::::{.my-r-code-container}
-
-```{r}
-#| label: dplyr-transgender
-
-transgender_clean |> 
-    dplyr::group_by(TRNSGNDR) |> 
-    dplyr::summarize(n = dplyr::n()) |> 
-    dplyr::mutate(perc = n / sum(n) * 100)
-```
-
-
-::::
-:::::
 
 ###### {report}
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap02-report-transgender}
-Using `report::report_table()` to summarize the result
+: Display summary of the `TRNSGNDR` variable with `report::report_table()`
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -662,7 +692,9 @@ Using `report::report_table()` to summarize the result
 report::report_table(transgender_clean)
 ```
 
-I just learned about the existence of {**report**}. It is specialized to facilitate reporting of results and statistical models. In this example I have used the `report::report_table()` function because the result of the standard `report::report()` is rather underwhelming as you can see: 
+I just learned about the existence of {**report**}. It is specialized to facilitate reporting of results and statistical models. The one-liner shows the levels of the variable, frequencies (`n_obs`) and percentages. Not bad!
+
+In this example I have used the `report::report_table()` function because the verbal result of the standard `report::report()` function is rather underwhelming as you can see: 
 
 ***
 
@@ -683,7 +715,7 @@ Do you consider yourself to be transgender? (Figures with missing values)
 
 (There is another report of the `TRNSGNDR` without the many `NA`s: See @rep-chap02-transgender2 for a comparison.)
 
-But it seems to me that with more complex results (e.g., from models) it seems to me that {**report**} quite usable. Following the book I will try it out and compare with the book’s reports.
+But it seems to me that with more complex results (e.g., reports from models) {**report**} is quite useful. In the course of this book I will try it out and compare with the reports of other functions.
 
 ***
 
@@ -732,7 +764,7 @@ Report Package for Automated Reporting of Results and Statistical Models
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap02-na-omit-transgender}
-: Numbered R Code Title
+: Display summary of the `TRNSGNDR` variable with the recoding method from the book
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -755,16 +787,65 @@ WATCH OUT! Wrong `perc_valid` cell value in `NA` row
 :::
 ::::{.my-watch-out-container}
 
-I have the same logic used as in the book. But the result is not the same as in @lst-chap02-freq-transgender. The `perc_valid` cell value in the `NA` row should be empty, but it shows the value 202 (rounded).
+I have the same logic used as the author in the book and got the same result too. But the result of one cell is wrong! The `perc_valid` cell value in the `NA` row should be empty, but it shows the value 202 (rounded).
 :::::
 ::::
 
-###### full_join()
+###### freq()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-freq-transgender}
+: Display summary of the `TRNSGNDR` variable with `descr::freq()`
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap02-freq-transgender}
+
+```{r}
+#| label: freq-transgender
+
+descr::freq(transgender_clean$TRNSGNDR, plot = FALSE)
+```
+
+Using `descr::freq()` to calculate values with and without NA's
+:::
+
+This is the first time I used the {**descr**} package and it show so far the best result! The one-liner shows levels, frequencies, percentage with and without missing values. It even plots a bar graph, but this is not useful here, so I omitted it with `plot = FALSE`.
+
+The only disadvantage: One has to learn a new package. And --- searching about packages about descriptive statistics I learned that there are at least 10 other packages. 
+
+::::
+:::::
+
+***
+
+::: {#pak-descr}
+
+***
+
+{**descr**}: [Descriptive Statistics](https://github.com/jalvesaq/descr)
+
+There is no logo available for {**descr**}
+
+
+Weighted frequency and contingency tables of categorical variables and of the comparison of the mean value of a numerical variable by the levels of a factor, and methods to produce xtable objects of the tables and to plot them. There are also functions to facilitate the character encoding conversion of objects, to quickly convert fixed width files into csv ones, and to export a data.frame to a text file with the necessary R and SPSS codes to reread the data. [@descr]
+
+Package for Descriptive Statistics
+:::
+
+***
+
+
+
+
+###### {**tidyverse**}
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap02-full-join-transgender}
-: Numbered R Code Title
+: Display summary of the `TRNSGNDR` variable with my recoding method using {**dplyr**} and {**tidyr**} from the {**tidyverse**}
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -787,7 +868,10 @@ dplyr::full_join(tg1, tg2, by = dplyr::join_by(TRNSGNDR, n))
 
 ```
 
-Although this code with packages from the {**tidayverse**} collection is more verbose than @lst-chap02-freq-transgender using {**descr**} it has the advantage that one does not need to install and learn a new package.
+Here I created a tibble with frequencies and percentages with and another one without missing data. Then I join these two tibbles together.
+
+Although this code with packages from the {**tidyverse**} collection is more complex and verbose than the one-liner from @lst-chap02-freq-transgender using {**descr**} it has the advantage that one does not need to install and learn a new package. I believe that sometimes it is more efficient to be proficient with some packages than to know many packages superficially.
+
 
 
 ::::
@@ -818,7 +902,7 @@ Compare with @rep-chap02-transgender1.
 
 #### Details of the procedure
 
-I will comply the following procedure
+The following box outlines the different steps and methods I have used. The bold first part of every bullet point corresponds to the tab name of @exr-chap02-achievement2.
 
 :::::{.my-procedure}
 :::{.my-procedure-header}
@@ -844,10 +928,10 @@ Report frequencies and proportions for the HADMAM variable
 
 In addition to check my understand for achievement 2  I will try to show the descriptive statistics as a `r glossary("Table 1")`, produced with {**kable**} but also with {**gtsummary**}. The table should contain all the features mentioned in @bul-chap02-table-features. I know that this looking ahead of achievement 4, but just let's try it for fun. 
 
-4. **Display 1** result with {**knitr**}
-5. **Display 1** result with {**kableExtra**}
-6. **Display 1** result with {**gt**}
-7. **Display 2** result with {**gtsummary**}
+4. **Table 1** result with {**knitr**} (@tbl-table-kable-hadmam)
+5. **Table 2** result with {**kableExtra**} (@tbl-table-kableextra-hadmam)
+6. **Table 3** result with {**gt**} (@tbl-table-gt-hadmam)
+7. **Table 4** result with {**gtsummary**} (@tbl-table-gtsummary-hadmam)
 
 ***
 
@@ -863,7 +947,7 @@ Finally I have summarized the `HADMAM` variable.
 :::::{.my-exercise}
 :::{.my-exercise-header}
 :::::: {#exr-chap02-achievement2}
-Achievement 2
+Achievement 2: Frequencies and proportions of the categorical HADMAM variable
 ::::::
 :::
 ::::{.my-exercise-container}
@@ -972,6 +1056,9 @@ hadmam_tbl2 <-
     
 names(hadmam_tbl2) <- c("Response", "n", "% with NA's", "% without NA's")
 
+saveRDS(hadmam_tbl2, "data/chap02/hadmam_clean.rds")
+
+
 hadmam_tbl2
 ```
 
@@ -979,11 +1066,11 @@ hadmam_tbl2
 ::::
 :::::
 
-###### Display 1 
+###### Table 1 
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap02-display-kable-hadmam}
+:::::: {#cnj-chap02-table-kable-hadmam}
 
 Display HADMAM variable as descriptive statistics with {**kable**}
 
@@ -992,7 +1079,7 @@ Display HADMAM variable as descriptive statistics with {**kable**}
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: tbl-display-kable-hadmam
+#| label: tbl-table-kable-hadmam
 #| tbl-cap: "Have you ever had a mammogram? N = 464664"
 
 knitr::kable(hadmam_tbl2)
@@ -1006,11 +1093,11 @@ To get a table with `knitr::kable()` it by far the easiest way: Just put the R d
 ::::
 :::::
 
-###### Display 2
+###### Table 2
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap02-display-kableextra-hadmam}
+:::::: {#cnj-chap02-table-kableextra-hadmam}
 
 Display HADMAM variable as descriptive statistics with {**kableExtra**}
 
@@ -1022,7 +1109,7 @@ Display HADMAM variable as descriptive statistics with {**kableExtra**}
 
 
 ```{r}
-#| label: tbl-display-kableextra-hadmam
+#| label: tbl-table-kableextra-hadmam
 #| tbl-cap: "Have you ever had a mammogram? N = 464664"
 
 hadmam_tbl2 |> 
@@ -1032,7 +1119,7 @@ hadmam_tbl2 |>
 ```
 ***
 
-{**kableExtra**} need more lines to get a similar result as @tbl-display-kable-hadmam. But {**kableExtra**} has many more styling options for HTML but also for {{< latex >}} as you can see in the [extensive documentation](https://haozhu233.github.io/kableExtra/). For instance scroll down the [HTML options page](https://haozhu233.github.io/kableExtra/awesome_table_in_html.html) to get an impression about available features.
+{**kableExtra**} need more lines to get a similar result as @tbl-table-kable-hadmam. But {**kableExtra**} has many more styling options for HTML but also for {{< latex >}} as you can see in the [extensive documentation](https://haozhu233.github.io/kableExtra/). For instance scroll down the [HTML options page](https://haozhu233.github.io/kableExtra/awesome_table_in_html.html) to get an impression about available features.
 
 
 :::::{.my-watch-out}
@@ -1044,11 +1131,11 @@ I don't know how to reduce the size of this HTML table and to get rid of the hor
 ::::
 :::::
 
-###### Display 3
+###### Table 3
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap02-display-gt-hadmam}
+:::::: {#cnj-chap02-table-gt-hadmam}
 
 Display HADMAM variable as descriptive statistics with {**gt**}
 
@@ -1057,7 +1144,7 @@ Display HADMAM variable as descriptive statistics with {**gt**}
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: tbl-display-gt-hadmam
+#| label: tbl-table-gt-hadmam
 
 hadmam_tbl2 |> 
     gt::gt() |>
@@ -1090,11 +1177,11 @@ This is the first time that I used the {**gt**} package. The table looks nice bu
 ::::
 :::::
 
-###### Display 4
+###### Table 4
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap02-display2-hadmam}
+:::::: {#cnj-chap02-table-hadmam}
 
 Display HADMAM variable as descriptive statistics with {**gtsummary**}
 
@@ -1103,7 +1190,7 @@ Display HADMAM variable as descriptive statistics with {**gtsummary**}
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: tbl-display-gtsummary-hadmam
+#| label: tbl-table-gtsummary-hadmam
 #| tbl-cap: "Have you ever had a mammogram? N = 464664"
 
 m1 <- hadmam_tbl1 |> 
@@ -1175,9 +1262,173 @@ Compare this report with the copy & paste description from @rep-chap02-mammogram
 
 ***
 
+#### Index of qualitative variation {#sec-index-variation}
+
+The `r glossary("index of qualitative variation")` (IQV) quantifies how much the observations are spread across categories of a categorical variable. While these indexes are computed in different ways, they all range from 0 to 1. The resulting values are high when observations are spread out among categories and low when they are not.
+
+If, for instance, a variable has the same amount of data in each of its levels, e.g. the data are perfectly spread across groups, then the index value would be 1. If all variable levels are empty but one, then there is no spread at all and the index value would be 0.
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap02-index-variation}
+: Assessment of spread in categorical variables with the index of qualitative variation
+::::::
+:::
+::::{.my-assessment-container}
+
+The index ranges from 0 to 1:
+
+- **0**: No spread at all: All observations are in only one group.
+- **1**: Data perfectly spread over all levels of the categorical variable: all levels have the same amount of observations.
+
+The qualitative assessment would be "low" or "high" depending if the index is (far) below or (far) above 0.5. 
+
+
+
+::::
+:::::
+
+Harris recommends the `qualvar::B()` function. But the `B` index relies on the geometric mean and is therefore not usable if one of the proportions equals to $0$, e.g., if one of the category levels has no observation the result is wrong. It returns always $0$  independently of the frequency of categories in other levels.
+
+The {**qualvar**} package has six indices of qualitative variations: The value of these standardized indices does not depend on the number of categories or number of observations: 
+
+- **ADA**: Average Deviation Analog
+- **B**: modified geometric mean
+- **DM**: Deviation from the mode (DM)
+- **HREL**: Shannon Index for computing the "surprise" or uncertainty.
+- **MDA**: Mean Difference Analog
+- **VA**: Variance Analog
+
+
+With the exception of two (`B` and `HREL`) these indices do not have problems with proportions that equals $0$  (HREL returns `NaN`).
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Resources about indices of variation (IQVs)
+:::
+::::{.my-resource-container}
+
+- A [vignette by Joël Gombin](https://cran.r-project.org/web/packages/qualvar/vignettes/wilcox1973.html) explains the origins of the several indices in the {**qualvar**} package.
+- Gombin’s vignette references as source the article [Indices of Qualitative Variation and Political Measurement](https://www.jstor.org/stable/446831) by Allen R. Wilcox [-@wilcox1973].
+- The explication of the three indices calculated with the `iqv()` function of the {**statpsych**} package can be found in [Introduction to Categorical Analysis](https://bpb-us-e1.wpmucdn.com/sites.ucsc.edu/dist/2/1389/files/2023/12/part3.pdf) by Douglas G. Bonett [-@bonettb, p.82f.].
+- [Wikipedia](https://en.wikipedia.org/wiki/Qualitative_variation) has a more complete list of IQVs.
+
+::::
+:::::
+
+
+
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-compare-iqv}
+: Using different IQVs with the `HADMAM` variable
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compare-iqv
+#| results: hold
+
+hadmam_clean <- readRDS("data/chap02/hadmam_clean.rds")
+x <- hadmam_clean$n[1:4]
+
+glue::glue("The frequencies of the `HADMAM` variable (without missing values) are:")
+x
+glue::glue("Applying `statpsych::iqv(x)` to a vector of these frequenecies results in:")
+statpsych::iqv(x)
+```
+
+With {**statpsych**} I have found another package that computes three indices of qualitative variations. They have different names (Simpson, Berger and Shannon) but correspond to one of the Wilcox indices:
+
+- Simpson = VA
+- Berger = DM
+- Shannon = HREL
+
+Compare these three values with @tbl-table-comp-iqv. Again I have used the frequencies of the `HADMAM` variable:
+
+
+
+| Function          | Result                 |
+|-------------------|------------------------|
+| qualvar::ADA(x)   | `r qualvar::ADA(x)`    |
+| qualvar::B(x)     | `r qualvar::B(x)`      |
+| qualvar::DM(x)    | `r qualvar::DM(x)`     |
+| qualvar::HREL(x)  | `r qualvar::HREL(x)`   |
+| qualvar::MDA(x)   | `r qualvar::MDA(x)`    |
+| qualvar::VA(x)    | `r qualvar::VA(x)`     |
+: Comparison of different Indices of Qualitative Variation (IQV) {#tbl-table-comp-iqv}
+
+
+
+::::
+:::::
+
+The few values of the HADMAM variable are not very instructive for the usage of the different indices. I am going to apply the functions to another, much more complex dataset from the 1968 US presidential election (Table 1 of [@wilcox1973, p.332]).
+
+I used experimental a different layout for the next part of the page, because I want to display a wide table without horizontal scroll bars. This should facilitate the comparison of the different indices. 
+
+The display is not optimal: It happens that the sidebars of the standard page overlay the table and cover the wide table partially. In that case outside the table and back again.
+
+:::{.column-page}
+
+***
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-compare2-iqv}
+Comparing different IQVs using data from the 1968 US presidential election
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compare2-iqv
+#| results: hold
+
+data(package = "qualvar", list = "wilcox1973")
+
+### taken from CRAN
+### https://cran.r-project.org/web/packages/qualvar/vignettes/wilcox1973.html
+wilcox1973$MDA <- apply(wilcox1973[,2:4], 1, qualvar::MDA)
+wilcox1973$DM <- apply(wilcox1973[,2:4], 1, qualvar::DM)
+wilcox1973$ADA <- apply(wilcox1973[,2:4], 1, qualvar::ADA)
+wilcox1973$VA <- apply(wilcox1973[,2:4], 1, qualvar::VA)
+wilcox1973$HREL <- apply(wilcox1973[,2:4], 1, qualvar::HREL)
+wilcox1973$B <- apply(wilcox1973[,2:4], 1, qualvar::B)
+
+
+qv_indices <- 
+    apply(wilcox1973[, 2:4], 1, statpsych::iqv) |> 
+    base::t() |> 
+    tibble::as_tibble(
+        .name_repair = ~ c("Simpson", "Berger", "Shannon")) 
+
+dplyr::bind_cols(wilcox1973, qv_indices) |> 
+    dplyr::mutate(
+        dplyr::across(
+            dplyr::where(~ is.numeric(.)), ~ round(., 3))) |> 
+    DT::datatable(options = list(pageLength = 60))
+```
+
+***
+
+This is a rather complex code chunk. I combined the indices from {**qualvar**} and {**statpsych**} with the dataset `qualvar::wilcox1973`. I got a very wide table and provided therefore with a [different Quarto layout](https://quarto.org/docs/authoring/article-layout.html) more space for this part of the page. (Whenever the sidebars are destroying the table view scroll up and again down.)
+
+I learned to use {**purrr**}-like formulas for creating a function on the spot. Important for my understanding was the [help file for `tidyselect::where()`](https://tidyselect.r-lib.org/reference/where.html) and the StackOverflow answer [Rounding selected columns of a data frame](https://stackoverflow.com/a/27613376/7322615).
+
+::::
+:::::
+
+:::
+
+***
+
 ## Descriptive analyses for continuous (numeric) variables {#sec-chap02-describe-numeric-variables}
 
-### Skewness
+### Skewness {#sec-chap02-skewness}
 
 `r glossary("Skewness")` is a measure of the extent to which a distribution is skewed.
 
@@ -1228,6 +1479,8 @@ salaries_gates <- c(salaries, 11500000000)
 
 semTools::skew(salaries)
 semTools::skew(salaries_gates)
+# statpsych::test.skew(salaries)
+# statpsych::test.skew(salaries_gates)
 
 ```
 
@@ -1367,6 +1620,32 @@ physical_health_clean |>
 
 ::::
 :::::
+
+***
+
+
+## Generate a descriptive "Table 1" for journal publishing
+
+We need to manipulate data to provide a table with all its required
+features as they are:
+
+***
+
+::: {#bul-chap02-table-features}
+
+***
+1. A main title indicating what is in the table, including
+    -   the overall sample size
+    -   key pieces of information that describe the data such as the year of data collection and the data source
+2. Clear column and row labels that have 
+    - logical row and column names
+    - a clear indication of what the data are, such as means or frequencies
+    - row and column sample sizes when they are different from overall
+    sample sizes [@harris2020].
+    
+Required features of a table
+:::
+
 
 ***
 
