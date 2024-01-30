@@ -4,7 +4,7 @@
 #| label: setup
 #| include: false
 
-base::source(file = "../_glance_data.R")
+base::source(file = "R/helper.R")
 ```
 
 ## Achievements to unlock
@@ -40,16 +40,20 @@ Subject of this chapter is the transgender health care problem.
 -   `r glossary("Cisgender")` people are people whose gender identity
     matches their biological sex.
 
+In this chapter we are going to use data from the `r glossary("BRFSS")` website. The Behavioral Risk Factor Surveillance System (BRFSS) is a system of health-related telephone surveys that collect state data about U.S. residents regarding their health-related risk behaviors, chronic health conditions, and use of preventive services. Established in 1984 with 15 states, BRFSS now collects data in all 50 states as well as the District of Columbia and three U.S. territories. BRFSS completes more than 400,000 adult interviews each year, making it the largest continuously conducted health survey system in the world. (<a href="https://www.cdc.gov/brfss/index.html">BRFSS</a>)
+
 The rationale of this chapter is the fact, that prior to examining
 statistical relationships among variables, published studies in academic
-journals usually present descriptive statistics. The following
-screenshot from [@narayan2017a, p.876] demonstrates how such a
-`r glossary("Table 1")` statistics might look:
+journals usually present descriptive statistics. What kind of measures exist and how to describe the data set is an important task before one can start to analyse statistical relations. The following
+screenshot from [@narayan2017a, p.876] demonstrates how such descriptive statistics can be summarized to create a so-called
+`r glossary("Table 1")` as an introduction to the subject:
 
 [![Screenshot of Table 1, "Transgender Survey Participants Demographics"
 from Narayan et. al.
 (2017)](img/chap02/table1-example-min.png){#fig-transgender-table1
 fig-alt="Screenshot of Table 1, \"Transgender Survey Participants Demographics\" from Narayan et. al. (2017)"}](https://link.springer.com/article/10.1007/s10549-017-4461-8)
+
+In this chapter we are going to reproduce @fig-transgender-table1 and add some additional information.
 
 ## Data, codebook, and R packages
 
@@ -139,11 +143,20 @@ For the decision if one should report mean or median in numerical variables the 
 
 I will explain explicitly only to those subjects where I am not firm. This is 
 
-- index of qualitative variation (@sec-index-variation)
-- skewness (@sec-chap02-skewness)
-- kurtosis
+::: {#bul-subjects-explained}
+- categorical variables:
+    - index of qualitative variation (@sec-index-variation)
+- numeric variables:
+    - skewness (@sec-chap02-skewness)
+    - mode (@sec-chap02-mode)
+    - kurtosis (@sec-chap02-kurtosis)
+    - scientific notation
+ 
+Subjects reviewed in this chapter
 
-But I will address all measures in the examples resp. exercises.
+:::
+
+But I will address all the other measures in the examples resp. exercises.
 
 
 ### Get the data
@@ -404,7 +417,7 @@ along!
 
 To summarize a categorical variable without recoding is generally not purposeful. An exception is `utils::str()` as it display the internal structure including attributes. With `utils::str()` one can detect for example if the data are labelled. If this is the case a quick glance at the data with `gtsummary::tbl_summary()` could be sensible.
 
-### Convert numerical variable to factor and recode its level
+### Convert numerical variable to factor and recode its levels
 
 :::::{.my-procedure}
 :::{.my-procedure-header}
@@ -414,8 +427,9 @@ Categorical variable: Four steps to get sensible values for reporting data
 
 1. To print a basic `table()` is always a useful first try.
 2. Check the `class()` of the variable. For a categorical variable is has to be `factor`.
-3. It this not the case then you have to recode the variable `as_factor`.
-4. Finally you can now recode the levels of the factor variable with `fct_recode()` to match the description in the codebook.
+3. If this not the case then you have to recode the variable `forcats::as_factor`.
+4. Then you can `forcats::fct_count()` the different levels of the factor.
+5. Finally you can now recode the levels of the factor variable with `forcats::fct_recode()` to match the description in the codebook.
 
 ::::
 :::::
@@ -503,6 +517,38 @@ Instead of `base::as.factor()` I am using `as_factor()` from the {**forcats**} p
 ::::
 :::::
 
+###### fct_count()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-get-levels}
+: Get information about the levels of a factor variable
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-levels
+
+transgender_pb |> 
+    dplyr::pull(TRNSGNDR) |> 
+    forcats::fct_count()
+```
+
+
+***
+
+`forcats::fct-count()` gives you all the information you need to recode a categorical variable:
+
+1. You will see the number of `NA`s.
+2. And even more important: If there are (currently) unused levels then `forcats::fct_count()` will also list them as $0$ observations.
+3. You will see if some levels are not used much so you can decide if you should probably merge them to a category of "other". {**forcats**} has several function to support you in this task.
+
+::::
+:::::
+
+You can now recode the levels according to the information in the codebook (see @fig-chap02-codebook-transgender).
+
+
 
 ###### fct_recode()
 
@@ -518,6 +564,7 @@ Instead of `base::as.factor()` I am using `as_factor()` from the {**forcats**} p
 ::: {#lst-chap02-recode-transgender}
 ```{r}
 #| label: recode-transgender
+#| results: hold
 
 ## create transgender_clean #########
 transgender_clean <- transgender_pb |> 
@@ -557,6 +604,8 @@ Harris explains in the book the superseded function `dplyr::recode_factor()`. It
 
 
 ### Data management
+
+#### Display categorical variable for reports 
 
 After recoding `TRNSGNDR` we have in @lst-chap02-recode-transgender printed the resulted tibble. The output summarizes already understandable the essence of the variable. But we are still missing some information:
 
@@ -623,7 +672,7 @@ Hmisc::describe(transgender_clean)
 
 ***
 
-`Hmisc::describe()` is a completely new function for me. Sometimes I met in my reading the {**Hmisc**} package, but I have never applied functions independently.
+`Hmisc::describe()` is a completely new function for me. Sometimes I met in my reading the {**Hmisc**} package, but I have never applied functions independently. (Fore more information on {**Hmisc**} see @pak-Hmisc.)
 
 In contrast to other methods it does not list the levels vertically but horizontally. This is unfortunately not super readable and one needs --- at least in this case --- to use the horizontal scroll bar.
 
@@ -632,46 +681,6 @@ But is has the advantage to display not only the frequencies but also the percen
 ::::
 :::::
 
-***
-
-::: {#pak-Hmisc}
-
-***
-
-{**Hmisc**}: [Harrell Miscellaneous](https://hbiostat.org/r/hmisc/)
-
-There is no hexagon sticker available for {**Hmisc**}.
-
-The {**Hmisc::} has it names from Frank Harrell Jr. It contains many functions useful for 
-- data analysis, 
-- high-level graphics, 
-- utility operations, 
-- computing sample size and power, 
-- simulation, 
-- importing and annotating datasets,
-- imputing missing values, 
-- advanced table making, 
-- variable clustering,
-- character string manipulation, 
-- conversion of R objects to {{< latex >}} and HTML code,
-- recoding variables, 
-- caching, 
-- simplified parallel computing, 
-- encrypting and decrypting data using a safe workflow, 
-- general moving window statistical estimation, 
-- assistance in interpreting principal component analysis [@Hmisc]
-
-
-This is big variety of functions. In contrast to other packages that are specific directed to solve one problem {**Hmisc**} seems to be an all-in-one-solution.
-
-
-Hmisc a package for miscellaneous functions for data analysis and related tasks
-
-:::
-
-To learn more about I should visit Frank E. Harrell's Jr [Hmisc start page](https://hbiostat.org/r/hmisc/). Especially his [book on R Workflow for Reproducible Data Analysis and Reporting](https://hbiostat.org/rflow/) seems to me very interesting!
-
-***
 
 
 ###### {report}
@@ -692,7 +701,7 @@ To learn more about I should visit Frank E. Harrell's Jr [Hmisc start page](http
 report::report_table(transgender_clean)
 ```
 
-I just learned about the existence of {**report**}. It is specialized to facilitate reporting of results and statistical models. The one-liner shows the levels of the variable, frequencies (`n_obs`) and percentages. Not bad!
+I just learned about the existence of {**report**}. It is specialized to facilitate reporting of results and statistical models (See: @pak-report). The one-liner shows the levels of the variable, frequencies (`n_obs`) and percentages. Not bad!
 
 In this example I have used the `report::report_table()` function because the verbal result of the standard `report::report()` function is rather underwhelming as you can see: 
 
@@ -736,28 +745,6 @@ TRNSGNDR |              missing | 310602 |          66.84
 
 ::::
 :::::
-
-***
-
-::: {#pak-report}
-
-***
-
-{**report**}: [Automated Reporting of Results and Statistical Models](URL to package)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap02/logoi/logo-report-min.png){width="176"}
-
-The primary goal of {**report**} is to bridge the gap between R’s output and the formatted results contained in your manuscript. It automatically produces reports of models and data frames according to best practices guidelines (e.g., APA’s style), ensuring standardization and quality in results reporting.
-
-:::
-
-Report Package for Automated Reporting of Results and Statistical Models
-:::
-
-<Other text not included in the reference>
-
-***
 
 ###### na.omit()
 
@@ -812,35 +799,18 @@ descr::freq(transgender_clean$TRNSGNDR, plot = FALSE)
 Using `descr::freq()` to calculate values with and without NA's
 :::
 
-This is the first time I used the {**descr**} package and it show so far the best result! The one-liner shows levels, frequencies, percentage with and without missing values. It even plots a bar graph, but this is not useful here, so I omitted it with `plot = FALSE`.
+This is the first time I used the {**descr**} package and it shows so far the best result! (See @pak-descr.) The one-liner shows levels, frequencies, percentage with and without missing values. It even plots a bar graph, but this is not useful here, so I omitted it with `plot = FALSE`.
 
 The only disadvantage: One has to learn a new package. And --- searching about packages about descriptive statistics I learned that there are at least 10 other packages. 
 
 ::::
 :::::
 
-***
-
-::: {#pak-descr}
-
-***
-
-{**descr**}: [Descriptive Statistics](https://github.com/jalvesaq/descr)
-
-There is no logo available for {**descr**}
-
-
-Weighted frequency and contingency tables of categorical variables and of the comparison of the mean value of a numerical variable by the levels of a factor, and methods to produce xtable objects of the tables and to plot them. There are also functions to facilitate the character encoding conversion of objects, to quickly convert fixed width files into csv ones, and to export a data.frame to a text file with the necessary R and SPSS codes to reread the data. [@descr]
-
-Package for Descriptive Statistics
-:::
-
-***
 
 
 
 
-###### {**tidyverse**}
+###### {tidyverse}
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -893,6 +863,300 @@ Compare with @rep-chap02-transgender1.
 
 :::
 :::
+
+#### Index of qualitative variation {#sec-index-variation}
+
+##### Introduction
+
+The `r glossary("index of qualitative variation")` (IQV) quantifies how much the observations are spread across categories of a categorical variable. While these indexes are computed in different ways, they all range from 0 to 1. The resulting values are high when observations are spread out among categories and low when they are not.
+
+If, for instance, a variable has the same amount of data in each of its levels, e.g. the data are perfectly spread across groups, then the index value would be 1. If all variable levels are empty but one, then there is no spread at all and the index value would be 0.
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap02-index-variation}
+: Assessment of spread in categorical variables with the index of qualitative variation
+::::::
+:::
+::::{.my-assessment-container}
+
+The index ranges from 0 to 1:
+
+- **0**: No spread at all: All observations are in only one group.
+- **1**: Data perfectly spread over all levels of the categorical variable: all levels have the same amount of observations.
+
+The qualitative assessment would be "low" or "high" depending if the index is (far) below or (far) above 0.5. But the most important use is the comparison of the proportions of levels in different observation. For a practical application see @tbl-compare2-iqv.
+
+
+
+::::
+:::::
+
+Harris recommends the `qualvar::B()` function. But the `B` index relies on the geometric mean and is therefore not usable if one of the proportions equals to $0$, e.g., if one of the category levels has no observation the result is wrong. It returns always $0$  independently of the frequency of categories in other levels.
+
+The {**qualvar**} package has six indices of qualitative variations: The value of these standardized indices does not depend on the number of categories or number of observations: 
+
+- **ADA**: Average Deviation Analog
+- **B**: modified geometric mean
+- **DM**: Deviation from the mode (DM)
+- **HREL**: Shannon Index for computing the "surprise" or uncertainty.
+- **MDA**: Mean Difference Analog
+- **VA**: Variance Analog
+
+
+With the exception of two (`B` and `HREL`) these indices do not have problems with proportions that equals $0$  (HREL returns `NaN`).
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Resources about indices of variation (IQVs)
+:::
+::::{.my-resource-container}
+
+- A [vignette by Joël Gombin](https://cran.r-project.org/web/packages/qualvar/vignettes/wilcox1973.html) explains the origins of the several indices in the {**qualvar**} package.
+- Gombin’s vignette references as source the article [Indices of Qualitative Variation and Political Measurement](https://www.jstor.org/stable/446831) by Allen R. Wilcox [-@wilcox1973].
+- The explication of the three indices calculated with the `iqv()` function of the {**statpsych**} package can be found in [Introduction to Categorical Analysis](https://bpb-us-e1.wpmucdn.com/sites.ucsc.edu/dist/2/1389/files/2023/12/part3.pdf) by Douglas G. Bonett [-@bonettb, p.82f.].
+- [Wikipedia](https://en.wikipedia.org/wiki/Qualitative_variation) has a more complete list of IQVs.
+
+::::
+:::::
+
+
+##### Experimenting with different IQV's
+
+In @def-hadmam-iqv I am going to apply several indices for qualitative variations using frequencies of the `HADMAM`variable. Tab "IQV 1" the calculation uses the original frequencies of the categorical variable but without missing values. In tab "IQV 2" I added a new level with no observations (frequency = 0). 
+
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-hadmam-iqv}
+: Computing the index of qualitative variation (IQV) for the `HADMAM` variable.
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### IQV 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-compare-iqv}
+: Using different IQVs with the `HADMAM` variable
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compare-iqv
+#| results: hold
+
+hadmam_clean <- readRDS("data/chap02/hadmam_clean.rds")
+x <- hadmam_clean$n[1:4]
+
+glue::glue("The frequencies of the `HADMAM` variable (without missing values) are:")
+x
+glue::glue("Applying `statpsych::iqv(x)` to a vector of these frequenecies:")
+statpsych::iqv(x)
+```
+
+With {**statpsych**} I have found another package that computes three indices of qualitative variations. They have different names (Simpson, Berger and Shannon) but correspond to one of the Wilcox indices:
+
+- Simpson = VA
+- Berger = DM
+- Shannon = HREL
+
+Compare these three values with @tbl-table-comp-iqv. Again I have used the frequencies of the `HADMAM` variable:
+
+
+
+| Function          | Result                 |
+|-------------------|------------------------|
+| qualvar::ADA(x)   | `r qualvar::ADA(x)`    |
+| qualvar::B(x)     | `r qualvar::B(x)`      |
+| qualvar::DM(x)    | `r qualvar::DM(x)`     |
+| qualvar::HREL(x)  | `r qualvar::HREL(x)`   |
+| qualvar::MDA(x)   | `r qualvar::MDA(x)`    |
+| qualvar::VA(x)    | `r qualvar::VA(x)`     |
+: Comparison of different Indices of Qualitative Variation (IQV) {#tbl-table-comp-iqv}
+
+
+
+::::
+:::::
+
+###### IQV with 0
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-compare-iqv2}
+: Using different IQVs with the `HADMAM` variable where one proportion is $0$
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compare-iqv2
+#| results: hold
+
+hadmam_clean <- readRDS("data/chap02/hadmam_clean.rds")
+y <- c(hadmam_clean$n[1:4], 0)
+
+glue::glue("The frequencies of the `HADMAM` variable, \nwithout missing values but one level has no observations:")
+y
+glue::glue("Applying `statpsych::iqv(y)` to a vector of these frequenecies:")
+statpsych::iqv(y)
+```
+
+
+| Function          | Result                 |
+|-------------------|------------------------|
+| qualvar::ADA(y)   | `r qualvar::ADA(y)`    |
+| qualvar::B(y)     | `r qualvar::B(y)`      |
+| qualvar::DM(y)    | `r qualvar::DM(y)`     |
+| qualvar::HREL(y)  | `r qualvar::HREL(y)`   |
+| qualvar::MDA(y)   | `r qualvar::MDA(y)`    |
+| qualvar::VA(y)    | `r qualvar::VA(y)`     |
+: Comparison of different Indices of Qualitative Variation (IQV) {#tbl-table-comp-iqv2}
+
+
+
+
+::::
+:::::
+
+As you can see: `B` and `HREL` (`Shannon`) cannot be used if one level has no observations. The $0$ result of `B` is especially dangerous as one could believe that there is no spread at all, e.g. assuming wrongly that all observations are in one level.
+
+###### IQV with NA
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-compare-iqv3}
+: Using different IQVs with the `HADMAM` variable where one value is `NA`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compare-iqv3
+#| results: hold
+
+hadmam_clean <- readRDS("data/chap02/hadmam_clean.rds")
+z <- c(hadmam_clean$n[1:4], NA)
+
+glue::glue("The frequencies of the `HADMAM` variable, \nwith NA for one level:")
+z
+glue::glue("Applying `statpsych::iqv(z)` to a vector of these frequenecies:")
+statpsych::iqv(z)
+glue::glue("Now with `statpsych::iqv(stats::na.omit(z))` to eliminate NA's:")
+statpsych::iqv(stats::na.omit(z))
+```
+
+
+| Function          | Result                 |
+|-------------------|------------------------|
+| qualvar::ADA(z)   | `r qualvar::ADA(z)`    |
+| qualvar::B(z)     | `r qualvar::B(z)`      |
+| qualvar::DM(z)    | `r qualvar::DM(z)`     |
+| qualvar::HREL(z)  | `r qualvar::HREL(z)`   |
+| qualvar::MDA(z)   | `r qualvar::MDA(z)`    |
+| qualvar::VA(z)    | `r qualvar::VA(z)`     |
+: Comparison of different Indices of Qualitative Variation (IQV) {#tbl-table-comp-iqv3}
+
+Missing values destroys completely the `statpsych::iqv()` function. The reason: The function lacks a `rm.na = TRUE` argument, a feature all the other indices have. 
+
+Bottom line: I recommend only to use the {**qualvar**} packages, because it covers not only all indices of `statpsych::iqv()`, but has other indices as well and is better adaptable to data.frames wit missing data.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+
+
+##### Practical usage of IQV
+
+
+
+The few values of the HADMAM variable are not very instructive for the usage of the different indices. I am going to apply the functions to another, much more complex dataset from the 1968 US presidential election (`r glossary("Table 1")` of [@wilcox1973, p.332]).
+
+<!---
+I am using experimentally a different layout for the next part of the page, because I want to display a wide table without horizontal scroll bars. This should facilitate the comparison of the different indices. 
+
+The display is not optimal: It happens that the sidebars of the standard page overlay the table and cover the wide table partially. In that case scroll outside the table and then scroll back again.
+--->
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-compare2-iqv}
+Comparing different IQVs using data from the 1968 US presidential election
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-compare2-iqv
+#| tbl-cap: "Comparing different IQVs using data from the 1968 US presidential election"
+#| results: hold
+
+data(package = "qualvar", list = "wilcox1973")
+
+### taken from vignette of {qualvar}
+### https://cran.r-project.org/web/packages/qualvar/vignettes/wilcox1973.html
+wilcox1973$MDA <- apply(wilcox1973[,2:4], 1, qualvar::MDA)
+wilcox1973$DM <- apply(wilcox1973[,2:4], 1, qualvar::DM)
+wilcox1973$ADA <- apply(wilcox1973[,2:4], 1, qualvar::ADA)
+wilcox1973$VA <- apply(wilcox1973[,2:4], 1, qualvar::VA)
+wilcox1973$HREL <- apply(wilcox1973[,2:4], 1, qualvar::HREL)
+wilcox1973$B <- apply(wilcox1973[,2:4], 1, qualvar::B)
+
+
+qv_indices <- 
+    apply(wilcox1973[, 2:4], 1, statpsych::iqv) |> 
+    base::t() |> 
+    tibble::as_tibble(
+        .name_repair = ~ c("Simpson", "Berger", "Shannon")) 
+
+qv_compared <- dplyr::bind_cols(wilcox1973, qv_indices) |> 
+    dplyr::mutate(
+        dplyr::across(
+            dplyr::where(~ is.numeric(.)), ~ round(., 3))) 
+
+## the last line is equivalent to
+##             dplyr::where(\(x) is.numeric(x)), \(y) round(y, 3))) or
+##             dplyr::where(function(x) is.numeric(x)), function(y) round(y, 3))) 
+
+DT::datatable(qv_compared, options = list(pageLength = 10))
+```
+
+***
+
+This is a rather complex code chunk. I combined the indices from {**qualvar**} and {**statpsych**} with the dataset `qualvar::wilcox1973`. I got a very wide table and provided therefore with a [different Quarto layout](https://quarto.org/docs/authoring/article-layout.html) more space for this part of the page. (Whenever the sidebars are destroying the table view scroll up and again down.)
+
+I learned to use {**purrr**}-like formulas for creating a function on the spot. Important for my understanding was the [help file for `tidyselect::where()`](https://tidyselect.r-lib.org/reference/where.html#the-formula-shorthand) and the StackOverflow answer [Rounding selected columns of a data frame](https://stackoverflow.com/a/27613376/7322615).
+
+The idea of IQV indices is to have a measure of spread for categorical variables. For the presidential election dataset a high IQV points out, that the three candidates are almost dead even. A good example is South Carolina (first row): With the exception of `B` are all indices well beyond 0.9.
+
+As an contrasting example take Texas (eighth row): In Texas Wallace is well behind the other to candidates. The indices (with the notable exceptions of `VA` and `HREL`) reflect this difference with a lower index value. 
+
+:::::{.my-important}
+:::{.my-important-header}
+Which index of qualitative variation (IQV) to choose?
+:::
+::::{.my-important-container}
+From my (cursory) inspection I would recommend to use mostly `MDA`, `DM` and `ADA` for computing an index of qualitative variation (IQV). 
+
+`B` is not stable against levels without observation and `HREL` is not immune against missing values. Together with `VA` is `HREL` --- in comparison to the other indices --- not so responsive to (smaller) changes in the proportional distribution of the categorical variable.
+::::
+:::::
+
+
+
+::::
+:::::
 
 
 
@@ -1262,173 +1526,123 @@ Compare this report with the copy & paste description from @rep-chap02-mammogram
 
 ***
 
-#### Index of qualitative variation {#sec-index-variation}
-
-The `r glossary("index of qualitative variation")` (IQV) quantifies how much the observations are spread across categories of a categorical variable. While these indexes are computed in different ways, they all range from 0 to 1. The resulting values are high when observations are spread out among categories and low when they are not.
-
-If, for instance, a variable has the same amount of data in each of its levels, e.g. the data are perfectly spread across groups, then the index value would be 1. If all variable levels are empty but one, then there is no spread at all and the index value would be 0.
-
-:::::{.my-assessment}
-:::{.my-assessment-header}
-:::::: {#cor-chap02-index-variation}
-: Assessment of spread in categorical variables with the index of qualitative variation
-::::::
-:::
-::::{.my-assessment-container}
-
-The index ranges from 0 to 1:
-
-- **0**: No spread at all: All observations are in only one group.
-- **1**: Data perfectly spread over all levels of the categorical variable: all levels have the same amount of observations.
-
-The qualitative assessment would be "low" or "high" depending if the index is (far) below or (far) above 0.5. 
-
-
-
-::::
-:::::
-
-Harris recommends the `qualvar::B()` function. But the `B` index relies on the geometric mean and is therefore not usable if one of the proportions equals to $0$, e.g., if one of the category levels has no observation the result is wrong. It returns always $0$  independently of the frequency of categories in other levels.
-
-The {**qualvar**} package has six indices of qualitative variations: The value of these standardized indices does not depend on the number of categories or number of observations: 
-
-- **ADA**: Average Deviation Analog
-- **B**: modified geometric mean
-- **DM**: Deviation from the mode (DM)
-- **HREL**: Shannon Index for computing the "surprise" or uncertainty.
-- **MDA**: Mean Difference Analog
-- **VA**: Variance Analog
-
-
-With the exception of two (`B` and `HREL`) these indices do not have problems with proportions that equals $0$  (HREL returns `NaN`).
-
-:::::{.my-resource}
-:::{.my-resource-header}
-Resources about indices of variation (IQVs)
-:::
-::::{.my-resource-container}
-
-- A [vignette by Joël Gombin](https://cran.r-project.org/web/packages/qualvar/vignettes/wilcox1973.html) explains the origins of the several indices in the {**qualvar**} package.
-- Gombin’s vignette references as source the article [Indices of Qualitative Variation and Political Measurement](https://www.jstor.org/stable/446831) by Allen R. Wilcox [-@wilcox1973].
-- The explication of the three indices calculated with the `iqv()` function of the {**statpsych**} package can be found in [Introduction to Categorical Analysis](https://bpb-us-e1.wpmucdn.com/sites.ucsc.edu/dist/2/1389/files/2023/12/part3.pdf) by Douglas G. Bonett [-@bonettb, p.82f.].
-- [Wikipedia](https://en.wikipedia.org/wiki/Qualitative_variation) has a more complete list of IQVs.
-
-::::
-:::::
-
-
-
-
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-compare-iqv}
-: Using different IQVs with the `HADMAM` variable
-::::::
-:::
-::::{.my-r-code-container}
-
-```{r}
-#| label: compare-iqv
-#| results: hold
-
-hadmam_clean <- readRDS("data/chap02/hadmam_clean.rds")
-x <- hadmam_clean$n[1:4]
-
-glue::glue("The frequencies of the `HADMAM` variable (without missing values) are:")
-x
-glue::glue("Applying `statpsych::iqv(x)` to a vector of these frequenecies results in:")
-statpsych::iqv(x)
-```
-
-With {**statpsych**} I have found another package that computes three indices of qualitative variations. They have different names (Simpson, Berger and Shannon) but correspond to one of the Wilcox indices:
-
-- Simpson = VA
-- Berger = DM
-- Shannon = HREL
-
-Compare these three values with @tbl-table-comp-iqv. Again I have used the frequencies of the `HADMAM` variable:
-
-
-
-| Function          | Result                 |
-|-------------------|------------------------|
-| qualvar::ADA(x)   | `r qualvar::ADA(x)`    |
-| qualvar::B(x)     | `r qualvar::B(x)`      |
-| qualvar::DM(x)    | `r qualvar::DM(x)`     |
-| qualvar::HREL(x)  | `r qualvar::HREL(x)`   |
-| qualvar::MDA(x)   | `r qualvar::MDA(x)`    |
-| qualvar::VA(x)    | `r qualvar::VA(x)`     |
-: Comparison of different Indices of Qualitative Variation (IQV) {#tbl-table-comp-iqv}
-
-
-
-::::
-:::::
-
-The few values of the HADMAM variable are not very instructive for the usage of the different indices. I am going to apply the functions to another, much more complex dataset from the 1968 US presidential election (Table 1 of [@wilcox1973, p.332]).
-
-I used experimental a different layout for the next part of the page, because I want to display a wide table without horizontal scroll bars. This should facilitate the comparison of the different indices. 
-
-The display is not optimal: It happens that the sidebars of the standard page overlay the table and cover the wide table partially. In that case outside the table and back again.
-
-:::{.column-page}
-
-***
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap02-compare2-iqv}
-Comparing different IQVs using data from the 1968 US presidential election
-::::::
-:::
-::::{.my-r-code-container}
-
-```{r}
-#| label: compare2-iqv
-#| results: hold
-
-data(package = "qualvar", list = "wilcox1973")
-
-### taken from CRAN
-### https://cran.r-project.org/web/packages/qualvar/vignettes/wilcox1973.html
-wilcox1973$MDA <- apply(wilcox1973[,2:4], 1, qualvar::MDA)
-wilcox1973$DM <- apply(wilcox1973[,2:4], 1, qualvar::DM)
-wilcox1973$ADA <- apply(wilcox1973[,2:4], 1, qualvar::ADA)
-wilcox1973$VA <- apply(wilcox1973[,2:4], 1, qualvar::VA)
-wilcox1973$HREL <- apply(wilcox1973[,2:4], 1, qualvar::HREL)
-wilcox1973$B <- apply(wilcox1973[,2:4], 1, qualvar::B)
-
-
-qv_indices <- 
-    apply(wilcox1973[, 2:4], 1, statpsych::iqv) |> 
-    base::t() |> 
-    tibble::as_tibble(
-        .name_repair = ~ c("Simpson", "Berger", "Shannon")) 
-
-dplyr::bind_cols(wilcox1973, qv_indices) |> 
-    dplyr::mutate(
-        dplyr::across(
-            dplyr::where(~ is.numeric(.)), ~ round(., 3))) |> 
-    DT::datatable(options = list(pageLength = 60))
-```
-
-***
-
-This is a rather complex code chunk. I combined the indices from {**qualvar**} and {**statpsych**} with the dataset `qualvar::wilcox1973`. I got a very wide table and provided therefore with a [different Quarto layout](https://quarto.org/docs/authoring/article-layout.html) more space for this part of the page. (Whenever the sidebars are destroying the table view scroll up and again down.)
-
-I learned to use {**purrr**}-like formulas for creating a function on the spot. Important for my understanding was the [help file for `tidyselect::where()`](https://tidyselect.r-lib.org/reference/where.html) and the StackOverflow answer [Rounding selected columns of a data frame](https://stackoverflow.com/a/27613376/7322615).
-
-::::
-:::::
-
-:::
 
 ***
 
 ## Descriptive analyses for continuous (numeric) variables {#sec-chap02-describe-numeric-variables}
 
+I will not review explicitly all measures for numeric variables. Instead I will focus on the subjects mentioned in @bul-subjects-explained.
+
+### Data for experiments with skewness and kurtosis
+
+#### Body measures
+
+To experiment with realistic data I will use the `bdims` dataset of {**openintro**}. It is a body measurement of 507 physically active individuals (247 men and 260 women). To get the following code to run you need to install the {**openintro**} via CRAN.
+
+I have chosen the `bdims` data because it has lots of numeric variable to experiment with skewness and kurtosis. As you can read in an [article of the Journal of Statistics Education](https://www.tandfonline.com/doi/full/10.1080/10691898.2003.11910711) "these data can be used to provide statistics students practice in the art of data analysis" [@heinz2003a]. The dataset contains body girth measurements and skeletal diameter measurements, as well as age, weight, height and gender, are given for 507 physically active individuals – 247 men and 260 women. You can read more about the educational use of the data and you will find an explanation of the many variables in the [online help of {**openintro**}](https://www.openintro.org/data/index.php?data=bdims).
+
+I will mostly concentrate on the following measures (all values are in centimeter):
+
+- age of the respondent
+- height 
+- weight
+- biacromial diameter (shoulder breadth)
+- biiliac diameter (pelvic breadth)
+- bitrochanteric diameter (hip bone breadth) and
+- elbow diameter, measured as sum of two elbows
+
+To give you a better understanding where some of these measure are located on the human body I replicate @fig-body-measures one figure of the article.
+
+![Biacromial, Biiliac, and Bitrochanteric Diameters](img/chap02/body-measures-min.png){#fig-body-measures
+fig-alt="Skeleton of the human body where three variable are measured: The biacromial diameter is the breadth of the shoulder, the biiliac diameter is the pelvic breadth and the bitrochanteric diameter is the breadth of the hip bone."
+fig-align="center"}
+
+To facilitate the following experiment I have written a function to generate a histogram with an overlaid density curve. The code is loaded with other functions whenever this chapter is rendered.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-histogram-code}
+: Function to create histogram with overlaid `dnorm` curve
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: histogram-code
+#| eval: false
+
+
+# df        = data.frame or tibble
+# v         = numerical column of data.frame: syntax for call df$v
+# x_label   = title for x-axis
+# nbins     = number of bins
+# col_fill  = fill color
+# col_color = border color of bins
+# col       = color of dnorm curve
+# return value is "ggplot" object to customize it further (set labels etc.)
+
+hist_dnorm <- function(df, v, n_bins = 20,
+                       col_fill = "gray90",
+                       col_color = "black",
+                       col_dnorm = "tomato") {
+    p <- df |>
+        ggplot2::ggplot(ggplot2::aes()) +
+        ggplot2::geom_histogram(
+            ggplot2::aes(y = ggplot2::after_stat(density)),
+            bins = n_bins,
+            fill = col_fill,
+            color = col_color,
+            stat = "histogram") +
+        ggplot2::stat_function(fun = dnorm,
+                               args = c(mean = mean(v),
+                                        sd = sd(v)),
+                               col = col_dnorm) +
+        ggplot2::theme_bw()
+    p
+
+}
+
+```
+
+(*This code chunk is not evaluated and has therefore no visible output.*)
+
+
+::::
+:::::
+
+
+
+
+#### Data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-load-bdims}
+: Load the `bdims` dataset of the {**openintro**} package and inspect the data
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: load-bdims
+
+
+data(package = "openintro", list = "bdims")
+skimr::skim(bdims)
+
+```
+
+***
+
+We can see from the tiny histograms which variable seems to be normally distributed and which are skewed --- and a little less obvious --- which variable has excess kurtosis.
+
+
+
+::::
+:::::
+
+
 ### Skewness {#sec-chap02-skewness}
+
+#### What is skewness?
 
 `r glossary("Skewness")` is a measure of the extent to which a distribution is skewed.
 
@@ -1437,66 +1651,6 @@ skewness_x = \frac{1}{n}\sum_{i=1}^{n}(\frac{x_i - m_x}{s_x})^3
 $$ {#eq-chap02-skewness}
 
 The mean of $x$, $m_x$, is subtracted from each observation $x_i$. These differences between the mean and each observed value are called `r glossary("deviation scores")`. Each deviation score is divided by the `r glossary("standard deviation")`, $s$, and the result is cubed. Finally, sum the cubed values and divide by the number of cubed values (which is taking the mean) to get the `r glossary("skewness")` of $x$. The resulting value is usually negative when the skew is to the left and usually positive when the skew is toward the right. Skewness is strongly impacted by the sample size, therefore the value of skew that is considered too skewed differs depending on sample size.
-
-There are many packages to compute the skewness of a distribution. (Type `??skewness` into the console to get a list. Harris recommends the `skew()` function from the {**semTools**} package. 
-
-***
-
-::: {#pak-semTools}
-
-***
-
-{**semTools**}: [Useful Tools for Structural Equation Modeling](https://github.com/simsem/semTools/wiki)
-
-(For {**semTools**} there is currently no logo available.)
-
-Provides tools for structural equation modeling, many of which extend the {**lavaan**} package; for example, to pool results from multiple imputations, probe latent interactions, or test measurement invariance.
-***
-
-{**semTools**}: A Package for Useful Tools for Structural Equation Modeling
-:::
-
-This is a very specialized package. I believe I will not use it at the moment besides the function `semTools::skew()` and `semTools::kurtosis()`.
-
-***
-
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap02-check-skew}
-: Using the `skew()` function from {**semTools**}
-::::::
-:::
-::::{.my-r-code-container}
-
-::: {#lst-chap02-check-skewness}
-
-```{r}
-#| label: check-skew
-
-salaries <- c(25000, 62000, 41000, 96000, 41000)
-salaries_gates <- c(salaries, 11500000000)
-
-semTools::skew(salaries)
-semTools::skew(salaries_gates)
-# statpsych::test.skew(salaries)
-# statpsych::test.skew(salaries_gates)
-
-```
-
-Using the `skew()` function from {**semTools**}
-
-:::
-
-***
-
-- **skew (g1)**: `r glossary("Skewness")`
-- **se**: `r glossary("Standard error")`
-- **z**: `r glossary("Z-score")`
-- **p**: `r glossary("p-value")`
-
-::::
-:::::
 
 :::::{.my-assessment}
 :::{.my-assessment-header}
@@ -1510,17 +1664,577 @@ Using the `skew()` function from {**semTools**}
 |----------------|:-------------------------:|---------------------------------|
 | n < 50         |    under -2 or over +2    | Problem!                        |
 | n > 50 & < 300 | under -3.29 or over +3.29 | Problem!                        |
-| n > 300        |     under -7 or over 7    | Problem but visual recommended! |
+| n > 300        |     under -7 or over 7    | Visual inspection recommended!  |
+
 : Skewness assessment {#tbl-chap02-skewness} {.striped .hover}
+
+- Right skewed = tail to the right = skew index is positive
+- Left skewed  = tail to the left  = skew index is negative
+
 
 ***
 
-Harris referenced [@kim2013] for the assessment table above. I noticed that there are many [short articles about different types of test.](https://synapse.koreamed.org/advanced/index.php). Just put the search string "Statistical[ALL] AND notes[ALL] AND clinical[ALL] AND researchers[ALL]" into the Kamje search engine.
 
-The z result of code @lst-chap02-check-skewness from the `salaries_gates` vector is 2.45, i.e., over 2 and therefore we have a skewness problem. The other vector, without the salary of Bill Gates is not excessively skewed.
+
+
 
 ::::
 :::::
+
+
+There are many packages to compute the skewness of a distribution. (Type `??skewness` into the console to get a list. Harris recommends the `skew()` function from the {**semTools**} package (See @pak-semTools). 
+
+
+
+#### Check skewness
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-check-skewness}
+: Check skewness of a distribution
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+###### no skewness
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-check-male-bia}
+: Checking skewness of a shoulder breadth distribution of 247 men 
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap02-check-skewness}
+
+```{r}
+#| label: fig-check-skew-normal
+#| fig-cap: "Shoulder breadth distribution in centimeters of 247 physically active men"
+#| cache: true
+#| results: hold
+
+
+## select men from the sample
+bdims_male <- bdims |> 
+    dplyr::filter(sex == 1)
+
+## construct graph using my private function hist_dnorm()
+p <- hist_dnorm(bdims_male, bdims_male$bia_di)
+
+p +
+    ggplot2::labs(x = "biacromial diameter in centimeters")
+
+## commented test output
+glue::glue("##################################################")
+glue::glue("Using the `semTools::skew()` function")
+semTools::skew(bdims_male$bia_di)
+glue::glue(" ")
+glue::glue("##################################################")
+glue::glue("Using the `statpsych::test.skew()` function")
+statpsych::test.skew(bdims$bia_di)
+```
+
+Checking the skewness of the shoulder breadth distribution of 247 men with `semTools::skew()` and `statpsych::test.skew()`
+
+:::
+
+***
+
+**Interpretation `semTools::skew()`**
+
+- **skew (g1)**: `r glossary("Skewness")`
+- **se**: `r glossary("Standard error")`
+- **z**: `r glossary("Z-score")`
+- **p**: `r glossary("p-value")`
+
+
+::: {.callout-tip style="color: darkgreen;"}
+The interpretation follows @tbl-chap02-skewness: The $z$ result of code @lst-chap02-check-skewness from the biacromial diameter of 247 men is only 1.44, e.g. well situated in the range of -3.29 and +3.29 and therefore we have no skewness problem. The p-value is with 0.17 big and therefore the null (there is no skewness) can't be rejected.
+:::
+
+
+***
+
+**Interpretation `statpsych::test.skew()`**
+
+The result of the `statpsych::test.skew()` function is a 1-row matrix:
+
+- **Skewness**: Estimate of the `r glossary("skewness")` coefficient
+- **p**: `r glossary("MCMC", "Monte Carlo")` two-sided `r glossary("p-value")` for test of zero skewness
+
+::: {.callout-tip style="color: darkgreen;"}
+The p-value is way above .05 and therefore the null can't be rejected. e.g., the data is from a normal distribution.
+:::
+
+::::
+:::::
+
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Be patienet: Calculation of `statpsych::test.skew()` needs time
+:::
+::::{.my-watch-out-container}
+
+
+> [`statpsych::test.skew()` c]omputes a Monte Carlo p-value (250,000 replications) for the null hypothesis that the sample data come from a normal distribution. If the p-value is small (e.g., less than .05) and the skewness estimate is positive, then the normality assumption can be rejected due to positive skewness. If the p-value is small (e.g., less than .05) and the skewness estimate is negative, then the normality assumption can be rejected due to negative skewness. ([R Documentation](https://search.r-project.org/CRAN/refmans/statpsych/html/test.skew.html) of statpsych::test.skew())
+
+::::
+:::::
+
+
+
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Articles on identifying non-normal distributions
+:::
+::::{.my-resource-container}
+Harris referenced [@kim2013] for the assessment table above. I noticed that there are many [short articles about different types of test.](https://synapse.koreamed.org/advanced/index.php). Just put the search string "Statistical[ALL] AND notes[ALL] AND clinical[ALL] AND researchers[ALL]" into the Kamje search engine.
+::::
+:::::
+
+
+###### Left skewed
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-left-skewed}
+: Pelvic breadth distribution of 507 physically active individuals
+::::::
+:::
+::::{.my-r-code-container}
+
+
+```{r}
+#| label: fig-check-skew-left
+#| fig-cap: "Pelvic breadth distribution in centimeters of 507 physically active indidviduals"
+#| cache: true
+#| results: hold
+
+## construct graph using my private function hist_dnorm()
+p <- hist_dnorm(bdims, bdims$bii_di)
+
+p +
+    ggplot2::labs(x = "respondent's biiliac diameter (pelvic breadth) in centimeters.")
+
+## commented test output
+glue::glue("##################################################")
+glue::glue("Using the `semTools::skew()` function")
+semTools::skew(bdims$bii_di)
+glue::glue(" ")
+glue::glue("##################################################")
+glue::glue("Using the `statpsych::test.skew()` function")
+statpsych::test.skew(bdims$bii_di)
+```
+
+***
+
+::: {.callout-tip style="color: darkgreen;"}
+## Skewness interpretation with `semTools::skew()` and `statpsych::test.skew()`
+
+Both tests have a very low p-value and attest us excessive skewness. This is even true if the z-value of `semTools::skew()` is only -3.85, e.g. in the appropriate boundaries of  -7 and + 7 for a sample of 507 individuals (compare @tbl-chap02-skewness). The recommended visual inspection of the histogram shows us a left skewed distribution: There are too much  individuals with a smaller pelvic breadth than it would appropriate for a normal distribution. It is very unlikely that the sample comes from a normal distribution. We have to reject the null.
+:::
+
+@tbl-chap02-skewness
+
+
+::::
+:::::
+
+###### Right skewed
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-right-skewed}
+: Waist girth distribution in centimeters of 507 physically active individuals
+::::::
+:::
+::::{.my-r-code-container}
+
+
+```{r}
+#| label: fig-check-skew-right
+#| fig-cap: "Waist girth distribution in centimeters of 507 physically active individuals"
+#| cache: true
+#| results: hold
+
+## construct graph using my private function hist_dnorm()
+p <- hist_dnorm(bdims, bdims$wai_gi)
+
+p +
+    ggplot2::labs(x = "Respondent's waist girth in centimeters, measured at the narrowest part of torso below the rib cage as average of contracted and relaxed position")
+
+## commented test output
+glue::glue("##################################################")
+glue::glue("Using the `semTools::skew()` function")
+semTools::skew(bdims$wai_gi)
+glue::glue(" ")
+glue::glue("##################################################")
+glue::glue("Using the `statpsych::test.skew()` function")
+statpsych::test.skew(bdims$wai_gi)
+```
+
+***
+
+::: {.callout-tip style="color: darkgreen;"}
+## Skewness interpretation with `semTools::skew()` and `statpsych::test.skew()`
+
+Both tests have a very low p-value and attest us excessive skewness. Again is the corresponding the z-value of `semTools::skew()` in the appropriate boundaries of -7 and + 7 for a sample of 507 individuals (compare @tbl-chap02-skewness). But the recommended visual inspection of the histogram shows us a right skewed distribution very clearly: There are too much individuals with a bigger waist girth than it would appropriate for a normal distribution. It is very unlikely that the sample comes from a normal distribution. We have to reject the null.
+:::
+
+::::
+:::::
+
+
+
+:::
+
+
+::::
+:::::
+
+
+
+### Mode {#sec-chap02-mode}
+
+The book claims: "… unfortunately, perhaps because it is rarely used, there is no mode function." This is not correct. There exists {**modeest**}, a package specialized for mode estimation (see @pak-modeest).
+
+Harris therefore explains how to sort the variable to get the value most used as first item. This methods works always out of the box and does not need a specialized package.
+
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-chap02-mode-estimation}
+: Estimation of the mode
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### modeest::mfv()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-mode-mfv}
+: Most frequent value(s) in a given numerical vector
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: mode-mfv
+#| results: hold
+
+tr_f <- forcats::fct_count(transgender_pb$TRNSGNDR)
+tr_recoded <- forcats::fct_count(transgender_clean$TRNSGNDR) |> 
+    dplyr::rename(Recoded = "f")
+
+tr <- dplyr::full_join(tr_f, tr_recoded, 
+                       by = dplyr::join_by(n)) |> 
+    dplyr::relocate(n, .after = dplyr::last_col())
+
+
+glue::glue("Let's remember the frequencies of the TRNSGNDR variable")
+tr
+glue::glue("                                             ")
+glue::glue("#############################################")
+
+glue::glue("TRNSGDR variable not recoded and with NA's")
+transgender_pb |> 
+    dplyr::pull(TRNSGNDR) |> 
+    modeest::mfv()
+
+glue::glue("                                             ")
+glue::glue("#############################################")
+glue::glue("TRNSGDR variable not recoded with NA's")
+transgender_pb |> 
+    dplyr::pull(TRNSGNDR) |> 
+    modeest::mfv(na_rm = TRUE)
+
+glue::glue("                                             ")
+glue::glue("#############################################")
+glue::glue("TRNSGDR variable recoded without NA's")
+transgender_clean |> 
+    dplyr::pull(TRNSGNDR) |> 
+    modeest::mfv(na_rm = TRUE)
+```
+
+::::
+:::::
+
+The function `mfv()` stands for Most Frequent Value(s) and is reexported by {**modeest**} from {**statip**}. It returns all modes, e.g. highest values from a vector. For instance: `modeest::mfv(c("a", "a", "b", "c", "c"))` returns "`r modeest::mfv(c("a", "a", "b", "c", "c"))`". If you want just the first mode value use `modeest::mfv1()`.
+
+###### dplyr::arrange()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+Arrange data that most frequent value(s) are first row
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: mode-arrange
+#| results: hold
+
+glue::glue("Let's remember the frequencies of the TRNSGNDR variable")
+tr
+glue::glue("                                                  ")
+glue::glue("#############################################.    ")
+
+glue::glue("TRNSGDR variable with NA's")
+tr |> 
+    dplyr::arrange(desc(n)) |> 
+    dplyr::dplyr_row_slice(1)
+
+glue::glue("                                                  ")
+glue::glue("#############################################.    ")
+glue::glue("TRNSGDR variable without NA's")
+tr |> 
+    tidyr::drop_na() |> 
+    dplyr::arrange(desc(n)) |> 
+    dplyr::first()
+
+glue::glue("                                                  ")
+glue::glue("#############################################.    ")
+glue::glue("TRNSGDR variable without NA's: Just the mode value")
+tr |> 
+    tidyr::drop_na() |> 
+    dplyr::arrange(desc(n)) |> 
+    dplyr::first() |> 
+    dplyr::pull(n)
+
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+### Kurtosis {#sec-chap02-kurtosis}
+
+`r glossary("Kurtosis")` measures how many observations are in the tails of the distribution. If a distribution that looks bell-shaped has many observations in the tails it is more flat than a normal distribution and called `r glossary("platykurtic")`. On the other hand if a distribution has that looks bell-shaped has only a few observations in the tails it is more pointy than a normal distribution and called `r glossary("leptokurtic")`. A normal distribution is `r glossary("mesokurtic")`, e.g., it is neither platykurtic nor leptokurtic.
+
+Platykurtic and leptokurtic deviations from normality do not necessarily influence the `r glossary("Arithmetic Mean", "mean")`, since it will still be a good representation of the middle of the data if the distribution is symmetrical and not `r glossary("skewness", "skewed")`. However, platykurtic and leptokurtic distributions will have smaller and larger values of `r glossary("variance var", "variance")` and `r glossary("standard deviation")`, respectively, compared to a normal distribution. And this is a problem, as variance and standard deviation are not only used to quantify spread, but are also used in many of the common statistical tests.
+
+***
+
+$$
+kurtosis_{n} = \frac{1}{n}\sum_{i=1}^{n}(\frac{x_i - m_x}{s_x})^4
+$$ {#eq-chap02-kurtosis}
+
+
+- $n$: Sample size
+- $s_{x}$: Standard deviation
+- $m_{x}$: The mean of $x$
+- $x_{i}$: Each value of $x$
+
+***
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap02-kurtosis}
+: How to evaluate kurtosis?
+::::::
+:::
+::::{.my-assessment-container}
+
+
+|       kurtosis (z) value  | Compared to normal distribution |
+|:-------------------------:|---------------------------------|
+|       around 3             | Normal distribution (mesokurtic) |
+|       above  3             | Less observations in tails (leptokurtic, pointy) |
+|       below  3             | More observation in tails (platykurtic, flat) |
+: Kurtosis assessment {#tbl-chap02-kurtosis} {.striped .hover}
+
+
+::::
+:::::
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-chap02-check-kurtosis}
+: Check excess of kurtosis
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### no kurtosis
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-check-kurtosis-normal}
+: Checking kurtosis of hip girth distribution of 507 individuals
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-check-kurtosis-normal
+#| fig-cap: "Respondent's bitrochanteric diameter (hip girth) in centimeters of 507 individuals"
+#| cache: true
+#| results: hold
+
+## construct graph using my private function hist_dnorm()
+p <- hist_dnorm(bdims, bdims$bit_di)
+
+p +
+    ggplot2::labs(x = "respondent's bitrochanteric diameter (hip girth) in centimeters of 507 individuals")
+
+glue::glue("###################################################################")
+glue::glue("Kurtosis of pelvic breadth using `semTools::kurtosis()`")
+semTools::kurtosis(bdims$bit_di)
+glue::glue(" ")
+glue::glue("###################################################################")
+glue::glue("Kurtosis of pelvic breadth using `statpsych::test.kurtosis()`")
+statpsych::test.kurtosis(bdims$bit_di)
+
+```
+
+***
+
+The excessive kurtosis computed by default is $g_{2}$, the fourth standardized moment of the empirical distribution.
+
+***
+
+::: {.callout-tip style="color: darkgreen;"}
+## Kurtosis test of the pelvic breadth distribution
+
+Both functions `semTools::skew()` and `statpsych::test.skew()` claim that there is no excess kurtosis. The z-value is small and the p-value is high, so we don't have to reject the null: The probability is very high, that the data come from a normal distribution.
+
+
+:::
+
+::::
+:::::
+
+
+###### Platykurtic (flat)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-check-kurtosis-flat}
+: Checking kurtosis of shoulder breadth distribution of 507 individuals
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-check-kurtosis-flat
+#| fig-cap: "Bitrochanteric diameter (shoulder breadth) distribution of 507 individuals"
+#| cache: true
+#| results: hold
+
+## construct graph using my private function hist_dnorm()
+p <- hist_dnorm(bdims, bdims$bia_di)
+
+p +
+    ggplot2::labs(x = "bitrochanteric diameter distribution of 507 individuals")
+
+glue::glue("###################################################################")
+glue::glue("Kurtosis of bitrochanteric diameter using `semTools::kurtosis()`")
+semTools::kurtosis(bdims$bia_di)
+glue::glue(" ")
+glue::glue("###################################################################")
+glue::glue("Kurtosis of bitrochanteric diameter using `statpsych::test.kurtosis()`")
+statpsych::test.kurtosis(bdims$bia_di)
+
+```
+
+***
+
+::: {.callout-tip style="color: darkgreen;"}
+## Kurtosis test of the shoulder breadth distribution
+
+Both functions `semTools::skew()` and `statpsych::test.skew()` assert that there is excess kurtosis. The p-value is very low, so we have to reject the null and assuming the alternative: The probability is very high, that the data didn't come from a normal distribution.
+
+As the z-value is below 3 and the excess value is negative we have a platykurtic (= flat) distribution. Looking at the histogram shows that this a reasonable interpretation.
+:::
+
+
+
+::::
+:::::
+
+###### Leptokurtic (pointy)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-check-kurtosis-pointy}
+: Checking kurtosis of pelvis breadth distribution of 507 individuals
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-check-kurtosis-pointy
+#| fig-cap: "Respondent's biiliac diameter (pelvic breadth) in centimeters of 507 individuals"
+#| results: hold
+#| cache: true
+
+
+## construct graph using my private function hist_dnorm()
+p <- hist_dnorm(bdims, bdims$bii_di)
+
+p +
+    ggplot2::labs(x = "Respondent's biiliac diameter (pelvic breadth) in centimeters (men and women, N = 507)")
+
+glue::glue("###################################################################")
+glue::glue("Kurtosis of pelvis breadth distribution using `semTools::kurtosis()`")
+semTools::kurtosis(bdims$bii_di)
+glue::glue(" ")
+glue::glue("###################################################################")
+glue::glue("Kurtosis of pelvis breadth distribution using `statpsych::test.kurtosis()`")
+statpsych::test.kurtosis(bdims$bii_di)
+
+```
+
+
+***
+
+::: {.callout-tip style="color: darkgreen;"}
+## Kurtosis test of the height distribution
+
+Both functions `semTools::skew()` and `statpsych::test.skew()` assert that there is excess kurtosis. The p-value is very low, so we have to reject the null and assuming the alternative: The probability is very high, that the data didn't come from a normal distribution.
+
+As the z-value is above 3 and the excess value is positive we have a leptokurtic (= pointy) distribution. Looking at the histogram shows that this a reasonable interpretation.
+:::
+
+
+
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+:::::{.my-important}
+:::{.my-important-header}
+Using only {**semTools**} for testing skewness and kurtosis
+:::
+::::{.my-important-container}
+
+I haven't found any difference between the results of {**semTools**} and {**statpsych**} in the computation of skewness and kurtosis. As the  {**statpsych**} is more cumbersome, because of its 250,000 replications, I will stick with the {**semTools**} functions.
+::::
+:::::
+
+
+***
+
+
 
 ### Data management for numerical variable
 
@@ -1648,6 +2362,186 @@ Required features of a table
 
 
 ***
+
+## Packages introduced in this chapter
+
+### descr
+
+:::::{.my-resource}
+:::{.my-resource-header}
+descr: Descriptive Statistics
+:::
+::::{.my-resource-container}
+***
+
+::: {#pak-descr}
+
+***
+
+{**descr**}: [Descriptive Statistics](https://github.com/jalvesaq/descr)
+
+There is no logo available for {**descr**}
+
+
+Weighted frequency and contingency tables of categorical variables and of the comparison of the mean value of a numerical variable by the levels of a factor, and methods to produce xtable objects of the tables and to plot them. There are also functions to facilitate the character encoding conversion of objects, to quickly convert fixed width files into csv ones, and to export a data.frame to a text file with the necessary R and SPSS codes to reread the data. [@descr]
+
+Package for Descriptive Statistics
+:::
+
+***
+
+::::
+:::::
+
+
+### Hmisc
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Hmisc: Harrell Miscellaneous
+:::
+::::{.my-resource-container}
+***
+
+::: {#pak-Hmisc}
+
+***
+
+{**Hmisc**}: [Harrell Miscellaneous](https://hbiostat.org/r/hmisc/)
+
+There is no hexagon sticker available for {**Hmisc**}.
+
+The {**Hmisc**} has it names from Frank Harrell Jr. It contains many functions useful for 
+
+- data analysis, 
+- high-level graphics, 
+- utility operations, 
+- computing sample size and power, 
+- simulation, 
+- importing and annotating datasets,
+- imputing missing values, 
+- advanced table making, 
+- variable clustering,
+- character string manipulation, 
+- conversion of R objects to {{< latex >}} and HTML code,
+- recoding variables, 
+- caching, 
+- simplified parallel computing, 
+- encrypting and decrypting data using a safe workflow, 
+- general moving window statistical estimation, 
+- assistance in interpreting principal component analysis [@Hmisc]
+
+
+This is big variety of functions. In contrast to other packages that are specific directed to solve one problem {**Hmisc**} seems to be an all-in-one-solution.
+
+
+Hmisc package for miscellaneous functions for data analysis and related tasks
+
+:::
+
+To learn more about I should visit Frank E. Harrell's Jr [Hmisc start page](https://hbiostat.org/r/hmisc/). Especially his [book on R Workflow for Reproducible Data Analysis and Reporting](https://hbiostat.org/rflow/) seems to me very interesting!
+
+***
+
+::::
+:::::
+
+### modeest
+
+:::::{.my-resource}
+:::{.my-resource-header}
+modeest: Mode Estimation
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-modeest}
+
+***
+
+{**modeest**}: [Mode Estimation](https://github.com/paulponcet/modeest)
+
+There is no hexagon sticker available for {**modeest**}.
+
+
+The {**modeest**} package provides estimators of the mode of univariate unimodal (and sometimes multimodal) data and values of the modes of usual probability distributions.
+
+{**modeest**} is a package specialized for mode estimation. It implements many different mode estimation reported in scientific articles. There is a long [list of references](https://www.rdocumentation.org/packages/modeest/versions/2.4.0/topics/modeest) on different methods of mode estimations.
+
+{**modeest**} Package for Mode Estimation
+:::
+
+
+::::
+:::::
+
+
+### Report
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Report: Automated Reporting of Results and Statistical Models
+:::
+::::{.my-resource-container}
+***
+
+::: {#pak-report}
+
+***
+
+{**report**}: [Automated Reporting of Results and Statistical Models](URL to package)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap02/logoi/logo-report-min.png){width="176"}
+
+The primary goal of {**report**} is to bridge the gap between R’s output and the formatted results contained in your manuscript. It automatically produces reports of models and data frames according to best practices guidelines (e.g., APA’s style), ensuring standardization and quality in results reporting.
+
+:::
+
+Report Package for Automated Reporting of Results and Statistical Models
+:::
+
+***
+
+
+::::
+:::::
+
+### semTools
+
+:::::{.my-resource}
+:::{.my-resource-header}
+semTools:: Useful Tools for Structural Equation Modeling
+:::
+::::{.my-resource-container}
+
+
+***
+
+::: {#pak-semTools}
+
+***
+
+{**semTools**}: [Useful Tools for Structural Equation Modeling](https://github.com/simsem/semTools/wiki)
+
+(For {**semTools**} there is currently no logo available.)
+
+Provides tools for structural equation modeling, many of which extend the {**lavaan**} package; for example, to pool results from multiple imputations, probe latent interactions, or test measurement invariance.
+***
+
+{**semTools**}: A Package for Useful Tools for Structural Equation Modeling
+:::
+
+This is a very specialized package. I believe I will not use it at the moment besides the function `semTools::skew()` and `semTools::kurtosis()`.
+
+***
+
+
+::::
+:::::
+
+
 
 ## Glossary
 
