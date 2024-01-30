@@ -41,7 +41,7 @@ during reading the book.
     {@sec-chap01-get-gss-data}
 -   How to work with labelled data? {@sec-chap01-labelled-data}
 -   Reviewing different packages for creating tables (@sec-chap01-review-table-packages)
-- Introducing {**gtsummary**}, a packages for presentation-ready data summary and analytic result tables (@sec-chap01-intro-gtsummary)
+- Introducing {**gtsummary**}, a packages for presentation-ready data summary and analytic result tables (see: @pak-gtsummary @sec-chap01-experiments-gtsummary)
 - Developing timeline graph (1973-2022) about opinions of respondents from `r glossary("GSS")` surveys about legalizing marijuana (@sec-chap01-grass-timeline)
 :::
 :::
@@ -136,9 +136,9 @@ R has many possibilities to import data from other statistical packages.
 
 ### Some packages for import data sources
 
--   {**readr**}: Read Rectangular Text Data, part of {**tidyverse**}
+-   {**readr**}: Read Rectangular Text Data (see: @pak-readr), it is part of {**tidyverse**}
 -   {**vroom**}: Read and Write Rectangular Text Data Quickly
--   {**haven**}: Import and Export 'SPSS', 'Stata' and 'SAS' Files
+-   {**haven**}: Import and Export 'SPSS', 'Stata' and 'SAS' Files (see: @pak-haven)
 -   {**foreign**}: Read Data Stored by 'Minitab', 'S', 'SAS', 'SPSS',
     'Stata', 'Systat', 'Weka', 'dBase', ...
 -   {**readxl**}: Read Excel Files
@@ -471,221 +471,20 @@ saw in the help file that
 > switch()](https://dplyr.tidyverse.org/reference/case_match.html))
 :::
 :::
-:::
-:::
-
-### Short description of some important packages
 
 
-@lst-repl-data-fig-book used some important package that I haven't profiled until now:
+@lst-repl-data-fig-book used some important packages:
 
-I used {**dplyr**} in the above code heavily. {**dplyr**} is part of the {**tidyverse**} core collection, together with {**forcats**}, {**ggplot2**}, {**readr**}, {**tibble**}, {**tidyr**}, {**string**} and {**purrr**}. The last two packages ({**string**} and {**purrr**}) I will profile when I use them the first time and {**forcats**} that I have mentioned in the comment to @lst-repl-data-fig-book I have outlined elsewhere (see: @pak-forcats). 
+I used {**dplyr**} in the above code heavily (see: @pak-dplyr). {**dplyr**} is part of the {**tidyverse**} core collection (see: @pak-tidyverse), together with {**forcats**} (see: @pak-forcats), {**ggplot2**} (see @pak-ggplot2), {**readr**} (see: @pak-ggplot2), {**tibble**} (see: @pak-tibble), {**tidyr**} (see: @pak-tidyr), {**string**} and {**purrr**}. 
 
-#### tidyverse package
-
-***
-
-::: {#pak-tidyverse}
-
-***
-
-{**tidyverse**}: [Easily Install and Load the 'Tidyverse'](https://www.tidyverse.org/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-tidyverse-min.png){width="176"}
-
-The {**tidyverse**} is an opinionated [collection of R packages](https://www.tidyverse.org/packages/) designed for data science. All packages share an underlying design philosophy, grammar, and data structures [@tidyverse]. Read more about the philosophy and purpose: [The tidy tools manifesto](https://tidyverse.tidyverse.org/articles/manifesto.html) and [Welcome to the {**tidyverse**}](https://tidyverse.tidyverse.org/articles/paper.html) 
+The last two packages ({**string**} and {**purrr**}) I will profile when I use them the first time.
 
 :::
-
-In this book I am not going to load {**tidyverse**} with all its packages. Instead I am using the `<package>::<function>` format to access the commands.
-
-
-
-Metapackage: Easily Install and Load the 'Tidyverse'
 :::
 
 
-***
 
-#### dplyr package
 
-***
-
-::: {#pak-dplyr}
-
-***
-
-{**package**}: [A Grammar of Data Manipulation](https://dplyr.tidyverse.org/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-dplyr-min.png){width="176"}
-
-{**dplyr**} is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges:
-- mutate() adds new variables that are functions of existing variables
-- select() picks variables based on their names.
-- filter() picks cases based on their values.
-- summarise() reduces multiple values down to a single summary.
-- arrange() changes the ordering of the rows. [@dplyr]
-
-:::
-
-These all combine naturally with group_by() which allows you to perform any operation “by group”. You can learn more about them in [vignette("dplyr")](https://dplyr.tidyverse.org/articles/dplyr.html). As well as these single-table verbs, dplyr also provides a variety of two-table verbs, which you can learn about in [vignette("two-table")](https://dplyr.tidyverse.org/articles/two-table.html). [@dplyr]
-
-
-Package for Data Manipulation
-:::
-
-<Other text not included in the reference>
-
-***
-
-#### forcats package
-
-***
-
-::: {#pak-forcats}
-
-***
-
-{**forcats**}: [Tools for Working with Categorical Variables (Factors)](https://forcats.tidyverse.org/)
-
-{**forcats**} provide a suite of useful tools that solve common problems with factors.
-"Forcats" is an anagram of "factors" and part of the {**tidyverse**} suite of packages.
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-forcats-min.png){width="176"}
-
-(1) reordering factor levels
-    - moving specified levels to front, 
-    - ordering by first appearance, 
-    - reversing, and 
-    - randomly shuffling
-(2) tools for modifying factor levels
-    - collapsing rare levels into other, 
-    - 'anonymizing', and
-    - manually 'recoding'
-:::
-
-forcats: A Package with Tools for Working with Categorical Variables
-
-:::
-
-***
-
-
-
-#### ggplot2 package
-
-***
-
-::: {#pak-ggplot2}
-
-***
-
-{**ggplot2**}: [Create Elegant Data Visualisations Using the Grammar of Graphics](https://ggplot2.tidyverse.org/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-ggplot2-min.png){width="176"}
-
-{**ggplot2**} is a system for declaratively creating graphics, based on [The Grammar of Graphics](https://link.springer.com/book/10.1007/0-387-28695-0). You provide the data, tell {**ggplot2**} how to map variables to aesthetics, what graphical primitives to use, and it takes care of the details. [@ggplot2]
-
-:::
-
-
-Package for Creating Data Visualisations
-:::
-
-***
-
-
-
-#### readr package
-
-***
-
-::: {#pak-readr}
-
-***
-
-{**readr**}: [Read Rectangular Text Data](https://readr.tidyverse.org/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-readr-min.png){width="176"}
-
-The goal of readr is to provide a fast and friendly way to read rectangular data from delimited files, such as comma-separated values (CSV) and tab-separated values (TSV). It is designed to parse many types of data found in the wild, while providing an informative problem report when parsing leads to unexpected results. [@readr] 
-
-
-:::
-
-{**readr**} supports the following formats:
-
-- read_csv(): comma-separated values (CSV)
-- read_tsv(): tab-separated values (TSV)
-- read_csv2(): semicolon-separated values with , as the decimal mark
-- read_delim(): delimited files (CSV and TSV are important special cases)
-- read_fwf(): fixed-width files
-- read_table(): whitespace-separated files
-- read_log(): web log files
-
-Package for Reading Rectangular Data
-
-:::
-
-
-***
-
-
-#### tibble package
-
-***
-
-::: {#pak-tibble}
-
-***
-
-{**tibble**}: [Simple Data Frames](https://tibble.tidyverse.org/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-tibble-min.png){width="176"}
-
-A tibble, or `tbl_df`, is a modern reimagining of the data.frame, keeping what time has proven to be effective, and throwing out what is not. Tibbles are data.frames that are lazy and surly: they do less (i.e. they don’t change variable names or types, and don’t do partial matching) and complain more (e.g. when a variable does not exist). This forces you to confront problems earlier, typically leading to cleaner, more expressive code. Tibbles also have an enhanced `print()` method which makes them easier to use with large datasets containing complex objects. [@tibble]
-
-:::
-
-
-Package for Creating Simple Data Frames
-:::
-
-***
-
-
-
-#### tidyr package 
-
-***
-
-::: {#pak-tidyr}
-
-***
-
-{**tidyr**}: [Tidy Messy Data](https://tidyr.tidyverse.org/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-tidyr-min.png){width="176"}
-
-The goal of tidyr is to help you create tidy data. Tidy data describes a standard way of storing data that is used wherever possible throughout the tidyverse. If you ensure that your data is tidy, you’ll spend less time fighting with the tools and more time working on your analysis. [@tidyr] Tidy data is data where:
-- Every column is a variable.
-- Every row is an observation.
-- Every cell is a single value.
-
-:::
-
-Packages for Tidying Messy Data
-:::
-
-
-***
 
 
 
@@ -1143,25 +942,10 @@ skimr::skim(nhanes_2013_ch1)
 
 Look at the data with `utils::str()` and `skimr::skim()`
 :::
+
+As one of the packages for displaying summaries I am using the {**skimr**} package (see @pak-skimr).
 ::::
 :::::
-
-::: {#pak-skimr}
-
-{**skimr**}: [Compact and Flexible Summaries of Data](https://docs.ropensci.org/skimr/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-skimr-min.png){width="176"}
-
-A simple to use summary function that can be used with pipes and displays nicely in the console. The default summary statistics may be modified by the user as can the default formatting.  Support for data frames and vectors is included, and users can implement their own skim methods for specific object types as described in a vignette. Default summaries include support for inline spark graphs. Instructions for managing these on specific operating systems are given in the [Using skimr](https://docs.ropensci.org/skimr/articles/skimr.html) vignette and the [README](https://github.com/ropensci/skimr/#skimr-).
-
-:::
-A Package for Compact and Flexible Summaries of Data
-:::
-
-***
-
-At the moment I am just using the `skimr::skim()` function. I believe most of the many other functions for adaption are oriented to developers. But still: I need to have a closer look to this package.
 
 
 
@@ -1815,41 +1599,14 @@ the GSS website, so that I could work on interesting research questions
 myself.
 
 I have found several resources helping to work with the
-`r glossary("GSS")`.
+`r glossary("GSS")`. The most important one is the {**gssr**} package (see: @pak-gssr)
 
 ::: my-resource
 ::: my-resource-header
-Working with the GSS
+asdfree: Analyze Survey Data for Free
 :::
 
 ::: my-resource-container
-## gssr {.unnumbered}
-
-[GSSR Package](https://kjhealy.github.io/gssr/): The General Social
-Survey Cumulative Data (1972-2022) and Panel Data files packaged for
-easy use in R. {**gssr**} is a data package, developed and maintained by
-[Kieran Healy](https://kieranhealy.org/), the author of [Data
-Visualization](https://kieranhealy.org/publications/dataviz/). The
-package bundles several datasets into a convenient format. Because of
-its large size {**gssr**} is not hosted on CRAN but as a [GitHub
-repository](https://github.com/kjhealy/gssr/).
-
-Instead of browsing and examining the complex dataset with the [GSS Data
-Explorer](https://gssdataexplorer.norc.org/) or [download datasets
-directly](https://gss.norc.org/Get-The-Data) from the The National
-Opinion Research Center ([NORC](http://norc.org/)) you can now just work
-inside R. The current package 0.4 (see: [gssr
-Update](https://kieranhealy.org/blog/archives/2023/12/02/gssr-update/))
-provides the GSS Cumulative Data File (1972-2022), three GSS Three Wave
-Panel Data Files (for panels beginning in 2006, 2008, and 2010,
-respectively), and the 2020 panel file.
-
-Version 0.40 also integrates survey code book information about
-variables directly into R’s help system, allowing them to be accessed
-via the help browser or from the console with ?, as if they were
-functions or other documented objects.
-
-## asdfree {.unnumbered}
 
 [Analyze Survey Data for Free](http://asdfree.com/) is a bookdown
 website by [Anthony
@@ -1858,10 +1615,8 @@ currently 64 locations to grab free survey data. As expected it features
 also a [description of the
 GSS](http://asdfree.com/general-social-survey-gss.html) including
 analysis examples with the {**survey**} package and --- especially
-important for my purpose here --- {**lodown**}, a [package on GitHub]()
-to facilitate data imports from many sites with survey data. (For
-details see the section
-[Prerequisites](http://asdfree.com/prerequisites.html))
+important for my purpose here --- {**lodown**}, a [package on GitHub](https://github.com/ajdamico/lodown) that is not maintained anymore.
+
 :::
 :::
 
@@ -2191,7 +1946,7 @@ The result is a pure `.rds` file where the columns are still of class
 ###### gssr
 
 Finally I will download the 2016 data with the help of the {**gssr**}
-package. This takes some minutes. At first I missed the vignette, so I
+package (see @pak-gssr). This takes some minutes. At first I missed the vignette, so I
 had to download the package again with the additional argument
 `build_vignettes = TRUE`. Whereas the vignette explains how to analyse
 data the GitHub is very helpful how to get the desired data.
@@ -2279,120 +2034,6 @@ How to work with labelled data?
 :::
 
 ::: my-resource-container
-
-::: {#pak-haven}
-{**haven**}: [Import and Export 'SPSS', 'Stata' and 'SAS'
-Files](https://haven.tidyverse.org/index.html)
-
-{**haven**} enables R to read and write various data formats used by
-other statistical packages. Currently it supports
-[SAS](https://www.sas.com/en_us/home.html),
-[SPSS](https://www.ibm.com/spss) and [STATA](https://www.stata.com/).
-{**haven**} output object has four important features:
-
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-haven-min.png){width="176"}
-
-(1) It creates `tibbles::tibble()` which a better print method for very
-    long and very wide files.
-(2) Dates and times are converted to R date/time classes.
-(3) Character vectors are not converted to factors.
-(4) Value labels are translated into a new `haven::labelled()` class,
-    which preserves the original semantics and can easily be coerced to
-    factors with `haven::as_factor()`. Special missing values are
-    preserved. See details in the vignette [Conversion
-    semantics](https://haven.tidyverse.org/articles/semantics.html).
-:::
-
-haven: A Package for Import and Export of 'SPSS', 'Stata' and 'SAS'
-Files
-:::
-
-I am here interested especially in the fourth feature.
-
-------------------------------------------------------------------------
-
-::: {#pak-labelled}
-{**labelled**}: [Manipulating Labelled
-Data](https://larmarange.github.io/labelled/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-labelled-min.png){width="176"}
-
-Work with labelled data imported from [IBM
-SPSS](https://www.ibm.com/spss) or [STATA](https://www.stata.com/) with
-{**haven**} or {**foreign**}. This package provides useful functions to
-deal with "haven_labelled" and "haven_labelled_spss" classes introduced
-by {**haven**} package. (With the free [gnu
-PSPP](https://www.gnu.org/software/pspp/) exists also a SPSS like open
-source version.) See details in the vignette [Introduction to
-labelled](https://larmarange.github.io/labelled/articles/intro_labelled.html)
-and the [GitHub website for
-labelled](https://larmarange.github.io/labelled/). There are other
-vignettes as well and a [cheat sheet as PDF for
-download](https://github.com/larmarange/labelled/raw/main/cheatsheet/labelled_cheatsheet.pdf).
-
-:::
-
-labelled: A Package for Manipulating Labelled Data
-:::
-------------------------------------------------------------------------
-
-
-::: {#pak-sjlabelled}
-{**sjlabelled**}: [Labelled Data Utility
-Functions](https://strengejacke.github.io/sjlabelled/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-sjlabelled-min.png){width="176"}
-
-Basically, this package covers reading and writing data between other
-statistical packages (like ‘SPSS’) and R, based on the haven and foreign
-packages; hence, this package also includes functions to make working
-with labelled data easier. This includes easy ways to get, set or change
-value and variable label attributes, to convert labelled vectors into
-factors or numeric (and vice versa), or to deal with multiple declared
-missing values.
-:::
-
-The prefix `sj` in {**sjlabelled**} (= in German Strenge Jacke, "strict
-jacket") refers to other work of [Daniel
-Lüdecke](https://www.uke.de/kliniken-institute/institute/medizinische-soziologie/team/profil_daniel_luedecke_ims.html),
-who has developed many R packages. All the `sj`-packages support labelled data.
-
-sjlabelled: A Package for Labelled Data Utility Functions
-
-:::
-
-***
-
-His packages are divided in two approaches:
-
-1.  Most packages are part pf the project
-    [EasyStats](https://easystats.github.io/easystats/), that provides
-    with 11 packages "An R Framework for Easy Statistical Modeling,
-    Visualization, and Reporting", similar to the {**tidyverse**}
-    collection. The {**easystats**} collection is orientated more to
-    statistics, whereas {**tidyverse**} is more directed to data
-    science.
-2.  The other line of package development supports labelled data in
-    combination with different R task like
-    -   [Data and Variable Transformation
-        Functions](https://cran.r-project.org/web/packages/sjmisc/index.html)
-        {**sjmisc**},
-    -   [Data Visualization for Statistics in Social
-        Science](https://cran.r-project.org/web/packages/sjPlot/index.html)
-        {**sjPlot**} and a
-    -   [Collection of Convenient Functions for Common Statistical
-        Computations](https://cran.r-project.org/web/packages/sjstats/index.html)
-        {**sjStats**}. -Additionally there exists {**sjtable2df**} a
-        package to [Convert 'sjPlot' HTML-Tables to R
-        'data.frame'](https://cran.r-project.org/web/packages/sjtable2df/index.html).
-
-
-
-------------------------------------------------------------------------
 
 [Survey Research Datasets and
 R](https://socialresearchcentre.github.io/r_survey_datasets/)
@@ -3217,7 +2858,7 @@ My conclusion to {**flextable**}
 
 ###### gt
 
- [{**gt**}](https://gt.rstudio.com/) & [{**gtsummary**}](https://www.danieldsjoberg.com/gtsummary/index.html)
+ [{**gt**}](https://gt.rstudio.com/)
  
 {**gt**} stands for "grammar of tables". It aims to do for tables what {**ggplot2**} did for graphics. ([Hadley Wickham on X](https://twitter.com/hadleywickham/status/1247997744469295104?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1247997744469295104%7Ctwgr%5Edb446e88f95e2f0e4a5e791da84f82d626ceee1c%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fcdn.embedly.com%2Fwidgets%2Fmedia.html%3Ftype%3Dtext2Fhtmlkey%3Da19fcc184b9711e1b4764040d3dc5c07schema%3Dtwitterurl%3Dhttps3A%2F%2Ftwitter.com%2Fhadleywickham%2Fstatus%2F1247997744469295104image%3D))
  
@@ -3274,7 +2915,7 @@ My conclusion to {**gtsummary**}
 :::
 ::::{.my-note-container}
 
-I have tried out {**gtsummary**} and I am enthusiastic about it! I wrote an introduction with some examples (@sec-chap01-intro-gtsummary) Now that I understand how it works I will definitely use it. (By the way: Besides the extensive documentation I found that the most effective introduction for me was watching the [Youtube video presentation](https://www.youtube.com/watch?v=tANo9E1SYJE) by the developer Daniel D. Sjoberg).
+I have tried out {**gtsummary**} and I am enthusiastic about it! I wrote an introduction with some examples (@sec-chap01-experiments-gtsummary) Now that I understand how it works I will definitely use it. (By the way: Besides the extensive documentation I found that the most effective introduction for me was watching the [Youtube video presentation](https://www.youtube.com/watch?v=tANo9E1SYJE) by the developer Daniel D. Sjoberg).
 
 {{< video https://www.youtube.com/watch?v=tANo9E1SYJE >}}
 
@@ -3443,36 +3084,7 @@ and
 
 As a consequence of my table packages review I experimented with the {**gtsummary**}. I wanted to create a table where I have information by the variables grass, age in four categories and sex with all their levels in absolute numbers and in percents.
 
-### Introduction to the gtsummary package {#sec-chap01-intro-gtsummary}
-
-::: {#pak-gtsummary}
-
-{**gtsummary**}: [Presentation-Ready Data Summary and Analytic Result Tables](https://www.danieldsjoberg.com/gtsummary/)
-
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap01/logoi/logo-gtsummary-min.png){width="176"}
-
-Creates presentation-ready tables summarizing data sets, regression models, and more. The code to create the tables is concise and highly customizable. Data frames can be summarized with any function, e.g. mean(), median(), even user-written functions. Regression models are summarized and include the reference rows for categorical variables. Common regression models, such as logistic regression and Cox proportional hazards regression, are automatically identified and the tables are pre-filled with appropriate column headers.
-
-
-
-:::
-
-- Summarize data frames or tibbles easily in R. Perfect for creating a `r glossary("Table 1")`. 
-- Summarize regression models in R and include reference rows for categorical variables. 
-- Customize {**gtsummary**} tables using a growing list of formatting/styling functions. 
-- Report statistics inline from summary tables and regression summary tables in R markdown. Make your reports completely reproducible!
-
-By leveraging {**broom**}, {**gt**}, and {**labelled**} packages, {**gtsummary**} creates beautifully formatted, ready-to-share summary and result tables in a single line of R code!
-
-Package for Presentation-Ready Data Summary and Analytic Result Tables
-
-:::
-
-
-
-***
-
+### Experiments with the gtsummary package {#sec-chap01-experiments-gtsummary}
 
 :::::{.my-experiment}
 :::{.my-experiment-header}
@@ -4016,16 +3628,13 @@ But {**gtsummary**} warned me to see that this is only "an intermediate data str
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap01-gss-grass-prepare-data}
-: Numbered R Code Title
+: Prepare data for timeline graph
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
 #| label: gss-grass-prepare-data
-
-
-
 
 grass_legal <- 
     base::readRDS("data-clean/chap01_gss_grass_legal_clean.rds")
@@ -4051,7 +3660,7 @@ grass_legal2 <- grass_legal |>
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap01-gss-grass-timeline}
-: Numbered R Code Title
+: Timeline of respondents opinion about legalizing marijuana (1973-2022)
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -4092,6 +3701,593 @@ grass_legal2 |>
 
 :::
 
+
+::::
+:::::
+
+
+## Packages introduced in this chapter
+
+### dplyr
+
+:::::{.my-resource}
+:::{.my-resource-header}
+dplyr:: A Grammar of Data Manipulation
+:::
+::::{.my-resource-container}
+
+
+
+***
+
+::: {#pak-dplyr}
+
+***
+
+{**package**}: [A Grammar of Data Manipulation](https://dplyr.tidyverse.org/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-dplyr-min.png){width="176"}
+
+{**dplyr**} is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges:
+- mutate() adds new variables that are functions of existing variables
+- select() picks variables based on their names.
+- filter() picks cases based on their values.
+- summarise() reduces multiple values down to a single summary.
+- arrange() changes the ordering of the rows. [@dplyr]
+
+:::
+
+These all combine naturally with group_by() which allows you to perform any operation “by group”. You can learn more about them in [vignette("dplyr")](https://dplyr.tidyverse.org/articles/dplyr.html). As well as these single-table verbs, dplyr also provides a variety of two-table verbs, which you can learn about in [vignette("two-table")](https://dplyr.tidyverse.org/articles/two-table.html). [@dplyr]
+
+
+Package for Data Manipulation
+:::
+
+
+
+
+
+::::
+:::::
+
+### forcats
+
+:::::{.my-resource}
+:::{.my-resource-header}
+forcats: Tools for Working with Categorical Variables
+:::
+::::{.my-resource-container}
+
+
+
+***
+
+::: {#pak-forcats}
+
+***
+
+{**forcats**}: [Tools for Working with Categorical Variables (Factors)](https://forcats.tidyverse.org/)
+
+{**forcats**} provide a suite of useful tools that solve common problems with factors.
+"Forcats" is an anagram of "factors" and part of the {**tidyverse**} suite of packages.
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-forcats-min.png){width="176"}
+
+(1) reordering factor levels
+    - moving specified levels to front, 
+    - ordering by first appearance, 
+    - reversing, and 
+    - randomly shuffling
+(2) tools for modifying factor levels
+    - collapsing rare levels into other, 
+    - 'anonymizing', and
+    - manually 'recoding'
+:::
+
+forcats: A Package with Tools for Working with Categorical Variables
+
+:::
+
+***
+
+
+::::
+:::::
+
+### ggplot2
+
+:::::{.my-resource}
+:::{.my-resource-header}
+ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics
+:::
+::::{.my-resource-container}
+
+
+***
+
+::: {#pak-ggplot2}
+
+***
+
+{**ggplot2**}: [Create Elegant Data Visualisations Using the Grammar of Graphics](https://ggplot2.tidyverse.org/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-ggplot2-min.png){width="176"}
+
+{**ggplot2**} is a system for declaratively creating graphics, based on [The Grammar of Graphics](https://link.springer.com/book/10.1007/0-387-28695-0). You provide the data, tell {**ggplot2**} how to map variables to aesthetics, what graphical primitives to use, and it takes care of the details. [@ggplot2]
+
+:::
+
+
+Package for Creating Data Visualisations
+:::
+
+***
+
+
+::::
+:::::
+
+
+### gssr
+
+:::::{.my-resource}
+:::{.my-resource-header}
+gssr: US General Social Survey (GSS) Data for R
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-gssr}
+
+***
+
+{**gssr**}: [US General Social Survey (GSS) Data for R](https://kjhealy.github.io/gssr/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-gssr-min.png){width="376"}
+
+[GSSR Package](https://kjhealy.github.io/gssr/): The General Social
+Survey Cumulative Data (1972-2022) and Panel Data files packaged for
+easy use in R. {**gssr**} is a data package, developed and maintained by
+[Kieran Healy](https://kieranhealy.org/), the author of [Data
+Visualization](https://kieranhealy.org/publications/dataviz/). The
+package bundles several datasets into a convenient format. Because of
+its large size {**gssr**} is not hosted on CRAN but as a [GitHub
+repository](https://github.com/kjhealy/gssr/).
+
+:::
+
+Instead of browsing and examining the complex dataset with the [GSS Data
+Explorer](https://gssdataexplorer.norc.org/) or [download datasets
+directly](https://gss.norc.org/Get-The-Data) from the The National
+Opinion Research Center ([NORC](http://norc.org/)) you can now just work
+inside R. The current package 0.4 (see: [gssr
+Update](https://kieranhealy.org/blog/archives/2023/12/02/gssr-update/))
+provides the GSS Cumulative Data File (1972-2022), three GSS Three Wave
+Panel Data Files (for panels beginning in 2006, 2008, and 2010,
+respectively), and the 2020 panel file.
+
+Version 0.40 also integrates survey code book information about
+variables directly into R’s help system, allowing them to be accessed
+via the help browser or from the console with ?, as if they were
+functions or other documented objects.
+
+Package for Getting the US General Social Survey (GSS) Data More Easily
+
+:::
+***
+
+
+::::
+:::::
+
+### gtsummary
+
+:::::{.my-resource}
+:::{.my-resource-header}
+
+gtsummary: Presentation-Ready Data Summary and Analytic Result Tables
+
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-gtsummary}
+
+***
+
+{**gtsummary**}: [Presentation-Ready Data Summary and Analytic Result Tables](https://www.danieldsjoberg.com/gtsummary/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-gtsummary-min.png){width="176"}
+
+Creates presentation-ready tables summarizing data sets, regression models, and more. The code to create the tables is concise and highly customizable. Data frames can be summarized with any function, e.g. mean(), median(), even user-written functions. Regression models are summarized and include the reference rows for categorical variables. Common regression models, such as logistic regression and Cox proportional hazards regression, are automatically identified and the tables are pre-filled with appropriate column headers.
+
+
+
+:::
+
+- Summarize data frames or tibbles easily in R. Perfect for creating a `r glossary("Table 1")`. 
+- Summarize regression models in R and include reference rows for categorical variables. 
+- Customize {**gtsummary**} tables using a growing list of formatting/styling functions. 
+- Report statistics inline from summary tables and regression summary tables in R markdown. Make your reports completely reproducible!
+
+By leveraging {**broom**}, {**gt**}, and {**labelled**} packages, {**gtsummary**} creates beautifully formatted, ready-to-share summary and result tables in a single line of R code!
+
+Package for Presentation-Ready Data Summary and Analytic Result Tables
+
+:::
+
+
+
+***
+
+
+
+::::
+:::::
+
+
+
+### haven
+
+:::::{.my-resource}
+:::{.my-resource-header}
+haven: Import and Export 'SPSS', 'Stata' and 'SAS' Files
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-haven}
+
+***
+
+{**haven**}: [Import and Export 'SPSS', 'Stata' and 'SAS'
+Files](https://haven.tidyverse.org/index.html)
+
+{**haven**} enables R to read and write various data formats used by
+other statistical packages. Currently it supports
+[SAS](https://www.sas.com/en_us/home.html),
+[SPSS](https://www.ibm.com/spss) and [STATA](https://www.stata.com/).
+{**haven**} output object has four important features:
+
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-haven-min.png){width="176"}
+
+(1) It creates `tibbles::tibble()` which a better print method for very
+    long and very wide files.
+(2) Dates and times are converted to R date/time classes.
+(3) Character vectors are not converted to factors.
+(4) Value labels are translated into a new `haven::labelled()` class,
+    which preserves the original semantics and can easily be coerced to
+    factors with `haven::as_factor()`. Special missing values are
+    preserved. See details in the vignette [Conversion
+    semantics](https://haven.tidyverse.org/articles/semantics.html).
+:::
+
+haven: A Package for Import and Export of 'SPSS', 'Stata' and 'SAS'
+Files
+:::
+
+I am here interested especially in the fourth feature.
+
+::::
+:::::
+
+### labelled
+
+:::::{.my-resource}
+:::{.my-resource-header}
+labelled: Manipulating Labelled Data
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-labelled}
+
+***
+{**labelled**}: [Manipulating Labelled
+Data](https://larmarange.github.io/labelled/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-labelled-min.png){width="176"}
+
+Work with labelled data imported from [IBM
+SPSS](https://www.ibm.com/spss) or [STATA](https://www.stata.com/) with
+{**haven**} or {**foreign**}. This package provides useful functions to
+deal with "haven_labelled" and "haven_labelled_spss" classes introduced
+by {**haven**} package. (With the free [gnu
+PSPP](https://www.gnu.org/software/pspp/) exists also a SPSS like open
+source version.) See details in the vignette [Introduction to
+labelled](https://larmarange.github.io/labelled/articles/intro_labelled.html)
+and the [GitHub website for
+labelled](https://larmarange.github.io/labelled/). There are other
+vignettes as well and a [cheat sheet as PDF for
+download](https://github.com/larmarange/labelled/raw/main/cheatsheet/labelled_cheatsheet.pdf).
+
+:::
+
+labelled: A Package for Manipulating Labelled Data
+:::
+
+
+::::
+:::::
+
+
+### sjlabelled
+
+:::::{.my-resource}
+:::{.my-resource-header}
+sjlabelled; 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-sjlabelled}
+
+***
+
+{**sjlabelled**}: [Labelled Data Utility
+Functions](https://strengejacke.github.io/sjlabelled/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-sjlabelled-min.png){width="176"}
+
+Basically, this package covers reading and writing data between other
+statistical packages (like ‘SPSS’) and R, based on the haven and foreign
+packages; hence, this package also includes functions to make working
+with labelled data easier. This includes easy ways to get, set or change
+value and variable label attributes, to convert labelled vectors into
+factors or numeric (and vice versa), or to deal with multiple declared
+missing values.
+:::
+
+The prefix `sj` in {**sjlabelled**} (= in German Strenge Jacke, "strict
+jacket") refers to other work of [Daniel
+Lüdecke](https://www.uke.de/kliniken-institute/institute/medizinische-soziologie/team/profil_daniel_luedecke_ims.html),
+who has developed many R packages. All the `sj`-packages support labelled data.
+
+sjlabelled: A Package for Labelled Data Utility Functions
+
+:::
+
+***
+
+His packages are divided in two approaches:
+
+1.  Most packages are part pf the project
+    [EasyStats](https://easystats.github.io/easystats/), that provides
+    with 11 packages "An R Framework for Easy Statistical Modeling,
+    Visualization, and Reporting", similar to the {**tidyverse**}
+    collection. The {**easystats**} collection is orientated more to
+    statistics, whereas {**tidyverse**} is more directed to data
+    science.
+2.  The other line of package development supports labelled data in
+    combination with different R task like
+    -   [Data and Variable Transformation
+        Functions](https://cran.r-project.org/web/packages/sjmisc/index.html)
+        {**sjmisc**},
+    -   [Data Visualization for Statistics in Social
+        Science](https://cran.r-project.org/web/packages/sjPlot/index.html)
+        {**sjPlot**} and a
+    -   [Collection of Convenient Functions for Common Statistical
+        Computations](https://cran.r-project.org/web/packages/sjstats/index.html)
+        {**sjStats**}. -Additionally there exists {**sjtable2df**} a
+        package to [Convert 'sjPlot' HTML-Tables to R
+        'data.frame'](https://cran.r-project.org/web/packages/sjtable2df/index.html).
+
+
+
+
+
+::::
+:::::
+
+
+### readr 
+
+:::::{.my-resource}
+:::{.my-resource-header}
+readr: Read Rectangular Text Data
+:::
+::::{.my-resource-container}
+
+
+***
+
+::: {#pak-readr}
+
+***
+
+{**readr**}: [Read Rectangular Text Data](https://readr.tidyverse.org/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-readr-min.png){width="176"}
+
+The goal of readr is to provide a fast and friendly way to read rectangular data from delimited files, such as comma-separated values (CSV) and tab-separated values (TSV). It is designed to parse many types of data found in the wild, while providing an informative problem report when parsing leads to unexpected results. [@readr] 
+
+
+:::
+
+{**readr**} supports the following formats:
+
+- read_csv(): comma-separated values (CSV)
+- read_tsv(): tab-separated values (TSV)
+- read_csv2(): semicolon-separated values with , as the decimal mark
+- read_delim(): delimited files (CSV and TSV are important special cases)
+- read_fwf(): fixed-width files
+- read_table(): whitespace-separated files
+- read_log(): web log files
+
+Package for Reading Rectangular Data
+
+:::
+
+
+***
+
+
+
+::::
+:::::
+
+### skimr
+
+
+
+:::::{.my-resource}
+:::{.my-resource-header}
+skimr: Compact and Flexible Summaries of Data
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-skimr}
+
+***
+
+{**skimr**}: [Compact and Flexible Summaries of Data](https://docs.ropensci.org/skimr/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-skimr-min.png){width="176"}
+
+A simple to use summary function that can be used with pipes and displays nicely in the console. The default summary statistics may be modified by the user as can the default formatting.  Support for data frames and vectors is included, and users can implement their own skim methods for specific object types as described in a vignette. Default summaries include support for inline spark graphs. Instructions for managing these on specific operating systems are given in the [Using skimr](https://docs.ropensci.org/skimr/articles/skimr.html) vignette and the [README](https://github.com/ropensci/skimr/#skimr-).
+
+
+:::
+
+At the moment I am just using the `skimr::skim()` function. I believe most of the many other functions for adaption are oriented to developers. But still: I need to have a closer look to this package.
+
+
+A Package for Compact and Flexible Summaries of Data
+:::
+
+***
+::::
+:::::
+
+
+
+
+
+
+
+### tibble 
+
+:::::{.my-resource}
+:::{.my-resource-header}
+tibble: Simple Data Frames
+:::
+::::{.my-resource-container}
+
+
+***
+
+::: {#pak-tibble}
+
+***
+
+{**tibble**}: [Simple Data Frames](https://tibble.tidyverse.org/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-tibble-min.png){width="176"}
+
+A tibble, or `tbl_df`, is a modern reimagining of the data.frame, keeping what time has proven to be effective, and throwing out what is not. Tibbles are data.frames that are lazy and surly: they do less (i.e. they don’t change variable names or types, and don’t do partial matching) and complain more (e.g. when a variable does not exist). This forces you to confront problems earlier, typically leading to cleaner, more expressive code. Tibbles also have an enhanced `print()` method which makes them easier to use with large datasets containing complex objects. [@tibble]
+
+:::
+
+
+Package for Creating Simple Data Frames
+:::
+
+***
+
+
+::::
+:::::
+
+
+
+
+### tidyr 
+
+:::::{.my-resource}
+:::{.my-resource-header}
+tidyr: Tidy Messy Data
+:::
+::::{.my-resource-container}
+
+
+***
+
+::: {#pak-tidyr}
+
+***
+
+{**tidyr**}: [Tidy Messy Data](https://tidyr.tidyverse.org/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-tidyr-min.png){width="176"}
+
+The goal of tidyr is to help you create tidy data. Tidy data describes a standard way of storing data that is used wherever possible throughout the tidyverse. If you ensure that your data is tidy, you’ll spend less time fighting with the tools and more time working on your analysis. [@tidyr] Tidy data is data where:
+- Every column is a variable.
+- Every row is an observation.
+- Every cell is a single value.
+
+:::
+
+Packages for Tidying Messy Data
+:::
+
+
+***
+
+::::
+:::::
+
+### tidyverse
+
+:::::{.my-resource}
+:::{.my-resource-header}
+tidyverse: Easily Install and Load the 'Tidyverse'
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-tidyverse}
+
+***
+
+{**tidyverse**}: [Easily Install and Load the 'Tidyverse'](https://www.tidyverse.org/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-tidyverse-min.png){width="176"}
+
+The {**tidyverse**} is an opinionated [collection of R packages](https://www.tidyverse.org/packages/) designed for data science. All packages share an underlying design philosophy, grammar, and data structures [@tidyverse]. Read more about the philosophy and purpose: [The tidy tools manifesto](https://tidyverse.tidyverse.org/articles/manifesto.html) and [Welcome to the {**tidyverse**}](https://tidyverse.tidyverse.org/articles/paper.html) 
+
+:::
+
+In this book I am not going to load {**tidyverse**} with all its packages. Instead I am using the `<package>::<function>` format to access the commands.
+
+
+
+Metapackage: Easily Install and Load the 'Tidyverse'
+
+***
+
+:::
 
 ::::
 :::::

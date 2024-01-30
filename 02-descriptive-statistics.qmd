@@ -404,7 +404,7 @@ For more
 information how to work with with labelled data see the full
 @sec-chap01-labelled-data with all its sub-sections. You will find
 some functions how to adapt @tbl-gtsummary-transgender to get a better
-descriptive in @sec-chap01-intro-gtsummary. But follow also this chapter
+descriptive in @sec-chap01-experiment-gtsummary. But follow also this chapter
 along!
 :::
 :::
@@ -946,6 +946,7 @@ In @def-hadmam-iqv I am going to apply several indices for qualitative variation
 :::
 ::::{.my-r-code-container}
 
+::: {#lst-chap02-compare-iqv}
 ```{r}
 #| label: compare-iqv
 #| results: hold
@@ -959,7 +960,11 @@ glue::glue("Applying `statpsych::iqv(x)` to a vector of these frequenecies:")
 statpsych::iqv(x)
 ```
 
-With {**statpsych**} I have found another package that computes three indices of qualitative variations. They have different names (Simpson, Berger and Shannon) but correspond to one of the Wilcox indices:
+Computing the index of qualitative variation (IQV) with `statpsych::iqv(x)`
+
+:::
+
+With {**statpsych**} I have found another package that computes three indices of qualitative variations (see: @pak-statpsych). They have different names (Simpson, Berger and Shannon) but correspond to one of the Wilcox indices:
 
 - Simpson = VA
 - Berger = DM
@@ -983,6 +988,8 @@ Compare these three values with @tbl-table-comp-iqv. Again I have used the frequ
 
 ::::
 :::::
+
+Normally the function `glue::glue()` is used to enclose expression by curly braces that will be evaluated as R code. Started with @lst-chap02-compare-iqv I will use this function of the {{**glue**}} package to print comments as output of the R code chunk. (For more information about {**glue** }see @pak-glue.) 
 
 ###### IQV with 0
 
@@ -1136,7 +1143,7 @@ DT::datatable(qv_compared, options = list(pageLength = 10))
 
 This is a rather complex code chunk. I combined the indices from {**qualvar**} and {**statpsych**} with the dataset `qualvar::wilcox1973`. I got a very wide table and provided therefore with a [different Quarto layout](https://quarto.org/docs/authoring/article-layout.html) more space for this part of the page. (Whenever the sidebars are destroying the table view scroll up and again down.)
 
-I learned to use {**purrr**}-like formulas for creating a function on the spot. Important for my understanding was the [help file for `tidyselect::where()`](https://tidyselect.r-lib.org/reference/where.html#the-formula-shorthand) and the StackOverflow answer [Rounding selected columns of a data frame](https://stackoverflow.com/a/27613376/7322615).
+I learned to use {**purrr**}-like formulas (see: @pak-purrr) for creating a function on the spot. Important for my understanding was the [help file for `tidyselect::where()`](https://tidyselect.r-lib.org/reference/where.html#the-formula-shorthand) (see: @pak-tidyselect) and the StackOverflow answer [Rounding selected columns of a data frame](https://stackoverflow.com/a/27613376/7322615) (see: @pak-tidyselect)
 
 The idea of IQV indices is to have a measure of spread for categorical variables. For the presidential election dataset a high IQV points out, that the three candidates are almost dead even. A good example is South Carolina (first row): With the exception of `B` are all indices well beyond 0.9.
 
@@ -2393,6 +2400,40 @@ Package for Descriptive Statistics
 ::::
 :::::
 
+### glue
+
+:::::{.my-resource}
+:::{.my-resource-header}
+glue: Interpreted String Literals
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-glue}
+
+***
+
+{**glue**}: [Interpreted String Literals](https://glue.tidyverse.org/)
+
+An implementation of interpreted string literals, inspired by Python's Literal String Interpolation
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap02/logoi/logo-glue-min.png){width="176"}
+
+Glue offers interpreted string literals that are small, fast, and dependency-free. Glue does this by embedding R expressions in curly braces which are then evaluated and inserted into the argument string.
+
+:::
+
+{**glue**}: A Package for Interpreting Literal Strings
+:::
+
+
+
+***
+::::
+:::::
+
 
 ### Hmisc
 
@@ -2435,7 +2476,7 @@ The {**Hmisc**} has it names from Frank Harrell Jr. It contains many functions u
 This is big variety of functions. In contrast to other packages that are specific directed to solve one problem {**Hmisc**} seems to be an all-in-one-solution.
 
 
-Hmisc package for miscellaneous functions for data analysis and related tasks
+{**Hmisc**}: A package for miscellaneous functions for data analysis and related tasks
 
 :::
 
@@ -2469,15 +2510,47 @@ The {**modeest**} package provides estimators of the mode of univariate unimodal
 
 {**modeest**} is a package specialized for mode estimation. It implements many different mode estimation reported in scientific articles. There is a long [list of references](https://www.rdocumentation.org/packages/modeest/versions/2.4.0/topics/modeest) on different methods of mode estimations.
 
-{**modeest**} Package for Mode Estimation
+{**modeest**}: A Package for Mode Estimation
 :::
 
 
 ::::
 :::::
 
+### purrr
 
-### Report
+:::::{.my-resource}
+:::{.my-resource-header}
+purrr: Functional Programming Tools
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-purrr}
+
+***
+
+{**purrr**}: [Functional Programming Tools](https://purrr.tidyverse.org/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap02/logoi/logo-purrr-min.png){width="176"}
+
+{**purrr**} enhances R’s functional programming (FP) toolkit by providing a complete and consistent set of tools for working with functions and vectors. If you’ve never heard of FP before, the best place to start is the family of `purrr::map()` functions which allow you to replace many for loops with code that is both more succinct and easier to read. The best place to learn about the `purrr::map()` functions is the [iteration chapter](https://r4ds.had.co.nz/iteration.html) in R for data science.
+
+:::
+
+
+{**purrr**}: A Package for Functional Programming Tools
+:::
+
+***
+::::
+:::::
+
+
+
+### report
 
 :::::{.my-resource}
 :::{.my-resource-header}
@@ -2499,7 +2572,7 @@ The primary goal of {**report**} is to bridge the gap between R’s output and t
 
 :::
 
-Report Package for Automated Reporting of Results and Statistical Models
+{**Report**} A Package for Automated Reporting of Results and Statistical Models
 :::
 
 ***
@@ -2541,6 +2614,106 @@ This is a very specialized package. I believe I will not use it at the moment be
 ::::
 :::::
 
+### statpsych
+
+:::::{.my-resource}
+:::{.my-resource-header}
+statpsych: Statistical Methods for Psychologists
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-statpsych}
+
+***
+
+{**statpsych**}: [Statistical Methods for Psychologists](URL to package)
+
+(*There is no hexagon logo for {**statpsych**} available.*)
+
+{**statpsych**} implements confidence interval and sample size methods that are especially useful in psychological research. 
+
+The methods can be applied in 1-group, 2-group, paired-samples, and multiple-group designs and to a variety of parameters including means, medians, proportions, slopes, standardized mean differences, standardized linear contrasts of means, plus several measures of correlation and association. 
+
+The confidence intervals and sample size functions are applicable to single parameters as well as differences, ratios, and linear contrasts of parameters. 
+
+The sample size functions can be used to approximate the sample size needed to estimate a parameter or function of parameters with desired confidence interval precision or to perform a variety of hypothesis tests (directional two-sided, equivalence, superiority, noninferiority) with desired power. For details, see: https://dgbonett.sites.ucsc.edu/.
+
+
+
+{**statpsych**}: A Package for Statistical Methods for Psychologists
+:::
+
+***
+::::
+:::::
+
+
+### tidyselect
+
+:::::{.my-resource}
+:::{.my-resource-header}
+tidyselect: Select from a Set of Strings
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-tidyselect}
+
+***
+
+{**tidyselect**}: [Select from a Set of Strings](https://tidyselect.r-lib.org/index.html)
+
+{*There is no hexagon logo for {**tidyselect**} available*}
+
+The {**tidyselect**} package is the backend of functions like `dplyr::select()` or `dplyr::pull()` as well as several {**tidyr**} verbs. It allows you to create selecting verbs that are consistent with other {**tidyverse**} packages.
+
+To learn about the selection syntax as a user of {**dplyr**} or {**tidyr**}, read the user-friendly [?language](https://tidyselect.r-lib.org/reference/language.html) reference.
+
+To learn how to implement tidyselect in your own functions, read [vignette("tidyselect")](https://tidyselect.r-lib.org/articles/tidyselect.html).
+
+To learn exactly how the {**tidyselect**} syntax is interpreted, read the technical description in [vignette("syntax")](https://tidyselect.r-lib.org/articles/syntax.html).
+
+{**tidyselect**}: A Package to Select from a Set of Strings
+:::
+
+***
+::::
+:::::
+
+
+### qualvar
+
+:::::{.my-resource}
+:::{.my-resource-header}
+qualvar: Implements Indices of Qualitative Variation Proposed by Wilcox (1973)
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-qualvar}
+
+***
+
+{**qualvar**}: [Implements Indices of Qualitative Variation Proposed by Wilcox (1973)](http://joelgombin.github.io/qualvar/)
+
+(*There is no hexagon log for {**qualvar**} available*)
+
+In 1973, Wilcox published a paper presenting various indices of qualitative variation for social scientists. The problem is to find relevant statistical indices to measure the variation in nominal-scale (i.e. qualitative or categorical) data. Please see the Wilcox paper for more details on the rationale.
+
+Wilcox presents six indices that can be used to measure qualitative variation. The {**qualvar**} package implements these indices so that R users can easily use them.
+
+{**qualvar**}: A Package for Computing Indices of Qualitative Variation
+:::
+
+
+
+***
+::::
+:::::
 
 
 ## Glossary
