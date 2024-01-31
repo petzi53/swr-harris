@@ -25,9 +25,9 @@ Objectives
     categorical (factor) 
     variables (@sec-chap02-describe-categorical-variables)
 -   **Achievement 3**: Choosing and conducting descriptive analyses for
-    continuous (numeric) variables
+    continuous (numeric) variables (@sec-chap02-describe-numeric-variables)
 -   **Achievement 4**: Developing clear tables for reporting descriptive
-    statistics
+    statistics (@sec-chap02-report-descriptive-statistics)
 :::
 :::
 
@@ -404,7 +404,7 @@ For more
 information how to work with with labelled data see the full
 @sec-chap01-labelled-data with all its sub-sections. You will find
 some functions how to adapt @tbl-gtsummary-transgender to get a better
-descriptive in @sec-chap01-experiment-gtsummary. But follow also this chapter
+descriptive in @sec-chap01-experiments-gtsummary. But follow also this chapter
 along!
 :::
 :::
@@ -1141,9 +1141,8 @@ DT::datatable(qv_compared, options = list(pageLength = 10))
 
 ***
 
-This is a rather complex code chunk. I combined the indices from {**qualvar**} and {**statpsych**} with the dataset `qualvar::wilcox1973`. I got a very wide table and provided therefore with a [different Quarto layout](https://quarto.org/docs/authoring/article-layout.html) more space for this part of the page. (Whenever the sidebars are destroying the table view scroll up and again down.)
+This is a rather complex code chunk. I combined the indices from {**qualvar**} and {**statpsych**} with the dataset `qualvar::wilcox1973` and got a very wide table. You have to use the horizontal scroll bar to see all columns of the table. I tried with [Quarto layout](https://quarto.org/docs/authoring/article-layout.html) a different layout with more space for this part of the page. But this was not optimal: Moving the sidebars in reverse destroys the table view and one has to scroll outside of the table and start scrolling to the table again. So I stick with the standard layout.
 
-I learned to use {**purrr**}-like formulas (see: @pak-purrr) for creating a function on the spot. Important for my understanding was the [help file for `tidyselect::where()`](https://tidyselect.r-lib.org/reference/where.html#the-formula-shorthand) (see: @pak-tidyselect) and the StackOverflow answer [Rounding selected columns of a data frame](https://stackoverflow.com/a/27613376/7322615) (see: @pak-tidyselect)
 
 The idea of IQV indices is to have a measure of spread for categorical variables. For the presidential election dataset a high IQV points out, that the three candidates are almost dead even. A good example is South Carolina (first row): With the exception of `B` are all indices well beyond 0.9.
 
@@ -1161,6 +1160,14 @@ From my (cursory) inspection I would recommend to use mostly `MDA`, `DM` and `AD
 :::::
 
 
+:::::{.my-note}
+:::{.my-note-header}
+Using {**purrr**}-like formulas
+:::
+::::{.my-note-container}
+I learned to use {**purrr**}-like formulas (see: @pak-purrr) for creating a function on the spot. Important for my understanding was the [help file for `tidyselect::where()`](https://tidyselect.r-lib.org/reference/where.html#the-formula-shorthand) (see: @pak-tidyselect) and the StackOverflow answer [Rounding selected columns of a data frame](https://stackoverflow.com/a/27613376/7322615) (see: @pak-tidyselect)
+::::
+:::::
 
 ::::
 :::::
@@ -1544,7 +1551,7 @@ I will not review explicitly all measures for numeric variables. Instead I will 
 
 #### Body measures
 
-To experiment with realistic data I will use the `bdims` dataset of {**openintro**}. It is a body measurement of 507 physically active individuals (247 men and 260 women). To get the following code to run you need to install the {**openintro**} via CRAN.
+To experiment with realistic data I will use the `bdims` dataset of {**openintro**} (see @pak-openintro). It is a body measurement of 507 physically active individuals (247 men and 260 women). To get the following code to run you need to install the {**openintro**} via CRAN.
 
 I have chosen the `bdims` data because it has lots of numeric variable to experiment with skewness and kurtosis. As you can read in an [article of the Journal of Statistics Education](https://www.tandfonline.com/doi/full/10.1080/10691898.2003.11910711) "these data can be used to provide statistics students practice in the art of data analysis" [@heinz2003a]. The dataset contains body girth measurements and skeletal diameter measurements, as well as age, weight, height and gender, are given for 507 physically active individuals – 247 men and 260 women. You can read more about the educational use of the data and you will find an explanation of the many variables in the [online help of {**openintro**}](https://www.openintro.org/data/index.php?data=bdims).
 
@@ -2029,6 +2036,8 @@ tr |>
 
 ### Kurtosis {#sec-chap02-kurtosis}
 
+#### What is kurtosis?
+
 `r glossary("Kurtosis")` measures how many observations are in the tails of the distribution. If a distribution that looks bell-shaped has many observations in the tails it is more flat than a normal distribution and called `r glossary("platykurtic")`. On the other hand if a distribution has that looks bell-shaped has only a few observations in the tails it is more pointy than a normal distribution and called `r glossary("leptokurtic")`. A normal distribution is `r glossary("mesokurtic")`, e.g., it is neither platykurtic nor leptokurtic.
 
 Platykurtic and leptokurtic deviations from normality do not necessarily influence the `r glossary("Arithmetic Mean", "mean")`, since it will still be a good representation of the middle of the data if the distribution is symmetrical and not `r glossary("skewness", "skewed")`. However, platykurtic and leptokurtic distributions will have smaller and larger values of `r glossary("variance var", "variance")` and `r glossary("standard deviation")`, respectively, compared to a normal distribution. And this is a problem, as variance and standard deviation are not only used to quantify spread, but are also used in many of the common statistical tests.
@@ -2066,6 +2075,8 @@ $$ {#eq-chap02-kurtosis}
 
 ::::
 :::::
+
+#### Check excess of kurtosis
 
 :::::{.my-experiment}
 :::{.my-experiment-header}
@@ -2241,7 +2252,23 @@ I haven't found any difference between the results of {**semTools**} and {**stat
 
 ***
 
+### Scientifc notation
 
+I have not troubles to read figures in `r glossary("scientific notation")`. But I often forget what command I must use to turn it off/on.
+
+- To turn off this option in R, type and run `options(scipen = 999)`. 
+- To turn it back on, type and run `options(scipen = 000)`.
+
+
+- For graphs you could change the scale of the axis:
+
+```
+ggplot(aes(x = Year, y = num.guns/100000)) + 
+geom_line(aes(color = gun.type)) +
+labs(y = "Number of firearms (in 100,000s)")
+```
+
+- To turn off just for one variable: `format(x, scientific = FALSE)`. It returns a character vector.
 
 ### Data management for numerical variable
 
@@ -2267,13 +2294,16 @@ Find numerical variable `PHYSHLTH` in codebook
 
 ```{r}
 #| label: select-physical-health
+#| results: hold
 
 brfss_tg_2014 <- base::readRDS("data/chap02/brfss_tg_2014_raw.rds")
 
 physical_health <- brfss_tg_2014 |> 
     dplyr::select(PHYSHLTH)
 
-str(physical_health)
+utils::str(physical_health)
+base::summary(physical_health)
+skimr::skim(physical_health)
 ```
 
 ***
@@ -2300,6 +2330,7 @@ Recode numerical variable `PHYSHLTH`
 
 ```{r}
 #| label: recode-physical-health
+#| results: hold
 
 physical_health_clean <- physical_health |> 
     dplyr::mutate(PHYSHLTH = dplyr::case_match(PHYSHLTH, 
@@ -2308,6 +2339,7 @@ physical_health_clean <- physical_health |>
                  88 ~ 0,
                  .default = PHYSHLTH))
 
+base::summary(physical_health_clean)
 skimr::skim(physical_health_clean)
 ```
 
@@ -2327,14 +2359,95 @@ skimr::skim(physical_health_clean)
 #| label: histogram-physical-health
 
 physical_health_clean |> 
-    ggplot2::ggplot(ggplot2::aes(PHYSHLTH)) +
-    ggplot2::geom_histogram()
+    ggplot2::ggplot(ggplot2::aes(x = PHYSHLTH)) +
+    ggplot2::geom_histogram(binwidth = 1, na.rm = TRUE) +
+    ggplot2::scale_y_continuous(labels = function(x){
+        trans = x / 1000;
+        base::paste0(trans, "K")
+    }) +
+    # ggplot2::scale_y_continuous(labels = scales::label_number()) +
+    ggplot2::theme_bw()
             
+```
+
+
+::::
+:::::
+
+:::::{.my-note}
+:::{.my-note-header}
+Two code changes compared to the books code chunk for figure 2.9
+:::
+::::{.my-note-container}
+
+**1. Preventing warning messages**
+
+I added `binwidth = 1, na.rm = TRUE` into the `ggplot2::geom_histogram()` function to prevent two warning messages:
+
+> - Warning: `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+> - Warning: Removed 10303 rows containing non-finite values (`stat_bin()`).
+
+I have to confess that I didn't know that one can use the argument `na.rm = TRUE` inside a {**ggplot2**} function.
+
+**2. Removing the scientific notation in the y-axis**
+
+- At first I used used outside the {**ggplot2**}-block options(scipen = 999)`. But then I decided not to turn off generally the scientific notation but to find a solution inside of the {**ggplot2**} code chunk. 
+- I came up with `ggplot2::scale_y_continuous(labels = scales::label_number())`. Using the {**scales**} package is a common way to change scales and labels of {**ggplot2**} graphics (see @pak-scales). My command changed the scientific notation to numbers, but the numbers still had many zeros and are not handy.
+- Finally I found a general solution, without using the {**scales**} package: Writing a local function for the `trans` argument of the `ggplot2::scale_y_continuous()` directive. I didn't know about this method before and found this solution on [StackOverflow](https://stackoverflow.com/questions/44656907/scale-y-continious-divide-by-1-000-and-append-k).
+
+::::
+:::::
+
+###### Central tendency
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-central-tendency-physhlth}
+: Computing mean, median and mode of the `PHYSHLTH` variable
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: central-tendency-physhlth
+
+physical_health_clean |> 
+    tidyr::drop_na() |> 
+    dplyr::summarize(mean = base::mean(PHYSHLTH),
+                     median = stats::median(PHYSHLTH),
+                     mode = modeest::mfv(PHYSHLTH))
+
 ```
 
 ::::
 :::::
 
+###### Spread
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-spread-physhlth}
+: Computing standard deviation, variance, the IQR and the qunatiles of the `PHYSHLTH` variable
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: spread-physhlth
+#| results: hold
+
+physical_health_clean |> 
+    tidyr::drop_na() |> 
+    dplyr::summarize(sd = stats::sd(PHYSHLTH),
+                     var = stats::var(PHYSHLTH),
+                     IQR = stats::IQR(PHYSHLTH)
+    )
+
+glue::glue(" quantiles corresponding to the given probabilities")
+stats::quantile(physical_health_clean$PHYSHLTH, na.rm = TRUE)
+
+```
+
+::::
+:::::
 
 
 :::
@@ -2345,7 +2458,7 @@ physical_health_clean |>
 ***
 
 
-## Generate a descriptive "Table 1" for journal publishing
+## Generate a descriptive "Table 1" for journal publishing {#sec-chap02-report-descriptive-statistics}
 
 We need to manipulate data to provide a table with all its required
 features as they are:
@@ -2517,6 +2630,38 @@ The {**modeest**} package provides estimators of the mode of univariate unimodal
 ::::
 :::::
 
+### openintro
+
+:::::{.my-resource}
+:::{.my-resource-header}
+openintro: Data Sets and Supplemental Functions from 'OpenIntro' Textbooks and Labs
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-openintro}
+
+***
+
+{**openintro**}: [Data Sets and Supplemental Functions from 'OpenIntro' Textbooks and Labs](https://openintrostat.github.io/openintro/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap02/logoi/logo-openintro-min.png){width="176"}
+
+The package contains data sets used in our open-source textbooks along with custom plotting functions for reproducing book figures. The package also contains the datasets used in {**OpenIntro**} labs. Note that many functions and examples include color transparency; some plotting elements may not show up properly (or at all) when run in some versions of Windows operating system.
+
+:::
+
+{**openintro**}: A Package to Supplement 'OpenIntro' Textbooks and Labs
+:::
+
+
+***
+::::
+:::::
+
+
 ### purrr
 
 :::::{.my-resource}
@@ -2580,6 +2725,40 @@ The primary goal of {**report**} is to bridge the gap between R’s output and t
 
 ::::
 :::::
+
+### scales
+
+:::::{.my-resource}
+:::{.my-resource-header}
+scales: Scale Functions for Visualization
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-scales}
+
+***
+
+{**scales**}: [Scale Functions for Visualization](https://scales.r-lib.org/)
+
+Graphical scales map data to aesthetics, and provide methods for automatically determining breaks and labels for axes and legends.
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap02/logoi/logo-scales-min.png){width="176"}
+
+One of the most difficult parts of any graphics package is scaling, converting from data values to perceptual properties. The inverse of scaling, making guides (legends and axes) that can be used to read the graph, is often even harder! The scales packages provides the internal scaling infrastructure used by ggplot2, and gives you tools to override the default breaks, labels, transformations and palettes.
+
+:::
+
+{**scales**}: A Package for Scaling Functions for Visualization
+:::
+
+
+***
+::::
+:::::
+
 
 ### semTools
 

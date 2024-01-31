@@ -3123,11 +3123,11 @@ chap01_nhanes_2013_clean <-
     base::readRDS("data-clean/chap01_nhanes_2013_clean.rds")
 
 chap01_gtsummary_basic <- chap01_nhanes_2013_clean |> 
-
+ 
     ## cut age into several defined age groups
     dplyr::mutate(age_cat = base::cut(age,
                    breaks = c(-Inf, 29, 39, 49, 59),
-                   labels = c("18 - 29", "30 - 39", "40 - 49", "50 - 59"))) |> 
+                   labels = c("18 - 29", "30 - 39", "40 - 49", "50 - 59"))) |>
     dplyr::select(-c(nr, age))
 
 base::saveRDS(chap01_gtsummary_basic, "data-clean/chap01_gtsummary_clean.rds")
