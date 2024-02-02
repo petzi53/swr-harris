@@ -98,7 +98,7 @@ Again there are two options:
    
     - descr (@pak-descr)
     - haven (@pak-haven)
-    - kableExtra
+    - kableExtra {@pak-kableExtra}
     - knitr
     - tidyverse (@pak-tidyverse)
         - dplyr (@pak-dplyr)
@@ -106,15 +106,15 @@ Again there are two options:
         - forcats (@pak-forcats)
         - tidyr (@pak-tidyr)
     - tableone
-    - semTools 
-    - qualvar 
+    - semTools (@pak-semTools)
+    - qualvar (@pak-qualvar)
     - labelled (@pak-labelled)
     - Hmisc (@pak-Hmisc)
     
 2. My additional packages (sorted alphabetically)
 
-    - gtsummary (See @pak-gtsummary)
-    - skimr (See @pak-skimr)
+    - gtsummary (@pak-gtsummary)
+    - skimr (@pak-skimr)
 
 
 

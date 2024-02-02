@@ -1,0 +1,136 @@
+# Data visualization {#sec-chap03}
+
+```{r}
+#| label: setup
+#| include: false
+
+base::source(file = "../_glance_data.R")
+```
+
+## Achievements to unlock
+
+::: my-objectives
+::: my-objectives-header
+Objectives
+:::
+
+::: my-objectives-container
+**SwR Achievements**
+
+- **Achievement 1**: Choosing and creating graphs for a single categorical variable
+- **Achievement 2**: Choosing and creating graphs for a single continuous variable 
+- **Achievement 3**: Choosing and creating graphs for two variables at once 
+- **Achievement 4**: Ensuring graphs are well-formatted with appropriate and clear titles, labels, colors, and other features
+
+:::
+:::
+
+## Gun violence in the US
+
+### Where to get data?
+
+1. Research about gun violence in under developed. Harris refers to an article by Stark & Shah [-@stark2017] (Figure 1 and 2).
+2. Data for figure 3 (Homicides in the US by guns 2012-2016) comes from the [Uniform Crime Reporting (UCR)](fbi.gov/services/cjis/ucr):
+
+    > The Uniform Crime Reporting (UCR) Program generates reliable statistics for use in law enforcement. It also provides information for students of criminal justice, researchers, the media, and the public. The program has been providing crime statistics since 1930.
+    
+    > The UCR Program includes data from more than 18,000 city, university and college, county, state, tribal, and federal law enforcement agencies. Agencies participate voluntarily and submit their crime data either through a state UCR program or directly to the FBI's UCR Program.
+
+3. Figure 4: Handguns were the most widely used type of gun for homicide in 2016.
+4. Gun manufacturers play an essential role: Figure 5 and 6.
+
+## Data, codebook, and R packages
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for data visualization
+:::
+
+::: my-resource-container
+
+**Data**
+
+There are two options:
+
+1. Download the three data files from <https://edge.sagepub.com/harris1e>
+    -  nhanes_2011_2012_ch3.csv
+    -  fbi_deaths_2016_ch3.csv 
+    -  gun_publications_funds_2004_2015_ch3.csv
+2.  Download 
+    -  the raw data directly from the Internet for the FBI deaths data 
+    -  the `r glossary("NHANES")` data by following the instructions in Box 3.1
+    -  the gun_publications_funds_2004_2015_ch3.csv 
+    from <https://edge.sagepub.com/harris1e>
+
+I will only work with the second option.
+
+**Codebook**
+
+Again there are two options:
+
+1. Download from <https://edge.sagepub.com/harris1e> 
+    - nhanes_demographics_2012_codebook.html 
+    - nhanes_auditory_2012_codebook.html 
+2. Access the codebooks online on the National Health and Nutrition Examination Survey [(NHANES) website](https://wwwn.cdc.gov/nchs/nhanes/Search/DataPage.aspx?Component=Questionnaire&CycleBeginYear=2011)
+
+        
+I will only work with the second option.
+
+**Packages**
+
+1. Packages used with the book (sorted alphabetically)
+
+- {**data.table**}: @pak-data-table (Tyson Barrett)
+- {**ggmosaic**}: @pak-ggmosaic (Haley Jeppson)
+- {**ggrepel**}: @pak-ggrepel (Kamil Slowikowski)
+- {**gridExtra**}: @pak-gridExtra (Baptiste Auguie)
+- {**httr**}: @pak-httr (Hadley Wickham)
+- {**readxl**}: @pak-readxl (Jennifer Bryan)
+- {**RNHANES**}: @pak-RNHANES (Herb Susmann)
+- {**scales**}: @pak-scales (Hadley Wickham)
+- {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+- {**waffle**}: @pak-waffle (Bob Rudis)
+
+    
+2. My additional packages (sorted alphabetically)
+
+
+
+:::
+:::
+
+
+
+
+***
+
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+
+## Session Info {.unnumbered}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+Session Info
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+
+
+::::
+:::::

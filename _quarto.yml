@@ -16,6 +16,7 @@ book:
     - index.qmd
     - 01-preparing-data.qmd
     - 02-descriptive-statistics.qmd
+    - 03-data-visualization.qmd
     - 95-references.qmd
 
 bibliography:
