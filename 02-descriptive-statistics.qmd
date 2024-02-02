@@ -27,7 +27,7 @@ Objectives
 -   **Achievement 3**: Choosing and conducting descriptive analyses for
     continuous (numeric) variables (@sec-chap02-describe-numeric-variables)
 -   **Achievement 4**: Developing clear tables for reporting descriptive
-    statistics (@sec-chap02-report-descriptive-statistics)
+    statistics (@sec-chap02-create-tables-for-publishing)
 :::
 :::
 
@@ -1557,13 +1557,10 @@ I have chosen the `bdims` data because it has lots of numeric variable to experi
 
 I will mostly concentrate on the following measures (all values are in centimeter):
 
-- age of the respondent
-- height 
-- weight
 - biacromial diameter (shoulder breadth)
 - biiliac diameter (pelvic breadth)
 - bitrochanteric diameter (hip bone breadth) and
-- elbow diameter, measured as sum of two elbows
+- waist girth
 
 To give you a better understanding where some of these measure are located on the human body I replicate @fig-body-measures one figure of the article.
 
@@ -1721,11 +1718,11 @@ There are many packages to compute the skewness of a distribution. (Type `??skew
 :::
 ::::{.my-r-code-container}
 
-::: {#lst-chap02-check-skewness}
-
 ```{r}
 #| label: fig-check-skew-normal
 #| fig-cap: "Shoulder breadth distribution in centimeters of 247 physically active men"
+#| lst-label: lst-check-skew-normal
+#| lst-cap: "Checking skewness of a shoulder breadth distribution of 247 men"
 #| cache: true
 #| results: hold
 
@@ -1750,10 +1747,6 @@ glue::glue("Using the `statpsych::test.skew()` function")
 statpsych::test.skew(bdims$bia_di)
 ```
 
-Checking the skewness of the shoulder breadth distribution of 247 men with `semTools::skew()` and `statpsych::test.skew()`
-
-:::
-
 ***
 
 **Interpretation `semTools::skew()`**
@@ -1765,7 +1758,7 @@ Checking the skewness of the shoulder breadth distribution of 247 men with `semT
 
 
 ::: {.callout-tip style="color: darkgreen;"}
-The interpretation follows @tbl-chap02-skewness: The $z$ result of code @lst-chap02-check-skewness from the biacromial diameter of 247 men is only 1.44, e.g. well situated in the range of -3.29 and +3.29 and therefore we have no skewness problem. The p-value is with 0.17 big and therefore the null (there is no skewness) can't be rejected.
+The interpretation follows @tbl-chap02-skewness: The $z$ result of @lst-check-skew-normal from the biacromial diameter of 247 men is only 1.44, e.g. well situated in the range of -3.29 and +3.29 and therefore we have no skewness problem. The p-value is with 0.17 big and therefore the null (there is no skewness) can't be rejected.
 :::
 
 
@@ -1880,7 +1873,8 @@ Both tests have a very low p-value and attest us excessive skewness. This is eve
 p <- hist_dnorm(bdims, bdims$wai_gi)
 
 p +
-    ggplot2::labs(x = "Respondent's waist girth in centimeters, measured at the narrowest part of torso below the rib cage as average of contracted and relaxed position")
+    ggplot2::labs(x = "Respondent's waist girth in centimeters, 
+                  \nmeasured at the narrowest part of torso below the rib cage as average of contracted and relaxed position")
 
 ## commented test output
 glue::glue("##################################################")
@@ -2148,7 +2142,7 @@ Both functions `semTools::skew()` and `statpsych::test.skew()` claim that there 
 ::::{.my-r-code-container}
 ```{r}
 #| label: fig-check-kurtosis-flat
-#| fig-cap: "Bitrochanteric diameter (shoulder breadth) distribution of 507 individuals"
+#| fig-cap: "Biachromial diameter (shoulder breadth) distribution of 507 individuals"
 #| cache: true
 #| results: hold
 
@@ -2156,14 +2150,14 @@ Both functions `semTools::skew()` and `statpsych::test.skew()` claim that there 
 p <- hist_dnorm(bdims, bdims$bia_di)
 
 p +
-    ggplot2::labs(x = "bitrochanteric diameter distribution of 507 individuals")
+    ggplot2::labs(x = "biachromial diameter distribution of 507 individuals")
 
 glue::glue("###################################################################")
-glue::glue("Kurtosis of bitrochanteric diameter using `semTools::kurtosis()`")
+glue::glue("Kurtosis of biachromial diameter using `semTools::kurtosis()`")
 semTools::kurtosis(bdims$bia_di)
 glue::glue(" ")
 glue::glue("###################################################################")
-glue::glue("Kurtosis of bitrochanteric diameter using `statpsych::test.kurtosis()`")
+glue::glue("Kurtosis of biachromial diameter using `statpsych::test.kurtosis()`")
 statpsych::test.kurtosis(bdims$bia_di)
 
 ```
@@ -2270,12 +2264,14 @@ labs(y = "Number of firearms (in 100,000s)")
 
 - To turn off just for one variable: `format(x, scientific = FALSE)`. It returns a character vector.
 
-### Data management for numerical variable
+### Data management for numerical variables
+
+#### The book's `PHYSHLTH` variable
 
 :::::{.my-example}
 :::{.my-example-header}
 :::::: {#exm-chap02-data-wrangling-numerical}
-: Data management for numerical variable
+: Data management for numerical `PHYSHLTH` variable
 ::::::
 :::
 ::::{.my-example-container}
@@ -2387,6 +2383,8 @@ I added `binwidth = 1, na.rm = TRUE` into the `ggplot2::geom_histogram()` functi
 > - Warning: `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 > - Warning: Removed 10303 rows containing non-finite values (`stat_bin()`).
 
+Concerning the first warning: `bins = 30` wouldn't be ideal, because we have 31 values (0-30 days where the physical health was not good). So `bins = 31` would also be a good choice.
+
 I have to confess that I didn't know that one can use the argument `na.rm = TRUE` inside a {**ggplot2**} function.
 
 **2. Removing the scientific notation in the y-axis**
@@ -2455,10 +2453,192 @@ stats::quantile(physical_health_clean$PHYSHLTH, na.rm = TRUE)
 ::::
 :::::
 
+#### Achievement 3: The `_AGE80` variable
+
+:::::{.my-exercise}
+:::{.my-exercise-header}
+:::::: {#exr-chap02-achievement-3}
+: Data management with the `_AGE80` variable
+::::::
+:::
+::::{.my-exercise-container}
+
+::: {.panel-tabset}
+
+###### Codebook & Summary
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-codebook-age80}
+: Get Codebook and first summary of raw data
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: codebook-age80
+#| results: hold
+
+brfss_tg_2014 <-  base::readRDS("data/chap02/brfss_tg_2014_raw.rds")
+
+age80 <- brfss_tg_2014 |> 
+    dplyr::select(`_AGE80`)
+
+utils::str(age80)
+skimr::skim(age80)
+base::summary(age80)
+```
+
+***
+
+![Imputed Age value collapsed above 80](img/chap02/age80-codebook-min.png){#fig-age80-codebook
+fig-alt="Imputed Age value collapsed above 80"
+fig-align="center"}
+
+***
+
+Remember: I have used as column name `_AGE80` (and not `X_AGE80`) when I imported with {**haven**} the data in @lst-chap02-get-brfss-2014-data.
+
+The age of the respondents range from 18 to 80. 
+
+**The good news**: There are no missing values or other codes that we need to recode.
+
+**The bad news**: The age value of 80 includes all people 80 and above. Therefore age 80 will have more observations as it would be appropriate for this age. As a consequence we can expect that the age distribution would be biased to the right (= left skewed). This is confirmed in two ways: (1) The median is higher than the mean and (2) we see the left skewed distribution also in the tiny histogram from the `skimr::skim()` summary.
+
+
+::::
+:::::
+
+
+###### _AGE80 measures
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-age80-measures}
+: Central tendency, spread, skewness & kurtosis of `_AGE80`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-age80-measures
+#| tbl-cap: "Age distribution of 464664 individuals (age value collapsed above 80)"
+#| results: hold
+
+glue::glue("###################################################################")
+glue::glue("Central tendency and spread measures of `_AGE80` variable")
+age80 |> 
+    dplyr::summarize(
+        mean = base::mean(`_AGE80`),  
+        median = stats::median(`_AGE80`), 
+        mode = modeest::mfv(`_AGE80`),
+        min = base::min(`_AGE80`),
+        max = base::max(`_AGE80`),
+        sd = stats::sd(`_AGE80`),
+        var = stats::var(`_AGE80`),
+        IQR = stats::IQR(`_AGE80`)
+    )
+
+## construct graph using my private function hist_dnorm()
+p <- hist_dnorm(age80, age80$`_AGE80`, n_bins = 62)
+
+p +
+    ggplot2::labs(x = "Age distribution of 464664 individuals (age value collapsed above 80)") +
+    ggplot2::scale_x_continuous(breaks = seq(20,80,10))
+
+glue::glue(" ")
+glue::glue("###################################################################")
+glue::glue("Skewness of `_AGE80` variable")
+semTools::skew(age80$`_AGE80`)
+glue::glue(" ")
+glue::glue("###################################################################")
+glue::glue("Kurtosis of `_AGE80` variable")
+semTools::kurtosis(age80$`_AGE80`)
+```
+
+***
+
+Instead of `base::range()` I have used `base::min()` and `base::max()`.
+
+As we already have assumed from the over sized 80 year value we have a left skewed distribution. But we have also excess kurtosis, because we have to much observation in the tails, e.g., the distribution is too flat (platykurtic) to come from a normal distribution.
+
+Now lets see the values after we have removed the obvious bias with the 80 year value. We will generate a new variable `_AGE79` that range only from 18 to 79 years.
+
+::::
+:::::
+
+###### _AGE79 measures
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-age79-measures}
+: Central tendency, spread, skewness & kurtosis of `_AGE79`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-age79-measures
+#| tbl-cap: "Age distribution of 425822 individuals from age 18 to 79"
+#| results: hold
+
+glue::glue("###################################################################")
+glue::glue("Central tendency and spread measures of `_AGE79` variable")
+age79 <- age80 |> 
+    dplyr::filter(`_AGE80` <= 79) |> 
+    dplyr::rename(`_AGE79` = `_AGE80`)
+
+age79 |> 
+    dplyr::summarize(
+        mean = base::mean(`_AGE79`),  
+        median = stats::median(`_AGE79`), 
+        mode = modeest::mfv(`_AGE79`),
+        min = base::min(`_AGE79`),
+        max = base::max(`_AGE79`),
+        sd = stats::sd(`_AGE79`),
+        var = stats::var(`_AGE79`),
+        IQR = stats::IQR(`_AGE79`)
+    )
+
+## construct graph using my private function hist_dnorm()
+p <- hist_dnorm(age79, age79$`_AGE79`, n_bins = 61)
+
+p +
+    ggplot2::labs(x = "Age distribution of 425822 individuals from age 18 to 79") +
+    ggplot2::scale_x_continuous(breaks = seq(20,80,10))
+
+glue::glue(" ")
+glue::glue("###################################################################")
+glue::glue("Skewness of `_AGE79` variable")
+semTools::skew(age79$`_AGE79`)
+glue::glue(" ")
+glue::glue("###################################################################")
+glue::glue("Kurtosis of `_AGE79` variable")
+semTools::kurtosis(age79$`_AGE79`)
+```
+
+***
+
+Filtering the data to get only values between 18-79 doesn't normalize the distribution. We can clearly see that there are too many people between 58 to 74 years respectively there is a gap in the cohorts from 35 to 55 years.
+
+
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
 ***
 
 
-## Generate a descriptive "Table 1" for journal publishing {#sec-chap02-report-descriptive-statistics}
+## Creating tables for publishing {#sec-chap02-create-tables-for-publishing}
+
+### Necessary features
 
 We need to manipulate data to provide a table with all its required
 features as they are:
@@ -2468,10 +2648,17 @@ features as they are:
 ::: {#bul-chap02-table-features}
 
 ***
+
 1. A main title indicating what is in the table, including
     -   the overall sample size
     -   key pieces of information that describe the data such as the year of data collection and the data source
-2. Clear column and row labels that have 
+    -   the units of measurement (people, organizations, etc.) 
+2. Correct formatting, including
+    -   consistent use of the same number of decimal places throughout the table
+    -   numbers aligned to the right so that the decimal points line up
+    -   words aligned to the left
+-       indentation and shading to differentiate rows or sections
+3. Clear column and row labels that have 
     - logical row and column names
     - a clear indication of what the data are, such as means or frequencies
     - row and column sample sizes when they are different from overall
@@ -2480,6 +2667,355 @@ features as they are:
 Required features of a table
 :::
 
+***
+
+The table I am going to reproduce:
+
+![Transgender Survey Participants Demographics (n = 220)](img/chap02/table1-example2-min.png){#fig-table1-example2
+fig-alt="Transgender Survey Participants Demographics (n = 220)"
+fig-align="center"}
+
+### Table generation step-by-step
+
+I will use Table 2.5 (here it is @fig-table1-example2) from the book as my goal model that I want to replicate. In my first approach I will use {**gtsummary**} and document every step of the development process.
+
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap02-table-generation}
+: replication
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Filter & Select
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-a}
+: Filter and Select
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: table1-step1
+
+brfss_tg_2014 <- base::readRDS("data/chap02/brfss_tg_2014_raw.rds")
+
+brfss_2014_raw <- brfss_tg_2014 |> 
+    tidyr::drop_na() |>
+    dplyr::filter(TRNSGNDR <= 3) |> 
+    dplyr::filter(`_AGEG5YR` >= 5 & `_AGEG5YR` <= 11) |> 
+    dplyr::select(- c(HADMAM, `_AGE80`))
+
+utils::str(brfss_2014_raw)
+skimr::skim(brfss_2014_raw)
+```
+
+***
+
+As first step I have reduced the dataset to those categories that are outlined in @fig-table1-example2. We will work with 222 records, 2 more as in the model table data are mentioned. But in the header it says "(n = 222)".
+
+::::
+:::::
+
+
+###### Recode
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap2-table-recode}
+Recode
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: text-b
+
+brfss_2014_recoded <- brfss_2014_raw |> 
+    dplyr::mutate(TRNSGNDR = forcats::as_factor(TRNSGNDR)) |> 
+    dplyr::mutate(TRNSGNDR = 
+          forcats::fct_recode(TRNSGNDR, "Male to female" = "1")) |> 
+    dplyr::mutate(TRNSGNDR = 
+          forcats::fct_recode(TRNSGNDR, "Female to male" = "2")) |> 
+    dplyr::mutate(TRNSGNDR = 
+            forcats::fct_recode(TRNSGNDR, "Gender non-conforming" = "3")) |> 
+    
+    dplyr::mutate(`_AGEG5YR` = forcats::as_factor(`_AGEG5YR`)) |> 
+    dplyr::mutate(`_AGEG5YR` = 
+          forcats::fct_recode(`_AGEG5YR`, "40-44" = "5")) |> 
+    dplyr::mutate(`_AGEG5YR` = 
+          forcats::fct_recode(`_AGEG5YR`, "45-49" = "6")) |> 
+    dplyr::mutate(`_AGEG5YR` = 
+          forcats::fct_recode(`_AGEG5YR`, "50-54" = "7")) |> 
+    dplyr::mutate(`_AGEG5YR` = 
+          forcats::fct_recode(`_AGEG5YR`, "55-59" = "8")) |> 
+    dplyr::mutate(`_AGEG5YR` = 
+          forcats::fct_recode(`_AGEG5YR`, "60-64" = "9")) |> 
+    dplyr::mutate(`_AGEG5YR` = 
+          forcats::fct_recode(`_AGEG5YR`, "65-69" = "10")) |> 
+        dplyr::mutate(`_AGEG5YR` = 
+          forcats::fct_recode(`_AGEG5YR`, "70-74" = "11")) |> 
+    
+    dplyr::mutate(`_RACE` = forcats::as_factor(`_RACE`)) |> 
+    dplyr::mutate(`_RACE` = 
+          forcats::fct_recode(`_RACE`, "White" = "1")) |> 
+    dplyr::mutate(`_RACE` = 
+          forcats::fct_recode(`_RACE`, "Black" = "2")) |> 
+    dplyr::mutate(`_RACE` = 
+          forcats::fct_recode(`_RACE`, "Native American" = "3")) |> 
+    dplyr::mutate(`_RACE` = 
+          forcats::fct_recode(`_RACE`, "Asian/Pacific Islander" = "4")) |> 
+    dplyr::mutate(`_RACE` = 
+          forcats::fct_collapse(`_RACE`, "Other" = 
+                c("5", "7", "8", "9"))) |> 
+    
+    dplyr::mutate(`_INCOMG` = forcats::as_factor(`_INCOMG`)) |> 
+    dplyr::mutate(`_INCOMG` = 
+          forcats::fct_recode(`_INCOMG`, "Less than $15,000" = "1")) |> 
+    dplyr::mutate(`_INCOMG` = 
+          forcats::fct_recode(`_INCOMG`, "$15,000 to less than $25,000" = "2")) |> 
+    dplyr::mutate(`_INCOMG` = 
+          forcats::fct_recode(`_INCOMG`, "$25,000 to less than $35,000" = "3")) |> 
+    dplyr::mutate(`_INCOMG` = 
+          forcats::fct_recode(`_INCOMG`, "$35,000 to less than $50,000" = "4")) |> 
+    dplyr::mutate(`_INCOMG` = 
+          forcats::fct_recode(`_INCOMG`, "$50,000 or more" = "5")) |> 
+    dplyr::mutate(`_INCOMG` = 
+          forcats::fct_recode(`_INCOMG`, "Don't know/not sure/missing" = "9")) |>  
+
+    dplyr::mutate(`_EDUCAG` = forcats::as_factor(`_EDUCAG`)) |> 
+    dplyr::mutate(`_EDUCAG` = 
+          forcats::fct_recode(`_EDUCAG`, "Did not graduate highschool" = "1")) |> 
+    dplyr::mutate(`_EDUCAG` = 
+          forcats::fct_recode(`_EDUCAG`, "Graduated highschool" = "2")) |> 
+    dplyr::mutate(`_EDUCAG` = 
+          forcats::fct_recode(`_EDUCAG`, "Attended college/technical school" = "3")) |> 
+    dplyr::mutate(`_EDUCAG` = 
+          forcats::fct_recode(`_EDUCAG`, "Graduated from college/technical school" = "4")) |> 
+    
+    dplyr::mutate(HLTHPLN1 = forcats::as_factor(HLTHPLN1)) |> 
+    dplyr::mutate(HLTHPLN1 = 
+          forcats::fct_recode(HLTHPLN1, "Yes" = "1")) |> 
+    dplyr::mutate(HLTHPLN1 = 
+          forcats::fct_recode(HLTHPLN1, "No" = "2")) |> 
+    
+    dplyr::mutate(PHYSHLTH = dplyr::case_match(PHYSHLTH, 
+                 77 ~ NA,
+                 99 ~ NA,
+                 88 ~ 0,
+                 .default = PHYSHLTH)) |> 
+
+    labelled::set_variable_labels(
+        TRNSGNDR = "Transition status",
+        `_AGEG5YR` = "Age category",
+        `_RACE` = "Race/ethnicity",
+        `_INCOMG` = "Income category",
+        `_EDUCAG` = "Education category",
+        HLTHPLN1 = "Health insurance?",
+        PHYSHLTH = "Days poor physical health per month"
+    )
+```
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Warning because of missing level `6` in `_RACE` variable
+:::
+::::{.my-watch-out-container}
+In my first run of this long R code I got the following warning:
+
+> - Warning: There was 1 warning in `dplyr::mutate()`.
+> - ℹ In argument: `_RACE = forcats::fct_collapse(...)`.
+> - Caused by warning:
+> - ! Unknown levels in `f`: 6
+
+No big deal, but to prevent this warning I didn't collapse this level into "Other" in the following runs.
+::::
+:::::
+
+
+
+
+
+::::
+:::::
+
+
+###### 1st try
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-table1-1st-try}
+: Transgender Survey Participants Demographics (1st try)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-table1-1st-try
+#| tbl-cap: "Transgender Survey Participants Demographics"
+#| 
+brfss_2014_recoded |> 
+    gtsummary::tbl_summary()
+```
+
+
+
+::::
+:::::
+
+My first try for a table 1 was just a one-liner with `gtsummary::tbl_summary()`. It looks already pretty good. But let's compare with @fig-table1-example2 in detail:
+
+1. My version is different in the header. It has "Characteristics" instead of "Survey participants demographics" and "N = 222" instead of "Frequency" and "Percentage" as separated columns.
+2. My percentage values do not have one decimal place.
+3. It is not obvious to which variable the "median, (IQR)" footnote belongs.
+4. My labels are not bold.
+
+I am not sure if I should account also for another difference: My "Health insurance" does not show the value "Yes" in a separate line. The same happens with "Days of poor physical health per month". But I believe that my version is better as it prevents to show redundant information. My separate last line "Unknown" is in any case better, because it is an important information.
+
+The first difference may be challenged for the same reason: Including "Frequency" and (braced) "Percentage" in one column and explained by a footnote is practically the same information just more compressed. It would provide more space for further information for more complex tables. So I will concentrate on number (2) to (4) and change in (1) only "Characteristic" to "Survey participants demographics".
+
+
+###### 2nd try
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-table1-2nd-try}
+: Transgender Survey Participants Demographics (2nd try)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-table1-2nd-try
+#| tbl-cap: "Transgender Survey Participants Demographics"
+#| cache: true
+
+brfss_2014_gtsummary <-  brfss_2014_recoded |> 
+    gtsummary::tbl_summary(
+        digits = list(gtsummary::all_categorical() ~ c(0, 1)),
+        label = PHYSHLTH ~ "Days poor physical health per month (median, IQR)"
+    ) |> 
+    gtsummary::bold_labels() |> 
+    gtsummary::modify_header(
+        label = "**Survey participants demographics**",
+        stat_0 = "**N = {n} ({style_percent(p)}%)**"
+    ) 
+
+brfss_2014_gtsummary
+```
+
+::::
+:::::
+
+
+###### 3rd try
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-table1-3rd-try}
+: Transgender Survey Participants Demographics (3rd try)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-table1-3rd-try
+#| tbl-cap: "Transgender Survey Participants Demographics"
+#| cache: true
+
+
+tbl1_gtsummary <- brfss_2014_recoded |> 
+    gtsummary::tbl_summary(
+        statistic = list(
+            gtsummary::all_continuous() ~ "{median}",
+            gtsummary::all_categorical() ~ "{n}"
+            ), 
+         label = PHYSHLTH ~ "Days poor physical health per month (median, IQR)"
+    )
+
+tbl2_gtsummary <- brfss_2014_recoded |> 
+    gtsummary::tbl_summary(
+        statistic = list(
+            gtsummary::all_continuous() ~ "({p25}, {p75})",
+            gtsummary::all_categorical() ~ "{p}%"
+            ),
+        digits = list(gtsummary::all_categorical() ~ 1),
+        label = PHYSHLTH ~ "Days poor physical health per month (median, IQR)"
+    )
+
+tbl_merge_gtsummary <- gtsummary::tbl_merge(
+    list(tbl1_gtsummary, tbl2_gtsummary)
+) |> 
+    gtsummary::bold_labels() |> 
+    gtsummary::modify_header(
+        list(
+            label ~ "**Survey participants demographics (N = {n})**",
+            stat_0_1 ~ "**Frequency**", 
+            stat_0_2 ~ "**Percent**"
+        )
+    ) |> 
+    gtsummary::modify_spanning_header(gtsummary::everything() ~ NA) |> 
+    gtsummary::modify_footnote(gtsummary::everything() ~ NA) 
+
+tbl_merge_gtsummary
+```
+
+::::
+:::::
+
+###### Small
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: code-chunk-name
+
+tbl_merge_gtsummary_small <- tbl_merge_gtsummary |> 
+    gtsummary::as_gt() |> 
+    gt::tab_options(table.font.size = "14px")
+
+tbl_merge_gtsummary_small
+
+
+```
+
+::::
+:::::
+
+###### Compact
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: code-chunk-name2
+#| results: hold
+
+gtsummary::theme_gtsummary_compact() 
+tbl_merge_gtsummary
+
+```
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
 
 ***
 
