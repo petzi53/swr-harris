@@ -1,7 +1,7 @@
 # Preface {.unnumbered}
 
 ::: {.callout-note style="color: blue;"}
-#### This is work in progress: I just started, and have only finished chapter 1 and 2 and (about 19% of the book), but with many experiments and additional self-created exercises.
+#### This is work in progress: I just started, and have only finished chapter 1 and 2 (about 19% of the book), but with many experiments and additional self-created exercises.
 :::
 
 ::: my-watch-out
@@ -284,3 +284,66 @@ Resources used for this Quarto book
     Download
 :::
 :::
+
+## Packages introduced in the preface
+
+:::::{.my-resource}
+:::{.my-resource-header}
+glossary: Glossaries for Markdown and Quarto Documents
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-glossary}
+
+***
+
+{**glossary**}: [Glossaries for Markdown and Quarto Documents](https://debruine.github.io/glossary/)
+
+Add glossaries to markdown and quarto documents by tagging individual words. Definitions can be provided inline or in a separate file.
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-glossary-min.png){width="176"}
+
+
+There is a lot of necessary jargon to learn for coding. The goal of glossary is to provide a lightweight solution for making glossaries in educational materials written in quarto or R Markdown. This package provides functions to link terms in text to their definitions in an external glossary file, as well as create a glossary table of all linked terms at the end of a section.
+
+:::
+
+
+{**glossary**}: A Package to Create Glossaries for Markdown and Quarto Documents
+:::
+
+
+***
+::::
+:::::
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+## Session Info {.unnumbered}
+
+::: my-r-code
+::: my-r-code-header
+Session Info
+:::
+
+::: my-r-code-container
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+:::
+:::
+
