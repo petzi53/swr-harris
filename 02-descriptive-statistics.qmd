@@ -2880,7 +2880,7 @@ I am not sure if I should account also for another difference: My "Health insura
 The first difference may be challenged for the same reason: Including "Frequency" and (braced) "Percentage" in one column and explained by a footnote is practically the same information just more compressed. It would provide more space for further information for more complex tables. So I will concentrate on number (2) to (4) and change in (1) only "Characteristic" to "Survey participants demographics".
 
 
-###### 2nd try
+###### Final 1
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2911,8 +2911,10 @@ brfss_2014_gtsummary
 ::::
 :::::
 
+This would be the final result adapted to the features and possibilities of {**gtsummary**}. But just for the sake of learn more about {**gtsummary**} let's separate frequencies and percent values into two columns. The [advice in StackOverflow](https://stackoverflow.com/questions/68687297/split-frequency-and-percentage-in-tbl-summary-in-to-two-separate-columns) is to generate two table objects with the standard `gtsummary::tbl_summary()` and then to merge them with `gtsummary::tbl:merge()`.
 
-###### 3rd try
+
+###### Final 2
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2963,8 +2965,16 @@ tbl_merge_gtsummary <- gtsummary::tbl_merge(
 tbl_merge_gtsummary
 ```
 
+
 ::::
 :::::
+
+The separation of the frequencies and percentages into two columns worked. But now we have an unfavorable line break in the first column with the variable labels. The problem is that the space between the columns are to wide, especially between second and third column.
+
+I couldn't find a way to reduce the space between columns. Maybe I would need to generate a new theme. But I have chosen to other possibilities: 
+
+- choosing a smaller font
+- choosing a more compact display
 
 ###### Small
 
@@ -2990,6 +3000,10 @@ tbl_merge_gtsummary_small
 ::::
 :::::
 
+The trick to get these details is to convert the {**gtsummary**} object with `gtsummary::as_gt()` into a {**gt**} object and then change the relevant characteristic. {**gt**} has much more control over the table display then {**gtsummary**} which has its strength to calculate and display values in a predefined `r glossary("table 1")` style.
+
+{**gtsummary**} has [several themes](https://www.danieldsjoberg.com/gtsummary/reference/theme_gtsummary.html) and support also different languages. But it is possible to [write your own theme](https://www.danieldsjoberg.com/gtsummary/articles/themes.html#writing-themes).
+
 ###### Compact
 
 :::::{.my-r-code}
@@ -3011,6 +3025,7 @@ tbl_merge_gtsummary
 ::::
 :::::
 
+Here I have used the predefined compact theme with reduced font size and smaller cell paddings.
 
 :::
 
@@ -3018,6 +3033,10 @@ tbl_merge_gtsummary
 :::::
 
 ***
+
+## Exercises (empty)
+
+I have skipped the chapter exercises: They bring nothing new for me. I have already done the recoding and table construction extensively and feel secure about these data management tasks.
 
 ## Packages introduced in this chapter
 

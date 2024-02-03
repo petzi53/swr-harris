@@ -1,7 +1,7 @@
 # Preface {.unnumbered}
 
 ::: {.callout-note style="color: blue;"}
-#### This is work in progress: I just started, and have only finished chapter 1 and 2 (about 19% of the book), but with many experiments and additional self-created exercises.
+#### This is work in progress: I have finished chapter 1 and 2 (about 19% of the book), but with many experiments and additional self-created exercises. Currently I am working on chapter 3.
 :::
 
 ::: my-watch-out
