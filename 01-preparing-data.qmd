@@ -732,6 +732,8 @@ purposes and display the structure of the file
 ::: my-r-code-container
 ```{r}
 #| label: save-xpt-file-demo
+#| lst-label: lst-chap01-downloadfile
+#| lst-cap: "Download a file and save it as R object"
 #| cache: true
 #| eval: false
 

@@ -294,6 +294,7 @@ base::saveRDS(object = transgender_pb,
 
 ###### str()
 
+
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-chap02-str-transgender}
@@ -304,6 +305,8 @@ base::saveRDS(object = transgender_pb,
 ::: my-r-code-container
 ```{r}
 #| label: str-transgender
+#| lst-label: lst-chap02-str-transgender
+#| lst-cap: "Show structure of the `transgender` data with `utils::str()`"
 #| cache: true
 
 utils::str(transgender_pb)

@@ -27,7 +27,6 @@ Objectives
 
 ## Gun violence in the US
 
-### Where to get data?
 
 1. Research about gun violence in under developed. Harris refers to an article by Stark & Shah [-@stark2017] (Figure 1 and 2).
 2. Data for figure 3 (Homicides in the US by guns 2012-2016) comes from the [Uniform Crime Reporting (UCR)](fbi.gov/services/cjis/ucr):
@@ -84,14 +83,25 @@ I will only work with the second option.
 - {**ggmosaic**}: @pak-ggmosaic (Haley Jeppson)
 - {**ggrepel**}: @pak-ggrepel (Kamil Slowikowski)
 - {**gridExtra**}: @pak-gridExtra (Baptiste Auguie)
-- {**httr**}: @pak-httr (Hadley Wickham)
+- ~~{**httr2**}: @pak-httr2 (Hadley Wickham)~~
 - {**readxl**}: @pak-readxl (Jennifer Bryan)
 - {**RNHANES**}: @pak-RNHANES (Herb Susmann)
 - {**scales**}: @pak-scales (Hadley Wickham)
 - {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
 - {**waffle**}: @pak-waffle (Bob Rudis)
 
-    
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Instead of downloading the file with {**httr**} I will use `utils::download.file()`
+:::
+::::{.my-watch-out-container}
+Harris lists the older {**httr**} package, but now there is {**httr2**}, "a modern re-imagining of {**httr**} that uses a pipe-based interface and solves more of the problems that `r glossary("API")` wrapping packages face." (See @pak-httr2)
+
+In the book is the {**httr**} package just used for downloading the excel file from the FBI website. For this specific task there is no need to download, install and learn a new package. You can use `utils::download.file()`, a function as I have it already applied successfully in @lst-chap02-get-brfss-2014-data.
+::::
+:::::
+
+
 2. My additional packages (sorted alphabetically)
 
 
@@ -100,9 +110,597 @@ I will only work with the second option.
 :::
 
 
+## Graphs for a single categorical variable
 
+### Introduction
+
+There are several options for visualizing a singe categorical variable:
+
+- **Pie charts**: Show parts of a whole. **Not recommended**: 
+    - Humans aren’t particularly good at estimating quantity from angles: Once we have more than two categories, pie charts can easily misrepresent percentages and become hard to read.
+    - Pie charts do badly when there are lots of categories. 
+        - Matching the labels and the slices can be hard work. 
+        - Small percentages (which might be important) are tricky to show. 
+    - (See more details and very convincing examples [Why you shouldn’t use pie charts](https://scc.ms.unimelb.edu.au/resources/data-visualisation-and-exploration/no_pie-charts) and [Here’s why you should (almost) never use a pie chart for your data](https://theconversation.com/heres-why-you-should-almost-never-use-a-pie-chart-for-your-data-214576) [@barnett2024; @hunt2019]. But see also the more differenced view in [what is a pie chart?](https://www.storytellingwithdata.com/blog/2020/5/14/what-is-a-pie-chart) [@ricks2020]).
+- **Waffle charts**: Show parts of whole. Waffle charts are one of the alternatives for replacing pie charts, but are seldom used.
+- **Bar charts**: Comparing groups. 
+- **Point charts**: Comparing groups.
+
+### Get the data
+
+The data can be download from the internet with the following URL: <https://ucr.fbi.gov/crime-in-the-u.s/2016/crime-in-the-u.s.-2016/tables/expanded-homicide-data-table-4.xls/output.xls>
+
+To get the data for this chapter is a three step procedure:
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap03-get-internet-data}
+: How to get data from the internet
+::::::
+:::
+::::{.my-procedure-container}
+
+1. My first step is always to go to the website and download the file manually. Some people may believe that this is superfluous, but I think there are three advantages for this preparatory task:
+    - Inspecting the website and checking if the URL is valid and points to the correct dataset.
+    - Checking the file extension
+    - Inspecting the file after downloaded to see if there is something to care about (e.g., the file starts with several lines, that are not data, or other issues).
+2. Download the file using `utils::donwload.file()`.
+3. Read the imported file into R with the appropriate program function, in the first case `readxl::read_excel()`
+   
+
+::::
+:::::
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-get-data}
+: Get data for chapter 3
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### FBI
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-get-fbi-data}
+: Get data from the FBI’s Uniform Crime Reporting database
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-fbi-data
+#| eval: false
+#| cache: true
+#| lst-label: lst-chap03-get-fbi-data
+#| lst-cap: "Get data from the FBI’s Uniform Crime Reporting database"
+
+## run only once (manually)
+# create a variable that contains the web
+# URL for the data set
+url1 <- base::paste0("https://ucr.fbi.gov/crime-in-the-u.s",
+                     "/2016/crime-in-the-u.s.-2016/tables/",
+                     "expanded-homicide-data-table-4.xls/output.xls")
+
+## run only once (manually)
+## download only once (manually)
+utils::download.file(url = url1,
+                     tf <- base::tempfile(),
+                     mode = "wb"
+)
+
+fbi_deaths <- tibble::tibble(
+     readxl::read_excel(path = tf,
+                        sheet = 1,
+                        skip = 3,
+                        n_max = 18))
+
+data_folder <- base::paste0(here::here(), "/data/")
+if (!base::file.exists(data_folder)) 
+    {base::dir.create(data_folder)}
+
+chap03_folder <- base::paste0(here::here(), "/data/chap03/")
+if (!base::file.exists(chap03_folder)) 
+    {base::dir.create(chap03_folder)}
+
+base::saveRDS(object = fbi_deaths, 
+        file = paste0(chap03_folder, "/fbi_death.rds"))
+
+```
 
 ***
+
+In changed the recommended R code by Harris for downloading the FBI Excel Data I in several ways:
+
+1. I did not use command from {**httr**}, but `utils::download.file()`.
+2. Instead creating a data frame with `base::data.frame()` I used a `tibble::tibble()`. This has the advantage that the column names were not changed. In the original files the column names are years, but in base R is not allowed that column names start with a number. In tidyverse this is possible but you must refer to this column names with enclosed accents like `2016`.
+3. Instead of saving the data as an Excel file I think that it is more convenient to store it as an R object with the extension ".rds". (I believe that Harris saved it in the book only to get the same starting condition with the already downloaded file in the books companion web site.) 
+::::
+:::::
+
+
+
+###### NHANES 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-get-NHANES1-data}
+: Get NHANES data 2011-2012 from the CDC website with {RNHANES}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: get-NHANES1-data
+#| cache: true
+#| eval: false
+#| lst-label: lst-chap03-get-NHANES1-data
+#| lst-cap: "Get NHANES data (2011-2012) from the CDC website with {RNHANES}"
+
+## run only once (manually)
+# download audiology data (AUQ_G)
+# with demographics
+nhanes_2012 <- 
+    RNHANES::nhanes_load_data(
+        file_name = "AUQ_G", 
+        year = "2011-2012",
+        demographics = TRUE)
+
+data_folder <- base::paste0(here::here(), "/data/")
+if (!base::file.exists(data_folder)) 
+    {base::dir.create(data_folder)}
+
+chap03_folder <- base::paste0(here::here(), "/data/chap03/")
+if (!base::file.exists(chap03_folder)) 
+    {base::dir.create(chap03_folder)}
+
+base::saveRDS(object = nhanes_2012, 
+        file = paste0(chap03_folder, "/nhanes_2012.rds"))
+
+```
+
+
+::::
+:::::
+
+
+{RNHANES} combines as a package specialized to download data from the National Health and Nutrition Examination Survey (NHANES) step 2 and 3 of @prp-chap03-get-internet-data. But as it turned out it only doesn't work with newer audiology data than 2012. I tried to use the package with data from 2016 and 2018 (For 2014 there are no audiology data available), but I got an error message.
+
+> Error in validate_year(year) : Invalid year: 2017-2018
+
+The problem lies in the function `RNHANES:::validate_year()`. It qualifies in version 1.1.0 only downloads until '2013-2014' as valid:
+
+***
+
+```
+function (year, throw_error = TRUE) 
+{
+    if (length(year) > 1) {
+        Map(validate_year, year, throw_error = throw_error) %>% 
+            unlist() %>% unname() %>% return()
+    }
+    else {
+        valid <- switch(as.character(year), `1999-2000` = TRUE, 
+            `2001-2002` = TRUE, `2003-2004` = TRUE, `2005-2006` = TRUE, 
+            `2007-2008` = TRUE, `2009-2010` = TRUE, `2011-2012` = TRUE, 
+            `2013-2014` = TRUE, FALSE)
+        if (throw_error == TRUE && valid == FALSE) {
+            stop(paste0("Invalid year: ", year))
+        }
+        return(valid)
+    }
+}
+```
+
+***
+
+**Conclusion**: Special data packages can facilitate your work, but to know how to download data programmatically on your own is an indispensable data science skill.
+
+See tab "NHANES 2" how this is done.
+
+
+###### NHANES 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-get-NHANES2-data}
+: Get NHANES data 2017-2018 from the CDC website with {haven}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: get-NHANES2-data
+#| cache: true
+#| eval: false
+#| lst-label: lst-chap03-get-NHANES2-data
+#| lst-cap: "Get NHANES data 2017-2018 from the CDC website with {haven}"
+
+## run only once (manually)
+# download audiology data (AUQ_J)
+nhanes_2018 <- haven::read_xpt(
+    file = "https://wwwn.cdc.gov/Nchs/Nhanes/2017-2018/AUQ_J.XPT"
+)
+
+data_folder <- base::paste0(here::here(), "/data/")
+if (!base::file.exists(data_folder)) 
+    {base::dir.create(data_folder)}
+
+chap03_folder <- base::paste0(here::here(), "/data/chap03/")
+if (!base::file.exists(chap03_folder)) 
+    {base::dir.create(chap03_folder)}
+
+base::saveRDS(object = nhanes_2018, 
+        file = paste0(chap03_folder, "/nhanes_2018.rds"))
+
+```
+
+
+::::
+:::::
+
+The download with {**haven**} has the additional advantage that the variables are labelled as already explained in @sec-chap01-labelled-data.
+
+
+:::
+
+
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-waffle-charts}
+: Creating Waffle Charts
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### 2012
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-waffle-chart-nhanes-2012}
+: Creating a waffle chart for number of total rounds fired (NHANES survey 2011-2012)
+::::::
+:::
+::::{.my-r-code-container}
+
+
+::: {#lst-chap03-waffle-chart-rounds-fired1}
+```{r}
+#| label: fig-waffle-chart-nhanes-2012
+#| fig-cap: "Proportion of total rounds fired (NHANES survey 2011-2012)"
+#| cache: true
+#| warning: false
+
+nhanes_2012 <- readRDS("data/chap03/nhanes_2012.rds")
+
+rounds_fired_2012 <- nhanes_2012 |> 
+    dplyr::select(AUQ310) |> 
+    tidyr::drop_na() |> 
+    dplyr::mutate(AUQ310 = forcats::as_factor(AUQ310)) |> 
+    dplyr::mutate(AUQ310 = forcats::fct_recode(AUQ310,
+        "1 to less than 100" = "1",
+        "100 to less than 1000" = "2",
+        "1000 to less than 10k" = "3",
+        "10k to less than 50 k" = "4",
+        "50k or more" = "5",
+        "Refused to answer" = "7",
+        "Don't know" = "9")
+    )
+
+fired_2012 <- rounds_fired_2012 |>
+    dplyr::count(AUQ310) |> 
+    dplyr::mutate(prop = round(n / sum(n), 2) * 100) |> 
+    dplyr::relocate(n, .after = dplyr::last_col())
+
+waffle::waffle(parts = fired_2012,
+               rows = 10,
+               # colors = c("azure2", "azure3", 
+               #            "grey71", "grey41", "black",
+               #  "lemonchiffon1"))
+               colors = c("lightblue1", "lightsteelblue1", 
+                          "deepskyblue1", "dodgerblue3", "black",
+                "lemonchiffon1"))
+```
+Proportion of total rounds fired (NHANES survey 2011-2012)
+
+:::
+
+***
+
+In contrast to the example in the book I have used percentages and not absolute numbers.
+
+> To emulate the percentage view of a pie chart, a 10x10 grid should be used with each square representing 1% of the total. ([waffle homepage](https://cinc.rud.is/web/packages/waffle/index.html))
+
+
+Another advantage: Using percentages I can compare 2011-2012 with 2017-2018 (see @fig-waffle-chart-nhanes-2018)
+
+
+::::
+:::::
+
+
+![How many total rounds have you ever fired? [Codebook 2011-2012 AUDIOMETRY](https://wwwn.cdc.gov/nchs/data/nhanes/2011-2012/questionnaires/auq.pdf)](img/chap03/NHANES-codebook-firearms-2012-min.png){#fig-firearms-codebook-2012
+fig-alt="'How many rounds in total have you ever fired?' this question has several options:
+- 1 = 1 to less than 100 rounds 
+- 2 = 100 to less than 1,000 rounds 
+- 3 = 1,000 to less than 10,000 rounds 
+- 4 = 10,000 to less than 50,000 rounds 
+- 5 = 50,000 rounds or more 
+- 7 = Refused 
+- 9 = Don’t know" fig-align="center"}
+
+###### 2018
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-waffle-chart-nhanes-2018}
+: Creating a waffle chart for number of total rounds fired (NHANES survey 2017-2018)
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap03-waffle-chart-rounds-fired2}
+```{r}
+#| label: fig-waffle-chart-nhanes-2018
+#| fig-cap: "Proportion of total rounds fired (NHANES survey 2017-2018)"
+#| results: hold
+#| cache: true
+#| warning: false
+
+nhanes_2018 <- readRDS("data/chap03/nhanes_2018.rds")
+
+rounds_fired_2018 <- nhanes_2018 |> 
+    dplyr::select(AUQ310) |> 
+    tidyr::drop_na() |> 
+    dplyr::mutate(AUQ310 = forcats::as_factor(AUQ310)) |> 
+    dplyr::mutate(AUQ310 = forcats::fct_recode(AUQ310,
+        "1 to less than 100" = "1",
+        "100 to less than 1000" = "2",
+        "1000 to less than 10k" = "3",
+        "10k to less than 50 k" = "4",
+        "50k or more" = "5",
+        "Refused to answer" = "7",
+        "Don't know" = "9")
+    )
+
+fired_2018 <-  rounds_fired_2018 |> 
+    dplyr::count(AUQ310) |>
+    dplyr::mutate(prop = round(n / sum(n), 2) * 100) |> 
+    dplyr::relocate(n, .after = dplyr::last_col())
+
+waffle::waffle(parts = fired_2018,
+               rows = 10,
+               colors = c("lightblue1", "lightsteelblue1", 
+                          "deepskyblue1", "dodgerblue3", "black",
+               "gold1", "lemonchiffon1"))
+```
+
+Proportion of total rounds fired (NHANES survey 2017-2018)
+
+:::
+
+***
+
+The number of different levels of the factor variable is almost too high to realize at one glance the differences of the various categories.
+
+> Best practices suggest keeping the number of categories small, just as should be done when creating pie charts. ([Create Waffle Charts Visualization](https://cinc.rud.is/web/packages/waffle/index.html))
+
+Compare 2011-2012 with 2017-2018 (see @fig-waffle-chart-nhanes-2012). You see there is just a small difference: Respondents in the 2017-2018 survey have fired tiny less rounds as the people asked in the 2011-2012 survey. Generally speaking: The fired total of rounds remains more or less constant during the period 2012 - 2018.  
+
+
+::::
+:::::
+
+![How many total rounds have you ever fired? [Codebook 2017-2018 AUDIOMETRY](https://wwwn.cdc.gov/nchs/data/nhanes/2017-2018/questionnaires/AUQ_J.pdf)](img/chap03/NHANES-codebook-firearms-2018-min.png){#fig-firearms-codebook-2018
+fig-alt="'How many rounds in total have you ever fired?' this question has several options:
+- 1 = 1 to less than 100 rounds 
+- 2 = 100 to less than 1,000 rounds 
+- 3 = 1,000 to less than 10,000 rounds 
+- 4 = 10,000 to less than 50,000 rounds 
+- 5 = 50,000 rounds or more 
+- 7 = Refused 
+- 9 = Don’t know" fig-align="center"}
+
+###### Compare
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-compare-fired-nhanes-2012-2018}
+: Compare the total rounds fired between the NHANES survey participants 2011-2012 and 2017-2018
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-compare-fired-nhanes-2012-2018
+#| tbl-cap: "Total rounds fired of NHANES survey participants 2011-2012 and 2017-2018"
+
+fired <- dplyr::full_join(x = fired_2012,
+                          y = fired_2018,
+                          by = dplyr::join_by(AUQ310) 
+)
+
+fired <-  fired |> 
+    dplyr::rename(
+        "Rounds fired" = "AUQ310",
+        `2012(%)` = prop.x,
+        `n (2012)` = n.x,
+        `2018(%)` = prop.y,
+        `n (2018)` = n.y,
+        ) |> 
+    dplyr::mutate(`Diff (%)` = `2012(%)` - `2018(%)`)
+
+fired
+```
+
+***
+
+The participants of the NHANES survey 2011-2012 and 2017-2018 fired almost the same numbers of total rounds. The participants in 2017-2018 fired just a tiny amount of bullets less. 
+
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+
+
+
+
+
+
+## Exercises
+
+***
+
+## Packages introduced in this chapter
+
+### RNHANES
+
+:::::{.my-resource}
+:::{.my-resource-header}
+RNHANES: Facilitates Analysis of CDC NHANES Data
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-RNHANES}
+
+***
+
+{**RNHANES**}: [Facilitates Analysis of CDC NHANES Data](https://wwww.silentspring.org/RNHANES/index.html)
+
+
+(*There is no hexagon logo available for RNHANES*)
+
+RNHANES is an R package for accessing and analyzing `r glossary("CDC")` `r glossary("NHANES")` (National Health and Nutrition Examination Survey) data that was developed by [Silent Spring Institute](https://silentspring.org/).
+
+{**RNHANES**}: A Package for Facilitating Analysis of CDC NHANES Data
+:::
+
+***
+::::
+:::::
+
+
+### httr2
+
+:::::{.my-resource}
+:::{.my-resource-header}
+httr2: Perform HTTP Requests and Process the Responses
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-httr2}
+
+***
+
+{**httr2**}: [Perform HTTP Requests and Process the Responses](https://httr2.r-lib.org/)
+
+Tools for creating and modifying HTTP requests, then performing them and processing the results. 
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-httr2-min.png){width="176"}
+
+{**httr2**} (pronounced hitter2) is a ground-up rewrite of {**httr**} that provides a pipeable `r glossary("API")` with an explicit request object that solves more problems felt by packages that wrap APIs (e.g. built-in rate-limiting, retries, OAuth, secure secrets, and more). --- {**httr2**} is designed to map closely to the underlying `r glossary("HTTP")` `r glossary("protocol")`. For more details, read [An overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview) from `r glossary("MDN")`.
+
+:::
+
+
+{**httr2**}: A Package to Perform HTTP Requests and Process the Responses
+:::
+
+***
+::::
+:::::
+
+### readxl
+
+:::::{.my-resource}
+:::{.my-resource-header}
+readxl: Read Excel Files
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-readxl}
+
+***
+
+{**readxl**}: [Read Excel Files](https://readxl.tidyverse.org/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-readxl-min.png){width="176"}
+
+The readxl package makes it easy to get data out of Excel and into R. Compared to many of the existing packages (e.g. {**gdata**}, {**xlsx**}, {**xlsReadWrite**}) {**readxl**} has no external dependencies, so it’s easy to install and use on all operating systems. It is designed to work with *tabular* data. Works on Windows, Mac and Linux without external dependencies.
+
+:::
+
+{**readxl**} supports both the legacy `.xls` format and the modern xml-based `.xlsx` format. The embedded [libxls](https://github.com/libxls/libxls) C library is used to support `.xls`, which abstracts away many of the complexities of the underlying binary format. To parse `.xlsx`, we use the [RapidXML](https://rapidxml.sourceforge.net/) C++ library.
+
+
+
+{**readxl**}: A Package to Read Excel Files
+:::
+
+***
+::::
+:::::
+
+### waffle
+
+:::::{.my-resource}
+:::{.my-resource-header}
+waffle: Create Waffle Chart Visualizations
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-waffle}
+
+***
+
+{**waffle**}: [Create Waffle Chart Visualizations](https://cinc.rud.is/web/packages/waffle/index.html)
+
+(*There is no hexagon logo for {**waffle**} available*)
+
+Square pie charts (a.k.a. waffle charts) can be used to communicate parts of a whole for categorical quantities. To emulate the percentage view of a pie chart, a 10x10 grid should be used with each square representing 1% of the total. 
+
+Modern uses of waffle charts do not necessarily adhere to this rule and can be created with a grid of any rectangular shape. 
+
+Best practices suggest keeping the number of categories small, just as should be done when creating pie charts. 
+
+Tools are provided to create waffle charts as well as stitch them together, and to use glyphs for making isotype pictograms.
+
+It uses {**ggplot2**} and returns a `ggplot2` object.
+
+
+
+{**waffle**}: A Package for Creating Waffle Chart Visualizations
+:::
+
+***
+::::
+:::::
 
 
 ## Glossary
