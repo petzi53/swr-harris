@@ -351,6 +351,215 @@ The download with {**haven**} has the additional advantage that the variables ar
 ::::
 :::::
 
+### Bar Charts
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-bar-charts}
+: Creating Bar Charts
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Recode
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-recode-bar-charts-gun-use-2012}
+: Recode gun use with NHANES data 2011-2012
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: recode-gun-use-2012
+#| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
+#| cache: true
+
+## load data
+nhanes_2012 <- base::readRDS("data/chap03/nhanes_2012.rds")
+
+## recode data
+gun_use_2012 <- nhanes_2012 |> 
+    dplyr::select(AUQ300) |> 
+    dplyr::mutate(AUQ300 = 
+          dplyr::na_if(x = AUQ300, y = 7)) |> 
+    dplyr::mutate(AUQ300 = 
+          dplyr::na_if(x = AUQ300, y = 9)) |> 
+    tidyr::drop_na() |> 
+    dplyr::mutate(AUQ300 = forcats::as_factor(AUQ300)) |> 
+    dplyr::mutate(AUQ300 = 
+          forcats::fct_recode(AUQ300, 
+                  "Yes" = "1", 
+                  "No" = "2")
+    )
+
+gun_use_2012 |> 
+    dplyr::count(AUQ300)
+```
+***
+
+For recoding the levels of the categorical variable I have looked up the appropriate passage in the codebook  (see: @fig-firearms-use-codebook-2012).
+
+::::
+:::::
+
+
+![Ever used firearms for any reason? [Codebook 2011-2012 AUDIOMETRY](https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/AUQ_G.htm#AUQ300)](img/chap03/NHANES-codebook-firearms-use-2012-min.png){#fig-firearms-use-codebook-2012
+fig-alt="'Ever used firearms for any reason?' this question has several options:
+- 1 = Yes
+- 2 = No
+- 7 = Refused 
+- 9 = Don’t know
+- . = Missing" fig-align="center"}
+
+
+
+
+###### Bar width
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-thick-thin-bar-charts-gun-use}
+: Bar charts for gun use (NHANES 2011-2012) with different width of bars
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-thick-thin-bar-charts-gun-use
+#| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
+#| cache: true
+
+
+## bar chart: bars with wide width
+p_normal <- gun_use_2012 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = AUQ300)
+    ) +
+    ggplot2::geom_bar() + 
+    ggplot2::labs(x = "Gun use", 
+                  y = "Number of participants") +
+    ggplot2::theme_bw()
+
+## bar chart: bars with small width
+p_small <- gun_use_2012 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = AUQ300)
+    ) +
+    ggplot2::geom_bar(width = 0.4) + 
+    ggplot2::theme_bw() +
+    ggplot2::theme(aspect.ratio = 4/1) +
+    ggplot2::labs(x = "Gun use", 
+                  y = "Number of participants")
+
+## display both charts side by side
+gridExtra::grid.arrange(p_normal, p_small, ncol = 2)
+```
+***
+
+1. **Left**: Only two bars look horrifying. In this example they are even a lot smaller as normal, because of the second graph to the right.
+2. **Right**: It is not enough to create smaller bars with the `width` argument inside the `ggplot2::geom_bar()` function because that would create unproportional wide space between the two bars. One need to apply the aspect ratio for the used theme as well. In this case all commands to the theme (e.g. my `ggplot2::the_bw()`) has to come before the `aspect.ratio` argument. One has to try out which aspect ratio works best.
+3. I used here --- as recommended in the book --- the {**gridExtra**} package to display the figures side by side (see @pak-gridExtra). But there are other options as well. In the next tab I will use the {**patchwork**} package, that is especially for {**ggplot2**} developed (see @pak-patchwork). A third option would be to use one of Quarto formatting commands: See
+    - [Subfigures](https://quarto.org/docs/authoring/figures.html#subfigures)
+    - [Figure panels](https://quarto.org/docs/authoring/figures.html#figure-panels)
+    - [Multiple Rows](https://quarto.org/docs/authoring/figures.html#multiple-rows) and
+    - [Figure divs](https://quarto.org/docs/authoring/figures.html#figure-divs).
+
+
+
+::::
+:::::
+
+###### Bar color
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-colored-bar-charts}
+: Bar charts for gun use (NHANES 2011-2012) with different colorizing methods
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-colorized-bar-charts-gun-use
+#| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
+#| cache: true
+
+## bar chart: filled colors within aes() (data controlled)
+p_fill_in <- gun_use_2012 |> 
+    ggplot2::ggplot(ggplot2::aes(x = AUQ300)) +
+    ggplot2::geom_bar(
+        ggplot2::aes(fill = AUQ300), width = 0.4) + 
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::theme(aspect.ratio = 3/1) +
+    ggplot2::labs(x = "Gun use", 
+                  y = "Number of participants",
+                  subtitle = "Filled inside \naes()") 
+
+## bar chart: filled colors outside aes() (manually controlled)
+p_fill_out <- gun_use_2012 |> 
+    ggplot2::ggplot(ggplot2::aes(x = AUQ300)) +
+    # ggplot2::theme(legend.position = "none") +
+    # ggplot2::geom_bar(width = 0.4, fill =  c("darkred", "steelblue")) + 
+    ggplot2::theme_bw() +
+    ggplot2::theme(aspect.ratio = 3/1) +
+    ggplot2::labs(x = "Gun use", 
+                  y = "Number of participants",
+                  subtitle = "Filled outside \naes() my colors")
+
+## ## bar chart: fill = data controlled by my own colors
+p_fill_in_my_colors <- gun_use_2012 |> 
+    ggplot2::ggplot(ggplot2::aes(x = AUQ300)) +
+    ggplot2::geom_bar(
+        ggplot2::aes(fill = AUQ300), width = 0.4) + 
+    ggplot2::theme_bw() +
+    ggplot2::scale_fill_manual(values = c("darkred", "steelblue"), guide = "none") +
+    ggplot2::theme(aspect.ratio = 3/1) +
+    ggplot2::labs(x = "Gun use", 
+                  y = "Number of participants",
+                  subtitle = "Filled inside \nwith my colors") 
+
+## bar chart: manually controlled colors
+p_fill_out_my_colors <- gun_use_2012 |> 
+    ggplot2::ggplot(ggplot2::aes(x = AUQ300)) +
+    ggplot2::geom_bar(width = 0.4, fill = c("darkred", "steelblue")) + 
+    ggplot2::theme_bw() +
+    ggplot2::theme(aspect.ratio = 3/1) +
+    ggplot2::labs(x = "Gun use", 
+                  y = "Number of participants",
+                  subtitle = "Filled outside \nwith my colors")
+
+## display both charts side by side
+library(patchwork)
+
+p_fill_in |  p_fill_out | p_fill_in_my_colors | p_fill_out_my_colors 
+```
+***
+
+- **Left**: This graph has the color fill argument within `aes()` and is therefore data controlled. This means that the colors will be settled automatically by factor level.
+- **Middle left**: This graph has the color fill argument outside `aes()` and is therefore manually controlled. One needs to supply colors otherwise one gets a graph without any colors at all.
+- **Middle right**: Even if the graph has the color fill argument within `aes()` and is therefore data controlled, you can change the color composition. But you has also the responsibility to provide a correct legend --- or as I have done in this example --- to remove the legend from the display. (The argument `guide = FALSE` as used in the book is superseded with `guide = "none"`)
+- **Right**: The graph is manually controlled because it has the color fill argument outside `aes()` with specified colors.
+
+I used {**patchwork**} here to show all four example graphs side by side (see @pak-patchwork). I needed some time and had to experiment because at first I tried it with the `+` operator. But that produced two very small graphs in the first row of the middle of the display area, and other two small graphs in the second row of the middle of the display area. Beside this ugly display the text of the subtitle was also truncated.
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+***
+
+
+### Waffle Charts
+
 :::::{.my-example}
 :::{.my-example-header}
 :::::: {#exm-chap03-waffle-charts}
@@ -569,28 +778,70 @@ The participants of the NHANES survey 2011-2012 and 2017-2018 fired almost the s
 
 ## Packages introduced in this chapter
 
-### RNHANES
+### cowplot
 
 :::::{.my-resource}
 :::{.my-resource-header}
-RNHANES: Facilitates Analysis of CDC NHANES Data
+cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'
 :::
 ::::{.my-resource-container}
 
 ***
 
-::: {#pak-RNHANES}
+::: {#pak-cowplot}
 
 ***
 
-{**RNHANES**}: [Facilitates Analysis of CDC NHANES Data](https://wwww.silentspring.org/RNHANES/index.html)
+{**cowplot**}: [Streamlined Plot Theme and Plot Annotations for 'ggplot2'](https://wilkelab.org/cowplot/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-cowplot-min.png){width="176"}
+
+The {**cowplot**} package provides various features that help with creating publication-quality figures, such as a set of themes, functions to align plots and arrange them into complex compound figures, and functions that make it easy to annotate plots and or mix plots with images. The package was originally written for internal use in the Wilke lab, hence the name (Claus O. Wilke’s plot package). It has also been used extensively in the book [Fundamentals of Data Visualization](https://www.amazon.com/gp/product/1492031089).
+
+:::
+
+There are several packages that can be used to align plots. The most widely used ones beside {**cowplot**} are {**egg**} and {**patchwork**} (see @pak-patchwork). All these packages use slightly different approaches to plot alignment, and the respective approaches have different strengths and weaknesses. If you cannot achieve your desired result with one of these packages try another one.
+
+Most importantly, while {**egg**} and {**patchwork**} align and arrange plots at the same time, {**cowplot**} aligns plots independently of how they are arranged. This makes it possible to align plots and then reproduce them separately, or even overlay them on top of each other.
+
+The {**cowplot**} package now provides a set of complementary themes with different features. I now believe that there isn’t one single theme that works for all figures, and therefore I recommend that you always explicitly set a theme for every plot you make.
 
 
-(*There is no hexagon logo available for RNHANES*)
 
-RNHANES is an R package for accessing and analyzing `r glossary("CDC")` `r glossary("NHANES")` (National Health and Nutrition Examination Survey) data that was developed by [Silent Spring Institute](https://silentspring.org/).
+{**cowplot**}: A Package for Streamlined Plot Themes and Plot Annotations for {ggplot2}
+:::
 
-{**RNHANES**}: A Package for Facilitating Analysis of CDC NHANES Data
+
+
+***
+::::
+:::::
+
+
+### gridExtra
+
+:::::{.my-resource}
+:::{.my-resource-header}
+gridExtra: Miscellaneous Functions for "Grid" Graphics
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-gridExtra}
+
+***
+
+{**gridExtra**}: [Miscellaneous Functions for "Grid" Graphics](https://cran.r-project.org/package=gridExtra)
+
+(*There is no hexagon logo for {**gridExtra**} available*)
+
+Provides a number of user-level functions to work with "grid" graphics, notably to arrange multiple grid-based plots on a page, and draw tables.
+
+The {**grid**) package (= part of the R system library) provides low-level functions to create graphical objects (`grobs`), and position them on a page in specific viewports. The {**gtable**} package introduced a higher-level layout scheme, arguably more amenable to user-level interaction. With the `gridExtra::arrangeGrob()` / `gridExtra::grid.arrange()` pair of functions, {**gridExtra**} builds upon {**gtable**} to arrange multiple `grobs` on a page.
+
+{**gridExtra**}: A Package for Miscellaneous Functions for "Grid" Graphics
 :::
 
 ***
@@ -631,6 +882,44 @@ Tools for creating and modifying HTTP requests, then performing them and process
 ::::
 :::::
 
+### patchwork
+
+:::::{.my-resource}
+:::{.my-resource-header}
+patchwork: The Composer of Plots
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-patchwork}
+
+***
+
+{**patchwork**}: [The Composer of Plots](https://patchwork.data-imaginist.com/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-patchwork-min.png){width="176"}
+
+The goal of {**patchwork**} is to make it ridiculously simple to combine separate `ggplots` into the same graphic. As such it tries to solve the same problem as `gridExtra::grid.arrange()` and `cowplot::plot_grid` but using an `r glossary("API")` that incites exploration and iteration, and scales to arbitrarily complex layouts.
+
+:::
+The {**ggplot2**} package provides a strong API for sequentially building up a plot, but does not concern itself with composition of multiple plots. {**patchwork**} is a package that expands the API to allow for arbitrarily complex composition of plots by, among others, providing mathematical operators for combining multiple plots. Other packages that try  to address this need (but with a different approach) are {**gridExtra**} and {**cowplot**} (see @pak-gridExtra and @pak-cowplot).
+
+Before plots can be laid out, they have to be assembled. Arguably one of patchwork’s biggest selling points is that it expands on the use of `+` in ggplot2 to allow plots to be added together and composed, creating a natural extension of the {**ggplot2**} API.
+
+While quite complex compositions can be achieved using `+`, `|`, and `/`, it may be necessary to take even more control over the layout. All of this can be controlled using the `patchwork::plot_layout()` function along with a couple of special placeholder objects.
+
+{**patchwork**}: A Package for Composing Plots
+:::
+
+
+
+***
+::::
+:::::
+
+
 ### readxl
 
 :::::{.my-resource}
@@ -664,6 +953,36 @@ The readxl package makes it easy to get data out of Excel and into R. Compared t
 ***
 ::::
 :::::
+
+### RNHANES
+
+:::::{.my-resource}
+:::{.my-resource-header}
+RNHANES: Facilitates Analysis of CDC NHANES Data
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-RNHANES}
+
+***
+
+{**RNHANES**}: [Facilitates Analysis of CDC NHANES Data](https://wwww.silentspring.org/RNHANES/index.html)
+
+
+(*There is no hexagon logo available for RNHANES*)
+
+RNHANES is an R package for accessing and analyzing `r glossary("CDC")` `r glossary("NHANES")` (National Health and Nutrition Examination Survey) data that was developed by [Silent Spring Institute](https://silentspring.org/).
+
+{**RNHANES**}: A Package for Facilitating Analysis of CDC NHANES Data
+:::
+
+***
+::::
+:::::
+
+
 
 ### waffle
 
