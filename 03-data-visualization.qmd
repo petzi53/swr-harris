@@ -17,28 +17,45 @@ Objectives
 ::: my-objectives-container
 **SwR Achievements**
 
-- **Achievement 1**: Choosing and creating graphs for a single categorical variable
-- **Achievement 2**: Choosing and creating graphs for a single continuous variable 
-- **Achievement 3**: Choosing and creating graphs for two variables at once 
-- **Achievement 4**: Ensuring graphs are well-formatted with appropriate and clear titles, labels, colors, and other features
-
+-   **Achievement 1**: Choosing and creating graphs for a single
+    categorical variable
+-   **Achievement 2**: Choosing and creating graphs for a single
+    continuous variable
+-   **Achievement 3**: Choosing and creating graphs for two variables at
+    once
+-   **Achievement 4**: Ensuring graphs are well-formatted with
+    appropriate and clear titles, labels, colors, and other features
 :::
 :::
 
 ## Gun violence in the US
 
+1.  Research about gun violence in under developed. Harris refers to an
+    article by Stark & Shah [-@stark2017] (Figure 1 and 2).
 
-1. Research about gun violence in under developed. Harris refers to an article by Stark & Shah [-@stark2017] (Figure 1 and 2).
-2. Data for figure 3 (Homicides in the US by guns 2012-2016) comes from the [Uniform Crime Reporting (UCR)](fbi.gov/services/cjis/ucr):
+2.  Data for figure 3 (Homicides in the US by guns 2012-2016) comes from
+    the [Uniform Crime Reporting (UCR)](fbi.gov/services/cjis/ucr):
 
-    > The Uniform Crime Reporting (UCR) Program generates reliable statistics for use in law enforcement. It also provides information for students of criminal justice, researchers, the media, and the public. The program has been providing crime statistics since 1930.
-    
-    > The UCR Program includes data from more than 18,000 city, university and college, county, state, tribal, and federal law enforcement agencies. Agencies participate voluntarily and submit their crime data either through a state UCR program or directly to the FBI's UCR Program.
+    > The Uniform Crime Reporting (UCR) Program generates reliable
+    > statistics for use in law enforcement. It also provides
+    > information for students of criminal justice, researchers, the
+    > media, and the public. The program has been providing crime
+    > statistics since 1930.
 
-3. Figure 4: Handguns were the most widely used type of gun for homicide in 2016.
-4. Gun manufacturers play an essential role: Figure 5 and 6.
+    > The UCR Program includes data from more than 18,000 city,
+    > university and college, county, state, tribal, and federal law
+    > enforcement agencies. Agencies participate voluntarily and submit
+    > their crime data either through a state UCR program or directly to
+    > the FBI's UCR Program.
 
-## Data, codebook, and R packages
+3.  Figure 4: Handguns were the most widely used type of gun for
+    homicide in 2016.
+
+4.  Gun manufacturers play an essential role: Figure 5 and 6.
+
+## Resources & Chapter Outline
+
+### Data, codebook, and R packages
 
 ::: my-resource
 ::: my-resource-header
@@ -46,20 +63,21 @@ Data, codebook, and R packages for data visualization
 :::
 
 ::: my-resource-container
-
 **Data**
 
 There are two options:
 
-1. Download the three data files from <https://edge.sagepub.com/harris1e>
-    -  nhanes_2011_2012_ch3.csv
-    -  fbi_deaths_2016_ch3.csv 
-    -  gun_publications_funds_2004_2015_ch3.csv
-2.  Download 
-    -  the raw data directly from the Internet for the FBI deaths data 
-    -  the `r glossary("NHANES")` data by following the instructions in Box 3.1
-    -  the gun_publications_funds_2004_2015_ch3.csv 
-    from <https://edge.sagepub.com/harris1e>
+1.  Download the three data files from
+    <https://edge.sagepub.com/harris1e>
+    -   nhanes_2011_2012_ch3.csv
+    -   fbi_deaths_2016_ch3.csv
+    -   gun_publications_funds_2004_2015_ch3.csv
+2.  Download
+    -   the raw data directly from the Internet for the FBI deaths data
+    -   the `r glossary("NHANES")` data by following the instructions in
+        Box 3.1
+    -   the gun_publications_funds_2004_2015_ch3.csv from
+        <https://edge.sagepub.com/harris1e>
 
 I will only work with the second option.
 
@@ -67,116 +85,112 @@ I will only work with the second option.
 
 Again there are two options:
 
-1. Download from <https://edge.sagepub.com/harris1e> 
-    - nhanes_demographics_2012_codebook.html 
-    - nhanes_auditory_2012_codebook.html 
-2. Access the codebooks online on the National Health and Nutrition Examination Survey [(NHANES) website](https://wwwn.cdc.gov/nchs/nhanes/Search/DataPage.aspx?Component=Questionnaire&CycleBeginYear=2011)
+1.  Download from <https://edge.sagepub.com/harris1e>
+    -   nhanes_demographics_2012_codebook.html
+    -   nhanes_auditory_2012_codebook.html
+2.  Access the codebooks online on the National Health and Nutrition
+    Examination Survey [(NHANES)
+    website](https://wwwn.cdc.gov/nchs/nhanes/Search/DataPage.aspx?Component=Questionnaire&CycleBeginYear=2011)
 
-        
 I will only work with the second option.
 
 **Packages**
 
-1. Packages used with the book (sorted alphabetically)
+1.  Packages used with the book (sorted alphabetically)
 
-- {**data.table**}: @pak-data-table (Tyson Barrett)
-- {**ggmosaic**}: @pak-ggmosaic (Haley Jeppson)
-- {**ggrepel**}: @pak-ggrepel (Kamil Slowikowski)
-- {**gridExtra**}: @pak-gridExtra (Baptiste Auguie)
-- ~~{**httr2**}: @pak-httr2 (Hadley Wickham)~~
-- {**readxl**}: @pak-readxl (Jennifer Bryan)
-- {**RNHANES**}: @pak-RNHANES (Herb Susmann)
-- {**scales**}: @pak-scales (Hadley Wickham)
-- {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
-- {**waffle**}: @pak-waffle (Bob Rudis)
+-   {**data.table**}: @pak-data-table (Tyson Barrett)
+-   {**ggmosaic**}: @pak-ggmosaic (Haley Jeppson)
+-   {**ggrepel**}: @pak-ggrepel (Kamil Slowikowski)
+-   {**gridExtra**}: @pak-gridExtra (Baptiste Auguie)
+-   ~~{**httr2**}: @pak-httr2 (Hadley Wickham)~~
+-   {**readxl**}: @pak-readxl (Jennifer Bryan)
+-   {**RNHANES**}: @pak-RNHANES (Herb Susmann)
+-   {**scales**}: @pak-scales (Hadley Wickham)
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+-   {**waffle**}: @pak-waffle (Bob Rudis)
 
-:::::{.my-watch-out}
-:::{.my-watch-out-header}
-WATCH OUT! Instead of downloading the file with {**httr**} I will use `utils::download.file()`
-:::
-::::{.my-watch-out-container}
-Harris lists the older {**httr**} package, but now there is {**httr2**}, "a modern re-imagining of {**httr**} that uses a pipe-based interface and solves more of the problems that `r glossary("API")` wrapping packages face." (See @pak-httr2)
-
-In the book is the {**httr**} package just used for downloading the excel file from the FBI website. For this specific task there is no need to download, install and learn a new package. You can use `utils::download.file()`, a function as I have it already applied successfully in @lst-chap02-get-brfss-2014-data.
-::::
-:::::
-
-
-2. My additional packages (sorted alphabetically)
-
-
-
-:::
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Instead of downloading the file with {**httr**} I will use
+`utils::download.file()`
 :::
 
+::: my-watch-out-container
+Harris lists the older {**httr**} package, but now there is {**httr2**},
+"a modern re-imagining of {**httr**} that uses a pipe-based interface
+and solves more of the problems that `r glossary("API")` wrapping
+packages face." (See @pak-httr2)
 
-## Graphs for a single categorical variable
+In the book is the {**httr**} package just used for downloading the
+excel file from the FBI website. For this specific task there is no need
+to download, install and learn a new package. You can use
+`utils::download.file()`, a function as I have it already applied
+successfully in @lst-chap02-get-brfss-2014-data.
+:::
+:::
 
-### Introduction
+2.  My additional packages (sorted alphabetically)
 
-There are several options for visualizing a singe categorical variable:
-
-- **Pie charts**: Show parts of a whole. **Not recommended**: 
-    - Humans aren’t particularly good at estimating quantity from angles: Once we have more than two categories, pie charts can easily misrepresent percentages and become hard to read.
-    - Pie charts do badly when there are lots of categories. 
-        - Matching the labels and the slices can be hard work. 
-        - Small percentages (which might be important) are tricky to show. 
-    - (See more details and very convincing examples [Why you shouldn’t use pie charts](https://scc.ms.unimelb.edu.au/resources/data-visualisation-and-exploration/no_pie-charts) and [Here’s why you should (almost) never use a pie chart for your data](https://theconversation.com/heres-why-you-should-almost-never-use-a-pie-chart-for-your-data-214576) [@barnett2024; @hunt2019]. But see also the more differenced view in [what is a pie chart?](https://www.storytellingwithdata.com/blog/2020/5/14/what-is-a-pie-chart) [@ricks2020]).
-- **Waffle charts**: Show parts of whole. Waffle charts are one of the alternatives for replacing pie charts, but are seldom used.
-- **Bar charts**: Comparing groups. 
-- **Point charts**: Comparing groups.
+-   {**cowplot**}: @pak-cowplot (Claus O. Wilke)
+-   {**ggtext**}: @pak-ggtext (Claus O. Wilke)
+-   {**patchwork**}: @pak-patchwork (Thomas Lin Pedersen)
+:::
+:::
 
 ### Get the data
 
-The data can be download from the internet with the following URL: <https://ucr.fbi.gov/crime-in-the-u.s/2016/crime-in-the-u.s.-2016/tables/expanded-homicide-data-table-4.xls/output.xls>
+The data can be download from the internet with the following URL:
+<https://ucr.fbi.gov/crime-in-the-u.s/2016/crime-in-the-u.s.-2016/tables/expanded-homicide-data-table-4.xls/output.xls>
 
 To get the data for this chapter is a three step procedure:
 
-:::::{.my-procedure}
-:::{.my-procedure-header}
-:::::: {#prp-chap03-get-internet-data}
+::: my-procedure
+::: my-procedure-header
+::: {#prp-chap03-get-internet-data}
 : How to get data from the internet
-::::::
 :::
-::::{.my-procedure-container}
+:::
 
-1. My first step is always to go to the website and download the file manually. Some people may believe that this is superfluous, but I think there are three advantages for this preparatory task:
-    - Inspecting the website and checking if the URL is valid and points to the correct dataset.
-    - Checking the file extension
-    - Inspecting the file after downloaded to see if there is something to care about (e.g., the file starts with several lines, that are not data, or other issues).
-2. Download the file using `utils::donwload.file()`.
-3. Read the imported file into R with the appropriate program function, in the first case `readxl::read_excel()`
-   
+::: my-procedure-container
+1.  My first step is always to go to the website and download the file
+    manually. Some people may believe that this is superfluous, but I
+    think there are three advantages for this preparatory task:
+    -   Inspecting the website and checking if the URL is valid and
+        points to the correct dataset.
+    -   Checking the file extension
+    -   Inspecting the file after downloaded to see if there is
+        something to care about (e.g., the file starts with several
+        lines, that are not data, or other issues).
+2.  Download the file using `utils::donwload.file()`.
+3.  Read the imported file into R with the appropriate program function,
+    in the first case `readxl::read_excel()`
+:::
+:::
 
-::::
-:::::
-
-
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap03-get-data}
+::: my-example
+::: my-example-header
+::: {#exm-chap03-get-data}
 : Get data for chapter 3
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### FBI
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-get-fbi-data}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-get-fbi-data}
 : Get data from the FBI’s Uniform Crime Reporting database
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
+::: {#lst-chap03-get-fbi-data}
 ```{r}
 #| label: get-fbi-data
 #| eval: false
 #| cache: true
-#| lst-label: lst-chap03-get-fbi-data
-#| lst-cap: "Get data from the FBI’s Uniform Crime Reporting database"
 
 ## run only once (manually)
 # create a variable that contains the web
@@ -211,34 +225,46 @@ base::saveRDS(object = fbi_deaths,
 
 ```
 
-***
+Get data from the FBI’s Uniform Crime Reporting database
+:::
 
-In changed the recommended R code by Harris for downloading the FBI Excel Data I in several ways:
+(*For this R code chunk is no output available*)
 
-1. I did not use command from {**httr**}, but `utils::download.file()`.
-2. Instead creating a data frame with `base::data.frame()` I used a `tibble::tibble()`. This has the advantage that the column names were not changed. In the original files the column names are years, but in base R is not allowed that column names start with a number. In tidyverse this is possible but you must refer to this column names with enclosed accents like `2016`.
-3. Instead of saving the data as an Excel file I think that it is more convenient to store it as an R object with the extension ".rds". (I believe that Harris saved it in the book only to get the same starting condition with the already downloaded file in the books companion web site.) 
-::::
-:::::
+------------------------------------------------------------------------
 
+In changed the recommended R code by Harris for downloading the FBI
+Excel Data I in several ways:
 
+1.  I did not use command from {**httr**}, but `utils::download.file()`.
+2.  Instead creating a data frame with `base::data.frame()` I used a
+    `tibble::tibble()`. This has the advantage that the column names
+    were not changed. In the original files the column names are years,
+    but in base R is not allowed that column names start with a number.
+    In tidyverse this is possible but you must refer to this column
+    names with enclosed accents like `2016`.
+3.  Instead of saving the data as an Excel file I think that it is more
+    convenient to store it as an R object with the extension ".rds". (I
+    believe that Harris saved it in the book only to get the same
+    starting condition with the already downloaded file in the books
+    companion web site.)
+:::
+:::
 
 ###### NHANES 1
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-get-NHANES1-data}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-get-NHANES1-data}
 : Get NHANES data 2011-2012 from the CDC website with {RNHANES}
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
+::: {#lst-chap03-get-NHANES1-data}
 ```{r}
 #| label: get-NHANES1-data
 #| cache: true
 #| eval: false
-#| lst-label: lst-chap03-get-NHANES1-data
-#| lst-cap: "Get NHANES data (2011-2012) from the CDC website with {RNHANES}"
 
 ## run only once (manually)
 # download audiology data (AUQ_G)
@@ -262,20 +288,28 @@ base::saveRDS(object = nhanes_2012,
 
 ```
 
+Get NHANES data (2011-2012) from the CDC website with {RNHANES}
+:::
 
-::::
-:::::
+(*For this R code chunk is no output available*)
+:::
+:::
 
-
-{RNHANES} combines as a package specialized to download data from the National Health and Nutrition Examination Survey (NHANES) step 2 and 3 of @prp-chap03-get-internet-data. But as it turned out it only doesn't work with newer audiology data than 2012. I tried to use the package with data from 2016 and 2018 (For 2014 there are no audiology data available), but I got an error message.
+{RNHANES} combines as a package specialized to download data from the
+National Health and Nutrition Examination Survey (NHANES) step 2 and 3
+of @prp-chap03-get-internet-data. But as it turned out it only doesn't
+work with newer audiology data than 2012. I tried to use the package
+with data from 2016 and 2018 (For 2014 there are no audiology data
+available), but I got an error message.
 
 > Error in validate_year(year) : Invalid year: 2017-2018
 
-The problem lies in the function `RNHANES:::validate_year()`. It qualifies in version 1.1.0 only downloads until '2013-2014' as valid:
+The problem lies in the function `RNHANES:::validate_year()`. It
+qualifies in version 1.1.0 only downloads until '2013-2014' as valid:
 
-***
+------------------------------------------------------------------------
 
-```
+```         
 function (year, throw_error = TRUE) 
 {
     if (length(year) > 1) {
@@ -295,29 +329,29 @@ function (year, throw_error = TRUE)
 }
 ```
 
-***
+------------------------------------------------------------------------
 
-**Conclusion**: Special data packages can facilitate your work, but to know how to download data programmatically on your own is an indispensable data science skill.
+**Conclusion**: Special data packages can facilitate your work, but to
+know how to download data programmatically on your own is an
+indispensable data science skill.
 
 See tab "NHANES 2" how this is done.
 
-
 ###### NHANES 2
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-get-NHANES2-data}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-get-NHANES2-data}
 : Get NHANES data 2017-2018 from the CDC website with {haven}
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
+::: {#lst-chap03-get-NHANES2-data}
 ```{r}
 #| label: get-NHANES2-data
 #| cache: true
 #| eval: false
-#| lst-label: lst-chap03-get-NHANES2-data
-#| lst-cap: "Get NHANES data 2017-2018 from the CDC website with {haven}"
 
 ## run only once (manually)
 # download audiology data (AUQ_J)
@@ -338,41 +372,170 @@ base::saveRDS(object = nhanes_2018,
 
 ```
 
-
-::::
-:::::
-
-The download with {**haven**} has the additional advantage that the variables are labelled as already explained in @sec-chap01-labelled-data.
-
-
+Get NHANES data 2017-2018 from the CDC website with {haven}
 :::
 
-
-::::
-:::::
-
-### Bar Charts
-
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap03-bar-charts}
-: Creating Bar Charts
-::::::
+(*For this R code chunk is no output available*)
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
+The download with {**haven**} has the additional advantage that the
+variables are labelled as already explained in
+@sec-chap01-labelled-data.
 
-###### Recode
+
+###### Research funding
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap03-recode-bar-charts-gun-use-2012}
-: Recode gun use with NHANES data 2011-2012
+:::::: {#cnj-chap03-get-research-funding}
+: Numbered R Code Title
 ::::::
 :::
 ::::{.my-r-code-container}
+```{r}
+#| label: get-research-funding
 
+research_funding <- readr::read_csv(
+    "data/chap03/gun_publications_funds_2004_2015_ch3.csv",
+    show_col_types = FALSE)
+
+str(research_funding)
+```
+
+::::
+:::::
+
+
+:::
+
+
+
+:::
+:::
+
+
+### Taxonomy of Graphs as Table of Content
+
+There are different possible classification of graph types. In the book
+Harris uses as major criteria the types and numbers of variables. This
+is very sensitive subject orientated arrangement addressed at the
+statistics novice with the main question: What type of graph should I
+use for my data?
+
+The disadvantage of the subject oriented selection criteria is that
+there some graph types (e.g. the bar chart) that appear several times
+under different headings. Explaining the graph types is therefore
+somewhat redundant on the one hand and piecemeal on the other hand.
+
+Another classification criteria would be the type of the graph itself.
+Under this pattern one could concentrate of the special features for
+each graph type. One of these features would be their applicability
+referring the variable types.
+
+I will outline both taxonomies side by side but follow the graph type
+classification.
+
+------------------------------------------------------------------------
+
+::: {layout-ncol="2"}
+::: {#bul-chap03-graphs-var-types}
+1.  One variable
+    -   Categorical (achievement 1)
+        -   Bar chart (@sec-chap03-bar-chart-1)
+        -   Pie chart (@sec-chap03-pie-chart)
+        -   Waffle chart (@sec-chap03-waffle-chart)
+    -   Continuous (achievement 2)
+        -   Histogram (@sec-chap03-histogram)
+        -   Density plot (@sec-chap03-density-plot)
+        -   Box plot (@sec-chap03-box-plot-1)
+2.  Two variables (achievement 3)
+    -   Both categorical
+        -   Mosaic plot (@sec-chap03-mosaic-plot)
+        -   Bar chart (@sec-chap03-bar-chart-2)
+            -   stacked
+            -   grouped
+    -   Categorical & continuous
+        -   Bar chart (@sec-chap03-bar-chart-3)
+        -   Point chart (@sec-chap03-point-chart)
+        -   Box plot (@sec-chap03-box-plot-2)
+        -   Violin plot (@sec-chap03-violin-plot)
+    -   Both continuous
+        -   Line graph (@sec-chap03-line-graph)
+        -   Scatterplot (@sec-chap03-scatterplot)
+
+Variable types and graph types
+:::
+
+::: {#bul-chap03-graph-types}
+-   Bar chart
+-   Box plot
+-   Density plot
+-   Histogram
+-   Line plot
+-   Mosaic plot
+-   Pie chart
+-   Point chart
+-   Scatterplot
+-   Violin plot
+-   Waffle chart
+
+Graph types sorted alphabetically
+:::
+:::
+
+------------------------------------------------------------------------
+
+You can see the redundancy when sorting graph types by variable types
+(left column). Another advantage of my right list is that I can add in
+the future other graph types. For instance I could add
+`r glossary("tile plots")`, using `ggplot2::geom_tile()` or
+`vcd::tile()`. (See more on tile plots [@meyer2006].)
+
+But if I turn the right list into a table of content then the mapping
+with chapter 3 of the book is lost. I follow therefore the list of left
+side but I have added links to the appropriate sections in both lists.
+
+## Achievement 1: Graphs for a single categorical variable
+
+### Introduction
+
+There are several options for visualizing a single categorical variable:
+
+------------------------------------------------------------------------
+
+::: {#bul-chap03-single-cat-var}
+-   `r glossary("Bar charts")`
+-   `r glossary("Point charts")`
+-   `r glossary("Waffle charts")`
+-   `r glossary("Pie charts")`
+
+Graph options for a single categorical variable
+:::
+
+------------------------------------------------------------------------
+
+### Bar Charts {#sec-chap03-bar-chart-1}
+
+::: my-example
+::: my-example-header
+::: {#exm-chap03-bar-charts}
+: Creating Bar Charts
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### Recode
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-recode-bar-charts-gun-use-2012}
+: Recode gun use variable `AUQ300` from NHANES data 2011-2012
+:::
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: recode-gun-use-2012
 #| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
@@ -394,40 +557,39 @@ gun_use_2012 <- nhanes_2012 |>
           forcats::fct_recode(AUQ300, 
                   "Yes" = "1", 
                   "No" = "2")
-    )
+    ) |> 
+    dplyr::rename(gun_use = AUQ300)
 
-gun_use_2012 |> 
-    dplyr::count(AUQ300)
+gun_use_2012 <- gun_use_2012 |> 
+    dplyr::count(gun_use)|> 
+    dplyr::mutate(percent = round(n / sum(n), 2) * 100) 
+
+gun_use_2012
 ```
-***
 
-For recoding the levels of the categorical variable I have looked up the appropriate passage in the codebook  (see: @fig-firearms-use-codebook-2012).
+------------------------------------------------------------------------
 
-::::
-:::::
+For recoding the levels of the categorical variable I have looked up the
+appropriate passage in the codebook (see:
+@fig-firearms-use-codebook-2012).
+:::
+:::
 
-
-![Ever used firearms for any reason? [Codebook 2011-2012 AUDIOMETRY](https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/AUQ_G.htm#AUQ300)](img/chap03/NHANES-codebook-firearms-use-2012-min.png){#fig-firearms-use-codebook-2012
-fig-alt="'Ever used firearms for any reason?' this question has several options:
-- 1 = Yes
-- 2 = No
-- 7 = Refused 
-- 9 = Don’t know
-- . = Missing" fig-align="center"}
-
-
-
+![Ever used firearms for any reason? [Codebook 2011-2012
+AUDIOMETRY](https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/AUQ_G.htm#AUQ300)](img/chap03/NHANES-codebook-firearms-use-2012-min.png){#fig-firearms-use-codebook-2012
+fig-alt="'Ever used firearms for any reason?' this question has several options: - 1 = Yes - 2 = No - 7 = Refused  - 9 = Don’t know - . = Missing"
+fig-align="center"}
 
 ###### Bar width
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-thick-thin-bar-charts-gun-use}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-thick-thin-bar-charts-gun-use}
 : Bar charts for gun use (NHANES 2011-2012) with different width of bars
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-thick-thin-bar-charts-gun-use
 #| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
@@ -437,20 +599,20 @@ fig-alt="'Ever used firearms for any reason?' this question has several options:
 ## bar chart: bars with wide width
 p_normal <- gun_use_2012 |> 
     ggplot2::ggplot(
-        ggplot2::aes(x = AUQ300)
+        ggplot2::aes(x = gun_use)
     ) +
     ggplot2::geom_bar() + 
     ggplot2::labs(x = "Gun use", 
                   y = "Number of participants") +
-    ggplot2::theme_bw()
+    ggplot2::theme_minimal()
 
 ## bar chart: bars with small width
 p_small <- gun_use_2012 |> 
     ggplot2::ggplot(
-        ggplot2::aes(x = AUQ300)
+        ggplot2::aes(x = gun_use)
     ) +
     ggplot2::geom_bar(width = 0.4) + 
-    ggplot2::theme_bw() +
+    ggplot2::theme_minimal() +
     ggplot2::theme(aspect.ratio = 4/1) +
     ggplot2::labs(x = "Gun use", 
                   y = "Number of participants")
@@ -458,31 +620,47 @@ p_small <- gun_use_2012 |>
 ## display both charts side by side
 gridExtra::grid.arrange(p_normal, p_small, ncol = 2)
 ```
-***
 
-1. **Left**: Only two bars look horrifying. In this example they are even a lot smaller as normal, because of the second graph to the right.
-2. **Right**: It is not enough to create smaller bars with the `width` argument inside the `ggplot2::geom_bar()` function because that would create unproportional wide space between the two bars. One need to apply the aspect ratio for the used theme as well. In this case all commands to the theme (e.g. my `ggplot2::the_bw()`) has to come before the `aspect.ratio` argument. One has to try out which aspect ratio works best.
-3. I used here --- as recommended in the book --- the {**gridExtra**} package to display the figures side by side (see @pak-gridExtra). But there are other options as well. In the next tab I will use the {**patchwork**} package, that is especially for {**ggplot2**} developed (see @pak-patchwork). A third option would be to use one of Quarto formatting commands: See
-    - [Subfigures](https://quarto.org/docs/authoring/figures.html#subfigures)
-    - [Figure panels](https://quarto.org/docs/authoring/figures.html#figure-panels)
-    - [Multiple Rows](https://quarto.org/docs/authoring/figures.html#multiple-rows) and
-    - [Figure divs](https://quarto.org/docs/authoring/figures.html#figure-divs).
+------------------------------------------------------------------------
 
-
-
-::::
-:::::
+1.  **Left**: Only two bars look horrifying. In this example they are
+    even a lot smaller as normal, because of the second graph to the
+    right.
+2.  **Right**: It is not enough to create smaller bars with the `width`
+    argument inside the `ggplot2::geom_bar()` function because that
+    would create unproportional wide space between the two bars. One
+    need to apply the aspect ratio for the used theme as well. In this
+    case all commands to the theme (e.g. my `ggplot2::the_bw()`) has to
+    come before the `aspect.ratio` argument. One has to try out which
+    aspect ratio works best.
+3.  I used here --- as recommended in the book --- the {**gridExtra**}
+    package to display the figures side by side (see @pak-gridExtra).
+    But there are other options as well. In the next tab I will use the
+    {**patchwork**} package, that is especially for {**ggplot2**}
+    developed (see @pak-patchwork). A third option would be to use one
+    of Quarto formatting commands: See
+    -   [Subfigures](https://quarto.org/docs/authoring/figures.html#subfigures)
+    -   [Figure
+        panels](https://quarto.org/docs/authoring/figures.html#figure-panels)
+    -   [Multiple
+        Rows](https://quarto.org/docs/authoring/figures.html#multiple-rows)
+        and
+    -   [Figure
+        divs](https://quarto.org/docs/authoring/figures.html#figure-divs).
+:::
+:::
 
 ###### Bar color
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-colored-bar-charts}
-: Bar charts for gun use (NHANES 2011-2012) with different colorizing methods
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-colored-bar-charts}
+: Bar charts for gun use (NHANES 2011-2012) with different colorizing
+methods
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-colorized-bar-charts-gun-use
 #| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
@@ -490,9 +668,9 @@ gridExtra::grid.arrange(p_normal, p_small, ncol = 2)
 
 ## bar chart: filled colors within aes() (data controlled)
 p_fill_in <- gun_use_2012 |> 
-    ggplot2::ggplot(ggplot2::aes(x = AUQ300)) +
+    ggplot2::ggplot(ggplot2::aes(x = gun_use)) +
     ggplot2::geom_bar(
-        ggplot2::aes(fill = AUQ300), width = 0.4) + 
+        ggplot2::aes(fill = gun_use), width = 0.4) + 
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "none") +
     ggplot2::theme(aspect.ratio = 3/1) +
@@ -502,7 +680,7 @@ p_fill_in <- gun_use_2012 |>
 
 ## bar chart: filled colors outside aes() (manually controlled)
 p_fill_out <- gun_use_2012 |> 
-    ggplot2::ggplot(ggplot2::aes(x = AUQ300)) +
+    ggplot2::ggplot(ggplot2::aes(x = gun_use)) +
     # ggplot2::theme(legend.position = "none") +
     # ggplot2::geom_bar(width = 0.4, fill =  c("darkred", "steelblue")) + 
     ggplot2::theme_bw() +
@@ -513,9 +691,9 @@ p_fill_out <- gun_use_2012 |>
 
 ## ## bar chart: fill = data controlled by my own colors
 p_fill_in_my_colors <- gun_use_2012 |> 
-    ggplot2::ggplot(ggplot2::aes(x = AUQ300)) +
+    ggplot2::ggplot(ggplot2::aes(x = gun_use)) +
     ggplot2::geom_bar(
-        ggplot2::aes(fill = AUQ300), width = 0.4) + 
+        ggplot2::aes(fill = gun_use), width = 0.4) + 
     ggplot2::theme_bw() +
     ggplot2::scale_fill_manual(values = c("darkred", "steelblue"), guide = "none") +
     ggplot2::theme(aspect.ratio = 3/1) +
@@ -525,7 +703,7 @@ p_fill_in_my_colors <- gun_use_2012 |>
 
 ## bar chart: manually controlled colors
 p_fill_out_my_colors <- gun_use_2012 |> 
-    ggplot2::ggplot(ggplot2::aes(x = AUQ300)) +
+    ggplot2::ggplot(ggplot2::aes(x = gun_use)) +
     ggplot2::geom_bar(width = 0.4, fill = c("darkred", "steelblue")) + 
     ggplot2::theme_bw() +
     ggplot2::theme(aspect.ratio = 3/1) +
@@ -537,50 +715,325 @@ p_fill_out_my_colors <- gun_use_2012 |>
 library(patchwork)
 
 p_fill_in |  p_fill_out | p_fill_in_my_colors | p_fill_out_my_colors 
+
 ```
-***
 
-- **Left**: This graph has the color fill argument within `aes()` and is therefore data controlled. This means that the colors will be settled automatically by factor level.
-- **Middle left**: This graph has the color fill argument outside `aes()` and is therefore manually controlled. One needs to supply colors otherwise one gets a graph without any colors at all.
-- **Middle right**: Even if the graph has the color fill argument within `aes()` and is therefore data controlled, you can change the color composition. But you has also the responsibility to provide a correct legend --- or as I have done in this example --- to remove the legend from the display. (The argument `guide = FALSE` as used in the book is superseded with `guide = "none"`)
-- **Right**: The graph is manually controlled because it has the color fill argument outside `aes()` with specified colors.
+------------------------------------------------------------------------
 
-I used {**patchwork**} here to show all four example graphs side by side (see @pak-patchwork). I needed some time and had to experiment because at first I tried it with the `+` operator. But that produced two very small graphs in the first row of the middle of the display area, and other two small graphs in the second row of the middle of the display area. Beside this ugly display the text of the subtitle was also truncated.
-::::
-:::::
+-   **Left**: This graph has the color fill argument within `aes()` and
+    is therefore data controlled. This means that the colors will be
+    settled automatically by factor level.
+-   **Middle left**: This graph has the color fill argument outside
+    `aes()` and is therefore manually controlled. One needs to supply
+    colors otherwise one gets a graph without any colors at all.
+-   **Middle right**: Even if the graph has the color fill argument
+    within `aes()` and is therefore data controlled, you can change the
+    color composition. But you has also the responsibility to provide a
+    correct legend --- or as I have done in this example --- to remove
+    the legend from the display. (The argument `guide = FALSE` as used
+    in the book is superseded with `guide = "none"`)
+-   **Right**: The graph is manually controlled because it has the color
+    fill argument outside `aes()` with specified colors.
 
-
+I used {**patchwork**} here to show all four example graphs side by side
+(see @pak-patchwork). I needed some time and had to experiment because
+at first I tried it with the `+` operator. But that produced two very
+small graphs in the first row of the middle of the display area, and
+other two small graphs in the second row of the middle of the display
+area. Beside this ugly display the text of the subtitle was also
+truncated.
+:::
+:::
+:::
+:::
 :::
 
-::::
-:::::
+### Pie Charts {#sec-chap03-pie-chart}
+
+`r glossary("Pie charts")` show parts of a whole. The pie, or circle,
+represents the whole. The slices of pie shown in different colors
+represent the parts. A similar graph type is the but they are **not
+recommended"** for several reasons
+
+-   Humans aren’t particularly good at estimating quantity from angles:
+    Once we have more than two categories, pie charts can easily
+    misrepresent percentages and become hard to read.
+-   Pie charts do badly when there are lots of categories: Matching the
+    labels and the slices can be hard work and small percentages (which
+    might be important) are tricky to show.
+
+::: my-resource
+::: my-resource-header
+Why you shouldn’t use pie charts
+:::
+
+::: my-resource-container
+-   [Why you shouldn’t use pie
+    charts](https://scc.ms.unimelb.edu.au/resources/data-visualisation-and-exploration/no_pie-charts):
+    Very convincing examples that demonstrate why pie charts provide
+    generally not a good graphical display [@hunt2019].
+-   [Here’s why you should (almost) never use a pie chart for your
+    data](https://theconversation.com/heres-why-you-should-almost-never-use-a-pie-chart-for-your-data-214576)
+    [@barnett2024].
+-   [What is a pie
+    chart?](https://www.storytellingwithdata.com/blog/2020/5/14/what-is-a-pie-chart):
+    A more sympathetic view on pie chart can be found in [@ricks2020].
+-   [The issue with pie
+    charts](https://www.data-to-viz.com/caveat/pie.html): The article
+    shows visually the problems with pie charts and recommend some
+    alternatives. [@holtz2018]
+:::
+:::
+
+But there are some cases, where pie chart (or
+`r glossary("donut charts")` sometimes also called ring chart) are
+appropriate:
+
+1.  **Visualize an important number by highlighting just one junk of the
+    circle**
+
+------------------------------------------------------------------------
+
+::: {#fig-chap03-pie-donut layout-ncol="2"}
+![Pie chart
+demo](img/chap03/pie-chart-one-figure-min.png){#fig-pie-chart-demo
+fig-alt="Donut chart: Circle with hole in the middle, colored 63% orange with text '63% didn't visit a dentist'"
+fig-align="center"}
+
+![Donut chart
+demo](img/chap03/donut-chart-one-figure-min.png){#fig-donut-demo
+fig-alt="Donut chart: Circle with hole in the middle, colored 63% orange with text '63% didn't visit a dentist'"
+fig-align="center"}
+
+Highlight just one junk to support only one number [@evergreen2019,
+pp.33-35]
+:::
+
+------------------------------------------------------------------------
+
+BTW: Donut charts are even worse than pie charts:
+
+> The middle of the pie is gone. The middle of the pie … where the angle
+> is established, which is what humans would look at to try to determine
+> wedge size, proportion, and data. Even though we aren’t accurate at
+> interpreting angles, the situation is made worse when we remove the
+> middle of the pie. Now we are left to judge curvature and … compare
+> wedges by both curvature and angle [@evergreen2019, p.32].
+
+2.  **Use a very limited number of wedges (best not more than two) for
+    making a clear point.**
+
+![Pie charts are acceptable with very few categories [@evergreen2019,
+p.176]](img/chap03/pie-chart-two-wedges-min.png){#fig-pie-chart-2
+fig-alt="circle colored with two different blue, on the left side - about 45% it says 'Male and on the right side 'Female'"
+fig-align="center" width="40%"}
+
+::: my-example
+::: my-example-header
+::: {#exm-chap03-pie-chart}
+: Creating Pie & Donut Charts
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### Pie chart (number)
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-pie-chart-number-gun-use}
+: Visualize percentage of gun user from NHANES survey 2011-2012
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-pie-chart-number-gun-use
+#| fig-cap: "Percentage of gun user (NHANES survey 2011-2012)"
+#| fig.width: 4
+
+
+lab <- "<span style='font-size:36pt; color:white'>**35%**</span>"
+gun_use_2012 |> 
+    ggplot2::ggplot(ggplot2::aes(x = '', y = percent)) +
+    ggplot2::geom_col(fill = c("#fa8324", "grey")) +
+    ggplot2::coord_polar(theta = 'y') +
+    ggtext::geom_richtext(ggplot2::aes(
+        x = 1.1, y = 15,
+        label = lab),
+        fill = "#fa8324",
+        label.colour = "#fa8324") +
+    ggplot2::annotate("text", x = .7, y = 15,
+                      label = "                  used firearms",
+                      color = "white",
+                      size = 6) +
+    ggplot2::theme_void() +
+    ggplot2::labs(x = '', y = '')
+```
 
 ***
 
+The most important code line to create a pie graph is
+`ggplot2::coord_polar(theta = 'y')`. In the concept of `gg` (grammar of
+graphics) a car chart and a pie chart are --- with the exception of the
+above code line --- identical [@c2010].
 
-### Waffle Charts
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap03-waffle-charts}
+Beside the `ggplot2::annotate()` function for text comments inside graphics I had for to get the necessary formatting options for the big number also to use {**ggtext**}, one of [132 registered {**ggplot2**} extensions](https://exts.ggplot2.tidyverse.org/gallery/). {**ggtext**} enables the rendering of complex formatted plot labels (see @pak-ggtext).
+:::
+:::
+
+For training purposes I tried to create exactly the same pattern (color, text size etc.) of a pie chart as in @fig-pie-chart-demo.
+
+###### Pie chart (yes/no)
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-pie-chart-binary-gun-use}
+: Ever used firearms for any reason? (NHANES survey 2011-2012)
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-pie-chart-binary-gun-use
+#| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
+#| fig.width: 4
+
+gun_use_2012 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = '', y = percent, 
+                     fill = forcats::fct_rev(gun_use))
+        ) +
+    ggplot2::geom_col() + 
+    ggplot2::geom_text(ggplot2::aes(
+        label = gun_use),
+        color = "white",
+        position = ggplot2::position_stack(vjust = 0.5),
+        size = 10) +
+    ggplot2::coord_polar(theta = 'y') +
+    ggplot2::theme_void() +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::labs(x = '', y = '') +
+    viridis::scale_fill_viridis(
+        discrete = TRUE,
+        option = "turbo",
+        begin = 0.1,
+        end = 0.9)
+```
+:::
+:::
+
+###### Donut 1
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-donut-small-hole-gun-use}
+: Donut chart with small hole
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-donut-small-hole-gun-use
+#| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
+#| fig-width: 5
+
+# Small hole
+hsize <- 1
+gun_use_small_hole <- gun_use_2012 |>  
+  dplyr::mutate(x = hsize)
+
+gun_use_small_hole |> 
+    dplyr::mutate(x = hsize) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = hsize, y = percent, 
+                     fill = forcats::fct_rev(gun_use))
+        ) +
+    ggplot2::geom_col() + 
+    ggplot2::coord_polar(theta = 'y') +
+    ggplot2::xlim(c(0.2, hsize + 0.5)) +
+    ggplot2::theme_void() +
+    ggplot2::labs(x = '', y = '', fill = "Gun used?") +
+    viridis::scale_fill_viridis(
+        breaks = c('Yes', 'No'),
+        discrete = TRUE,
+        option = "turbo",
+        begin = 0.1,
+        end = 0.9)
+
+
+```
+:::
+:::
+
+###### Donut 2
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-donut-big-hole-gun-use}
+: Donut chart with big hole
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-donut-big-hole-gun-use
+#| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
+#| fig-width: 5
+
+hsize <- 2
+gun_use_big_hole <- gun_use_2012  |>
+  dplyr::mutate(x = hsize)
+
+gun_use_big_hole |>
+    dplyr::mutate(x = hsize) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = hsize, y = percent, 
+                     fill = forcats::fct_rev(gun_use))
+        ) +
+    ggplot2::geom_col() + 
+    ggplot2::coord_polar(theta = 'y') +
+    ggplot2::xlim(c(0.2, hsize + 0.5)) +
+    ggplot2::theme_void() +
+    ggplot2::labs(x = '', y = '', fill = "Gun used?") +
+    viridis::scale_fill_viridis(
+        breaks = c('Yes', 'No'),
+        discrete = TRUE,
+        option = "turbo",
+        begin = 0.1,
+        end = 0.9)
+```
+:::
+:::
+:::
+:::
+:::
+
+------------------------------------------------------------------------
+
+### Waffle Charts {#sec-chap03-waffle-chart}
+
+::: my-example
+::: my-example-header
+::: {#exm-chap03-waffle-charts}
 : Creating Waffle Charts
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### 2012
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-waffle-chart-nhanes-2012}
-: Creating a waffle chart for number of total rounds fired (NHANES survey 2011-2012)
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-waffle-chart-nhanes-2012}
+: Creating a waffle chart for number of total rounds fired (NHANES
+survey 2011-2012)
 :::
-::::{.my-r-code-container}
+:::
 
-
+::: my-r-code-container
 ::: {#lst-chap03-waffle-chart-rounds-fired1}
 ```{r}
 #| label: fig-waffle-chart-nhanes-2012
@@ -618,45 +1071,40 @@ waffle::waffle(parts = fired_2012,
                           "deepskyblue1", "dodgerblue3", "black",
                 "lemonchiffon1"))
 ```
-Proportion of total rounds fired (NHANES survey 2011-2012)
 
+Proportion of total rounds fired (NHANES survey 2011-2012)
 :::
 
-***
+------------------------------------------------------------------------
 
-In contrast to the example in the book I have used percentages and not absolute numbers.
+In contrast to the example in the book I have used percentages and not
+absolute numbers.
 
-> To emulate the percentage view of a pie chart, a 10x10 grid should be used with each square representing 1% of the total. ([waffle homepage](https://cinc.rud.is/web/packages/waffle/index.html))
+> To emulate the percentage view of a pie chart, a 10x10 grid should be
+> used with each square representing 1% of the total. ([waffle
+> homepage](https://cinc.rud.is/web/packages/waffle/index.html))
 
+Another advantage: Using percentages I can compare 2011-2012 with
+2017-2018 (see @fig-waffle-chart-nhanes-2018)
+:::
+:::
 
-Another advantage: Using percentages I can compare 2011-2012 with 2017-2018 (see @fig-waffle-chart-nhanes-2018)
-
-
-::::
-:::::
-
-
-![How many total rounds have you ever fired? [Codebook 2011-2012 AUDIOMETRY](https://wwwn.cdc.gov/nchs/data/nhanes/2011-2012/questionnaires/auq.pdf)](img/chap03/NHANES-codebook-firearms-2012-min.png){#fig-firearms-codebook-2012
-fig-alt="'How many rounds in total have you ever fired?' this question has several options:
-- 1 = 1 to less than 100 rounds 
-- 2 = 100 to less than 1,000 rounds 
-- 3 = 1,000 to less than 10,000 rounds 
-- 4 = 10,000 to less than 50,000 rounds 
-- 5 = 50,000 rounds or more 
-- 7 = Refused 
-- 9 = Don’t know" fig-align="center"}
+![How many total rounds have you ever fired? [Codebook 2011-2012
+AUDIOMETRY](https://wwwn.cdc.gov/nchs/data/nhanes/2011-2012/questionnaires/auq.pdf)](img/chap03/NHANES-codebook-firearms-2012-min.png){#fig-firearms-codebook-2012
+fig-alt="'How many rounds in total have you ever fired?' this question has several options: - 1 = 1 to less than 100 rounds  - 2 = 100 to less than 1,000 rounds  - 3 = 1,000 to less than 10,000 rounds  - 4 = 10,000 to less than 50,000 rounds  - 5 = 50,000 rounds or more  - 7 = Refused  - 9 = Don’t know"
+fig-align="center"}
 
 ###### 2018
 
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-waffle-chart-nhanes-2018}
-: Creating a waffle chart for number of total rounds fired (NHANES survey 2017-2018)
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-waffle-chart-nhanes-2018}
+: Creating a waffle chart for number of total rounds fired (NHANES
+survey 2017-2018)
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ::: {#lst-chap03-waffle-chart-rounds-fired2}
 ```{r}
 #| label: fig-waffle-chart-nhanes-2018
@@ -694,40 +1142,41 @@ waffle::waffle(parts = fired_2018,
 ```
 
 Proportion of total rounds fired (NHANES survey 2017-2018)
-
 :::
 
-***
+------------------------------------------------------------------------
 
-The number of different levels of the factor variable is almost too high to realize at one glance the differences of the various categories.
+The number of different levels of the factor variable is almost too high
+to realize at one glance the differences of the various categories.
 
-> Best practices suggest keeping the number of categories small, just as should be done when creating pie charts. ([Create Waffle Charts Visualization](https://cinc.rud.is/web/packages/waffle/index.html))
+> Best practices suggest keeping the number of categories small, just as
+> should be done when creating pie charts. ([Create Waffle Charts
+> Visualization](https://cinc.rud.is/web/packages/waffle/index.html))
 
-Compare 2011-2012 with 2017-2018 (see @fig-waffle-chart-nhanes-2012). You see there is just a small difference: Respondents in the 2017-2018 survey have fired tiny less rounds as the people asked in the 2011-2012 survey. Generally speaking: The fired total of rounds remains more or less constant during the period 2012 - 2018.  
+Compare 2011-2012 with 2017-2018 (see @fig-waffle-chart-nhanes-2012).
+You see there is just a small difference: Respondents in the 2017-2018
+survey have fired tiny less rounds as the people asked in the 2011-2012
+survey. Generally speaking: The fired total of rounds remains more or
+less constant during the period 2012 - 2018.
+:::
+:::
 
-
-::::
-:::::
-
-![How many total rounds have you ever fired? [Codebook 2017-2018 AUDIOMETRY](https://wwwn.cdc.gov/nchs/data/nhanes/2017-2018/questionnaires/AUQ_J.pdf)](img/chap03/NHANES-codebook-firearms-2018-min.png){#fig-firearms-codebook-2018
-fig-alt="'How many rounds in total have you ever fired?' this question has several options:
-- 1 = 1 to less than 100 rounds 
-- 2 = 100 to less than 1,000 rounds 
-- 3 = 1,000 to less than 10,000 rounds 
-- 4 = 10,000 to less than 50,000 rounds 
-- 5 = 50,000 rounds or more 
-- 7 = Refused 
-- 9 = Don’t know" fig-align="center"}
+![How many total rounds have you ever fired? [Codebook 2017-2018
+AUDIOMETRY](https://wwwn.cdc.gov/nchs/data/nhanes/2017-2018/questionnaires/AUQ_J.pdf)](img/chap03/NHANES-codebook-firearms-2018-min.png){#fig-firearms-codebook-2018
+fig-alt="'How many rounds in total have you ever fired?' this question has several options: - 1 = 1 to less than 100 rounds  - 2 = 100 to less than 1,000 rounds  - 3 = 1,000 to less than 10,000 rounds  - 4 = 10,000 to less than 50,000 rounds  - 5 = 50,000 rounds or more  - 7 = Refused  - 9 = Don’t know"
+fig-align="center"}
 
 ###### Compare
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-compare-fired-nhanes-2012-2018}
-: Compare the total rounds fired between the NHANES survey participants 2011-2012 and 2017-2018
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-compare-fired-nhanes-2012-2018}
+: Compare the total rounds fired between the NHANES survey participants
+2011-2012 and 2017-2018
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: tbl-compare-fired-nhanes-2012-2018
 #| tbl-cap: "Total rounds fired of NHANES survey participants 2011-2012 and 2017-2018"
@@ -750,11 +1199,113 @@ fired <-  fired |>
 fired
 ```
 
-***
+------------------------------------------------------------------------
 
-The participants of the NHANES survey 2011-2012 and 2017-2018 fired almost the same numbers of total rounds. The participants in 2017-2018 fired just a tiny amount of bullets less. 
+The participants of the NHANES survey 2011-2012 and 2017-2018 fired
+almost the same numbers of total rounds. The participants in 2017-2018
+fired just a tiny amount of bullets less.
+:::
+:::
+:::
+:::
+:::
+
+## Achievement 2: Graphs for a single continuous variable
+
+### Introduction
+
+Options are:
+
+------------------------------------------------------------------------
+
+::: {#bul-chap03-single-cont-var}
+-   `r glossary("histograms")`,
+-   `r glossary("density plots")`,
+-   `r glossary("boxplots")`,
+-   `r glossary("violin plots")`.
+
+Graph options for a single continuous variable
+:::
+
+------------------------------------------------------------------------
+
+-   **Histograms and density plots** are very similar to each other and
+    show the overall shape of the data. These two types of graphs are
+    especially useful in determining whether or not a variable has a
+    normal distribution.
+
+-   **Boxplots** show the central tendency and spread of the data, which
+    is another way to determine whether a variable is normally
+    distributed or skewed.
+
+-   **Violin plots** are also useful when looking at a continuous
+    variable and are like a combination of boxplots and density plots.
+    Violin plots are commonly used to examine the distribution of a
+    continuous variable for different levels (or groups) of a factor (or
+    categorical) variable.
+
+### Histograms, Density and Box Plot {#sec-chap03-histogram}
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-histogram}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Histogram
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-histogram-research-funding}
+: Histogram of research funding (2004-2015)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-histogram-research-funding
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_histogram(bins = 10,
+                            fill = "grey90",
+                            color = "black") +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Number of research subjects ('Causes of Deadth')") +
+    ggplot2::theme_bw()
+```
+
+::::
+:::::
 
 
+###### Density plot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-density-plot-research-funding}
+: Density plot of research funding (2004-2015)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-density-plot-research-funding
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_density(fill = "grey90",
+                          bw = 1.1) +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Probability density") +
+    ggplot2::theme_bw()
+```
 
 ::::
 :::::
@@ -766,53 +1317,129 @@ The participants of the NHANES survey 2011-2012 and 2017-2018 fired almost the s
 
 ***
 
+### Densitiy Plots {#sec-chap03-density-plot}
 
+### Box Plots {#sec-chap03-box-plot-1}
 
+## Achievement 3: Graph for two variable at once
 
+### Introduction
 
+### Two categorical variables
 
+#### Mosaic Plots {#sec-chap03-mosaic-plot}
+
+#### Bar Charts {#sec-chap03-bar-chart-2}
+
+##### Stacked Bar Charts
+
+##### Grouped Bar Charts
+
+### One categorical and one continuous variable
+
+#### Bar Charts {#sec-chap03-bar-chart-3}
+
+#### Point Charts {#sec-chap03-point-chart}
+
+#### Box Plots {#sec-chap03-box-plot-2}
+
+#### Violin Plots {#sec-chap03-violin-plot}
+
+### Two continuous variables
+
+#### Line Graphs {#sec-chap03-line-graph}
+
+#### Scattterplots {#sec-chap03-scatterplot}
+
+------------------------------------------------------------------------
 
 ## Exercises
 
-***
+------------------------------------------------------------------------
 
 ## Packages introduced in this chapter
 
 ### cowplot
 
+::: my-resource
+::: my-resource-header
+cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'
+:::
+
+::: my-resource-container
+
+------------------------------------------------------------------------
+
+::: {#pak-cowplot}
+
+------------------------------------------------------------------------
+
+{**cowplot**}: [Streamlined Plot Theme and Plot Annotations for
+'ggplot2'](https://wilkelab.org/cowplot/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-cowplot-min.png){width="176"}
+
+The {**cowplot**} package provides various features that help with
+creating publication-quality figures, such as a set of themes, functions
+to align plots and arrange them into complex compound figures, and
+functions that make it easy to annotate plots and or mix plots with
+images. The package was originally written for internal use in the Wilke
+lab, hence the name (Claus O. Wilke’s plot package). It has also been
+used extensively in the book [Fundamentals of Data
+Visualization](https://www.amazon.com/gp/product/1492031089).
+:::
+
+There are several packages that can be used to align plots. The most
+widely used ones beside {**cowplot**} are {**egg**} and {**patchwork**}
+(see @pak-patchwork). All these packages use slightly different
+approaches to plot alignment, and the respective approaches have
+different strengths and weaknesses. If you cannot achieve your desired
+result with one of these packages try another one.
+
+Most importantly, while {**egg**} and {**patchwork**} align and arrange
+plots at the same time, {**cowplot**} aligns plots independently of how
+they are arranged. This makes it possible to align plots and then
+reproduce them separately, or even overlay them on top of each other.
+
+The {**cowplot**} package now provides a set of complementary themes
+with different features. I now believe that there isn’t one single theme
+that works for all figures, and therefore I recommend that you always
+explicitly set a theme for every plot you make.
+
+{**cowplot**}: A Package for Streamlined Plot Themes and Plot
+Annotations for {ggplot2}
+:::
+
+------------------------------------------------------------------------
+:::
+:::
+
+### ggtext
+
 :::::{.my-resource}
 :::{.my-resource-header}
-cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'
+ggtext: Improved Text Rendering Support for 'ggplot2'
 :::
 ::::{.my-resource-container}
 
 ***
 
-::: {#pak-cowplot}
+::: {#pak-ggtext}
 
 ***
 
-{**cowplot**}: [Streamlined Plot Theme and Plot Annotations for 'ggplot2'](https://wilkelab.org/cowplot/)
+{**ggtext**}: [Improved Text Rendering Support for 'ggplot2'](https://wilkelab.org/ggtext/)
 
-::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap03/logoi/logo-cowplot-min.png){width="176"}
+(*There is no hexagon logo for {**ggtext**} available*)
 
-The {**cowplot**} package provides various features that help with creating publication-quality figures, such as a set of themes, functions to align plots and arrange them into complex compound figures, and functions that make it easy to annotate plots and or mix plots with images. The package was originally written for internal use in the Wilke lab, hence the name (Claus O. Wilke’s plot package). It has also been used extensively in the book [Fundamentals of Data Visualization](https://www.amazon.com/gp/product/1492031089).
+The ggtext package provides simple Markdown and HTML rendering for {**ggplot2.**} Under the hood, the package uses the {**gridtext**} package for the actual rendering, and consequently it is limited to the [feature set provided by gridtext](https://wilkelab.org/gridtext/).
 
+Support is provided for Markdown both in theme elements (plot titles, subtitles, captions, axis labels, legends, etc.) and in geoms (similar to `ggplot2::geom_text()`). In both cases, there are two alternatives, one for creating simple text labels and one for creating text boxes with word wrapping.
+
+
+{**ggtext**}: A Package for Improved Text Rendering Support for 'ggplot2'
 :::
-
-There are several packages that can be used to align plots. The most widely used ones beside {**cowplot**} are {**egg**} and {**patchwork**} (see @pak-patchwork). All these packages use slightly different approaches to plot alignment, and the respective approaches have different strengths and weaknesses. If you cannot achieve your desired result with one of these packages try another one.
-
-Most importantly, while {**egg**} and {**patchwork**} align and arrange plots at the same time, {**cowplot**} aligns plots independently of how they are arranged. This makes it possible to align plots and then reproduce them separately, or even overlay them on top of each other.
-
-The {**cowplot**} package now provides a set of complementary themes with different features. I now believe that there isn’t one single theme that works for all figures, and therefore I recommend that you always explicitly set a theme for every plot you make.
-
-
-
-{**cowplot**}: A Package for Streamlined Plot Themes and Plot Annotations for {ggplot2}
-:::
-
-
 
 ***
 ::::
@@ -821,206 +1448,256 @@ The {**cowplot**} package now provides a set of complementary themes with differ
 
 ### gridExtra
 
-:::::{.my-resource}
-:::{.my-resource-header}
+::: my-resource
+::: my-resource-header
 gridExtra: Miscellaneous Functions for "Grid" Graphics
 :::
-::::{.my-resource-container}
 
-***
+::: my-resource-container
+
+------------------------------------------------------------------------
 
 ::: {#pak-gridExtra}
 
-***
+------------------------------------------------------------------------
 
-{**gridExtra**}: [Miscellaneous Functions for "Grid" Graphics](https://cran.r-project.org/package=gridExtra)
+{**gridExtra**}: [Miscellaneous Functions for "Grid"
+Graphics](https://cran.r-project.org/package=gridExtra)
 
 (*There is no hexagon logo for {**gridExtra**} available*)
 
-Provides a number of user-level functions to work with "grid" graphics, notably to arrange multiple grid-based plots on a page, and draw tables.
+Provides a number of user-level functions to work with "grid" graphics,
+notably to arrange multiple grid-based plots on a page, and draw tables.
 
-The {**grid**) package (= part of the R system library) provides low-level functions to create graphical objects (`grobs`), and position them on a page in specific viewports. The {**gtable**} package introduced a higher-level layout scheme, arguably more amenable to user-level interaction. With the `gridExtra::arrangeGrob()` / `gridExtra::grid.arrange()` pair of functions, {**gridExtra**} builds upon {**gtable**} to arrange multiple `grobs` on a page.
+The {**grid**) package (= part of the R system library) provides
+low-level functions to create graphical objects (`grobs`), and position
+them on a page in specific viewports. The {**gtable**} package
+introduced a higher-level layout scheme, arguably more amenable to
+user-level interaction. With the `gridExtra::arrangeGrob()` /
+`gridExtra::grid.arrange()` pair of functions, {**gridExtra**} builds
+upon {**gtable**} to arrange multiple `grobs` on a page.
 
-{**gridExtra**}: A Package for Miscellaneous Functions for "Grid" Graphics
+{**gridExtra**}: A Package for Miscellaneous Functions for "Grid"
+Graphics
 :::
 
-***
-::::
-:::::
-
+------------------------------------------------------------------------
+:::
+:::
 
 ### httr2
 
-:::::{.my-resource}
-:::{.my-resource-header}
+::: my-resource
+::: my-resource-header
 httr2: Perform HTTP Requests and Process the Responses
 :::
-::::{.my-resource-container}
 
-***
+::: my-resource-container
+
+------------------------------------------------------------------------
 
 ::: {#pak-httr2}
 
-***
+------------------------------------------------------------------------
 
-{**httr2**}: [Perform HTTP Requests and Process the Responses](https://httr2.r-lib.org/)
+{**httr2**}: [Perform HTTP Requests and Process the
+Responses](https://httr2.r-lib.org/)
 
-Tools for creating and modifying HTTP requests, then performing them and processing the results. 
+Tools for creating and modifying HTTP requests, then performing them and
+processing the results.
 
 ::: {layout="[10, 30]" layout-valign="center"}
 ![](img/chap03/logoi/logo-httr2-min.png){width="176"}
 
-{**httr2**} (pronounced hitter2) is a ground-up rewrite of {**httr**} that provides a pipeable `r glossary("API")` with an explicit request object that solves more problems felt by packages that wrap APIs (e.g. built-in rate-limiting, retries, OAuth, secure secrets, and more). --- {**httr2**} is designed to map closely to the underlying `r glossary("HTTP")` `r glossary("protocol")`. For more details, read [An overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview) from `r glossary("MDN")`.
-
+{**httr2**} (pronounced hitter2) is a ground-up rewrite of {**httr**}
+that provides a pipeable `r glossary("API")` with an explicit request
+object that solves more problems felt by packages that wrap APIs (e.g.
+built-in rate-limiting, retries, OAuth, secure secrets, and more). ---
+{**httr2**} is designed to map closely to the underlying
+`r glossary("HTTP")` `r glossary("protocol")`. For more details, read
+[An overview of
+HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview) from
+`r glossary("MDN")`.
 :::
 
-
-{**httr2**}: A Package to Perform HTTP Requests and Process the Responses
+{**httr2**}: A Package to Perform HTTP Requests and Process the
+Responses
 :::
 
-***
-::::
-:::::
+------------------------------------------------------------------------
+:::
+:::
 
 ### patchwork
 
-:::::{.my-resource}
-:::{.my-resource-header}
+::: my-resource
+::: my-resource-header
 patchwork: The Composer of Plots
 :::
-::::{.my-resource-container}
 
-***
+::: my-resource-container
+
+------------------------------------------------------------------------
 
 ::: {#pak-patchwork}
 
-***
+------------------------------------------------------------------------
 
-{**patchwork**}: [The Composer of Plots](https://patchwork.data-imaginist.com/)
+{**patchwork**}: [The Composer of
+Plots](https://patchwork.data-imaginist.com/)
 
 ::: {layout="[10, 30]" layout-valign="center"}
 ![](img/chap03/logoi/logo-patchwork-min.png){width="176"}
 
-The goal of {**patchwork**} is to make it ridiculously simple to combine separate `ggplots` into the same graphic. As such it tries to solve the same problem as `gridExtra::grid.arrange()` and `cowplot::plot_grid` but using an `r glossary("API")` that incites exploration and iteration, and scales to arbitrarily complex layouts.
-
+The goal of {**patchwork**} is to make it ridiculously simple to combine
+separate `ggplots` into the same graphic. As such it tries to solve the
+same problem as `gridExtra::grid.arrange()` and `cowplot::plot_grid` but
+using an `r glossary("API")` that incites exploration and iteration, and
+scales to arbitrarily complex layouts.
 :::
-The {**ggplot2**} package provides a strong API for sequentially building up a plot, but does not concern itself with composition of multiple plots. {**patchwork**} is a package that expands the API to allow for arbitrarily complex composition of plots by, among others, providing mathematical operators for combining multiple plots. Other packages that try  to address this need (but with a different approach) are {**gridExtra**} and {**cowplot**} (see @pak-gridExtra and @pak-cowplot).
 
-Before plots can be laid out, they have to be assembled. Arguably one of patchwork’s biggest selling points is that it expands on the use of `+` in ggplot2 to allow plots to be added together and composed, creating a natural extension of the {**ggplot2**} API.
+The {**ggplot2**} package provides a strong API for sequentially
+building up a plot, but does not concern itself with composition of
+multiple plots. {**patchwork**} is a package that expands the API to
+allow for arbitrarily complex composition of plots by, among others,
+providing mathematical operators for combining multiple plots. Other
+packages that try to address this need (but with a different approach)
+are {**gridExtra**} and {**cowplot**} (see @pak-gridExtra and
+@pak-cowplot).
 
-While quite complex compositions can be achieved using `+`, `|`, and `/`, it may be necessary to take even more control over the layout. All of this can be controlled using the `patchwork::plot_layout()` function along with a couple of special placeholder objects.
+Before plots can be laid out, they have to be assembled. Arguably one of
+patchwork’s biggest selling points is that it expands on the use of `+`
+in ggplot2 to allow plots to be added together and composed, creating a
+natural extension of the {**ggplot2**} API.
+
+While quite complex compositions can be achieved using `+`, `|`, and
+`/`, it may be necessary to take even more control over the layout. All
+of this can be controlled using the `patchwork::plot_layout()` function
+along with a couple of special placeholder objects.
 
 {**patchwork**}: A Package for Composing Plots
 :::
 
-
-
-***
-::::
-:::::
-
+------------------------------------------------------------------------
+:::
+:::
 
 ### readxl
 
-:::::{.my-resource}
-:::{.my-resource-header}
+::: my-resource
+::: my-resource-header
 readxl: Read Excel Files
 :::
-::::{.my-resource-container}
 
-***
+::: my-resource-container
+
+------------------------------------------------------------------------
 
 ::: {#pak-readxl}
 
-***
+------------------------------------------------------------------------
 
 {**readxl**}: [Read Excel Files](https://readxl.tidyverse.org/)
 
 ::: {layout="[10, 30]" layout-valign="center"}
 ![](img/chap03/logoi/logo-readxl-min.png){width="176"}
 
-The readxl package makes it easy to get data out of Excel and into R. Compared to many of the existing packages (e.g. {**gdata**}, {**xlsx**}, {**xlsReadWrite**}) {**readxl**} has no external dependencies, so it’s easy to install and use on all operating systems. It is designed to work with *tabular* data. Works on Windows, Mac and Linux without external dependencies.
-
+The readxl package makes it easy to get data out of Excel and into R.
+Compared to many of the existing packages (e.g. {**gdata**}, {**xlsx**},
+{**xlsReadWrite**}) {**readxl**} has no external dependencies, so it’s
+easy to install and use on all operating systems. It is designed to work
+with *tabular* data. Works on Windows, Mac and Linux without external
+dependencies.
 :::
 
-{**readxl**} supports both the legacy `.xls` format and the modern xml-based `.xlsx` format. The embedded [libxls](https://github.com/libxls/libxls) C library is used to support `.xls`, which abstracts away many of the complexities of the underlying binary format. To parse `.xlsx`, we use the [RapidXML](https://rapidxml.sourceforge.net/) C++ library.
-
-
+{**readxl**} supports both the legacy `.xls` format and the modern
+xml-based `.xlsx` format. The embedded
+[libxls](https://github.com/libxls/libxls) C library is used to support
+`.xls`, which abstracts away many of the complexities of the underlying
+binary format. To parse `.xlsx`, we use the
+[RapidXML](https://rapidxml.sourceforge.net/) C++ library.
 
 {**readxl**}: A Package to Read Excel Files
 :::
 
-***
-::::
-:::::
+------------------------------------------------------------------------
+:::
+:::
 
 ### RNHANES
 
-:::::{.my-resource}
-:::{.my-resource-header}
+::: my-resource
+::: my-resource-header
 RNHANES: Facilitates Analysis of CDC NHANES Data
 :::
-::::{.my-resource-container}
 
-***
+::: my-resource-container
+
+------------------------------------------------------------------------
 
 ::: {#pak-RNHANES}
 
-***
+------------------------------------------------------------------------
 
-{**RNHANES**}: [Facilitates Analysis of CDC NHANES Data](https://wwww.silentspring.org/RNHANES/index.html)
-
+{**RNHANES**}: [Facilitates Analysis of CDC NHANES
+Data](https://wwww.silentspring.org/RNHANES/index.html)
 
 (*There is no hexagon logo available for RNHANES*)
 
-RNHANES is an R package for accessing and analyzing `r glossary("CDC")` `r glossary("NHANES")` (National Health and Nutrition Examination Survey) data that was developed by [Silent Spring Institute](https://silentspring.org/).
+RNHANES is an R package for accessing and analyzing `r glossary("CDC")`
+`r glossary("NHANES")` (National Health and Nutrition Examination
+Survey) data that was developed by [Silent Spring
+Institute](https://silentspring.org/).
 
 {**RNHANES**}: A Package for Facilitating Analysis of CDC NHANES Data
 :::
 
-***
-::::
-:::::
-
-
+------------------------------------------------------------------------
+:::
+:::
 
 ### waffle
 
-:::::{.my-resource}
-:::{.my-resource-header}
+::: my-resource
+::: my-resource-header
 waffle: Create Waffle Chart Visualizations
 :::
-::::{.my-resource-container}
 
-***
+::: my-resource-container
+
+------------------------------------------------------------------------
 
 ::: {#pak-waffle}
 
-***
+------------------------------------------------------------------------
 
-{**waffle**}: [Create Waffle Chart Visualizations](https://cinc.rud.is/web/packages/waffle/index.html)
+{**waffle**}: [Create Waffle Chart
+Visualizations](https://cinc.rud.is/web/packages/waffle/index.html)
 
 (*There is no hexagon logo for {**waffle**} available*)
 
-Square pie charts (a.k.a. waffle charts) can be used to communicate parts of a whole for categorical quantities. To emulate the percentage view of a pie chart, a 10x10 grid should be used with each square representing 1% of the total. 
+Square pie charts (a.k.a. waffle charts) can be used to communicate
+parts of a whole for categorical quantities. To emulate the percentage
+view of a pie chart, a 10x10 grid should be used with each square
+representing 1% of the total.
 
-Modern uses of waffle charts do not necessarily adhere to this rule and can be created with a grid of any rectangular shape. 
+Modern uses of waffle charts do not necessarily adhere to this rule and
+can be created with a grid of any rectangular shape.
 
-Best practices suggest keeping the number of categories small, just as should be done when creating pie charts. 
+Best practices suggest keeping the number of categories small, just as
+should be done when creating pie charts.
 
-Tools are provided to create waffle charts as well as stitch them together, and to use glyphs for making isotype pictograms.
+Tools are provided to create waffle charts as well as stitch them
+together, and to use glyphs for making isotype pictograms.
 
 It uses {**ggplot2**} and returns a `ggplot2` object.
-
-
 
 {**waffle**}: A Package for Creating Waffle Chart Visualizations
 :::
 
-***
-::::
-:::::
-
+------------------------------------------------------------------------
+:::
+:::
 
 ## Glossary
 
@@ -1033,21 +1710,18 @@ glossary_table()
 
 ------------------------------------------------------------------------
 
-
 ## Session Info {.unnumbered}
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
+::: my-r-code
+::: my-r-code-header
 Session Info
 :::
-::::{.my-r-code-container}
 
+::: my-r-code-container
 ```{r}
 #| label: session-info
 
 sessioninfo::session_info()
 ```
-
-
-::::
-:::::
+:::
+:::

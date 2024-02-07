@@ -82,6 +82,9 @@ crossref:
     - kind: float
       reference-prefix: Bullet List
       key: bul
+    - kind: float
+      reference-prefix: Numerical List
+      key: num
 
 pak-cap-location: top
 bul-cap-location: top
