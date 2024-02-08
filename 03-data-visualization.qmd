@@ -18,13 +18,12 @@ Objectives
 **SwR Achievements**
 
 -   **Achievement 1**: Choosing and creating graphs for a single
-    categorical variable
+    categorical variable (@sec-chap03-achievement-1)
 -   **Achievement 2**: Choosing and creating graphs for a single
-    continuous variable
+    continuous variable (@sec-chap03-achievement-2)
 -   **Achievement 3**: Choosing and creating graphs for two variables at
-    once
--   **Achievement 4**: Ensuring graphs are well-formatted with
-    appropriate and clear titles, labels, colors, and other features
+    once (@sec-chap03-achievement-3)
+-   **Achievement 4**: Ensuring graphs are well-formatted
 :::
 :::
 
@@ -250,19 +249,19 @@ Excel Data I in several ways:
 :::
 :::
 
-###### NHANES 1
+###### NHANES 2012
 
 ::: my-r-code
 ::: my-r-code-header
-::: {#cnj-chap03-get-NHANES1-data}
+::: {#cnj-chap03-get-NHANES-2012-data}
 : Get NHANES data 2011-2012 from the CDC website with {RNHANES}
 :::
 :::
 
 ::: my-r-code-container
-::: {#lst-chap03-get-NHANES1-data}
+::: {#lst-chap03-get-NHANES-2012-data}
 ```{r}
-#| label: get-NHANES1-data
+#| label: get-NHANES-2012-data
 #| cache: true
 #| eval: false
 
@@ -335,21 +334,21 @@ function (year, throw_error = TRUE)
 know how to download data programmatically on your own is an
 indispensable data science skill.
 
-See tab "NHANES 2" how this is done.
+See tab "NHANES 2018" how this is done.
 
-###### NHANES 2
+###### NHANES 2018
 
 ::: my-r-code
 ::: my-r-code-header
-::: {#cnj-chap03-get-NHANES2-data}
+::: {#cnj-chap03-get-NHANES-2018-data}
 : Get NHANES data 2017-2018 from the CDC website with {haven}
 :::
 :::
 
 ::: my-r-code-container
-::: {#lst-chap03-get-NHANES2-data}
+::: {#lst-chap03-get-NHANES-2018-data}
 ```{r}
-#| label: get-NHANES2-data
+#| label: get-NHANES-2018-data
 #| cache: true
 #| eval: false
 
@@ -383,16 +382,16 @@ The download with {**haven**} has the additional advantage that the
 variables are labelled as already explained in
 @sec-chap01-labelled-data.
 
-
 ###### Research funding
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-get-research-funding}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-get-research-funding}
 : Numbered R Code Title
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: get-research-funding
 
@@ -402,18 +401,11 @@ research_funding <- readr::read_csv(
 
 str(research_funding)
 ```
-
-::::
-:::::
-
-
-:::
-
-
-
 :::
 :::
-
+:::
+:::
+:::
 
 ### Taxonomy of Graphs as Table of Content
 
@@ -496,7 +488,7 @@ But if I turn the right list into a table of content then the mapping
 with chapter 3 of the book is lost. I follow therefore the list of left
 side but I have added links to the appropriate sections in both lists.
 
-## Achievement 1: Graphs for a single categorical variable
+## Achievement 1: Graphs for a single categorical variable {#sec-chap03-achievement-1}
 
 ### Introduction
 
@@ -867,23 +859,27 @@ gun_use_2012 |>
                       label = "                  used firearms",
                       color = "white",
                       size = 6) +
-    ggplot2::theme_void() +
-    ggplot2::labs(x = '', y = '')
+    ggplot2::theme_void() 
 ```
 
-***
+------------------------------------------------------------------------
 
 The most important code line to create a pie graph is
 `ggplot2::coord_polar(theta = 'y')`. In the concept of `gg` (grammar of
 graphics) a car chart and a pie chart are --- with the exception of the
 above code line --- identical [@c2010].
 
-
-Beside the `ggplot2::annotate()` function for text comments inside graphics I had for to get the necessary formatting options for the big number also to use {**ggtext**}, one of [132 registered {**ggplot2**} extensions](https://exts.ggplot2.tidyverse.org/gallery/). {**ggtext**} enables the rendering of complex formatted plot labels (see @pak-ggtext).
+Beside the `ggplot2::annotate()` function for text comments inside
+graphics I had for to get the necessary formatting options for the big
+number also to use {**ggtext**}, one of [132 registered {**ggplot2**}
+extensions](https://exts.ggplot2.tidyverse.org/gallery/). {**ggtext**}
+enables the rendering of complex formatted plot labels (see
+@pak-ggtext).
 :::
 :::
 
-For training purposes I tried to create exactly the same pattern (color, text size etc.) of a pie chart as in @fig-pie-chart-demo.
+For training purposes I tried to create exactly the same pattern (color,
+text size etc.) of a pie chart as in @fig-pie-chart-demo.
 
 ###### Pie chart (yes/no)
 
@@ -1210,7 +1206,7 @@ fired just a tiny amount of bullets less.
 :::
 :::
 
-## Achievement 2: Graphs for a single continuous variable
+## Achievement 2: Graphs for a single continuous variable {#sec-chap03-achievement-2}
 
 ### Introduction
 
@@ -1244,84 +1240,430 @@ Graph options for a single continuous variable
     continuous variable for different levels (or groups) of a factor (or
     categorical) variable.
 
-### Histograms, Density and Box Plot {#sec-chap03-histogram}
+### Histogram {#sec-chap03-histogram}
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap03-histogram}
-: Numbered Example Title
-::::::
+::: my-experiment
+::: my-experiment-header
+::: {#def-chap03-histogram-research-funding}
+: Histograms of research funding (2004-2015) with 10 and 30 bins
 :::
-::::{.my-example-container}
-
-::: {.panel-tabset}
-
-###### Histogram
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-histogram-research-funding}
-: Histogram of research funding (2004-2015)
-::::::
 :::
-::::{.my-r-code-container}
 
+::: my-experiment-container
+::: panel-tabset
+###### 10 bins
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-histogram-research-funding}
+: Histogram of research funding (2004-2015) with 10 bins
+:::
+:::
+
+::: my-r-code-container
 ```{r}
-#| label: fig-histogram-research-funding
+#| label: fig-histogram-research-funding-10-bins
 #| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
 
-research_funding |> 
+p_histo_funding <- research_funding |> 
     ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
     ggplot2::geom_histogram(bins = 10,
                             fill = "grey90",
                             color = "black") +
     ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
-                  y = "Number of research subjects ('Causes of Deadth')") +
+                  y = "Number of causes") +
+    ggplot2::theme_bw()
+
+p_histo_funding
+```
+:::
+:::
+
+###### 30 bins
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-research-funding-30-bins}
+: Histogram of research funding (2004-2015) with 30 bins
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-histogram-research-funding-30-bins
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_histogram(bins = 30,
+                            fill = "grey90",
+                            color = "black") +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Number of research topics ('Causes of Deadth')") +
     ggplot2::theme_bw()
 ```
+:::
+:::
+:::
+:::
+:::
+
+With histograms it is important to play around with the number of
+`bins`. This changes the appearance of histograms sometimes quite
+profoundly. The default of 30 bins displays a warning that one should
+choose a better value with the argument `binwidth` (another option to
+control the number of bins.)
+
+It is not quite clear for me what would be the optimal number of bins of
+a given data set. It was easy for @fig-histogram-physical-health: There
+were only 30 different values, each for one. So to provide the same
+number of bins as number of observed days (= 30) was a sensible choice.
+
+There is not much difference in the case of 10 or 30 bins of
+@def-chap03-histogram-research-funding. A big difference would be for
+example when the number of modes is changing, or the mode is moving far
+to another value. It seems to me that with a density plot it is simpler
+to choose the optimal curve (even if I do not understand the underlying
+rationale of this `r glossary("kernel density estimation")` (KDE)
+procedure).
+
+### Density plot {#sec-chap03-density-plot}
+
+::: my-experiment
+::: my-experiment-header
+::: {#def-chap03-density-plot-research-funding}
+: Density plot of research funding (2004-2015) with different bandwidth
+:::
+:::
+
+::: my-experiment-container
+::: panel-tabset
+
+###### Default
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-density-plot-research-funding-2}
+: Density plot with standard bandwidth `bw = "nrd0"`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-density-plot-research-funding-0
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+
+p_dens_funding <- research_funding |>
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_density(fill = "grey90",
+                          color = "black") +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Probability density") +
+    ggplot2::theme_bw()
+
+p_dens_funding
+```
+***
+
+This is the density plot without changing the default bandwidth. It uses `nrd0` as bandwidth. One can see that it is somewhat similar to `bw = 1.5` (see @fig-density-plot-research-funding-2). 
+
+- `bw.nrd0` implements a rule-of-thumb for choosing the bandwidth of a Gaussian kernel density estimator. It defaults to 0.9 times the minimum of the standard deviation and the interquartile range divided by 1.34 times the sample size to the negative one-fifth power (= Silverman's ‘rule of thumb’, Silverman (1986, page 48, eqn (3.31))) unless the quartiles coincide when a positive result will be guaranteed. (Quoted form the help file of `stats::bandwidth()`)
 
 ::::
 :::::
 
 
-###### Density plot
+###### 0.5
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap03-density-plot-research-funding}
-: Density plot of research funding (2004-2015)
+:::::: {#cnj-chap03-density-plot-research-funding-1}
+: Density plot with bandwidth of 0.5
 ::::::
 :::
 ::::{.my-r-code-container}
-
 ```{r}
-#| label: fig-density-plot-research-funding
+#| label: fig-density-plot-research-funding-1
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_density(fill = "#7d70b6",
+                          color = "black",
+                          bw = .5) +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Probability density") +
+    ggplot2::theme_bw()
+
+```
+***
+
+I have replicated Figure 3.26 without knowing what `bw = 0.5` means and how it is computed.
+
+::::
+:::::
+
+###### 1.5
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-density-plot-research-funding-2}
+: Density plot of research funding (2004-2015) with bandwidth of 1.5
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-density-plot-research-funding-2
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_density(fill = "#7d70b6",
+                          color = "black",
+                          bw = 1.5) +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Probability density") +
+    ggplot2::theme_bw()
+
+```
+***
+
+I have replicated Figure 3.27 without knowing what `bw = 1.5` means and how it is computed. This is the figure that was chosen in the book as appropriate to represent the data distribution. It is very similar to the {**ggplot2**} standard version (@fig-density-plot-research-funding-0), where neither `bw` nor `kernel` was changed.
+
+
+::::
+:::::
+
+###### nrd0
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-density-plot-research-funding-3a}
+: Density plot with bandwidth selector `nrd0` 
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-density-plot-research-funding-3a
 #| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
 
 research_funding |> 
     ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
     ggplot2::geom_density(fill = "grey90",
-                          bw = 1.1) +
+                          color = "black",
+                          bw = "nrd0") +
     ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
                   y = "Probability density") +
     ggplot2::theme_bw()
 ```
 
-::::
-:::::
+------------------------------------------------------------------------
+
+Here I have stated expressively that `bw = "nrd0"`. This is the default value that implements a rule-of-thumb for choosing the bandwidth of a Gaussian `r glossary("kernel density estimation", "kernel density estimator")`. It is appropriate for normal-like distributions.
+
+:::
+:::
+
+
+###### SJ
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-density-plot-research-funding-3b}
+: Density plot with bandwidth selector `SJ` 
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-density-plot-research-funding-3b
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_density(fill = "grey90",
+                          color = "black",
+                          bw = "SJ") +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Probability density") +
+    ggplot2::theme_bw()
+```
+
+------------------------------------------------------------------------
+
+`bw = "SJ"` select the bandwidth using pilot estimation of derivatives and is appropriate for multimodal or general non-normal distribution [@webelod2018].
+:::
+:::
+
+
+
+###### ucv 
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-density-plot-research-funding-4a}
+: Density plot with bandwidth `ucv` 
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-density-plot-research-funding-4a
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_density(fill = "grey90",
+                          color = "black",
+                          bw = "ucv") +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Probability density") +
+    ggplot2::theme_bw()
+```
+
+***
+
+`ucv` is one of the two extremes. It chooses a very small bandwidth. (The other extreme selector is `bcv` which chooses very a wide bandwidth.)
+:::
+:::
+
+
+###### bcv
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-density-plot-research-funding-4b}
+: Density plot with bandwith `bcv`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-density-plot-research-funding-4b
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_density(fill = "grey90    ", 
+                          color = "black",
+                          bw = "bcv") +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar",
+                  y = "Probability density") +
+    ggplot2::theme_bw()
+```
+
+***
+
+`bcv` is one of the two extremes. It chooses a very wide bandwidth. (The other extreme selector is `ucv` which chooses a very narrow bandwidth.)
+
+:::
+:::
 
 :::
 
 ::::
 :::::
 
-***
+The equivalent of `binwidth` in histograms is `bw` (smoothing
+bandwidth) in density plots. I have to confess that I do not understand
+all the relevant factors to choose the optimal bandwidth for density plots (or binwidth for histograms).
 
-### Densitiy Plots {#sec-chap03-density-plot}
+In density plots there is also the `kernel` argument for choosing the
+appropriate smoothing kernel. I learned from the video by od webel [-@webelod2018]  that the chosen kernel (gaussian", the standard, "rectangular", "triangular", "epanechnikov", "biweight", "cosine" or "optcosine") is not so important because the result all in similar distributions. Most important, however, is to choose the appropriate bandwidth.
+
+It is said that one disadvantage of density plots is its feature to smooth out the distribution so that you cannot see anymore --- in contrast to histograms --- if there are gaps in the data. But if you choose a very small bandwidth like `ucv` then you get a distribution similar to a histogram.
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Information about kernel density estimation and bandwidth
+:::
+::::{.my-resource-container}
+
+Much of my understanding about bandwidth and kernel density estimation comes from the video [Intro to Kernel Density Estimation](https://www.youtube.com/watch?v=x5zLaWT5KPs) by od webel [-@webelod2018].
+
+{{< video https://www.youtube.com/watch?v=x5zLaWT5KPs >}}
+
+Another article on this complex topic: [What is Kernel Density
+Estimation?](https://www.statisticshowto.com/kernel-density-estimation/).
+From this article I learned that a kernel is nothing else as a weighting function to
+estimate the `r glossary("probability density function")` (PDF). (Until now I had a sketchy impression about this concept derived from another meaning of "kernel", related with the core part of a computer.)
+
+
+::::
+:::::
+
+
+
+
 
 ### Box Plots {#sec-chap03-box-plot-1}
 
-## Achievement 3: Graph for two variable at once
+`r glossary("Histograms")` and `r glossary("density plots")` are great for examining the overall shape of the data for a continuous variable. `r glossary("Boxplots")` in contrasts are useful for identifying the middle value and the boundaries around the middle half of the data.
+
+***
+
+![Parts of a boxplot [@ferreira2016, p.211]](img/chap03/box-plot-parts-min.png){#fig-box-plot-parts 
+fig-alt="Explains the parts of a box plots: The middle 50\% are called Interquartile Range (IQR). It is followed by the 'Whiskers'. Whiskers are calculated: Take the first (lower fence) or third (upper fence) 'Quartile' and add 1.5 x IQR.  A quartile is 25\% of the data. Whiskers are followed by the outliers." fig-align="center" width="100%"}
+
+***
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name}
+: Box plot of research funding (2004-2015)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-box-plot-research-funding-1
+#| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
+
+p_box_funding <- research_funding |> 
+    ggplot2::ggplot(ggplot2::aes(x = Funding / 1000000000)) +
+    ggplot2::geom_boxplot(fill = "grey90",
+                          color = "black") +
+    ggplot2::labs(x = "Research funding (2004-2015) in billions dollar") +
+    ggplot2::theme_bw()
+
+p_box_funding
+```
+
+::::
+:::::
+
+### Summary
+
+Each of the three presented plot types (histogram, density plot and box plot) has it strength and disadvantage.
+
+> All three graphs show the right skew clearly, while the histogram and boxplot show gaps in the data toward the end of the tail. The boxplot is the only one of the three that clearly identifies the central tendency and spread of the variable.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-histogram-density-box-plot}
+: Comparison of histogram, density plot and box plot
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-histogram-density-box-plot
+
+gridExtra::grid.arrange(p_histo_funding, 
+                        p_dens_funding, 
+                        p_box_funding, 
+                        nrow = 3)
+
+```
+
+::::
+:::::
+
+
+***
+
+
+## Achievement 3: Graph for two variable at once {#sec-chap03-achievement-3}
 
 ### Introduction
 
@@ -1417,34 +1759,42 @@ Annotations for {ggplot2}
 
 ### ggtext
 
-:::::{.my-resource}
-:::{.my-resource-header}
+::: my-resource
+::: my-resource-header
 ggtext: Improved Text Rendering Support for 'ggplot2'
 :::
-::::{.my-resource-container}
 
-***
+::: my-resource-container
+
+------------------------------------------------------------------------
 
 ::: {#pak-ggtext}
 
-***
+------------------------------------------------------------------------
 
-{**ggtext**}: [Improved Text Rendering Support for 'ggplot2'](https://wilkelab.org/ggtext/)
+{**ggtext**}: [Improved Text Rendering Support for
+'ggplot2'](https://wilkelab.org/ggtext/)
 
 (*There is no hexagon logo for {**ggtext**} available*)
 
-The ggtext package provides simple Markdown and HTML rendering for {**ggplot2.**} Under the hood, the package uses the {**gridtext**} package for the actual rendering, and consequently it is limited to the [feature set provided by gridtext](https://wilkelab.org/gridtext/).
+The ggtext package provides simple Markdown and HTML rendering for
+{**ggplot2.**} Under the hood, the package uses the {**gridtext**}
+package for the actual rendering, and consequently it is limited to the
+[feature set provided by gridtext](https://wilkelab.org/gridtext/).
 
-Support is provided for Markdown both in theme elements (plot titles, subtitles, captions, axis labels, legends, etc.) and in geoms (similar to `ggplot2::geom_text()`). In both cases, there are two alternatives, one for creating simple text labels and one for creating text boxes with word wrapping.
+Support is provided for Markdown both in theme elements (plot titles,
+subtitles, captions, axis labels, legends, etc.) and in geoms (similar
+to `ggplot2::geom_text()`). In both cases, there are two alternatives,
+one for creating simple text labels and one for creating text boxes with
+word wrapping.
 
-
-{**ggtext**}: A Package for Improved Text Rendering Support for 'ggplot2'
+{**ggtext**}: A Package for Improved Text Rendering Support for
+'ggplot2'
 :::
 
-***
-::::
-:::::
-
+------------------------------------------------------------------------
+:::
+:::
 
 ### gridExtra
 

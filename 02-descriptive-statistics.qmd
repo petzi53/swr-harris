@@ -143,6 +143,8 @@ For the decision if one should report mean or median in numerical variables the 
 
 I will explain explicitly only to those subjects where I am not firm. This is 
 
+***
+
 ::: {#bul-subjects-explained}
 - categorical variables:
     - index of qualitative variation (@sec-index-variation)
@@ -155,6 +157,8 @@ I will explain explicitly only to those subjects where I am not firm. This is
 Subjects reviewed in this chapter
 
 :::
+
+***
 
 But I will address all the other measures in the examples resp. exercises.
 
@@ -1541,10 +1545,6 @@ Compare this report with the copy & paste description from @rep-chap02-mammogram
 ::::
 :::::
 
-***
-
-
-***
 
 ## Descriptive analyses for continuous (numeric) variables {#sec-chap02-describe-numeric-variables}
 
@@ -1721,11 +1721,12 @@ There are many packages to compute the skewness of a distribution. (Type `??skew
 :::
 ::::{.my-r-code-container}
 
+
+::: {#lst-chap02-check-skew-normal}
+
 ```{r}
 #| label: fig-check-skew-normal
 #| fig-cap: "Shoulder breadth distribution in centimeters of 247 physically active men"
-#| lst-label: lst-check-skew-normal
-#| lst-cap: "Checking skewness of a shoulder breadth distribution of 247 men"
 #| cache: true
 #| results: hold
 
@@ -1750,6 +1751,10 @@ glue::glue("Using the `statpsych::test.skew()` function")
 statpsych::test.skew(bdims$bia_di)
 ```
 
+Checking skewness of a shoulder breadth distribution of 247 men
+
+:::
+
 ***
 
 **Interpretation `semTools::skew()`**
@@ -1761,7 +1766,7 @@ statpsych::test.skew(bdims$bia_di)
 
 
 ::: {.callout-tip style="color: darkgreen;"}
-The interpretation follows @tbl-chap02-skewness: The $z$ result of @lst-check-skew-normal from the biacromial diameter of 247 men is only 1.44, e.g. well situated in the range of -3.29 and +3.29 and therefore we have no skewness problem. The p-value is with 0.17 big and therefore the null (there is no skewness) can't be rejected.
+The interpretation follows @tbl-chap02-skewness: The $z$ result of @fig-check-skew-normal from the biacromial diameter of 247 men is only 1.44, e.g. well situated in the range of -3.29 and +3.29 and therefore we have no skewness problem. The p-value is with 0.17 big and therefore the null (there is no skewness) can't be rejected.
 :::
 
 
@@ -2354,8 +2359,12 @@ skimr::skim(physical_health_clean)
 ::::::
 :::
 ::::{.my-r-code-container}
+
+{#lst-chap02-histogram-physical-health}
+
 ```{r}
-#| label: histogram-physical-health
+#| label: fig-histogram-physical-health
+#| fig-cap: "Number of days where physical health is not good"
 
 physical_health_clean |> 
     ggplot2::ggplot(ggplot2::aes(x = PHYSHLTH)) +
@@ -2369,6 +2378,9 @@ physical_health_clean |>
             
 ```
 
+Number of days where physical health is not good
+
+:::
 
 ::::
 :::::
