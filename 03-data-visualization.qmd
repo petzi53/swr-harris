@@ -132,11 +132,13 @@ successfully in @lst-chap02-get-brfss-2014-data.
 
 -   {**cowplot**}: @pak-cowplot (Claus O. Wilke)
 -   {**ggtext**}: @pak-ggtext (Claus O. Wilke)
+-   {**janitor**}: @pak-janitor (Sam Firke)
 -   {**patchwork**}: @pak-patchwork (Thomas Lin Pedersen)
+-   {**viridis**}: @pak-viridis (Simon Garnier)
 :::
 :::
 
-### Get the data
+### Get data
 
 The data can be download from the internet with the following URL:
 <https://ucr.fbi.gov/crime-in-the-u.s/2016/crime-in-the-u.s.-2016/tables/expanded-homicide-data-table-4.xls/output.xls>
@@ -387,7 +389,7 @@ variables are labelled as already explained in
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-chap03-get-research-funding}
-: Numbered R Code Title
+: Research funding for different kind of research topics (2004-2015)
 :::
 :::
 
@@ -407,7 +409,223 @@ str(research_funding)
 :::
 :::
 
-### Taxonomy of Graphs as Table of Content
+### Recode data
+
+::: my-example
+::: my-example-header
+::: {#exm-ID-text}
+: Recode data for chapter 3
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### Gun use
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-recode-gun-use-2012}
+: Recode gun use variable `AUQ300` from NHANES data 2011-2012
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: recode-gun-use
+#| cache: true
+
+## load data
+nhanes_2012 <- base::readRDS("data/chap03/nhanes_2012.rds")
+
+## recode data
+nhanes_2012_clean1 <- nhanes_2012 |> 
+    dplyr::mutate(AUQ300 = 
+          dplyr::na_if(x = AUQ300, y = 7)) |> 
+    dplyr::mutate(AUQ300 = 
+          dplyr::na_if(x = AUQ300, y = 9)) |> 
+    ## see my note in the text under the code
+    # tidyr::drop_na() |> 
+    dplyr::mutate(AUQ300 = forcats::as_factor(AUQ300)) |> 
+    dplyr::mutate(AUQ300 = 
+          forcats::fct_recode(AUQ300, 
+                  "Yes" = "1", 
+                  "No" = "2")
+    ) |> 
+    dplyr::rename(gun_use = AUQ300) |> 
+    dplyr::relocate(gun_use)
+
+
+gun_use_2012 <- nhanes_2012_clean1 |> 
+    dplyr::count(gun_use)|> 
+    dplyr::mutate(percent = round(n / sum(n), 2) * 100) 
+
+glue::glue("Result calculated manually with `dplyr::count()` and `dplyr::mutate()`")
+gun_use_2012
+
+glue::glue(" ")
+glue::glue("*******************************************************************")
+glue::glue("Result calculated with `janitor::tabyl()` and `janitor::adorn_pct_formating()`")
+nhanes_2012_clean1 |> 
+    janitor::tabyl(gun_use) |> 
+    janitor::adorn_pct_formatting()
+
+```
+
+------------------------------------------------------------------------
+
+For recoding the levels of the categorical variable I have looked up the
+appropriate passage in the codebook (see:
+@fig-firearms-use-codebook-2012).
+
+With the last line `dplyr::relocate(gun_use)` I put the column `gun_use`
+to the front of the data frame. If neither the `.before` nor the
+`.after` argument of the function are supplied the column will move
+columns to the left-hand side of the data frame. So it is easy to find
+for visual inspections via the RStudio data frame viewer.
+
+::: my-note
+::: my-note-header
+When to remove the NA's?
+:::
+
+::: my-note-container
+It would be not correct to remove the NA's here in the recoding code
+chunk, because this would remove the rows with missing values from the
+`gun_use` variable across the whole data frame! This implies that values
+of other variable that are not missing would be removed too. It is
+correct to remove the NA's when the output for the analysis (graph or
+table) is prepared via the pipe operator without changing the stored
+data.
+:::
+:::
+:::
+:::
+
+![Ever used firearms for any reason? [Codebook 2011-2012
+AUDIOMETRY](https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/AUQ_G.htm#AUQ300)](img/chap03/NHANES-codebook-firearms-use-2012-min.png){#fig-firearms-use-codebook-2012
+fig-alt="'Ever used firearms for any reason?' this question has several options: - 1 = Yes - 2 = No - 7 = Refused  - 9 = Don’t know - . = Missing"
+fig-align="center"}
+
+###### Rounds fired
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-recode-rounds-fired}
+: Recode rounds fired variable `AUQ310` from NHANES data 2011-2012
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: recode-rounds-fired
+#| cache: true
+
+nhanes_2012_clean2 <- nhanes_2012_clean1 |> 
+    dplyr::mutate(AUQ310 = forcats::as_factor(AUQ310)) |> 
+    dplyr::mutate(AUQ310 = forcats::fct_recode(AUQ310,
+        "1 to less than 100" = "1",
+        "100 to less than 1000" = "2",
+        "1000 to less than 10k" = "3",
+        "10k to less than 50 k" = "4",
+        "50k or more" = "5",
+        "Refused to answer" = "7",
+        "Don't know" = "9")
+    ) |> 
+    dplyr::rename(rounds_fired = AUQ310) |> 
+    dplyr::relocate(rounds_fired, .after = gun_use)
+
+fired_2012 <- nhanes_2012_clean2 |>
+    dplyr::select(rounds_fired) |> 
+    tidyr::drop_na() |> 
+    dplyr::count(rounds_fired) |> 
+    dplyr::mutate(prop = round(n / sum(n), 2) * 100) |> 
+    dplyr::relocate(n, .after = dplyr::last_col())
+fired_2012
+```
+
+I got a warning about a unknown level `7` because no respondent refused
+an answer. But this is not important. I could either choose to not
+recode level `7` or turn warning off in the chunk option --- or simply
+to ignore the warning.
+:::
+:::
+
+###### Sex
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-recode-sex}
+: Recode sex variable `RIAGENDR` from NHANES data 2011-2012
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: recode-sex
+#| cache: true
+
+nhanes_2012_clean3 <- nhanes_2012_clean2 |> 
+    dplyr::mutate(RIAGENDR = forcats::as_factor(RIAGENDR)) |> 
+    dplyr::mutate(RIAGENDR = forcats::fct_recode(RIAGENDR,
+                 "Male" = '1',
+                 "Female" = '2')
+    ) |> 
+    dplyr::rename(sex = RIAGENDR) |> 
+    dplyr::relocate(sex, .after = rounds_fired)
+
+nhanes_2012_clean3 |> 
+    janitor::tabyl(sex) |> 
+    janitor::adorn_pct_formatting()
+```
+:::
+:::
+
+###### Ear plugs
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-recode-ear-plugs}
+: Recode ear plugs variable `AUQ320` from NHANES data 2011-2012
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: recode-ear-plugs
+#| cache: true
+
+nhanes_2012_clean4 <- nhanes_2012_clean3 |> 
+    dplyr::mutate(AUQ320 = forcats::as_factor(AUQ320)) |> 
+    dplyr::mutate(AUQ320 = forcats::fct_recode(AUQ320,
+        "Always" = "1",
+        "Usually" = "2",
+        "About half the time" = "3",
+        "Seldom" = "4",
+        "Never" = "5",
+        # "Refused to answer" = "7", # nobody refused
+        "Don't know" = "9")
+    ) |> 
+    dplyr::rename(ear_plugs = AUQ320) |> 
+    dplyr::relocate(ear_plugs, .after = gun_use)
+
+base::saveRDS(nhanes_2012_clean4, 
+              "data/chap03/nhanes_2012_clean.rds")
+
+nhanes_2012_clean4 |> 
+    janitor::tabyl(ear_plugs) |> 
+    janitor::adorn_pct_formatting()
+```
+:::
+:::
+:::
+:::
+:::
+
+------------------------------------------------------------------------
+
+### Classification of Graphs
+
+#### Introduction
 
 There are different possible classification of graph types. In the book
 Harris uses as major criteria the types and numbers of variables. This
@@ -425,39 +643,59 @@ Under this pattern one could concentrate of the special features for
 each graph type. One of these features would be their applicability
 referring the variable types.
 
-I will outline both taxonomies side by side but follow the graph type
-classification.
+#### Lists of different categorization approaches
 
-------------------------------------------------------------------------
+::: my-example
+::: my-example-header
+::: {#exm-chap03-categorization-approaches}
+: Five different categorization approaches
+:::
+:::
 
-::: {layout-ncol="2"}
+::: my-example-container
+::: panel-tabset
+###### Variables
+
 ::: {#bul-chap03-graphs-var-types}
-1.  One variable
-    -   Categorical (achievement 1)
+1.  **One variable**
+    -   *Categorical* (achievement 1)
         -   Bar chart (@sec-chap03-bar-chart-1)
         -   Pie chart (@sec-chap03-pie-chart)
         -   Waffle chart (@sec-chap03-waffle-chart)
-    -   Continuous (achievement 2)
+    -   *Continuous* (achievement 2)
         -   Histogram (@sec-chap03-histogram)
         -   Density plot (@sec-chap03-density-plot)
         -   Box plot (@sec-chap03-box-plot-1)
-2.  Two variables (achievement 3)
-    -   Both categorical
+        -   Violin plot (see under two variables:
+            @sec-chap03-violin-plot)
+2.  **Two variables** (achievement 3)
+    -   *Both categorical*
         -   Mosaic plot (@sec-chap03-mosaic-plot)
         -   Bar chart (@sec-chap03-bar-chart-2)
             -   stacked
             -   grouped
-    -   Categorical & continuous
+    -   *Categorical & continuous*
         -   Bar chart (@sec-chap03-bar-chart-3)
         -   Point chart (@sec-chap03-point-chart)
         -   Box plot (@sec-chap03-box-plot-2)
         -   Violin plot (@sec-chap03-violin-plot)
-    -   Both continuous
+    -   *Both continuous*
         -   Line graph (@sec-chap03-line-graph)
         -   Scatterplot (@sec-chap03-scatterplot)
 
-Variable types and graph types
+Book variable types and their corresponding graph types
 :::
+
+------------------------------------------------------------------------
+
+You can see the redundancy when you categorize the graph types by
+variable types. But the advantage is, that your choice of graph is
+driven by essential statistical aspects.
+
+This chapter will follow the book and therefore it will present the same
+order in the explication of the graphs as in the book outlined.
+
+###### Graphs
 
 ::: {#bul-chap03-graph-types}
 -   Bar chart
@@ -472,21 +710,431 @@ Variable types and graph types
 -   Violin plot
 -   Waffle chart
 
-Graph types sorted alphabetically
-:::
+Book graph types sorted alphabetically
 :::
 
 ------------------------------------------------------------------------
 
-You can see the redundancy when sorting graph types by variable types
-(left column). Another advantage of my right list is that I can add in
-the future other graph types. For instance I could add
-`r glossary("tile plots")`, using `ggplot2::geom_tile()` or
-`vcd::tile()`. (See more on tile plots [@meyer2006].)
+This is a very abridged list of graphs used for presentation of
+statistical results. Although it is just a tiny selection of possible
+graphs it contains those graphs that are most important, most used and
+most well know types.
 
-But if I turn the right list into a table of content then the mapping
-with chapter 3 of the book is lost. I follow therefore the list of left
-side but I have added links to the appropriate sections in both lists.
+###### R Charts
+
+::: {#bul-chap03-graph-types-r-charts}
+-   **Correlations**
+    -   Bubble
+    -   Contour plot
+    -   Correlogram
+    -   Heat map
+    -   Scatterplot
+-   **Distributions**
+    -   Beeswarm
+    -   Box plot
+    -   Density plot
+    -   Dot plot
+    -   Dumbbell
+    -   Histogram
+    -   Ridgeline
+    -   Violin plot
+-   **Evolution**
+    -   Area chart
+    -   Calendar
+    -   Candle stick
+    -   Line chart
+    -   Slope
+-   **Flow**
+    -   Alluvial
+    -   Chord
+    -   Sankey
+    -   Waterfall
+-   **Miscellaneous**
+    -   Art
+    -   Biology
+    -   Calendar
+    -   Computer & Games
+    -   Fun
+    -   Image Processing
+    -   Sports
+-   **Part of whole**
+    -   Bar chart
+    -   Dendogram
+    -   Donut chart
+    -   Mosaic chart
+    -   Parliament
+    -   Pie chart
+    -   Tree map
+    -   Venn diagram
+    -   Voronoi
+    -   Waffle chart
+-   **Ranking**
+    -   Bar chart
+    -   Bump chart
+    -   Lollipop
+    -   Parallel Coordinates
+    -   Radar chart
+    -   Word cloud
+-   **Spatial**
+    -   Base map
+    -   Cartogram
+    -   Choropleth
+    -   Interactive
+    -   Proportion symbol
+
+Categorization of graph types used by [R Chart](https://r-charts.com/)
+:::
+
+------------------------------------------------------------------------
+
+Although this list has only 8 categories it is in contrast to
+@bul-chap03-graph-types a more complete list of different graphs. It
+features also not so well known graph types. Besides a miscellaneous
+category where the members of this group do not share a common feature
+the graph are sorted in categorization schema that has --- with the
+exception of bar charts --- no redundancy, e.g. is almost a taxonomy of
+graph types.
+
+###### From Data to Viz
+
+::: {#bul-chap03-graph-types-data-viz}
+-   **NUMERIC**
+    -   **One numeric variable**
+        -   Histogram
+        -   Density plot
+    -   **Two numeric variables**
+        -   *Not ordered*
+            -   Few points
+                -   Box plot
+                -   Histogram
+                -   Scatter plot
+            -   Many points
+                -   Violin plot
+                -   Density plot
+                -   Scatter with marginal point
+                -   2D density plot
+        -   *Ordered*
+            -   Connected scatter plot
+            -   Area plot
+            -   Line plot
+    -   **Three numeric variables**
+        -   *Not ordered*
+            -   Box plot
+            -   Violin plot
+            -   Bubble plot
+            -   3D scatter or surface
+        -   *Ordered*
+            -   Stacked area plot
+            -   Stream graph
+            -   Line plot
+            -   Area (SM)
+    -   **Several numeric variables**
+        -   *Not ordered*
+            -   Box plot
+            -   Violin plot
+            -   Ridge line
+            -   PCA
+            -   Correlogram
+            -   Heatmap
+            -   Dendogram
+        -   *Ordered*
+            -   Stacked area plot
+            -   Stream graph
+            -   Line plot
+            -   Area (SM)
+-   **CATEGORICAL**
+    -   **One categorical variable**
+        -   Bar plot
+        -   Lollipop
+        -   Waffle chart
+        -   Word cloud
+        -   Doughnut
+        -   Pie chart
+        -   Tree map
+        -   Circular packing
+    -   **Two or more categorical variables**
+        -   *Two independent lists*
+            -   Venn diagram
+        -   *Nested or hierarchical data set*
+            -   Tree map
+            -   Circular packing
+            -   Sunburst
+            -   Bar plot
+            -   Dendogram
+        -   *Subgroups*
+            -   Grouped scatter
+            -   Heat map
+            -   Lollipop
+            -   Grouped bar plot
+            -   Stacked bar plot
+            -   Parallel plot
+            -   Spider plot
+            -   Sankey diagram
+        -   *Adjacency*
+            -   Network
+            -   Chord
+            -   Arc
+            -   Sankey diagram
+            -   Heat map
+-   **NUMERIC & CATEGORICAL**
+    -   **One numeric & one categorical**
+        -   *One observation per group*
+            -   Box plot
+            -   Lollipop
+            -   Doughnut
+            -   Pie chart
+            -   Word cloud
+            -   Tree map
+            -   Circular packing
+            -   Waffle chart
+        -   *Several observations per group*
+            -   Box plot
+            -   Violin plot
+            -   Ridge line
+            -   Density plot
+            -   Histogram
+    -   **One categorical & several numeric**
+        -   *No order*
+            -   Group scatter
+            -   2D density
+            -   Box plot
+            -   Violin plot
+            -   PCA
+            -   Correlogram
+        -   *One numeric is ordered*
+            -   Stacked area
+            -   Area
+            -   Stream graph
+            -   Line plot
+            -   Connected scatter
+        -   *One value per group*
+            -   Grouped scatter
+            -   Heat map
+            -   Lollipop
+            -   Grouped bar plot
+            -   Stacked bar plot
+            -   Parallel plot
+            -   Spider plot
+            -   Sankey diagram
+    -   **Several categorical & one numeric**
+        -   *Subgroup*
+            -   One observation per group
+                -   One value per group
+                -   Grouped scatter
+                -   Heat map
+                -   Lollipop
+                -   Grouped bar plot
+                -   Stacked bar plot
+                -   Parallel plot
+                -   Spider plot
+                -   Sankey diagram
+            -   Several observations per group
+                -   Box plot
+                -   Violin plot
+        -   *Nested / Hierarchical ordered*
+            -   One observation per group
+                -   Bar plot
+                -   Dendogram
+                -   Sun burst
+                -   Tree map
+                -   Circular packing
+            -   Several observations per group
+                -   Box plot
+                -   Violin plot
+        -   *Adjacency*
+            -   Network diagram
+            -   Chord diagram
+            -   Arc diagram
+            -   Sankey diagram
+            -   Heat map
+-   **MAPS**
+    -   Map
+    -   Connection map
+    -   Choropleth
+    -   Map hexabin
+    -   Bubble map
+-   **NETWORK**
+    -   **Simple network**
+        -   Network
+        -   Chord diagram
+        -   Arc diagram
+        -   Sankey diagram
+        -   Heat map
+        -   Hive
+    -   **Nested or hierarchical network**
+        -   *No value*
+            -   Dendogram
+            -   Tree map
+            -   Circular packing
+            -   Sunburst
+            -   Sankey diagram
+        -   *Value for leaf*
+            -   Dendogram
+            -   Tree map
+            -   Circular packing
+            -   Sunburst
+            -   Sankey diagram
+        -   *Value for edges*
+            -   Dendogram
+            -   Sankey diagram
+            -   Chord diagram
+        -   *Value for connection* Hierarchical edge bundling
+-   **TIME SERIES**
+    -   **One series**
+        -   Box plot
+        -   Violin plot
+        -   Ridge line
+        -   Area
+        -   Line plot
+        -   Bar plot
+        -   Lollipop
+    -   **Several series**
+        -   Box plot
+        -   Violin plot
+        -   Ridge line
+        -   Heat map
+        -   Line plot
+        -   Stacked area
+        -   Stream graph
+
+Categorization of graph types used by [From Data to
+Viz](https://www.data-to-viz.com/)
+:::
+
+------------------------------------------------------------------------
+
+This is the same variable oriented approach as in the book but with much
+more details and differentiation. It is cluttered with redundancies but
+should be helpful for selecting an appropriate graph type for your data
+analysis. And the interactive style on the web allows for a much better
+orientation as implemented in the above list.
+
+###### Top 50
+
+::: {#bul-chap03-graph-types-top-50}
+-   **Correlation**
+    -   Scatterplot
+    -   Scatterplot With Encircling
+    -   Jitter Plot
+    -   Counts Chart
+    -   Bubble Plot
+    -   Animated Bubble Plot
+    -   Marginal Histogram / Boxplot
+    -   Correlogram
+-   **Deviation**
+    -   Diverging Bars
+    -   Diverging Lollipop Chart
+    -   Diverging Dot Plot
+    -   Area Chart
+-   **Ranking**
+    -   Ordered Bar Chart
+    -   Lollipop Chart
+    -   Dot Plot
+    -   Slope Chart
+    -   Dumbbell Plot
+-   **Distribution**
+    -   Histogram
+    -   Density Plot
+    -   Box Plot
+    -   Dot + Box Plot
+    -   Tufte Boxplot
+    -   Violin Plot
+    -   Population Pyramid
+-   **Composition**
+    -   Waffle Chart
+    -   Pie Chart
+    -   Treemap
+    -   Bar Chart
+-   **Change**
+    -   Time Series Plots
+        -   From a Data Frame
+        -   Format to Monthly X Axis
+        -   Format to Yearly X Axis
+        -   From Long Data Format
+        -   From Wide Data Format
+    -   Stacked Area Chart
+    -   Calendar Heat Map
+    -   Slope Chart
+    -   Seasonal Plot
+-   **Groups**
+    -   Dendrogram
+    -   Clusters
+-   **Spatial**
+    -   Open Street Map
+    -   Google Road Map
+    -   Google Hybrid Map
+
+Categorization of graph types used by [Top 50 ggplot2
+Visualizations](https://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
+:::
+
+###### ggplot2 gallery
+
+::: {#bul-chap03-graph-types-ggplot2-gallery}
+-   **Univariate**
+    -   Bar graphs
+    -   Histograms
+    -   Frequency polygons
+    -   Dot plots
+    -   Density plots
+    -   Violin plots
+    -   Box plots
+-   **Amounts**
+    -   Summary bar graphs
+    -   Grouped bar graphs
+    -   Overlapping bar graphs
+    -   Waffle charts
+    -   Heatmaps
+    -   Cleveland dot plot
+-   **Proportions**
+    -   Pie charts
+    -   Diverging bar graphs
+    -   Mosaic plots
+    -   Treemaps
+    -   Stacked densities
+-   **Distributions**
+    -   Overlapping histograms
+    -   Overlapping frequency polygons
+    -   Overlapping dot plots
+    -   Beeswarm plots
+    -   Overlapping density plot
+    -   Ridgeline plots
+    -   Grouped box plots
+    -   Grouped violin plots
+    -   Raincloud plots
+-   **Dates and times**
+    -   Line graphs
+    -   Grouped line graphs
+    -   Bump charts
+    -   Slope graphs
+    -   Stream plots
+    -   Alluvial charts
+-   **Relationships**
+    -   Scatter plots
+    -   Grouped scatter plots
+    -   Bubble charts
+    -   Grouped bubble graph
+    -   Parallel sets
+    -   Density contours
+    -   2D histograms
+    -   Hexagon bins
+-   **Lines**
+    -   `geom_line()`
+    -   `geom_path()`
+    -   `geom_step()`
+-   **Complex lines**
+    -   `geom_curve()`
+-   **Areas**
+    -   `geom_ribbon()`
+
+Categorization of graph types used by [ggplot2
+gallery](https://mjfrigaard.github.io/ggp2-gallery/)
+:::
+:::
+:::
+:::
+
+------------------------------------------------------------------------
 
 ## Achievement 1: Graphs for a single categorical variable {#sec-chap03-achievement-1}
 
@@ -507,71 +1155,17 @@ Graph options for a single categorical variable
 
 ------------------------------------------------------------------------
 
-### Bar Charts {#sec-chap03-bar-chart-1}
+### Bar Chart {#sec-chap03-bar-chart-1}
 
 ::: my-example
 ::: my-example-header
 ::: {#exm-chap03-bar-charts}
-: Creating Bar Charts
+: Creating Bar Charts for Firearm Usage
 :::
 :::
 
 ::: my-example-container
 ::: panel-tabset
-###### Recode
-
-::: my-r-code
-::: my-r-code-header
-::: {#cnj-chap03-recode-bar-charts-gun-use-2012}
-: Recode gun use variable `AUQ300` from NHANES data 2011-2012
-:::
-:::
-
-::: my-r-code-container
-```{r}
-#| label: recode-gun-use-2012
-#| fig-cap: "Ever used firearms for any reason? (NHANES survey 2011-2012)"
-#| cache: true
-
-## load data
-nhanes_2012 <- base::readRDS("data/chap03/nhanes_2012.rds")
-
-## recode data
-gun_use_2012 <- nhanes_2012 |> 
-    dplyr::select(AUQ300) |> 
-    dplyr::mutate(AUQ300 = 
-          dplyr::na_if(x = AUQ300, y = 7)) |> 
-    dplyr::mutate(AUQ300 = 
-          dplyr::na_if(x = AUQ300, y = 9)) |> 
-    tidyr::drop_na() |> 
-    dplyr::mutate(AUQ300 = forcats::as_factor(AUQ300)) |> 
-    dplyr::mutate(AUQ300 = 
-          forcats::fct_recode(AUQ300, 
-                  "Yes" = "1", 
-                  "No" = "2")
-    ) |> 
-    dplyr::rename(gun_use = AUQ300)
-
-gun_use_2012 <- gun_use_2012 |> 
-    dplyr::count(gun_use)|> 
-    dplyr::mutate(percent = round(n / sum(n), 2) * 100) 
-
-gun_use_2012
-```
-
-------------------------------------------------------------------------
-
-For recoding the levels of the categorical variable I have looked up the
-appropriate passage in the codebook (see:
-@fig-firearms-use-codebook-2012).
-:::
-:::
-
-![Ever used firearms for any reason? [Codebook 2011-2012
-AUDIOMETRY](https://wwwn.cdc.gov/Nchs/Nhanes/2011-2012/AUQ_G.htm#AUQ300)](img/chap03/NHANES-codebook-firearms-use-2012-min.png){#fig-firearms-use-codebook-2012
-fig-alt="'Ever used firearms for any reason?' this question has several options: - 1 = Yes - 2 = No - 7 = Refused  - 9 = Don’t know - . = Missing"
-fig-align="center"}
-
 ###### Bar width
 
 ::: my-r-code
@@ -590,6 +1184,7 @@ fig-align="center"}
 
 ## bar chart: bars with wide width
 p_normal <- gun_use_2012 |> 
+    tidyr::drop_na() |>     
     ggplot2::ggplot(
         ggplot2::aes(x = gun_use)
     ) +
@@ -600,6 +1195,7 @@ p_normal <- gun_use_2012 |>
 
 ## bar chart: bars with small width
 p_small <- gun_use_2012 |> 
+    tidyr::drop_na() |>
     ggplot2::ggplot(
         ggplot2::aes(x = gun_use)
     ) +
@@ -660,6 +1256,7 @@ methods
 
 ## bar chart: filled colors within aes() (data controlled)
 p_fill_in <- gun_use_2012 |> 
+    tidyr::drop_na() |>
     ggplot2::ggplot(ggplot2::aes(x = gun_use)) +
     ggplot2::geom_bar(
         ggplot2::aes(fill = gun_use), width = 0.4) + 
@@ -672,6 +1269,7 @@ p_fill_in <- gun_use_2012 |>
 
 ## bar chart: filled colors outside aes() (manually controlled)
 p_fill_out <- gun_use_2012 |> 
+    tidyr::drop_na() |>
     ggplot2::ggplot(ggplot2::aes(x = gun_use)) +
     # ggplot2::theme(legend.position = "none") +
     # ggplot2::geom_bar(width = 0.4, fill =  c("darkred", "steelblue")) + 
@@ -683,6 +1281,7 @@ p_fill_out <- gun_use_2012 |>
 
 ## ## bar chart: fill = data controlled by my own colors
 p_fill_in_my_colors <- gun_use_2012 |> 
+    tidyr::drop_na() |>
     ggplot2::ggplot(ggplot2::aes(x = gun_use)) +
     ggplot2::geom_bar(
         ggplot2::aes(fill = gun_use), width = 0.4) + 
@@ -695,6 +1294,7 @@ p_fill_in_my_colors <- gun_use_2012 |>
 
 ## bar chart: manually controlled colors
 p_fill_out_my_colors <- gun_use_2012 |> 
+    tidyr::drop_na() |>
     ggplot2::ggplot(ggplot2::aes(x = gun_use)) +
     ggplot2::geom_bar(width = 0.4, fill = c("darkred", "steelblue")) + 
     ggplot2::theme_bw() +
@@ -740,7 +1340,7 @@ truncated.
 :::
 :::
 
-### Pie Charts {#sec-chap03-pie-chart}
+### Pie Chart {#sec-chap03-pie-chart}
 
 `r glossary("Pie charts")` show parts of a whole. The pie, or circle,
 represents the whole. The slices of pie shown in different colors
@@ -823,7 +1423,7 @@ fig-align="center" width="40%"}
 ::: my-example
 ::: my-example-header
 ::: {#exm-chap03-pie-chart}
-: Creating Pie & Donut Charts
+: Creating Pie & Donut Charts for Firearm Usage
 :::
 :::
 
@@ -842,21 +1442,23 @@ fig-align="center" width="40%"}
 ```{r}
 #| label: fig-pie-chart-number-gun-use
 #| fig-cap: "Percentage of gun user (NHANES survey 2011-2012)"
-#| fig.width: 4
+#| fig-width: 4
+#| cache: true
 
 
 lab <- "<span style='font-size:36pt; color:white'>**35%**</span>"
 gun_use_2012 |> 
+    tidyr::drop_na() |>
     ggplot2::ggplot(ggplot2::aes(x = '', y = percent)) +
     ggplot2::geom_col(fill = c("#fa8324", "grey")) +
     ggplot2::coord_polar(theta = 'y') +
     ggtext::geom_richtext(ggplot2::aes(
-        x = 1.1, y = 15,
+        x = 1.1, y = 8,
         label = lab),
         fill = "#fa8324",
         label.colour = "#fa8324") +
-    ggplot2::annotate("text", x = .7, y = 15,
-                      label = "                  used firearms",
+    ggplot2::annotate("text", x = .7, y = 10,
+                      label = "                used firearms",
                       color = "white",
                       size = 6) +
     ggplot2::theme_void() 
@@ -897,6 +1499,7 @@ text size etc.) of a pie chart as in @fig-pie-chart-demo.
 #| fig.width: 4
 
 gun_use_2012 |> 
+    tidyr::drop_na() |>
     ggplot2::ggplot(
         ggplot2::aes(x = '', y = percent, 
                      fill = forcats::fct_rev(gun_use))
@@ -917,6 +1520,11 @@ gun_use_2012 |>
         begin = 0.1,
         end = 0.9)
 ```
+
+I have used {**viridis**} to produce colorblind-friendly color maps (see
+@pak-viridis). Instead of using as the first default color yellow I have
+chosen with the color map options and the begin/end argument, what color
+shoud appear for this binary variable.
 :::
 :::
 
@@ -941,6 +1549,7 @@ gun_use_small_hole <- gun_use_2012 |>
   dplyr::mutate(x = hsize)
 
 gun_use_small_hole |> 
+    tidyr::drop_na() |>
     dplyr::mutate(x = hsize) |> 
     ggplot2::ggplot(
         ggplot2::aes(x = hsize, y = percent, 
@@ -983,6 +1592,7 @@ gun_use_big_hole <- gun_use_2012  |>
   dplyr::mutate(x = hsize)
 
 gun_use_big_hole |>
+    tidyr::drop_na() |>
     dplyr::mutate(x = hsize) |> 
     ggplot2::ggplot(
         ggplot2::aes(x = hsize, y = percent, 
@@ -1008,7 +1618,7 @@ gun_use_big_hole |>
 
 ------------------------------------------------------------------------
 
-### Waffle Charts {#sec-chap03-waffle-chart}
+### Waffle Chart {#sec-chap03-waffle-chart}
 
 ::: my-example
 ::: my-example-header
@@ -1037,35 +1647,12 @@ survey 2011-2012)
 #| cache: true
 #| warning: false
 
-nhanes_2012 <- readRDS("data/chap03/nhanes_2012.rds")
 
-rounds_fired_2012 <- nhanes_2012 |> 
-    dplyr::select(AUQ310) |> 
-    tidyr::drop_na() |> 
-    dplyr::mutate(AUQ310 = forcats::as_factor(AUQ310)) |> 
-    dplyr::mutate(AUQ310 = forcats::fct_recode(AUQ310,
-        "1 to less than 100" = "1",
-        "100 to less than 1000" = "2",
-        "1000 to less than 10k" = "3",
-        "10k to less than 50 k" = "4",
-        "50k or more" = "5",
-        "Refused to answer" = "7",
-        "Don't know" = "9")
-    )
-
-fired_2012 <- rounds_fired_2012 |>
-    dplyr::count(AUQ310) |> 
-    dplyr::mutate(prop = round(n / sum(n), 2) * 100) |> 
-    dplyr::relocate(n, .after = dplyr::last_col())
-
-waffle::waffle(parts = fired_2012,
-               rows = 10,
-               # colors = c("azure2", "azure3", 
-               #            "grey71", "grey41", "black",
-               #  "lemonchiffon1"))
-               colors = c("lightblue1", "lightsteelblue1", 
-                          "deepskyblue1", "dodgerblue3", "black",
-                "lemonchiffon1"))
+fired_2012 |> 
+    waffle::waffle(rows = 10,
+                   colors = c("lightblue1", "lightsteelblue1", 
+                              "deepskyblue1", "dodgerblue3", "black",
+                    "lemonchiffon1"))
 ```
 
 Proportion of total rounds fired (NHANES survey 2011-2012)
@@ -1123,10 +1710,11 @@ rounds_fired_2018 <- nhanes_2018 |>
         "50k or more" = "5",
         "Refused to answer" = "7",
         "Don't know" = "9")
-    )
+    )  |>    
+    dplyr::rename(rounds_fired = AUQ310) 
 
 fired_2018 <-  rounds_fired_2018 |> 
-    dplyr::count(AUQ310) |>
+    dplyr::count(rounds_fired) |>
     dplyr::mutate(prop = round(n / sum(n), 2) * 100) |> 
     dplyr::relocate(n, .after = dplyr::last_col())
 
@@ -1177,14 +1765,14 @@ fig-align="center"}
 #| label: tbl-compare-fired-nhanes-2012-2018
 #| tbl-cap: "Total rounds fired of NHANES survey participants 2011-2012 and 2017-2018"
 
-fired <- dplyr::full_join(x = fired_2012,
+fired_df <- dplyr::full_join(x = fired_2012,
                           y = fired_2018,
-                          by = dplyr::join_by(AUQ310) 
+                          by = dplyr::join_by(rounds_fired) 
 )
 
-fired <-  fired |> 
+fired_df <-  fired_df |> 
     dplyr::rename(
-        "Rounds fired" = "AUQ310",
+        "Rounds fired" = rounds_fired,
         `2012(%)` = prop.x,
         `n (2012)` = n.x,
         `2018(%)` = prop.y,
@@ -1192,7 +1780,7 @@ fired <-  fired |>
         ) |> 
     dplyr::mutate(`Diff (%)` = `2012(%)` - `2018(%)`)
 
-fired
+fired_df
 ```
 
 ------------------------------------------------------------------------
@@ -1338,16 +1926,16 @@ procedure).
 
 ::: my-experiment-container
 ::: panel-tabset
-
 ###### Default
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-density-plot-research-funding-2}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-density-plot-research-funding-2}
 : Density plot with standard bandwidth `bw = "nrd0"`
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-density-plot-research-funding-0
 #| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
@@ -1363,25 +1951,33 @@ p_dens_funding <- research_funding |>
 
 p_dens_funding
 ```
-***
 
-This is the density plot without changing the default bandwidth. It uses `nrd0` as bandwidth. One can see that it is somewhat similar to `bw = 1.5` (see @fig-density-plot-research-funding-2). 
+------------------------------------------------------------------------
 
-- `bw.nrd0` implements a rule-of-thumb for choosing the bandwidth of a Gaussian kernel density estimator. It defaults to 0.9 times the minimum of the standard deviation and the interquartile range divided by 1.34 times the sample size to the negative one-fifth power (= Silverman's ‘rule of thumb’, Silverman (1986, page 48, eqn (3.31))) unless the quartiles coincide when a positive result will be guaranteed. (Quoted form the help file of `stats::bandwidth()`)
+This is the density plot without changing the default bandwidth. It uses
+`nrd0` as bandwidth. One can see that it is somewhat similar to
+`bw = 1.5` (see @fig-density-plot-research-funding-2).
 
-::::
-:::::
-
+-   `bw.nrd0` implements a rule-of-thumb for choosing the bandwidth of a
+    Gaussian kernel density estimator. It defaults to 0.9 times the
+    minimum of the standard deviation and the interquartile range
+    divided by 1.34 times the sample size to the negative one-fifth
+    power (= Silverman's ‘rule of thumb’, Silverman (1986, page 48, eqn
+    (3.31))) unless the quartiles coincide when a positive result will
+    be guaranteed. (Quoted form the help file of `stats::bandwidth()`)
+:::
+:::
 
 ###### 0.5
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-density-plot-research-funding-1}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-density-plot-research-funding-1}
 : Density plot with bandwidth of 0.5
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-density-plot-research-funding-1
 #| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
@@ -1396,22 +1992,26 @@ research_funding |>
     ggplot2::theme_bw()
 
 ```
-***
 
-I have replicated Figure 3.26 without knowing what `bw = 0.5` means and how it is computed.
+------------------------------------------------------------------------
 
-::::
-:::::
+I have replicated Figure 3.26 without knowing what `bw = 0.5` means and
+how it is computed.
+:::
+:::
 
 ###### 1.5
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-density-plot-research-funding-2}
+::: my-r-code
+::: my-r-code-header
+<div>
+
 : Density plot of research funding (2004-2015) with bandwidth of 1.5
-::::::
+
+</div>
 :::
-::::{.my-r-code-container}
+
+::: my-r-code-container
 ```{r}
 #| label: fig-density-plot-research-funding-2
 #| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
@@ -1426,20 +2026,24 @@ research_funding |>
     ggplot2::theme_bw()
 
 ```
-***
 
-I have replicated Figure 3.27 without knowing what `bw = 1.5` means and how it is computed. This is the figure that was chosen in the book as appropriate to represent the data distribution. It is very similar to the {**ggplot2**} standard version (@fig-density-plot-research-funding-0), where neither `bw` nor `kernel` was changed.
+------------------------------------------------------------------------
 
-
-::::
-:::::
+I have replicated Figure 3.27 without knowing what `bw = 1.5` means and
+how it is computed. This is the figure that was chosen in the book as
+appropriate to represent the data distribution. It is very similar to
+the {**ggplot2**} standard version
+(@fig-density-plot-research-funding-0), where neither `bw` nor `kernel`
+was changed.
+:::
+:::
 
 ###### nrd0
 
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-chap03-density-plot-research-funding-3a}
-: Density plot with bandwidth selector `nrd0` 
+: Density plot with bandwidth selector `nrd0`
 :::
 :::
 
@@ -1460,18 +2064,20 @@ research_funding |>
 
 ------------------------------------------------------------------------
 
-Here I have stated expressively that `bw = "nrd0"`. This is the default value that implements a rule-of-thumb for choosing the bandwidth of a Gaussian `r glossary("kernel density estimation", "kernel density estimator")`. It is appropriate for normal-like distributions.
-
+Here I have stated expressively that `bw = "nrd0"`. This is the default
+value that implements a rule-of-thumb for choosing the bandwidth of a
+Gaussian
+`r glossary("kernel density estimation", "kernel density estimator")`.
+It is appropriate for normal-like distributions.
 :::
 :::
-
 
 ###### SJ
 
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-chap03-density-plot-research-funding-3b}
-: Density plot with bandwidth selector `SJ` 
+: Density plot with bandwidth selector `SJ`
 :::
 :::
 
@@ -1492,18 +2098,18 @@ research_funding |>
 
 ------------------------------------------------------------------------
 
-`bw = "SJ"` select the bandwidth using pilot estimation of derivatives and is appropriate for multimodal or general non-normal distribution [@webelod2018].
+`bw = "SJ"` select the bandwidth using pilot estimation of derivatives
+and is appropriate for multimodal or general non-normal distribution
+[@webelod2018].
 :::
 :::
 
-
-
-###### ucv 
+###### ucv
 
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-chap03-density-plot-research-funding-4a}
-: Density plot with bandwidth `ucv` 
+: Density plot with bandwidth `ucv`
 :::
 :::
 
@@ -1522,12 +2128,13 @@ research_funding |>
     ggplot2::theme_bw()
 ```
 
-***
+------------------------------------------------------------------------
 
-`ucv` is one of the two extremes. It chooses a very small bandwidth. (The other extreme selector is `bcv` which chooses very a wide bandwidth.)
+`ucv` is one of the two extremes. It chooses a very small bandwidth.
+(The other extreme selector is `bcv` which chooses very a wide
+bandwidth.)
 :::
 :::
-
 
 ###### bcv
 
@@ -1553,69 +2160,82 @@ research_funding |>
     ggplot2::theme_bw()
 ```
 
-***
+------------------------------------------------------------------------
 
-`bcv` is one of the two extremes. It chooses a very wide bandwidth. (The other extreme selector is `ucv` which chooses a very narrow bandwidth.)
-
+`bcv` is one of the two extremes. It chooses a very wide bandwidth. (The
+other extreme selector is `ucv` which chooses a very narrow bandwidth.)
 :::
 :::
-
+:::
+:::
 :::
 
-::::
-:::::
-
-The equivalent of `binwidth` in histograms is `bw` (smoothing
-bandwidth) in density plots. I have to confess that I do not understand
-all the relevant factors to choose the optimal bandwidth for density plots (or binwidth for histograms).
+The equivalent of `binwidth` in histograms is `bw` (smoothing bandwidth)
+in density plots. I have to confess that I do not understand all the
+relevant factors to choose the optimal bandwidth for density plots (or
+binwidth for histograms).
 
 In density plots there is also the `kernel` argument for choosing the
-appropriate smoothing kernel. I learned from the video by od webel [-@webelod2018]  that the chosen kernel (gaussian", the standard, "rectangular", "triangular", "epanechnikov", "biweight", "cosine" or "optcosine") is not so important because the result all in similar distributions. Most important, however, is to choose the appropriate bandwidth.
+appropriate smoothing kernel. I learned from the video by od webel
+[-@webelod2018] that the chosen kernel (gaussian", the standard,
+"rectangular", "triangular", "epanechnikov", "biweight", "cosine" or
+"optcosine") is not so important because the result all in similar
+distributions. Most important, however, is to choose the appropriate
+bandwidth.
 
-It is said that one disadvantage of density plots is its feature to smooth out the distribution so that you cannot see anymore --- in contrast to histograms --- if there are gaps in the data. But if you choose a very small bandwidth like `ucv` then you get a distribution similar to a histogram.
+It is said that one disadvantage of density plots is its feature to
+smooth out the distribution so that you cannot see anymore --- in
+contrast to histograms --- if there are gaps in the data. But if you
+choose a very small bandwidth like `ucv` then you get a distribution
+similar to a histogram.
 
-:::::{.my-resource}
-:::{.my-resource-header}
+::: my-resource
+::: my-resource-header
 Information about kernel density estimation and bandwidth
 :::
-::::{.my-resource-container}
 
-Much of my understanding about bandwidth and kernel density estimation comes from the video [Intro to Kernel Density Estimation](https://www.youtube.com/watch?v=x5zLaWT5KPs) by od webel [-@webelod2018].
+::: my-resource-container
+Much of my understanding about bandwidth and kernel density estimation
+comes from the video [Intro to Kernel Density
+Estimation](https://www.youtube.com/watch?v=x5zLaWT5KPs) by od webel
+[-@webelod2018].
 
 {{< video https://www.youtube.com/watch?v=x5zLaWT5KPs >}}
 
 Another article on this complex topic: [What is Kernel Density
 Estimation?](https://www.statisticshowto.com/kernel-density-estimation/).
-From this article I learned that a kernel is nothing else as a weighting function to
-estimate the `r glossary("probability density function")` (PDF). (Until now I had a sketchy impression about this concept derived from another meaning of "kernel", related with the core part of a computer.)
-
-
-::::
-:::::
-
-
-
-
-
-### Box Plots {#sec-chap03-box-plot-1}
-
-`r glossary("Histograms")` and `r glossary("density plots")` are great for examining the overall shape of the data for a continuous variable. `r glossary("Boxplots")` in contrasts are useful for identifying the middle value and the boundaries around the middle half of the data.
-
-***
-
-![Parts of a boxplot [@ferreira2016, p.211]](img/chap03/box-plot-parts-min.png){#fig-box-plot-parts 
-fig-alt="Explains the parts of a box plots: The middle 50\% are called Interquartile Range (IQR). It is followed by the 'Whiskers'. Whiskers are calculated: Take the first (lower fence) or third (upper fence) 'Quartile' and add 1.5 x IQR.  A quartile is 25\% of the data. Whiskers are followed by the outliers." fig-align="center" width="100%"}
-
-***
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-code-name}
-: Box plot of research funding (2004-2015)
-::::::
+From this article I learned that a kernel is nothing else as a weighting
+function to estimate the `r glossary("probability density function")`
+(PDF). (Until now I had a sketchy impression about this concept derived
+from another meaning of "kernel", related with the core part of a
+computer.)
 :::
-::::{.my-r-code-container}
+:::
 
+### Box Plot {#sec-chap03-box-plot-1}
+
+`r glossary("Histograms")` and `r glossary("density plots")` are great
+for examining the overall shape of the data for a continuous variable.
+`r glossary("Boxplots")` in contrasts are useful for identifying the
+middle value and the boundaries around the middle half of the data.
+
+------------------------------------------------------------------------
+
+![Parts of a boxplot [@ferreira2016,
+p.211]](img/chap03/box-plot-parts-min.png){#fig-box-plot-parts
+fig-alt="Explains the parts of a box plots: The middle 50% are called Interquartile Range (IQR). It is followed by the 'Whiskers'. Whiskers are calculated: Take the first (lower fence) or third (upper fence) 'Quartile' and add 1.5 x IQR.  A quartile is 25% of the data. Whiskers are followed by the outliers."
+fig-align="center" width="100%"}
+
+------------------------------------------------------------------------
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-code-name}
+: Box plot of research funding (2004-2015)
+:::
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-box-plot-research-funding-1
 #| fig-cap: "Research funding (2004-2015) for the top 30 mortility casues in the U.S. (in billions dollar)"
@@ -1629,25 +2249,30 @@ p_box_funding <- research_funding |>
 
 p_box_funding
 ```
-
-::::
-:::::
+:::
+:::
 
 ### Summary
 
-Each of the three presented plot types (histogram, density plot and box plot) has it strength and disadvantage.
+Each of the three presented plot types (histogram, density plot and box
+plot) has it strength and disadvantage.
 
-> All three graphs show the right skew clearly, while the histogram and boxplot show gaps in the data toward the end of the tail. The boxplot is the only one of the three that clearly identifies the central tendency and spread of the variable.
+> All three graphs show the right skew clearly, while the histogram and
+> boxplot show gaps in the data toward the end of the tail. The boxplot
+> is the only one of the three that clearly identifies the central
+> tendency and spread of the variable.
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-histogram-density-box-plot}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-histogram-density-box-plot}
 : Comparison of histogram, density plot and box plot
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-histogram-density-box-plot
+#| fig-cap: "Comparison: Histogram, densitiy plot and box plot"
 
 gridExtra::grid.arrange(p_histo_funding, 
                         p_dens_funding, 
@@ -1655,49 +2280,318 @@ gridExtra::grid.arrange(p_histo_funding,
                         nrow = 3)
 
 ```
+:::
+:::
 
+------------------------------------------------------------------------
+
+## Achievement 3: Graph for two variable at once {#sec-chap03-achievement-3}
+
+### Two categorical variables
+
+#### Mosaic Plot {#sec-chap03-mosaic-plot}
+
+`r glossary("Mosaic plots")` also called
+[Marimekko](https://en.wikipedia.org/wiki/Marimekko) charts or Mekko
+charts show the relative size of groups across two or more variables. It
+gives an overview of the data and makes it possible to recognize
+relationships between different variables. For example, independence is
+shown when the boxes across categories all have the same areas.
+
+Mosaic plots are the multidimensional extension of
+[spineplots](https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/spineplot.html),
+which graphically display the same information for only one variable.
+
+::: {#bul-chap03-mosaic-charts-properties}
+-   The displayed variables are categorical or ordinal scales.
+-   The plot is of at least two variables. There is no upper limit, but
+    too many variables may be confusing in graphic form.
+-   The number of observations is not limited, but not read in the
+    image.
+-   The areas of the rectangular tiles that are available for a
+    combination of features are proportional to the number of
+    observations that have this combination of features.
+-   Unlike as other graphs, it is not possible for the mosaic plot to
+    plot a confidence interval.
+
+Properties of Mosaic Charts
+([Wikipedia](https://en.wikipedia.org/wiki/Mosaic_plot))
+:::
+
+::: my-example
+::: my-example-header
+::: {#exm-chap03-mosaic-chart--about-gun-usage}
+: Mosaic chart of gun use, rounds fired, ear plugs and by sex (NHANES
+survey 2011-2012)
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### Gun use & sex
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-mosaic-gun-use-sex}
+: Firearm use by sex in the United States among 2011–2012 NHANES
+participants
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-mosaic-gun-use-sex
+#| fig-cap: "Firearm use by sex in the United States among 2011–2012 NHANES participants"
+
+nhanes_2012_clean <- readRDS("data/chap03/nhanes_2012_clean.rds")
+
+library(ggmosaic)
+library(ggplot2)
+
+nhanes_2012_clean |> 
+    tidyr::drop_na(c(gun_use, sex)) |> 
+    ggplot2::ggplot() + 
+    ggmosaic::geom_mosaic(ggplot2::aes(
+        x = ggmosaic::product(gun_use, sex), 
+        fill = gun_use)
+        ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Sex",
+              y = "Ever used a gun?",
+              fill = "Gun use") +
+    ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) +
+    viridis::scale_fill_viridis(
+        discrete = TRUE,
+        option = "turbo")
+```
+***
+
+
+:::::{.my-note}
+:::{.my-note-header}
+Better use of mosaic charts when variables have different levels with different proportions
+:::
+::::{.my-note-container}
+@fig-mosaic-gun-use-sex is a bad example for a mosaic chart: One of its features (that the area of the columns reflect the proportion of the level) does not shine in this example because both levels (men and women) have approximately the same proportion (49.8 vs. 50.2%). Although it is better to have variables with several levels.
 ::::
 :::::
 
 
+
+
+:::
+:::
+
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Loading and attaching {**ggmosaic**} is mandatory
+:::
+
+::: my-watch-out-container
+Just calling the {**ggmosaic**} functions with the `::` syntax results into an error. I have to expressively load and attach the package with `library(ggmosiac)`. But the error only appears when I render the whole document; running just the R code chunk
+works. I suppose that this results from a misbehavior of the
+{**ggmosaic**} code.
+
+There is also another warning with {**ggmosaic**} version 0.33: One
+should use `tidyr::unite(`) instead of `tidyr::unite_()` since
+{**tidyr**} version 1.2.0. This is a missing adaption in the
+{**ggmosaic**} package as the warning message pointed out. I could get
+rid of this warning message by installing the GitHub version 0.34 as recommended in this [GitHub post](https://github.com/haleyjeppson/ggmosaic/issues/68#issuecomment-1812411397).
+:::
+:::
+
+
+###### Rounds fired & sex
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-mosaic-rounds-fired-sex}
+: Rounds fired by sex in the United States among 2011–2012 NHANES
+participants
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-mosaic-rounds-fired-sex
+#| fig-cap: "Rounds fired by sex in the United States among 2011–2012 NHANES participants"
+
+
+nhanes_2012_clean |> 
+    tidyr::drop_na(c(rounds_fired, sex)) |> 
+    ggplot2::ggplot() + 
+    ggmosaic::geom_mosaic(ggplot2::aes(
+        x = ggmosaic::product(rounds_fired, sex), 
+        fill = rounds_fired)
+        ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Sex",
+                  y = "Total number of rounds fired",
+                  fill = "Rounds fired") +
+    ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) +
+        viridis::scale_fill_viridis(
+        discrete = TRUE,
+        option = "rocket",
+        direction = -1)
+```
 ***
 
+This is already a more informative chart as @fig-mosaic-gun-use-sex. It shows that women are not only less using a gun, those they do, they fire less round than men. 
 
-## Achievement 3: Graph for two variable at once {#sec-chap03-achievement-3}
+But mosaic charts really shine when both variables have several levels as shown in @fig-mosaic-rounds-fired-ear-plugs.
 
-### Introduction
+:::
+:::
 
-### Two categorical variables
+###### Rounds fireds & ear plugs
 
-#### Mosaic Plots {#sec-chap03-mosaic-plot}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-mosaic-rounds-fired-ear-plugs}
+: Number of rounds fired by wearing ear plugs among the 2011–2012 NHANES
+participants
+:::
+:::
 
-#### Bar Charts {#sec-chap03-bar-chart-2}
+::: my-r-code-container
+```{r}
+#| label: fig-mosaic-rounds-fired-ear-plugs
+#| fig-cap: "Rounds fired with ear plugs among the 2011–2012 NHANES participants"
 
-##### Stacked Bar Charts
 
-##### Grouped Bar Charts
+nhanes_2012_clean |> 
+    tidyr::drop_na(c(rounds_fired, ear_plugs)) |> 
+    ggplot2::ggplot() + 
+    ggmosaic::geom_mosaic(ggplot2::aes(
+        x = ggmosaic::product(rounds_fired, ear_plugs), 
+        fill = rounds_fired)
+        ) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.text.x = 
+           ggplot2::element_text(angle = 45, 
+                                 vjust = 1, 
+                                 hjust = 1)) +
+    ggplot2::labs(x = "Wearing ear plugs",
+                  y = "Total number of rounds fired",
+                  fill = "Rounds fired") +
+    ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) +
+        viridis::scale_fill_viridis(
+        discrete = TRUE,
+        option = "plasma",
+        direction = -1)
+
+```
+***
+
+The chart clearly shows that a part (more than 1/3 of the respondent) never use ear plugs, even if they fire many rounds.
+
+
+
+:::
+:::
+:::
+:::
+:::
+
+------------------------------------------------------------------------
+
+#### Bar Chart {#sec-chap03-bar-chart-2}
+
+##### Stacked Bar Chart
+
+##### Grouped Bar Chart
 
 ### One categorical and one continuous variable
 
-#### Bar Charts {#sec-chap03-bar-chart-3}
+#### Bar Chart {#sec-chap03-bar-chart-3}
 
-#### Point Charts {#sec-chap03-point-chart}
+#### Point Chart {#sec-chap03-point-chart}
 
-#### Box Plots {#sec-chap03-box-plot-2}
+#### Box Plot {#sec-chap03-box-plot-2}
 
-#### Violin Plots {#sec-chap03-violin-plot}
+#### Violin Plot {#sec-chap03-violin-plot}
 
 ### Two continuous variables
 
-#### Line Graphs {#sec-chap03-line-graph}
+#### Line Graph {#sec-chap03-line-graph}
 
-#### Scattterplots {#sec-chap03-scatterplot}
+#### Scattterplot {#sec-chap03-scatterplot}
 
 ------------------------------------------------------------------------
 
 ## Exercises
 
 ------------------------------------------------------------------------
+
+## Additional resources for this chapter
+
+### Online resources
+
+::: my-resource
+::: my-resource-header
+Online resources of {**ggplot2**} code examples
+:::
+
+::: my-resource-container
+### R Graphs Galleries {.unnumbered}
+
+-   [**R Charts**](https://r-charts.com/): Code examples of R graphs
+    made with base R, {**ggplot2**} and other packages. Over 1400 graphs
+    with reproducible code divided in 8 big categories and over 50 chart
+    types, in addition of tools to choose and create colors and color
+    palettes [@soage2024].
+-   [**The R Graph Gallery**](https://r-graph-gallery.com/index.html):
+    Featuring over 400 examples, our collection is meticulously
+    organized into nearly 50 chart types, following the
+    [data-to-viz](https://www.data-to-viz.com/) classification. Each
+    example comes with reproducible code and a detailed explanation of
+    its functionality [@healy2018a].
+-   [**Top 50 ggplot2 Visualizations - The Master List (With Full R
+    Code)**](https://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html):
+    Part 3 of a three part tutorial on {**ggplot2**}. There are 8 types
+    of objectives you may construct plots. So, before you actually make
+    the plot, try and figure what findings and relationships you would
+    like to convey or examine through the visualization
+    [@prabhakaran2017].
+-   [**ggplot2 gallery**](https://mjfrigaard.github.io/ggp2-gallery/): A
+    collection of graphs created using ggplot2 (and friends!). See also
+    the [ggplot2 field manual](https://mjfrigaard.github.io/fm-ggp2/):
+    What graph should I use? What kind of graph is that? [@frigaard2023;
+    @frigaard2023a]
+-   [**ggplot2 extension
+    gallery**](https://exts.ggplot2.tidyverse.org/gallery/):
+
+### Videos {.unnumbered}
+
+-   **Plotting anything with {**ggplot2**}: [Video
+    1](https://www.youtube.com/watch?v=h29g21z0a68) & [Video
+    2](https://www.youtube.com/watch?v=0m4yywqNPVY)**: Two 2 hour (!)
+    videos: Part I focuses on teaching the underlying theory of
+    {**ggplot2**} and how it is reflected in the `r glossary("API")`.
+    Part II focuses on the extended {**ggplot2**} universe with
+    practical examples from many extension packages. Further, at the end
+    is a short section on how to approach new graphics [@pedersen2020a;
+    @pedersen2020].
+
+### Books online {.unnumbered}
+
+-   [**ggplot2: Elegant Graphics for Data Analysis
+    (3e)**](https://ggplot2-book.org/): This book gives some details on
+    the basics of {**ggplot2**}, but its primary focus is explaining the
+    Grammar of Graphics that {**ggplot2**} uses, and describing the full
+    details. It will help you understand the details of the underlying
+    theory, giving you the power to tailor any plot specifically to your
+    needs [@wickham2024].
+-   [**R Graphics Cookbook, 2nd edition**](https://r-graphics.org/): a
+    practical guide that provides more than 150 recipes to help you
+    generate high-quality graphs quickly, without having to comb through
+    all the details of R’s graphing systems. Each recipe tackles a
+    specific problem with a solution you can apply to your own project,
+    and includes a discussion of how and why the recipe works
+    [@chang2024].
+:::
+:::
 
 ## Packages introduced in this chapter
 
@@ -1751,6 +2645,48 @@ explicitly set a theme for every plot you make.
 
 {**cowplot**}: A Package for Streamlined Plot Themes and Plot
 Annotations for {ggplot2}
+:::
+
+------------------------------------------------------------------------
+:::
+:::
+
+### ggmosaic
+
+::: my-resource
+::: my-resource-header
+ggmosaic: Mosaic Plots in the 'ggplot2' Framework
+:::
+
+::: my-resource-container
+
+------------------------------------------------------------------------
+
+::: {#pak-ggmosaic}
+
+------------------------------------------------------------------------
+
+{**ggmosaic**}: [Mosaic Plots in the 'ggplot2'
+Framework](https://haleyjeppson.github.io/ggmosaic/) [@ggmosaic]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-ggmosaic-min.png){width="176"}
+
+{**ggmosaic**} is designed to create visualizations of categorical data
+and is capable of producing bar charts, stacked bar charts, mosaic
+plots, and double decker plots and therefore offers a wide range of
+potential plots.
+:::
+
+Furthermore, {**ggmosaic**} allows various features to be customized:
+
+-   the order of the variables,
+-   the formula setup of the plot,
+-   faceting,
+-   the type of partition, and
+-   the space between the categories.
+
+{**ggmosaic**}: A Package for Mosaic Plots in the 'ggplot2' Framework
 :::
 
 ------------------------------------------------------------------------
@@ -1878,6 +2814,79 @@ Responses
 :::
 :::
 
+### janitor
+
+::: my-resource
+::: my-resource-header
+janitor: Simple Tools for Examining and Cleaning Dirty Data
+:::
+
+::: my-resource-container
+
+------------------------------------------------------------------------
+
+::: {#pak-janitor}
+
+------------------------------------------------------------------------
+
+{**janitor**}: [Simple Tools for Examining and Cleaning Dirty
+Data](https://sfirke.github.io/janitor/) [@janitor]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-janitor-min.png){width="176"}
+
+{**janitor**} has simple functions for examining and cleaning dirty
+data. It was built with beginning and intermediate R users in mind and
+is optimized for user-friendliness. Advanced R users can perform many of
+these tasks already, but with janitor they can do it faster and save
+their thinking for the fun stuff.
+:::
+
+**The main janitor functions:**
+
+-   perfectly format data.frame column names;
+-   create and format frequency tables of one, two, or three variables -
+    think an improved `base::table()`; and
+-   provide other tools for cleaning and examining data.frames.
+
+The tabulate-and-report functions approximate popular features of SPSS
+and Microsoft Excel.
+
+{**janitor**} is a {**tidyverse**}-oriented package. Specifically, it
+plays nicely with the `%>%` pipe and is optimized for cleaning data
+brought in with the {**readr**} and {**readxl**} packages.
+
+{**janitor**}: A Package for Simple Tools for Examining and Cleaning
+Dirty Data
+:::
+
+------------------------------------------------------------------------
+
+I am using {**janitor**} mostly in two ways:
+
+1.  as better `base::table()` function, using `janitor::tabyl()`
+    -   `base::table()` doesn't accept data.frames and is therefore not
+        compatible with the pipe
+    -   `base::table()` doesn't output data.frames
+    -   `base::table()` results are hard to format (the most annoying
+        "feature" for me)
+
+-   to add information and formatting to the table with the
+    `janitor::adorn_*` functions
+    -   `janitor::adorn_totals()`
+    -   `janitor::adorn_percentages()`
+    -   `janitor::adorn_pct_formatting()`
+    -   `janitor::adorn_rounding()`
+    -   `janitor::adorn_ns()` (adding Ns = number of counts)
+    -   `janitor::adorn_title()`
+
+You could also use {**tidyverse**} commands (for instance for a two
+table `dplyr::count()` followed by `tidyr::pivot_wider()`) but the many
+`adorn_*`-functions make it easy to enhance the results. BTW: The prefix
+`adorn` comes from 'adornment' (ornament, decoration).
+:::
+:::
+
 ### patchwork
 
 ::: my-resource
@@ -2000,6 +3009,46 @@ Survey) data that was developed by [Silent Spring
 Institute](https://silentspring.org/).
 
 {**RNHANES**}: A Package for Facilitating Analysis of CDC NHANES Data
+:::
+
+------------------------------------------------------------------------
+:::
+:::
+
+### viridis
+
+::: my-resource
+::: my-resource-header
+viridis: Colorblind-Friendly Color Maps for R
+:::
+
+::: my-resource-container
+
+------------------------------------------------------------------------
+
+::: {#pak-viridis}
+
+------------------------------------------------------------------------
+
+{**viridis**}: <https://sjmgarnier.github.io/viridis/> [@viridis]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-viridis-min.png){width="176"}
+
+{**viridis**}, and its companion package {**viridisLite**} provide a
+series of color maps that are designed to improve graph readability for
+readers with common forms of color blindness and/or color vision
+deficiency. The color maps are also perceptually-uniform, both in
+regular form and also when converted to black-and-white for printing.
+:::
+
+{**viridisLite**} provides the base functions for generating the color
+maps in base R. The package is meant to be as lightweight and
+dependency-free as possible for maximum compatibility with all the R
+ecosystem. {**viridis**} provides additional functionalities, in
+particular bindings for {**ggplot2**}.
+
+{**viridis**}: A Package for Colorblind-Friendly Color Maps for R
 :::
 
 ------------------------------------------------------------------------

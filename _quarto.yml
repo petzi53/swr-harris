@@ -85,6 +85,9 @@ crossref:
     - kind: float
       reference-prefix: Numerical List
       key: num
+    - kind: float
+      reference-prefix: Note
+      key: not
 
 pak-cap-location: top
 bul-cap-location: top
