@@ -526,7 +526,7 @@ nhanes_2012_clean2 <- nhanes_2012_clean1 |>
         "1 to less than 100" = "1",
         "100 to less than 1000" = "2",
         "1000 to less than 10k" = "3",
-        "10k to less than 50 k" = "4",
+        "10k to less than 50k" = "4",
         "50k or more" = "5",
         "Refused to answer" = "7",
         "Don't know" = "9")
@@ -2342,6 +2342,8 @@ participants
 ```{r}
 #| label: fig-mosaic-gun-use-sex
 #| fig-cap: "Firearm use by sex in the United States among 2011–2012 NHANES participants"
+#| warning: false
+#| results: hold
 
 nhanes_2012_clean <- readRDS("data/chap03/nhanes_2012_clean.rds")
 
@@ -2360,9 +2362,14 @@ nhanes_2012_clean |>
               y = "Ever used a gun?",
               fill = "Gun use") +
     ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) +
-    viridis::scale_fill_viridis(
-        discrete = TRUE,
-        option = "turbo")
+    ggplot2::scale_fill_viridis_d(
+      alpha = .1,
+      begin = 0.25,
+      end = 0.75,
+      direction = -1,
+      option = "turbo",
+      aesthetics = "fill"
+    )
 ```
 ***
 
@@ -2419,7 +2426,11 @@ participants
 
 
 nhanes_2012_clean |> 
+    dplyr::mutate(rounds_fired =
+          dplyr::na_if(rounds_fired, "Don't know")) |> 
     tidyr::drop_na(c(rounds_fired, sex)) |> 
+    dplyr::mutate(rounds_fired =
+          forcats::fct_drop(rounds_fired)) |> 
     ggplot2::ggplot() + 
     ggmosaic::geom_mosaic(ggplot2::aes(
         x = ggmosaic::product(rounds_fired, sex), 
@@ -2430,10 +2441,11 @@ nhanes_2012_clean |>
                   y = "Total number of rounds fired",
                   fill = "Rounds fired") +
     ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) +
-        viridis::scale_fill_viridis(
+    viridis::scale_fill_viridis(
         discrete = TRUE,
-        option = "rocket",
-        direction = -1)
+        option = "turbo",
+        direction = -1
+        )
 ```
 ***
 
@@ -2461,7 +2473,15 @@ participants
 
 
 nhanes_2012_clean |> 
+    dplyr::mutate(rounds_fired =
+        dplyr::na_if(rounds_fired, "Don't know")) |> 
+    dplyr::mutate(ear_plugs =
+        dplyr::na_if(ear_plugs, "Don't know")) |> 
     tidyr::drop_na(c(rounds_fired, ear_plugs)) |> 
+    dplyr::mutate(rounds_fired =
+        forcats::fct_drop(rounds_fired)) |>
+    dplyr::mutate(ear_plugs =
+        forcats::fct_drop(ear_plugs)) |>
     ggplot2::ggplot() + 
     ggmosaic::geom_mosaic(ggplot2::aes(
         x = ggmosaic::product(rounds_fired, ear_plugs), 
@@ -2478,7 +2498,7 @@ nhanes_2012_clean |>
     ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) +
         viridis::scale_fill_viridis(
         discrete = TRUE,
-        option = "plasma",
+        option = "turbo",
         direction = -1)
 
 ```
@@ -2490,9 +2510,56 @@ The chart clearly shows that a part (more than 1/3 of the respondent) never use 
 
 :::
 :::
+
+
+
+
+
+:::
+
 :::
 :::
+
+:::::{.my-note}
+:::{.my-note-header}
+My own adaptions to the mosaic figures
 :::
+::::{.my-note-container}
+
+
+In contrast to the book I have used three additional adaptions for the figures produced with the {**ggmosaic**} package:
+
+1. I have used with the {**viridis**} package color-blind friendly palettes (see: @pak-viridis). There are several features to comment:
+    - I have the direction of the palettes reversed so that the light color are at the bottom and the dark colors at the top. 
+    - In @fig-mosaic-gun-use-sex I had start and end color of the palette "turbo" manually changed to get a better color separation with lighter colors. Otherwise I would have gotten <span style="background-color: #30123BFF; color: white;">dark blue</span> and <span style="background-color: #7A0403FF; color: white;">dark red</span>. (Unfortunately the argument `alpha` for setting the transparency value does not work with {**viridis**}.)
+    - With {**ggplot2**} version 3.0.0 the {**viridisLite**} package was integrated integrated into {**ggplot2**}. I have used this new possibility in @fig-mosaic-gun-use-sex.
+2. I have removed the small amount of "Don't know" answers in @fig-mosaic-rounds-fired-sex and @fig-mosaic-rounds-fired-ear-plugs to get a graph that is easier to interpret. 
+3. I have reversed the display of the legend so that the colors match the graphic e.g. from bottom to top are colors in the figure and in the legend identical.
+4. For @fig-mosaic-rounds-fired-ear-plugs I have the angle for the text of the axis set to 45° to prevent overlapping text under small columns.
+    
+
+
+::::
+:::::
+
+
+
+
+:::::{.my-resource}
+:::{.my-resource-header}
+{vcd} / {vcdExtra} are other packages for mosaic graphs (and more)
+:::
+::::{.my-resource-container}
+
+The packages {**vcd**} and {**vcdExtra**} are specialized package for the **v**isualization of **c**ategorical **d**ata. I have tried it out, but its usage for the mosaic function is more complex and need time to learn.
+
+{**vcd**} and {**vcdExtra**} are support packages for the book, "Discrete Data Analysis with R" [@friendly2015] (see @pak-vcdExtra). There is also a website [DDAR](http://ddar.datavis.ca/) (abbreviation of the book title) and a [course description](https://friendly.github.io/psy6136/) with additional material. There are several introductory vignettes to learn different aspects of the two packages.
+
+So if you are interested to learn more about visualization of catagorical data besides the mosaic graph then DDAR would be the right place.
+
+::::
+:::::
+
 
 ------------------------------------------------------------------------
 
@@ -2647,7 +2714,6 @@ explicitly set a theme for every plot you make.
 Annotations for {ggplot2}
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
@@ -2689,7 +2755,6 @@ Furthermore, {**ggmosaic**} allows various features to be customized:
 {**ggmosaic**}: A Package for Mosaic Plots in the 'ggplot2' Framework
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
@@ -2728,7 +2793,6 @@ word wrapping.
 'ggplot2'
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
@@ -2767,7 +2831,6 @@ upon {**gtable**} to arrange multiple `grobs` on a page.
 Graphics
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
@@ -2810,7 +2873,6 @@ HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview) from
 Responses
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
@@ -2937,7 +2999,6 @@ along with a couple of special placeholder objects.
 {**patchwork**}: A Package for Composing Plots
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
@@ -2979,7 +3040,6 @@ binary format. To parse `.xlsx`, we use the
 {**readxl**}: A Package to Read Excel Files
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
@@ -3011,9 +3071,70 @@ Institute](https://silentspring.org/).
 {**RNHANES**}: A Package for Facilitating Analysis of CDC NHANES Data
 :::
 
-------------------------------------------------------------------------
 :::
 :::
+
+### vcd
+
+:::::{.my-resource}
+:::{.my-resource-header}
+vcd: Visualizing Categorical Data 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-vcd}
+
+***
+
+{**vcd**}: [Visualizing Categorical Data](https://cran.r-project.org/web/packages/vcd/index.html) [@vcd]                      
+
+(*There is no hexagon logo for {**vcd**} available*)
+
+Visualization techniques, data sets, summary and inference procedures aimed particularly at categorical data. Special emphasis is given to highly extensible grid graphics. The package was package was originally inspired by the book "Visualizing Categorical Data" by Michael Friendly and is now the main support package for a new book, "Discrete Data Analysis with R" by Michael Friendly and David Meyer [-@friendly2015].
+
+{**vcd**}: A Package for Visualizing Categorical Data
+:::
+
+***
+::::
+:::::
+
+### vcdExtra
+
+:::::{.my-resource}
+:::{.my-resource-header}
+vcdExtra: 'vcd' Extensions and Additions 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-vcdExtra}
+
+***
+
+{**vcdExtra**}: ['vcd' Extensions and Additions](https://friendly.github.io/vcdExtra/) [@vcdExtra]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-vcdExtra-min.png){width="176"}
+
+
+This package provides additional data sets, documentation, and many functions designed to extend the vcd package for Visualizing Categorical Data and the {**gnm**} package for Generalized Nonlinear Models. In particular, {**vcdExtra**} extends mosaic, assoc and sieve plots from {**vcd**} to handle `stats::glm()` and `gnm::gnm()` models and adds a 3D version in `vcdExtra::mosaic3d()`.
+
+:::
+
+{**vcdExtra**} is a support package for the book Discrete Data Analysis with R (DDAR) by Michael Friendly and David Meyer [-@friendly2015]. There is also a [web site for DDAR](http://ddar.datavis.ca/) with all figures and code samples from the book. It is also used in my graduate course, [Psy 6136: Categorical Data Analysis](https://friendly.github.io/psy6136/).
+
+{**vcdExtra**}: A Package for 'vcd' Extensions and Additions
+:::
+
+***
+::::
+:::::
+
+
 
 ### viridis
 
@@ -3051,7 +3172,6 @@ particular bindings for {**ggplot2**}.
 {**viridis**}: A Package for Colorblind-Friendly Color Maps for R
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
@@ -3094,7 +3214,6 @@ It uses {**ggplot2**} and returns a `ggplot2` object.
 {**waffle**}: A Package for Creating Waffle Chart Visualizations
 :::
 
-------------------------------------------------------------------------
 :::
 :::
 
