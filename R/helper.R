@@ -45,7 +45,7 @@ first_and_last_row <-  function(df) {
 # Generate histogram from a data frame
 # and overlay the density normal distribution
 # Author: Peter Baumgartner
-# Used in "Statistics with R"
+# Used in my personal notes on "Statistics with R"
 # See: https://bookdown.org/pbaumgartner/swr-harris/
 ##########################################################
 
@@ -75,4 +75,53 @@ hist_dnorm <- function(df, v, n_bins = 20,
         ggplot2::theme_bw()
     p
 
+}
+
+
+################################################################
+# list_plotter: Plot color list as a palette
+# Purpose:
+# Display different color palettes for easy comparison
+# Author: Emil Hvitfeldt
+# Developed for r-color-palettes and {paletteer} package
+# See: https://github.com/EmilHvitfeldt/r-color-palettes/blob/main/R/list_plotter.R
+# I have used it in my personal notes on "Statistics with R"
+# # See: https://bookdown.org/pbaumgartner/swr-harris/
+################################################################
+
+
+
+list_plotter <- function(color_list, names, package_name) {
+    par(mar = c(0, 0, 0, 0) + 0.1)
+
+    plot(
+        0,
+        0,
+        type = "n",
+        axes = FALSE,
+        bty = "n",
+        xlab = "",
+        ylab = "",
+        xlim = c(0, 1),
+        ylim = c(-length(color_list) - 1, 0)
+    )
+
+    title(package_name, line = -3)
+    for (i in seq_len(length(color_list))) {
+        colors_len <- length(color_list[[i]])
+        breaks <- seq(from = 0,
+                      to = 1,
+                      length = colors_len + 1)
+
+
+        text(0, -i, names[i], pos = 4)
+        rect(
+            xleft = breaks[1:colors_len],
+            xright = breaks[1:colors_len + 1],
+            ytop = -0.15 - i,
+            ybottom = -0.8 - i,
+            col = color_list[[i]],
+            border = NA
+        )
+    }
 }

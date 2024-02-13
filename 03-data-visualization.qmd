@@ -4,7 +4,7 @@
 #| label: setup
 #| include: false
 
-base::source(file = "../_glance_data.R")
+base::source(file = "R/helper.R")
 ```
 
 ## Achievements to unlock
@@ -1303,11 +1303,20 @@ p_fill_out_my_colors <- gun_use_2012 |>
                   y = "Number of participants",
                   subtitle = "Filled outside \nwith my colors")
 
-## display both charts side by side
-library(patchwork)
-
-p_fill_in |  p_fill_out | p_fill_in_my_colors | p_fill_out_my_colors 
-
+##  patchwork with :: syntax ############################
+## display all 4 charts side by side
+## using the trick from 
+## https://github.com/thomasp85/patchwork/issues/351#issuecomment-1931140157
+patchwork:::"|.ggplot"(
+    patchwork:::"|.ggplot"(
+        p_fill_in,
+        p_fill_out
+    ),
+    patchwork:::"|.ggplot"(
+        p_fill_in_my_colors,
+        p_fill_out_my_colors
+    )
+)
 ```
 
 ------------------------------------------------------------------------
@@ -1723,6 +1732,38 @@ waffle::waffle(parts = fired_2018,
                colors = c("lightblue1", "lightsteelblue1", 
                           "deepskyblue1", "dodgerblue3", "black",
                "gold1", "lemonchiffon1"))
+
+my_colors <- scales::viridis_pal(
+                                alpha = 1, 
+                                begin = .25, 
+                                 end = .75, 
+                                direction = -1, 
+                                option = "cividis")(7)
+
+waffle::waffle(parts = fired_2018,
+               rows = 10,
+               colors = c("#BCAF6FFF", "#A69D75FF", 
+                          "#918C78FF", "#7C7B78FF", 
+                          "#6A6C71FF", "#575C6DFF", "#414D6BFF")
+)
+
+waffle::waffle(parts = fired_2018,
+               rows = 10,
+               colors = grDevices::palette(my_colors)
+)
+
+ggplot2::ggplot(fired_2018,
+    ggplot2::aes(fill = rounds_fired,
+                 values = prop)) +
+    waffle::geom_waffle() + 
+    ggplot2::scale_fill_manual(values = scales::viridis_pal(
+                                alpha = 0.75, 
+                                # begin = .25, 
+                                #  end = .75, 
+                                direction = -1, 
+                                option = "cividis")(7)) +
+    ggplot2::theme_classic()
+    
 ```
 
 Proportion of total rounds fired (NHANES survey 2017-2018)
@@ -2291,6 +2332,8 @@ gridExtra::grid.arrange(p_histo_funding,
 
 #### Mosaic Plot {#sec-chap03-mosaic-plot}
 
+##### Properties
+
 `r glossary("Mosaic plots")` also called
 [Marimekko](https://en.wikipedia.org/wiki/Marimekko) charts or Mekko
 charts show the relative size of groups across two or more variables. It
@@ -2301,6 +2344,8 @@ shown when the boxes across categories all have the same areas.
 Mosaic plots are the multidimensional extension of
 [spineplots](https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/spineplot.html),
 which graphically display the same information for only one variable.
+
+***
 
 ::: {#bul-chap03-mosaic-charts-properties}
 -   The displayed variables are categorical or ordinal scales.
@@ -2318,9 +2363,13 @@ Properties of Mosaic Charts
 ([Wikipedia](https://en.wikipedia.org/wiki/Mosaic_plot))
 :::
 
+***
+
+##### Mosaic charts with {**ggmosaic**}
+
 ::: my-example
 ::: my-example-header
-::: {#exm-chap03-mosaic-chart--about-gun-usage}
+::: {#exm-chap03-mosaic-chart-about-gun-usage}
 : Mosaic chart of gun use, rounds fired, ear plugs and by sex (NHANES
 survey 2011-2012)
 :::
@@ -2363,9 +2412,9 @@ nhanes_2012_clean |>
               fill = "Gun use") +
     ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) +
     ggplot2::scale_fill_viridis_d(
-      alpha = .1,
-      begin = 0.25,
-      end = 0.75,
+      alpha = 1,
+      begin = 0.15,
+      end = 0.35,
       direction = -1,
       option = "turbo",
       aesthetics = "fill"
@@ -2423,7 +2472,9 @@ participants
 ```{r}
 #| label: fig-mosaic-rounds-fired-sex
 #| fig-cap: "Rounds fired by sex in the United States among 2011–2012 NHANES participants"
+#| results: hold
 
+library(paletteer)
 
 nhanes_2012_clean |> 
     dplyr::mutate(rounds_fired =
@@ -2436,16 +2487,58 @@ nhanes_2012_clean |>
         x = ggmosaic::product(rounds_fired, sex), 
         fill = rounds_fired)
         ) +
-    ggplot2::theme_bw() +
+    ggplot2::theme_classic() +
     ggplot2::labs(x = "Sex",
                   y = "Total number of rounds fired",
                   fill = "Rounds fired") +
     ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) +
-    viridis::scale_fill_viridis(
-        discrete = TRUE,
-        option = "turbo",
-        direction = -1
-        )
+    
+    ## different scale options #################################
+    
+    ## OPTION 1: Viridis colour scales from {viridisLite} using {ggplot2}
+    ggplot2::scale_fill_viridis_d(
+        alpha = 1,  # alpha does not work!
+        begin = .25,
+         end = .75,
+        direction = -1,
+        option = "cividis"
+    )
+
+    ## OPTION 2: Create your own discrete scale using {ggplot2} and {scales}
+    # ggplot2::scale_fill_manual(values = scales::viridis_pal(
+    #                             alpha = 1,
+    #                             begin = .25,
+    #                              end = .75,
+    #                             direction = -1,
+    #                             option = "cividis")(5))
+
+    # # OPTION 3: Viridis Color Scales for ggplot2 using {viridis}
+    # viridis::scale_fill_viridis(
+    #     begin = .25,
+    #     end = .75,
+    #     discrete = TRUE,
+    #     option = "cividis",
+    #     direction = -1
+    #     )
+
+    # ## OPTION 4: Viridis manual scale with {paletteer}
+    # ## has no alpha, begin and end
+    # ggplot2::scale_fill_manual(values =
+    #        paletteer::paletteer_c("viridis::cividis",
+    #           n = 5,
+    #           direction = -1)
+    # )
+
+    # ## OPTION 5: Wrapper around continuous function (no direction!)
+    # ## has no alpha, begin and end, 
+    # ## needs base:rev() function for direction
+    # ggplot2::scale_fill_manual(values =
+    #        base::rev(paletteer:::paletteer_c_viridis(
+    #            name = "cividis",
+    #            n = 5))
+    # )
+
+
 ```
 ***
 
@@ -2455,6 +2548,8 @@ But mosaic charts really shine when both variables have several levels as shown 
 
 :::
 :::
+
+I have experimented with several approaches to provide a specific scale. In this case the color friendly `cividis` scale from the {**viridis**} package. From the 5 different scaling option I have 4 commented out. See the code for the details.
 
 ###### Rounds fireds & ear plugs
 
@@ -2511,7 +2606,51 @@ The chart clearly shows that a part (more than 1/3 of the respondent) never use 
 :::
 :::
 
+###### Rounds fired & sex (alpha)
 
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-mosaic-rounds-fired-sex}
+: Rounds fired by sex in the United States among 2011–2012 NHANES
+participants
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-mosaic-rounds-fired-sex-alpha
+#| fig-cap: "Rounds fired by sex in the United States among 2011–2012 NHANES participants"
+
+nhanes_2012_clean |> 
+    dplyr::mutate(rounds_fired =
+          dplyr::na_if(rounds_fired, "Don't know")) |> 
+    tidyr::drop_na(c(rounds_fired, sex)) |> 
+    dplyr::mutate(rounds_fired =
+          forcats::fct_drop(rounds_fired)) |> 
+    ggplot2::ggplot() + 
+    ggmosaic::geom_mosaic(ggplot2::aes(
+        x = ggmosaic::product(rounds_fired, sex), 
+        fill = rounds_fired)
+        ) +
+    ggplot2::scale_fill_viridis_d(
+        option = "turbo",
+        direction = -1
+        ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Sex",
+                  y = "Total number of rounds fired",
+                  fill = "Rounds fired") +
+    ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE)) 
+
+```
+***
+
+This is already a more informative chart as @fig-mosaic-gun-use-sex. It shows that women are not only less using a gun, those they do, they fire less round than men. 
+
+But mosaic charts really shine when both variables have several levels as shown in @fig-mosaic-rounds-fired-ear-plugs.
+
+:::
+:::
 
 
 
@@ -2519,6 +2658,8 @@ The chart clearly shows that a part (more than 1/3 of the respondent) never use 
 
 :::
 :::
+
+##### Adaptions and other resources
 
 :::::{.my-note}
 :::{.my-note-header}
@@ -2555,10 +2696,11 @@ The packages {**vcd**} and {**vcdExtra**} are specialized package for the **v**i
 
 {**vcd**} and {**vcdExtra**} are support packages for the book, "Discrete Data Analysis with R" [@friendly2015] (see @pak-vcdExtra). There is also a website [DDAR](http://ddar.datavis.ca/) (abbreviation of the book title) and a [course description](https://friendly.github.io/psy6136/) with additional material. There are several introductory vignettes to learn different aspects of the two packages.
 
-So if you are interested to learn more about visualization of catagorical data besides the mosaic graph then DDAR would be the right place.
+So if you are interested to learn more about visualization of categorical data besides the mosaic graph then DDAR would be the right place.
 
 ::::
 :::::
+
 
 
 ------------------------------------------------------------------------
@@ -2592,6 +2734,739 @@ So if you are interested to learn more about visualization of catagorical data b
 ------------------------------------------------------------------------
 
 ## Additional resources for this chapter
+
+### Color Palettes
+
+#### Introduction
+
+At least since creating graphs for two variable at once (@sec-chap03-achievement-3) the question arises: What color palette should be chosen?  
+
+To dive into the topic of color palettes for R is a very deep water and I can here only scratch the surface. My main purpose in this section is to provide practical orientation on tools to choose appropriate color palettes. I am following here mainly the [compiled material by Emil Hvitfeldt](https://github.com/EmilHvitfeldt/r-color-palettes) [-@hvitfeldt2024], who is also the developer of {**paleteer**} (see @pak-paletteer) [@paletteer].
+
+It is not enough that the colors do not offend the eye, e.g. that they are aesthetically pleasant. There are two other important consideration as well:
+
+1. Palettes have to retain its integrity when printed in black and white
+2. People with colorblindness are able to understand it ([Perception of color palettes](https://github.com/EmilHvitfeldt/r-color-palettes))
+
+#### Printing black & white
+
+Often you have a beauty colorful graphic which looks very nice in RStudio and on your web site. But how does it look when the graphics is printed out or appear in book published only in black and white?
+
+You can check the black/white appearance of the colors your plot is using with the function `colorspace::desaturate()`.
+
+:::::{.my-important}
+:::{.my-important-header}
+To test if the palette you want to use will be distorted when in black and white, use the `colorspace::desaturate()` to desaturate it.
+:::
+:::::
+
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-ID-text}
+: Numbered Experiment Title
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### ggplot2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name}
+: Standard color palette for {ggplot2} in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-ggplot2-palette-bw
+#| fig-cap: "Standard color palette for ggplot2"
+#| fig-height: 3
+
+pal_data <- list(
+    names = c("Normal", "desaturated"),
+    color = list(scales::hue_pal()(256),
+          colorspace::desaturate(scales::hue_pal()(256))))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Standard color palette for ggplot2")
+```
+***
+
+The standard color palette of {**ggplot2**} is completely useless when you print it out in black & white! The problem is that the colors are picked to have constant chroma and luminance thus yielding the same shade of grey when desaturated.
+
+::::
+:::::
+
+
+
+
+###### A
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "magma" (option 'A') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-magma-palette-bw
+#| fig-cap: "Viridis palette 'magma' (option 'A') in color and desaturated"
+#| fig-height: 3
+
+pal_data <- list(names = c("Normal", "desaturated"),
+     color = list(viridis::magma(256),
+     colorspace::desaturate(viridis::magma(256))))
+
+list_plotter(pal_data$color, pal_data$names, "viridis::magma")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "A" ("magma")
+::::
+:::::
+
+###### B
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "inferno" (option 'B') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-inferno-palette-bw
+#| fig-cap: "Viridis palette 'inferno' (option 'B') in color and desaturated"
+#| fig-height: 3
+
+pal_data <- list(names = c("Normal", "desaturated"),
+     color = list(viridis::inferno(256),
+     colorspace::desaturate(viridis::inferno(256))))
+
+list_plotter(pal_data$color, pal_data$names, "viridis::inferno")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "B" ("inferno")
+::::
+:::::
+
+###### C
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "plasma" (option 'C') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-plasma-palette-bw
+#| fig-cap: "Viridis palette 'plasma' (option 'C') in color and desaturated"
+#| fig-height: 3
+
+pal_data <- list(names = c("Normal", "desaturated"),
+     color = list(viridis::plasma(256),
+     colorspace::desaturate(viridis::plasma(256))))
+
+list_plotter(pal_data$color, pal_data$names, "viridis::plasma")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "C" ("plasma")
+::::
+:::::
+
+###### D
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "viridis" (option 'D') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-viridis-palette-bw
+#| fig-cap: "Viridis palette 'viridis' (option 'D') in color and desaturated"
+#| fig-height: 3
+
+pal_data <- list(names = c("Normal", "desaturated"),
+     color = list(viridis::viridis(256),
+     colorspace::desaturate(viridis::viridis(256))))
+
+list_plotter(pal_data$color, pal_data$names, "viridis::viridis")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "D" ("viridis")
+::::
+:::::
+
+###### E
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "cividis" (option 'E') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-cividis-palette-bw
+#| fig-cap: "Viridis palette 'cividis' (option 'E') in color and desaturated"
+#| fig-height: 3
+
+pal_data <- list(names = c("Normal", "desaturated"),
+     color = list(viridis::cividis(256),
+     colorspace::desaturate(viridis::cividis(256))))
+
+list_plotter(pal_data$color, pal_data$names, "viridis::cividis")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "D" ("cividis")
+::::
+:::::
+
+###### F
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "rocket" (option 'F') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-rocket-palette-bw
+#| fig-cap: "Viridis palette 'rocket' (option 'F') in color and desaturated"
+#| fig-height: 3
+
+pal_data <- list(names = c("Normal", "desaturated"),
+     color = list(viridis::rocket(256),
+     colorspace::desaturate(viridis::rocket(256))))
+
+list_plotter(pal_data$color, pal_data$names, "viridis::rocket")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "F" ("rocket")
+::::
+:::::
+
+###### G
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "mako" (option 'G') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-mako-palette-bw
+#| fig-cap: "Viridis palette 'mako' (option 'G') in color and desaturated"
+#| fig-height: 3
+
+pal_data <- list(names = c("Normal", "desaturated"),
+     color = list(viridis::mako(256),
+     colorspace::desaturate(viridis::mako(256))))
+
+list_plotter(pal_data$color, pal_data$names, "viridis::mako")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "G" ("mako")
+::::
+:::::
+
+###### H
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "turbo" (option 'H') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-turbo-palette-bw
+#| fig-cap: "Viridis palette 'turbo' (option 'H') in color and desaturated"
+#| fig-height: 3
+
+pal_data <- list(names = c("Normal", "desaturated"),
+     color = list(viridis::turbo(256),
+     colorspace::desaturate(viridis::turbo(256))))
+
+list_plotter(pal_data$color, pal_data$names, "viridis::turbo")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "H" ("turbo")
+
+
+
+
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Begin and end of the "viridis::turbo" color scale are very similar in black & white
+:::
+::::{.my-watch-out-container}
+
+In this chapter I preferred "viridis::turbo"because it is the most colorful palette of {**viridis**}. But it turned out that the begin and end of the color scale are not distinguishable in black & white. I had therefore to use a different begin and/or end to prevent this similarity. 
+::::
+:::::
+
+###### Practice test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap03-practice-test}
+```{r}
+#| label: fig-color-replication
+#| fig-cap: "Color replication of gun-use by sex"
+#| fig-height: 3
+#| results: hold
+
+pal_data_1 <- list(names = c("Normal", "desaturated"),
+    color = list(scales::viridis_pal(
+                                alpha = 1, 
+                                begin = .25, 
+                                 end = .75, 
+                                direction = -1, 
+                                option = "turbo")(2),
+    colorspace::desaturate(scales::viridis_pal(
+                                alpha = 1, 
+                                begin = .25, 
+                                end = .75, 
+                                direction = -1, 
+                                option = "turbo")(2)))
+    )
+
+pal_data_2 <- list(names = c("Normal", "desaturated"),
+    color = list(scales::viridis_pal(
+                                alpha = 1, 
+                                begin = .15, 
+                                 end = .35, 
+                                direction = -1, 
+                                option = "turbo")(2),
+    colorspace::desaturate(scales::viridis_pal(
+                                alpha = 1, 
+                                begin = .15, 
+                                end = .35, 
+                                direction = -1, 
+                                option = "turbo")(2)))
+    )
+
+list_plotter(pal_data_1$color, pal_data_1$names, 
+     "Color used in my first try with gun-use by sex")
+list_plotter(pal_data_2$color, pal_data_1$names, 
+     "Changed colors to get better distinction with black & white printing")
+```
+Practice test: Replication of used color in @fig-mosaic-gun-use-sex
+
+:::
+
+::::
+:::::
+
+
+
+
+:::
+
+::::
+:::::
+
+**Summary and my personal preferences**
+
+Read more details about {**viridis**} scales in the vignette [Introduction to the {**viridis**} color maps](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html). These scalles are not only colorful and pretty but also perceptually uniform and robust to color blindness (`r glossary("CVD")`). 
+
+- The default scale is "D" (`viridis`) which is easier to read for most of the CVDs. `cividis` is a corrected version providing easiness for all kinds of CVDs.
+- `turbo` stands out, because it is a rainbow scale developed to address the shortcomings of the Jet rainbow color map. It is not perceptually uniform.
+- I do not like yellow (mostly at the end of the color scale and therefore always used, even with binary factors). But one can prevent the appearance with a different choice of the end point of the scale.
+- If you do not use all colors you can exactly provide all parameters of your scale & color choice to `colorspace::desaturate()`. For instance: `colorspace::desaturate(viridis::turbo(5, 0.5, .25, .75, -1))` See for a practice test @lst-chap03-practice-test.
+
+***
+
+#### Color blindness
+
+350 million people are color blind. Men are affected more than women: 28% (1 out of 12) men and 0.5% (1 out of 200) women. ([EnChroma](https://enchroma.com/pages/facts-about-color-blindness))
+
+Usually when people talk about `r glossary("color blindness")`, they are referring to the most common forms of red-green color blindness. But there are also other color vision deficiency (CVD):
+
+
+***
+
+::: {#bul-types-of-cvd}
+- **Deutan = Red-Green Color Blind: Color Cone Sensitivity: Green**: Deuteranomaly is the most common type of color blindness, affecting about 6% of men. It is characterized by a reduced sensitivity to green light, making it difficult to differentiate between shades of red and green.
+- **Protan = Red-Green Color Blind: Color Cone Sensitivity: Red**: Protan (“pro-tan”) is the second most common and is characterized by a reduced sensitivity to red light. People with protanomaly have difficulty distinguishing between shades of red and green.
+- **Tritan = Blue-Yellow Color Blind: Color Cone Sensitivity: Blue**: Tritanomaly is a rare type of color blindness that affects both males and females equally. It is characterized by a reduced sensitivity to blue light, making it difficult to differentiate between shades of blue and green, as well as yellow and red.
+- **Monochromacy and Achromatopsia** describes a range of conditions that include rod-Monochromacy, S-cone Monochromacy and Achromatopsia Sometimes these are collectively referred to as types of achromatopsia, as the word “achromat” meaning “no color.” However, not all cases of achromatopsia have “no color” vision.
+
+Types of color vision deficiency (CVD)
+
+:::
+
+***
+
+To visualize the effect of color blindness on our palettes we will turn to two packages. The `dichromat` package can simulate color blindness on individual colors or entire palettes.
+
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-ID-text}
+: Effects of color blindness on different palettes
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### ggplot2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name}
+: Standard color palette for {ggplot2} in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-ggplot2-palette-cvd
+#| fig-cap: "Effects of color blindness of standard color palette of ggplot2"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+                 color = list(scales::hue_pal()(256),
+                              dichromat::dichromat(scales::hue_pal()(256), type = "deutan"),
+                              dichromat::dichromat(scales::hue_pal()(256), type = "protan"),
+                              dichromat::dichromat(scales::hue_pal()(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, "The effect of color blindness on the ggplot2 standard palette")
+
+```
+
+::::
+:::::
+
+
+
+
+###### A
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "magma" (option 'A') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-magma-palette-cvd
+#| fig-cap: "Effects of color blindness of {viridis} palette 'magma' (option 'A')"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+         color = list(viridis::magma(256),
+              dichromat::dichromat(viridis::magma(256), type = "deutan"),
+              dichromat::dichromat(viridis::magma(256), type = "protan"),
+              dichromat::dichromat(viridis::magma(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Color blindness effects on the viridis 'magma' palette")
+```
+
+
+::::
+:::::
+
+###### B
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "inferno" (option 'B') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-inferno-palette-cvd
+#| fig-cap: "Effects of color blindness of {viridis} palette 'inferno' (option 'B')"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+         color = list(viridis::inferno(256),
+              dichromat::dichromat(viridis::inferno(256), type = "deutan"),
+              dichromat::dichromat(viridis::inferno(256), type = "protan"),
+              dichromat::dichromat(viridis::inferno(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Color blindness effects on the viridis 'inferno' palette")
+```
+
+
+::::
+:::::
+
+###### C
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "plasma" (option 'C') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-plasma-palette-cvd
+#| fig-cap: "Effects of color blindness of {viridis} palette 'plasma' (option 'C')"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+         color = list(viridis::plasma(256),
+              dichromat::dichromat(viridis::plasma(256), type = "deutan"),
+              dichromat::dichromat(viridis::plasma(256), type = "protan"),
+              dichromat::dichromat(viridis::plasma(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Color blindness effects on the viridis 'plasma' palette")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "C" ("plasma")
+::::
+:::::
+
+###### D
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "viridis" (option 'D') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-viridis-palette-cvd
+#| fig-cap: "Effects of color blindness of {viridis} palette 'viridis' (option 'D')"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+         color = list(viridis::viridis(256),
+              dichromat::dichromat(viridis::viridis(256), type = "deutan"),
+              dichromat::dichromat(viridis::viridis(256), type = "protan"),
+              dichromat::dichromat(viridis::viridis(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Color blindness effects on the viridis 'viridis' palette")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "D" ("viridis")
+::::
+:::::
+
+###### E
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "cividis" (option 'E') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-cividis-palette-cvd
+#| fig-cap: "Effects of color blindness of {cividis} palette 'cividis' (option 'E')"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+         color = list(viridis::cividis(256),
+              dichromat::dichromat(viridis::cividis(256), type = "deutan"),
+              dichromat::dichromat(viridis::cividis(256), type = "protan"),
+              dichromat::dichromat(viridis::cividis(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Color blindness effects on the viridis 'cividis' palette")
+```
+
+
+::::
+:::::
+
+###### F
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "rocket" (option 'F') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-rocket-palette-cvd
+#| fig-cap: "Effects of color blindness of {viridis} palette 'rocket' (option 'F')"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+         color = list(viridis::rocket(256),
+              dichromat::dichromat(viridis::rocket(256), type = "deutan"),
+              dichromat::dichromat(viridis::rocket(256), type = "protan"),
+              dichromat::dichromat(viridis::rocket(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Color blindness effects on the viridis 'rocket' palette")
+```
+
+
+::::
+:::::
+
+###### G
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "mako" (option 'G') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-mako-palette-cvd
+#| fig-cap: "Effects of color blindness of {viridis} palette 'mako' (option 'G')"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+         color = list(viridis::mako(256),
+              dichromat::dichromat(viridis::mako(256), type = "deutan"),
+              dichromat::dichromat(viridis::mako(256), type = "protan"),
+              dichromat::dichromat(viridis::mako(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Color blindness effects on the viridis 'mako' palette")
+```
+
+***
+
+One of the continuous palettes that satisfy the criteria of readable gray shades are the palettes collected in the {**viridis**} resp. {**viridisLite**} packages. Here I have used the option "G" ("mako")
+::::
+:::::
+
+###### H
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: {viridis} color palette "turbo" (option 'H') in color and desaturated
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-turbo-palette-cvd
+#| fig-cap: "Effects of color blindness of {viridis} palette 'turbo' (option 'H')"
+#| fig-height: 4.5
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+         color = list(viridis::turbo(256),
+              dichromat::dichromat(viridis::turbo(256), type = "deutan"),
+              dichromat::dichromat(viridis::turbo(256), type = "protan"),
+              dichromat::dichromat(viridis::turbo(256), type = "tritan")))
+
+list_plotter(pal_data$color, pal_data$names, 
+             "Color blindness effects on the viridis 'turbo' palette")
+```
+
+
+
+
+::::
+:::::
+
+
+
+
+:::
+
+::::
+:::::
+
+
+```{r}
+#| label: fig-cvd-bw-effects
+#| fig-cap: "Color blindness and satured effects on different color palettes"
+#| results: hold
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia"),
+                 color = list(rainbow(256),
+                              dichromat::dichromat(rainbow(256), type = "deutan"),
+                              dichromat::dichromat(rainbow(256), type = "protan"),
+                              dichromat::dichromat(rainbow(256), type = "tritan"),
+                              colorspace::desaturate(rainbow(256))))
+
+list_plotter(pal_data$color, pal_data$names, "The effect of color blindness on the rainbow palette")
+
+pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia", "saturated"),
+                 color = list(viridis::magma(256),
+                              dichromat::dichromat(viridis::magma(256), type = "deutan"),
+                              dichromat::dichromat(viridis::magma(256), type = "protan"),
+                              dichromat::dichromat(viridis::magma(256), type = "tritan"),
+                              colorspace::desaturate(viridis::magma(256))))
+
+list_plotter(pal_data$color, pal_data$names, "Color blindness and satured effects on the viridis magma palette")
+```
+
 
 ### Online resources
 
@@ -2948,6 +3823,51 @@ table `dplyr::count()` followed by `tidyr::pivot_wider()`) but the many
 `adorn` comes from 'adornment' (ornament, decoration).
 :::
 :::
+
+### paletteer
+
+:::::{.my-resource}
+:::{.my-resource-header}
+paletteer: Comprehensive Collection of Color Palettes 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-paletteer}
+
+***
+
+{**paletteer**}: [Comprehensive Collection of Color Palettes](https://emilhvitfeldt.github.io/paletteer/index.html) [@paletteer]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap03/logoi/logo-paletteer-min.png){width="176"}
+
+
+The choices of color palettes in R can be quite overwhelming with palettes spread over many packages with many different API's. This packages aims to collect all color palettes across the R ecosystem under the same package with a streamlined API.
+
+:::
+
+The palettes are divided into 2 groups; discrete and continuous. For discrete palette you have the choice between the fixed width palettes and dynamic palettes.
+
+1. discrete
+    - fixed width palettes: These are the most common discrete palettes. They have a set amount of colors which doesn’t change when the number of colors requested vary.
+    - dynamic palettes: The colors of dynamic palettes depend on the number of colors you need.
+2. continuous: These palettes provides as many colors as you need for a smooth transition of color.
+
+This package includes 2759 palettes from 75 different packages and information about these can be found in the following data.frames: `palettes_c_names`, `palettes_d_names` and `palettes_dynamic_names`. Additionally this [github repo](https://github.com/EmilHvitfeldt/r-color-palettes/blob/main/README.md) showcases all the palettes included in the package and more.
+
+{**paletteer**}: A Package for Comprehensive Collection of Color Palettes
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
+
+
+
 
 ### patchwork
 
