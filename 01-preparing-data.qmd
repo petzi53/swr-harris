@@ -3728,6 +3728,62 @@ grass_legal2 |>
 
 ## Packages introduced in this chapter
 
+### data.table
+
+:::::{.my-resource}
+:::{.my-resource-header}
+data.table: Extension of `data.frame` 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-data-table}
+
+***
+
+{**data.table**}: [Extension of `data.frame`](URL to package) [biblio]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-data.table-min.png){width="176"}
+{**data.table**} provides a high-performance version of base R’s data.frame with syntax and feature enhancements for ease of use, convenience and programming speed.
+
+:::
+
+Fast aggregation of large data (e.g. 100GB in RAM), fast ordered joins, fast add/modify/delete of columns by group using no copies at all, list columns, friendly and fast character-separated-value read/write. Offers a natural and flexible syntax, for faster development.
+
+**Features**
+
+- fast and friendly delimited file reader: `data.table::fread()`, see also convenience features for small data
+- fast and feature rich delimited file writer: `data.table::fwrite()`
+- low-level parallelism: many common operations are internally parallelized to use multiple CPU threads
+- fast and scalable aggregations; e.g. 100GB in RAM (see benchmarks on up to two billion rows)
+- fast and feature rich joins: ordered joins (e.g. rolling forwards, backwards, nearest and limited staleness), overlapping range joins (similar to IRanges::findOverlaps), non-equi joins (i.e. joins using operators >, >=, <, <=), aggregate on join (by=.EACHI), update on join
+- fast add/update/delete columns by reference by group using no copies at all
+- fast and feature rich reshaping data: `data.table::dcast()` (pivot/wider/spread) and `data.table::melt()` (unpivot/longer/gather)
+- any R function from any R package can be used in queries not just the subset of functions made available by a database backend, also columns of type list are supported
+- has no dependencies at all other than base R itself, for simpler production/maintenance
+- the R dependency is as old as possible for as long as possible, dated April 2014, and we continuously test against that version; e.g. v1.11.0 released on 5 May 2018 bumped the dependency up from 5 year old R 3.0.0 to 4 year old R 3.1.0
+
+{**data.table**}: A Package for the Extension of `data.frame`
+:::
+
+I believe the most important application of {**data.table**} is working with huge amount of data (several GB). In the book SwR it is used in this first chapter with the `data.table::fread()` function. I have used here the `readr::read_csv()` as part of the {**tidyverse**} collection, because the dataset is very small (29 kB).
+
+
+With {**DT**} there is another package that seems important. It is a wrapper of the JavaScript library 'DataTables' (See @pak-DT). I was using already {**DT**} to display interactive tables on websites, but I do not understand completely the difference between {**data.table**} and {**DT**}. 
+As far as I understood:
+
+- Using {**data.table**} is very fast but you will loose the inutitive function of the tidyverse.
+- {**DT**} is for the presentation of (large) interactive tables whereas {**data.table**} is for the fast manipulation of huge data sets.
+
+***
+::::
+:::::
+
+
+
+
 ### dplyr
 
 :::::{.my-resource}
@@ -3794,7 +3850,7 @@ Data objects in R can be rendered as HTML tables using the JavaScript library [D
 {**DT**}: A Package as Wrapper of the JavaScript Library 'DataTables'
 :::
 
-
+What I do not understand: What is the relationship of {**DT**} to the {**data.table**} package?
 ***
 ::::
 :::::
