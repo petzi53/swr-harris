@@ -54,7 +54,7 @@ Objectives
 
 ## Resources & Chapter Outline
 
-### Data, codebook, and R packages
+### Data, codebook, and R packages {#sec-data-codebook-packages}
 
 ::: my-resource
 ::: my-resource-header
@@ -79,6 +79,17 @@ There are two options:
         <https://edge.sagepub.com/harris1e>
 
 I will only work with the second option.
+
+:::::{.my-note}
+:::{.my-note-header}
+Manufactured firearms data not mentioned
+:::
+::::{.my-note-container}
+Harris provides the "total_firearms_manufactured_US_1990to2015.csv" file with firearm production in the US from 1990-2015 but did not mention the source. I have looked around on the web and reported the results of my research in @sec-gun-production.
+::::
+:::::
+
+
 
 **Codebook**
 
@@ -109,25 +120,25 @@ I will only work with the second option.
 -   {**waffle**}: @pak-waffle (Bob Rudis)
 -   {**withr**}: @pak-withr (Lionel Henry)
 
-::: my-watch-out
-::: my-watch-out-header
-WATCH OUT! Instead of downloading the file with {**httr**} I will use
+:::::{.my-note}
+:::{.my-note-header}
+Instead of downloading the file with {**httr**} I will use
 `utils::download.file()`
 :::
-
-::: my-watch-out-container
+::::{.my-note-container}
 Harris lists the older {**httr**} package, but now there is {**httr2**},
 "a modern re-imagining of {**httr**} that uses a pipe-based interface
 and solves more of the problems that `r glossary("API")` wrapping
 packages face." (See @pak-httr2)
 
-In the book is the {**httr**} package just used for downloading the
+The {**httr**} package is in the book just used for downloading the
 excel file from the FBI website. For this specific task there is no need
-to download, install and learn a new package. You can use
+to download, to install and to learn a new package. You can use
 `utils::download.file()`, a function as I have it already applied
 successfully in @lst-chap02-get-brfss-2014-data.
-:::
-:::
+::::
+:::::
+
 
 2.  My additional packages (sorted alphabetically)
 
@@ -135,6 +146,7 @@ successfully in @lst-chap02-get-brfss-2014-data.
 -   {**colorblindr**}: @pak-colorblindr (Claus O. Wilke)
 -   {**colorspace**}: @pak-colorspace (Achim Zeileis)
 -   {**cowplot**}: @pak-cowplot (Claus O. Wilke)
+-   {**curl**}: @pak-curl (Jeroen Ooms)
 -   {**dichromat**}: @pak-dichromat (Thomas Lumley)
 -   {**ggtext**}: @pak-ggtext (Claus O. Wilke)
 -   {**janitor**}: @pak-janitor (Sam Firke)
@@ -151,8 +163,38 @@ successfully in @lst-chap02-get-brfss-2014-data.
 
 ### Get data
 
-The data can be download from the internet with the following URL:
-<https://ucr.fbi.gov/crime-in-the-u.s/2016/crime-in-the-u.s.-2016/tables/expanded-homicide-data-table-4.xls/output.xls>
+#### Gun production {#sec-gun-production}
+
+There are different sources of data for this chapter. A special case are the data provided by Harris about guns manufactured in the US between 1990 and 2015. There is no source available because this dataset was not mentioned in the section about "Data, codebook, and R packages" (see: @sec-data-codebook-packages). But a Google searched revealed several interesting possible sources:
+
+- **ATF**: The original data are generated and published by the [Bureau of Alcohol, Tobacco, Firearms and Explosives](https://www.atf.gov/resource-center/data-statistics) (`r glossary("ATF agency", "ATF")`). Scrolling down you will find the header "Annual Firearms Manufacturers And Export Report" (AFMER). But the data are separated by year and only available as a summarized PDF fact sheet. But finally I found in a downloaded `.csv` file from [USAFacts](https://usafacts.org/) a reference to a [PDF file where all the data I am interesting in are listed](https://www.atf.gov/firearms/docs/report/2019-firearms-commerce-report/download). To the best of my knowledge there are no better accessible data on the ATF website.  
+- **Statista**: With a free account of `r glossary("statista")` it is possible to download [Number of firearms manufactured in the United States from 1986 to 2021](https://www.statista.com/statistics/215395/number-of-total-firearms-manufactured-in-the-us/). But here we are missing the detailed breakdown by type of firearms. Another restriction is that the publication of the data are only allowed if you have a professional or enterprise account, starting with € 199,- per month.
+- **The Trace**: Another option is to download the collected data by [The Trace](https://www.thetrace.org/2023/03/guns-america-data-atf-total/), an American non-profit journalism outlet devoted to gun-related news in the United States ([Wikipeda](https://en.wikipedia.org/wiki/The_Trace_(website))). The quoted article is referring to a [google spreadsheet](https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vShiwPP36HrjUyPztuIhoYjR3Xd3uhlQivMC3wPSNq1UCjVbj2wsPZIISqOtFQ0NbVVwwKBzyrDNuCz/pubhtml#) where you can access the collected data for the US gun production from 1899 (!) until today.
+- **USAFacts**: Finally I found the data I was looking for in a easy accessible format to download on the website of USAFacts, a not-for-profit organization and website that provides data and reports on the United States population, its government's finances, and government's impact on society.([Wikipedia](https://en.wikipedia.org/wiki/USAFacts)). The data range from 1986 to 2019 and they are based on the original ATF data from the PDF report. They are higher than the data provided by Harris because the include exports. The AFMER report excludes production for the U.S. military but includes  also firearms purchased by domestic law enforcement agencies. 
+
+:::{#not-chap03-circulated-guns-us}
+:::::{.my-note}
+:::{.my-note-header}
+Using USAFacts data includes gun exports
+:::
+::::{.my-note-container}
+If you are interested to research the relationship between gun ownership in the USA and homicides then you would need to reflect how to get a better approximation as the yearly manufactured guns. Besides that not all gun manufacturer have reported their production numbers to the ATF, there is a big difference between gun production and gun sales. Additionally there are some other issues that influence the number of circulated guns in the US. So you have to take into account for instance
+
+- the export and import of guns, 
+- that guns fall out of circulation because of broken part, attrition, or illegal exports
+
+As an exercise I have subtracted from the manufactured gun the exported guns and have added the imported firearms. You will find the result in @lst-chap03-guns-total.
+::::
+:::::
+
+How to calculate the numbers of circulated guns in the US
+:::
+
+
+
+
+
+#### Three steps procedure
 
 To get the data for this chapter is a three step procedure:
 
@@ -179,6 +221,9 @@ To get the data for this chapter is a three step procedure:
 :::
 :::
 
+
+#### Get & save data
+
 ::: my-example
 ::: my-example-header
 ::: {#exm-chap03-get-data}
@@ -201,8 +246,9 @@ To get the data for this chapter is a three step procedure:
 ::: {#lst-chap03-get-fbi-data}
 ```{r}
 #| label: get-fbi-data
-#| eval: false
 #| cache: true
+#| results: hold
+#| eval: false
 
 ## run only once (manually)
 # create a variable that contains the web
@@ -211,43 +257,54 @@ url1 <- base::paste0("https://ucr.fbi.gov/crime-in-the-u.s",
                      "/2016/crime-in-the-u.s.-2016/tables/",
                      "expanded-homicide-data-table-4.xls/output.xls")
 
-## run only once (manually)
-## download only once (manually)
-utils::download.file(url = url1,
-                     tf <- base::tempfile(),
+## code worked in the console
+## but did not work when rendered in quarto
+# utils::download.file(url = url1,
+#                      destfile = paste0(here::here(),
+#                                        "/data/chap03/fbi_deaths.xls"),
+#                      method = "libcurl",
+#                      mode = "wb"
+# )
+
+## the following code line worked but I used {**curl**}
+# httr::GET(url = url1, 
+#           httr::write_disk(
+#               path = base::paste0(here::here(),
+#                     "/data/chap03/fbi_deaths.xls",
+#               overwrite = TRUE)
+#               )
+#         )
+
+curl::curl_download(url = url1,
+                     destfile = paste0(here::here(),
+                                       "/data/chap03/fbi_deaths.xls"),
+                     quiet = TRUE,
                      mode = "wb"
 )
 
 fbi_deaths <- tibble::tibble(
-     readxl::read_excel(path = tf,
+     readxl::read_excel(path = paste0(here::here(), 
+                                      "/data/chap03/fbi_deaths.xls"),
                         sheet = 1,
                         skip = 3,
                         n_max = 18))
 
-data_folder <- base::paste0(here::here(), "/data/")
-if (!base::file.exists(data_folder)) 
-    {base::dir.create(data_folder)}
-
-chap03_folder <- base::paste0(here::here(), "/data/chap03/")
-if (!base::file.exists(chap03_folder)) 
-    {base::dir.create(chap03_folder)}
-
-base::saveRDS(object = fbi_deaths, 
-        file = paste0(chap03_folder, "/fbi_deaths.rds"))
+save_data_file("chap03", fbi_deaths, "fbi_deaths.rds")
 
 ```
 
 Get data from the FBI’s Uniform Crime Reporting database
 :::
 
-(*For this R code chunk is no output available*)
-
 ------------------------------------------------------------------------
+(*For this R code chunk is no output available, but you can inspect the data at @lst-chap03-show-fbi-data.*)
+
+***
 
 In changed the recommended R code by Harris for downloading the FBI
 Excel Data I in several ways:
 
-1.  I did not use command from {**httr**}, but `utils::download.file()`.
+1.  Instead of of using {**httr**}, I tried first with `utils::download.file()`. This worked in the console (compiling the R code chunk), but did not work when rendered with Quarto. I changed to {**curl**} and used the `curl_download()` function which worked in both situations (see: @pak-curl).
 2.  Instead creating a data frame with `base::data.frame()` I used a
     `tibble::tibble()`. This has the advantage that the column names
     were not changed. In the original files the column names are years,
@@ -276,6 +333,7 @@ Excel Data I in several ways:
 ```{r}
 #| label: get-NHANES-2012-data
 #| cache: true
+#| results: hold
 #| eval: false
 
 ## run only once (manually)
@@ -287,23 +345,18 @@ nhanes_2012 <-
         year = "2011-2012",
         demographics = TRUE)
 
-data_folder <- base::paste0(here::here(), "/data/")
-if (!base::file.exists(data_folder)) 
-    {base::dir.create(data_folder)}
-
-chap03_folder <- base::paste0(here::here(), "/data/chap03/")
-if (!base::file.exists(chap03_folder)) 
-    {base::dir.create(chap03_folder)}
-
-base::saveRDS(object = nhanes_2012, 
-        file = paste0(chap03_folder, "/nhanes_2012.rds"))
-
+save_data_file("chap03", nhanes_2012, "nhanes_2012.rds")
 ```
 
 Get NHANES data (2011-2012) from the CDC website with {RNHANES}
 :::
 
-(*For this R code chunk is no output available*)
+***
+
+(*For this R code chunk is no output available, but you can inspect the data at @lst-chap03-show-NHANES-2012-data*)
+
+***
+
 :::
 :::
 
@@ -363,6 +416,7 @@ See tab "NHANES 2018" how this is done.
 ```{r}
 #| label: get-NHANES-2018-data
 #| cache: true
+#| results: hold
 #| eval: false
 
 ## run only once (manually)
@@ -371,23 +425,16 @@ nhanes_2018 <- haven::read_xpt(
     file = "https://wwwn.cdc.gov/Nchs/Nhanes/2017-2018/AUQ_J.XPT"
 )
 
-data_folder <- base::paste0(here::here(), "/data/")
-if (!base::file.exists(data_folder)) 
-    {base::dir.create(data_folder)}
-
-chap03_folder <- base::paste0(here::here(), "/data/chap03/")
-if (!base::file.exists(chap03_folder)) 
-    {base::dir.create(chap03_folder)}
-
-base::saveRDS(object = nhanes_2018, 
-        file = paste0(chap03_folder, "/nhanes_2018.rds"))
-
+save_data_file("chap03", nhanes_2018, "nhanes_2018.rds")
 ```
 
 Get NHANES data 2017-2018 from the CDC website with {haven}
 :::
 
-(*For this R code chunk is no output available*)
+***
+
+(*For this R code chunk is no output available, but you can inspect the data at @lst-chap03-show-NHANES-2018-data.*)
+
 :::
 :::
 
@@ -407,15 +454,370 @@ variables are labelled as already explained in
 ::: my-r-code-container
 ```{r}
 #| label: get-research-funding
+#| cache: true
+#| results: hold
 
 research_funding <- readr::read_csv(
     "data/chap03/gun_publications_funds_2004_2015_ch3.csv",
     show_col_types = FALSE)
 
-str(research_funding)
+save_data_file("chap03", research_funding, "research_funding.rds")
 ```
+***
+
+(*For this R code chunk is no output available, but you can inspect the data at @lst-chap03-show-research-funding.*)
+
+***
+
 :::
 :::
+
+###### Guns manufactured
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-get-guns-manufactured}
+: Get guns manufactured 1986-2019 from USAFacts.org
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-guns-manufactured-2019
+#| cache: true
+#| results: hold
+#| eval: false
+
+guns_manufactured_2019 <-  readr::read_csv(
+    "https://a.usafacts.org/api/v4/Metrics/csv/16185?&_ga=2.61283563.611609354.1708598369-436724430.1708598369", show_col_types = FALSE
+)
+
+save_data_file("chap03", guns_manufactured_2019, "guns_manufactured_2019.rds")
+```
+
+***
+
+(*For this R code chunk is no output available, but you can inspect the data at @lst-chap03-show-guns-manufactured-2019.*)
+
+***
+
+::::
+:::::
+
+###### Guns exported
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-get-guns-exported}
+: Get guns exported from a PDF report by the `r glossary("ATF Agency", "ATF")`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-guns-exported
+#| results: hold
+#| cache: true
+#| eval: false
+
+guns_export <- tabulizer::extract_tables(
+    "data/chap03/firearms_commerce_2019.pdf", 
+    pages = 4
+    )
+
+guns_exported_2017 <- guns_export[[1]]
+
+save_data_file("chap03", guns_exported_2017, "guns_exported_2017.rds")
+
+
+```
+
+***
+
+(*For this R code chunk is no output available, but you can inspect the data at @lst-chap03-show-guns-exported-2017.*)
+
+***
+
+
+There are several innovation applied in this R code chunk:
+
+    1. First of all I have used the {**tabulizer**} package to scrap the export and import data tables from the original `r glossary("ATF Agency", "ATF")`-PDF. To make this procedure reproducible I have downloaded the [PDF from the ATF website](https://www.atf.gov/firearms/docs/report/2019-firearms-commerce-report/download) as I assume that this PDF will updated regularily. 
+    
+    
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Read carefully the installation instructions
+:::
+::::{.my-watch-out-container}
+Please read carefully the [installation advices](https://docs.ropensci.org/tabulizer/) at the start of the page but --- even more important --- [Installing Java on Windows with Chocolatey](https://docs.ropensci.org/tabulizer/#installing-java-on-windows-with-chocolatey) if you working on a windows machine or generally the [Troubleshooting](https://docs.ropensci.org/tabulizer/#troubleshooting) section for macOs, Linux and Windows.
+::::
+:::::
+
+I have recoded the data in several ways:
+    - I turned the resulted matrices from the {**tabulizer**} package into tibbles.
+    - Now I could rename all the columns with one name vector.
+    - As the export data end with the year 2017 I had to reduce the import data ans also my original gun manufactured file to this shorter period.
+    
+
+::::
+:::::
+
+###### Guns imported
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-get-guns-imported}
+: Get and recode guns imported from a PDF by the `r glossary("ATF Agency", "ATF")`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-guns-imported
+#| results: hold
+#| cache: true
+#| eval: false
+
+guns_import <- tabulizer::extract_tables(
+    "data/chap03/firearms_commerce_2019.pdf", 
+    pages = 6
+    )
+
+guns_imported_2018 <- guns_import[[1]]
+
+save_data_file("chap03", guns_imported_2018, "guns_imported_2018.rds")
+
+```
+
+***
+
+(*For this R code chunk is no output available. But you can inspect the data at @lst-chap03-show-guns-imported-2018.*)
+
+***
+
+::::
+:::::
+
+
+:::
+:::
+:::
+
+### Show raw data
+
+::: my-example
+::: my-example-header
+::: {#exm-chap03-show-data}
+: Show raw data for chapter 3
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### FBI
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-show-fbi-data}
+: Show raw data from the FBI’s Uniform Crime Reporting database
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap03-show-fbi-data}
+```{r}
+#| label: show-fbi-data
+#| cache: true
+#| results: hold
+
+fbi_deaths <- base::readRDS("data/chap03/fbi_deaths.rds")
+
+utils::str(fbi_deaths)
+skimr::skim(fbi_deaths)
+```
+
+Show raw data from the FBI’s Uniform Crime Reporting database
+:::
+
+
+:::
+:::
+
+###### NHANES 2012
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-get-NHANES-2012-data}
+: Show raw NHANES data 2011-2012 from the CDC website with {RNHANES}
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap03-show-NHANES-2012-data}
+```{r}
+#| label: show-NHANES-2012-data
+#| cache: true
+#| results: hold
+
+nhanes_2012 <- base::readRDS("data/chap03/nhanes_2012.rds")
+
+utils::str(nhanes_2012)
+skimr::skim(nhanes_2012)
+```
+
+Show raw NHANES data (2011-2012) from the CDC website with {RNHANES}
+:::
+
+:::
+:::
+
+
+###### NHANES 2018
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-get-NHANES-2018-data}
+: Show raw NHANES data 2017-2018 from the CDC website with {haven}
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap03-show-NHANES-2018-data}
+```{r}
+#| label: show-NHANES-2018-data
+#| cache: true
+#| results: hold
+
+nhanes_2018 <- base::readRDS("data/chap03/nhanes_2018.rds")
+
+utils::str(nhanes_2018)
+skimr::skim(nhanes_2018)
+```
+
+Show raw NHANES data 2017-2018 from the CDC website with {haven}
+:::
+
+:::
+:::
+
+###### Research funding
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap03-show-research-funding}
+: Show raw research funding data for different kinds of research topics (2004-2015)
+:::
+:::
+
+::: my-r-code-container
+
+::: {#lst-chap03-show-research-funding}
+```{r}
+#| label: show-research-funding
+#| cache: true
+#| results: hold
+
+research_funding <- base::readRDS("data/chap03/research_funding.rds")
+
+utils::str(research_funding)
+skimr::skim(research_funding)
+```
+
+Show raw research funding data for different kinds of research topics (2004-2015)
+:::
+
+:::
+:::
+
+###### Guns manufactured
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-show-guns-manufactured}
+: Show raw data about guns manufactured in ten US (1986 - 2019) from USAFact.org website
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap03-show-guns-manufactured-2019}
+```{r}
+#| label: show-guns-manufactured-2019
+#| cache: true
+#| results: hold
+
+guns_manufactured_2019 <-  base::readRDS("data/chap03/guns_manufactured_2019.rds")
+
+utils::str(guns_manufactured_2019)
+skimr::skim(guns_manufactured_2019)
+```
+
+Show raw data about guns manufactured in ten US (1986 - 2019) from USAFact.org website
+:::
+
+::::
+:::::
+
+###### Guns exported
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-show-guns-exported}
+: Show raw data of exported guns from the ATF PDF report (1998-2019)
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap03-show-guns-exported-2017}
+```{r}
+#| label: show-guns-exported
+#| results: hold
+#| cache: true
+
+
+guns_exported_2017 <-  base::readRDS("data/chap03/guns_exported_2017.rds")
+
+utils::str(guns_exported_2017)
+skimr::skim(guns_exported_2017)
+```
+
+Show raw data of exported guns from the ATF PDF report (1986-2017)
+
+:::
+::::
+:::::
+
+###### Guns imported
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-show-guns-imported}
+: Show raw data of imported guns from the ATF PDF report (1986-2018)
+
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap03-show-guns-imported-2018}
+```{r}
+#| label: guns-imported
+#| results: hold
+#| cache: true
+
+
+guns_imported_2018 <-  base::readRDS("data/chap03/guns_imported_2018.rds")
+
+utils::str(guns_imported_2018)
+skimr::skim(guns_imported_2018)
+```
+
+Show raw data of imported guns from the ATF PDF report (1986-2018)
+
+:::
+::::
+:::::
+
+
 :::
 :::
 :::
@@ -543,7 +945,10 @@ correct to remove the NA's when the output for the analysis (graph or
 table) is prepared via the pipe operator without changing the stored
 data.
 :::
+
+
 :::
+
 :::
 :::
 
@@ -661,13 +1066,274 @@ nhanes_2012_clean4 |>
     janitor::tabyl(ear_plugs) |> 
     janitor::adorn_pct_formatting()
 ```
+
+
 :::
 :::
+
+###### Guns exported
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-recode-guns-exported}
+: Recode guns exported from a PDF report by the `r glossary("ATF Agency", "ATF")`
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap03-recode-guns-exported}
+```{r}
+#| label: recode-guns-exported
+#| results: hold
+#| cache: false
+
+guns_exported_2017 <- base::readRDS("data/chap03/guns_exported_2017.rds")
+
+lookup_export <- c(Year = "V1",
+                   Pistols = "V2",
+                   Revolvers = "V3",
+                   Rifles = "V4",
+                   Shotguns = "V5",
+                   Misc = "V6",
+                   Total = "V7")
+
+guns_exported_clean <- dplyr::rename(
+    tibble::as_tibble(guns_exported_2017), 
+    dplyr::all_of(lookup_export)
+    ) |> 
+    
+    ## comma separated character columns to numeric
+    dplyr::mutate(dplyr::across(2:7, 
+        function(x)
+            { base::as.numeric(as.character(base::gsub(",", "", x))) })
+        ) |> 
+
+    ## add Pistols and Revolvers to Handguns
+    dplyr::mutate(Handguns = Pistols + Revolvers) |> 
+    
+    ## specify the same order for all three data frames
+    dplyr::select(-c(Pistols, Revolvers)) |> 
+    dplyr::relocate(c(Year, Handguns, Rifles, 
+                      Shotguns, Misc, Total))
+
+save_data_file("chap03", guns_exported_clean, "guns_exported_clean.rds")
+
+utils::str(guns_exported_clean)
+skimr::skim(guns_exported_clean)
+```
+
+Recoded: Guns exported from a PDF report by the `r glossary("ATF Agency", "ATF")`
+
+:::
+***
+
+I have recoded the data in several ways:
+
+    - I turned the resulted matrices from the {**tabulizer**} package into tibbles.
+    - Now I could rename all the columns with one named vector `lookup_export`.
+    - All the columns are of character type. Before I could change the appropriate column to numeric I had to remove the comma for big numbers, otherwise the base::as-numeric() function would not have worked.
+    - I added `Pistols` and `Revolvers` to `Handguns`, because the dataset about imported guns have only this category.
+    - Finnaly I relocated the columns to get the same structure in all data frames.
+
+::::
+:::::
+
+###### Guns imported
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-recode-guns-imported}
+: Recode guns imported from a PDF by the `r glossary("ATF Agency", "ATF")`
+::::::
+:::
+::::{.my-r-code-container}
+
+:::{#lst-chap03-recode-guns-imported}
+```{r}
+#| label: recode-guns-imported
+#| results: hold
+#| cache: false
+
+guns_imported_2018 <-  base::readRDS("data/chap03/guns_imported_2018.rds")
+
+lookup_import <- c(Year = "V1",
+            Shotguns = "V2",
+            Rifles = "V3",
+            Handguns = "V4",
+            Total = "V5")
+
+## reduce the reported period for all file from 1980 to 2017
+guns_imported_clean <- dplyr::rename(
+    tibble::as_tibble(guns_imported_2018), 
+    dplyr::all_of(lookup_import)
+    ) |> 
+    
+    ## comma separated character columns to numeric
+    dplyr::mutate(dplyr::across(2:5, 
+        function(x)
+            { base::as.numeric(as.character(base::gsub(",", "", x))) })
+        ) |> 
+
+    dplyr::slice(1:dplyr::n() - 1) |> 
+    dplyr::mutate(Misc = 0) |> 
+    dplyr::relocate(c(Year, Handguns, Rifles, 
+                      Shotguns, Misc, Total))
+
+
+save_data_file("chap03", guns_imported_clean, "guns_imported_clean.rds")
+
+utils::str(guns_imported_clean)
+skimr::skim(guns_imported_clean)
+
+```
+
+Recoded: Guns imported from a PDF by the `r glossary("ATF Agency", "ATF")`
+:::
+***
+
+Here applies similar note as in the previous tab:
+
+    - I turned the resulted matrices from the {**tabulizer**} package into tibbles.
+    - Now I could rename all the columns with one named vector `lookup_import`.
+    - All the columns are of character type. Before I could change the appropriate column to numeric I had to remove the comma for big numbers, otherwise the base::as-numeric() function would not have worked.
+    - I relocated the columns to get the same structure in all data frames.
+
+::::
+:::::
+
+###### Guns manufactured
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-recode-guns-manufactured}
+: Recode the guns manufactured data frame to get an appropriate structure to add the imported and subtract the exported data.
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap03-recode-guns-manufactured}
+```{r}
+#| label: recode-guns-manufactured
+#| results: hold
+#| cache: true
+
+guns_manufactured_clean <- base::readRDS("data/chap03/guns_manufactured_2019_clean.rds")
+
+lookup_manufactured <- c(
+    Total = "Firearms manufactured (Items)",
+    Pistols = "Pistols (Items)",
+    Rifles = "Rifles (Items)",
+    Shotguns = "Shotguns (Items)",
+    Revolvers = "Revolvers (Items)",
+    Misc = "Misc. Firearms (Items)"
+    )
+
+guns_manufactured_clean  <-  guns_manufactured_clean |>
+    dplyr::select(-c(`2018`, `2019`)) |>
+    tidyr::pivot_longer(
+        cols = !Years,
+        names_to = "Year",
+        values_to = "count"
+    ) |>
+    tidyr::pivot_wider(
+        names_from = Years,
+        values_from = count
+    ) |> 
+    dplyr::rename(
+        dplyr::all_of(lookup_manufactured)
+    ) |> 
+    dplyr::mutate(Handguns = Pistols + Revolvers) |> 
+    dplyr::select(-c(Pistols, Revolvers)) |> 
+    dplyr::relocate(c(Year, Handguns, Rifles, 
+                      Shotguns, Misc, Total))
+
+save_data_file("chap03", guns_manufactured_clean, "guns_manufactured_clean.rds")
+
+utils::str(guns_manufactured_clean)
+skimr::skim(guns_manufactured_clean)
+```
+
+Recoded: Prepare manufactured data to get an appropriate structure to add the imported and subtract the exported data.
+:::
+::::
+:::::
+
+###### Gun production
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-recode-gun-production}
+: Recode firearms production dataset 1986-2019 from USAFact.org
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: recode-gun-production
+#| cache: true
+#| results: hold
+
+
+guns_manufactured_2019 <- base::readRDS("data/chap03/guns_manufactured_2019.rds")
+
+guns_manufactured_2019_clean <- guns_manufactured_2019 |> 
+    dplyr::select(-c(2:7)) |> 
+    dplyr::slice(c(1,3:7)) |> 
+    ## strange: `1986` is a character variable
+    dplyr::mutate(`1986` = as.numeric(`1986`))
+
+base::saveRDS(guns_manufactured_2019_clean, 
+              "data/chap03/guns_manufactured_2019_clean.rds")
+
+utils::str(guns_manufactured_2019_clean)
+skimr::skim(guns_manufactured_2019_clean)
+```
+
+::::
+:::::
+
+###### Guns total
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-guns-total}
+: Manufactured guns - exported guns + imported guns
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap03-guns-total}
+
+```{r}
+#| label: guns-total
+
+guns_manufactured_clean <-  base::readRDS("data/chap03/guns_manufactured_clean.rds")
+guns_exported_clean <- base::readRDS("data/chap03/guns_exported_clean.rds")
+guns_imported_clean <- base::readRDS("data/chap03/guns_imported_clean.rds")
+
+guns_total <- guns_manufactured_clean[, 2:5] - guns_exported_clean[, 2:5]
+guns_total_clean <- guns_total[, 1:4] + guns_imported_clean[, 2:5]
+
+dplyr::bind_cols(guns_manufactured_clean[, 1], guns_total_clean)
+```
+Manufactured guns - exported guns + imported guns
+:::
+
+***
+
+As a first approximation to get guns data circulated in the US I have taken the manufactured numbers, subtracted the exported guns and added the imported guns.
+
+I have already listed some reasons why the above result is still not the real amount of circulated guns per year in the US (see: @not-chap03-circulated-guns-us)
+
+::::
+:::::
+
+
 :::
 :::
 :::
 
-------------------------------------------------------------------------
 
 ### Classification of Graphs
 
@@ -3541,7 +4207,7 @@ Here I have used the same code as before but have added several scale improvemen
 
 I had considerable problems with the fill color for this chart, because I did not know where and how to add the `fill` aesthetics. As I added during my experimentation a new `ggplot2::eas()` layer with the argument `fill = weapons`, I got the following warning message: 
 
-> The following aesthetics were dropped during statistical transformation. This can happen when ggplot fails to infer the correct grouping structure in the data. Did you forget to specify a `group` aesthetic or to convert a numerical variable into a factor?
+> The following aesthetics were dropped during statistical transformation. This can happen when ggplot fails to infer the correct grouping structure in the data. Did you forget to specify a `group` aesthetic or to convert a numerical variable into a factor?
 
 I didn't know how to add the `group` aesthetic and all the examples I found on the web are referring to `geom_line()`. (See for instance the page of the online manual for ggplot2 [Aesthetics: grouping](https://ggplot2.tidyverse.org/reference/aes_group_order.html) or Mapping variable values to colors in the first edition of [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/#mapping-variable-values-to-colors)). I finally found the solution. The following text snippet is now more understandable for me:
 
@@ -3646,6 +4312,12 @@ Here I have the first time used the {**withr**} package (see: @pak-withr) for a 
 ::::
 :::::
 
+::: {.callout-tip}
+1. Handguns are in all years constant the type of firearms where the most homicides were committed.
+2. Starting with 2013 the homicides with handguns are rising constantly.
+3. The type of firearms not stated is also rising over the years. What is the reason that this category is on the rise? As the second most cause of homicides it could disturb the previous conclusion. Imagine that most of this category belong to handguns category than we would see a still stepper rise of homicides with handguns. Or the diametrically opposite assumption: If most of the this category belongs to one of the other smaller categories than this would change the ranking of the homicides by firearm types.  
+:::
+
 ###### year/gun
 
 :::::{.my-r-code}
@@ -3682,7 +4354,9 @@ withr::with_options(
 ::::
 :::::
 
-
+::: {.callout-tip}
+This graph is not very informative because it is difficult to compare the type of firearms for different years. To get this information a line chart would be much better. (See @gun-types-line-graph)
+:::
 :::
 
 ::::
@@ -3693,9 +4367,292 @@ withr::with_options(
 
 #### Point Chart {#sec-chap03-point-chart}
 
+Point charts are an alternative for simple bar graphs. The use less ink and are generated with the same code as bar charts with two exceptions:
+
+- Instead of the `geom_bar()` / `geom_col()` this type of graph uses `geom_point()`.
+- To colorize the graph one need the `color` scale instead of the `fill` scale..
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-ID-text}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### header1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-a}
+: Numbered R Code Title (Original)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-point-chart-mean-and-flipped
+#| fig-cap: "Point chart: Mean annual homicides by firearm type in the United States, 2012–2016"
+
+fbi_deaths_clean <- base::readRDS("data/chap03/fbi_deaths_clean.rds")
+
+fbi_deaths_clean |>
+    dplyr::group_by(weapons) |>
+    dplyr::summarize(mean_deaths_2012_2016 = mean(deaths)) |>
+    ggplot2::ggplot(
+        ggplot2::aes(color = weapons,
+                     x = stats::reorder(
+                         x = weapons, 
+                         X = -mean_deaths_2012_2016),
+                     y = mean_deaths_2012_2016)
+        ) +
+    ggplot2::geom_point(size = 4) +
+    ggplot2::coord_flip() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Firearm type",
+                  y = "Number of homicides committed") +
+    ggplot2::scale_color_manual(values = 
+           c("Handguns" = "#7463AC", 
+             "Firearms, type not stated" = "gray", 
+             "Rifles" = "gray", 
+             "Shotguns" = "gray", 
+             "Other guns" = "gray"), guide = "none") 
+```
+
+
+::::
+:::::
+
+
+###### header2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-point-chart-mean-error-bars
+#| fig-cap: "Point chart with error bars: Mean annual homicides by firearm type in the United States, 2012–2016"
+
+fbi_deaths_clean <- base::readRDS("data/chap03/fbi_deaths_clean.rds")
+
+fbi_deaths_clean |>
+    dplyr::group_by(weapons) |>
+    dplyr::summarize(
+        central = mean(x = deaths), 
+        spread = sd(x = deaths)
+        ) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = stats::reorder(
+                         x = weapons, 
+                         X = -central),
+                     y = central)
+    ) +
+    ggplot2::geom_errorbar(
+        ggplot2::aes(ymin = central - spread, 
+                     ymax = central + spread, 
+                     linetype = "Mean\n+/- sd"), 
+        width = .2) +
+    ggplot2::geom_point(
+        ggplot2::aes(color = weapons,
+                     size = "Mean (2012-2016)"),
+        alpha = 0.5
+    ) +
+    ggplot2::coord_flip() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Firearm type",
+                  y = "Number of homicides committed") +
+    ggplot2::scale_color_manual(values = 
+           c("Handguns" = "#7463AC", 
+             "Firearms, type not stated" = "gray", 
+             "Rifles" = "gray", 
+             "Shotguns" = "gray", 
+             "Other guns" = "gray"), 
+           guide = "none"
+           ) +
+    ggplot2::scale_linetype_manual(values = 1, name = "Error bars") + 
+    ggplot2::scale_size_manual(values = 4, name = "") + 
+    ggplot2::theme(legend.position = "top")
+```
+***
+
+I added `alpha = 0.5` so that the small error bars are still visible "behind" the big dots.
+
+::::
+:::::
+
+This is a more complex graph: It has two layers (`geom_errorbar()` and `geom_point()`) and three different scales (weapons, line type and size). The difficulty for me is to know where to put the different aesthetics. For instance: I could put `size = 4` after the `alpha = 0.5` argument, but then the argument `scale_size_manual(values = 4)` would not work anymore. Otherwise it is not possible to add the alpha argument into the `scale_size_manual()` function.
+
+
+::: {.callout-tip}
+Only for "firearms, type not stated" and "Handguns" had a remarkable size of standard deviation from the mean. For the other types ("Riffles", "shotguns" and "other guns") the spread is so small that they did not even extend outside of the dots. (To see them, I had to apply an `alpha` argument.)
+
+In the book Harris supposes that the the small number of years is the reason for this tendency. I do not believe that this may be the main reason. I think it has more to do with the absolute small numbers of observation in these type of firearms.
+:::
+
+:::
+
+::::
+:::::
+
+
 #### Box Plot {#sec-chap03-box-plot-2}
 
+While the bar chart and point chart were great for comparing the means of the groups, the boxplot will provide more information about the distribution in each group.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-ID-text}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### header1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-a}
+: Numbered R Code Title (Original)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-boxplots-guns
+#| fig-cap: "Boxplot: Annual homicides by firearm type in the United States, 2012–2016"
+
+fbi_deaths_clean <- base::readRDS("data/chap03/fbi_deaths_clean.rds")
+
+fbi_deaths_clean |>
+    ggplot2::ggplot(
+        ggplot2::aes(x = stats::reorder(
+                         x = weapons, 
+                         X = -deaths),
+                     y = deaths)
+        ) +
+    ggplot2::geom_boxplot() +
+    ggplot2::coord_flip() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Firearm type",
+                  y = "Number of homicides committed") 
+```
+In contrast to the book I have not colored / filled the boxes.
+
+In this type of graph we do not only see the bigger spread of handguns and firearms not stated, but we also see the skew of these two distributions.
+
+In the next tab we can see the distribution of the mean values in relation to the boxplots.
+
+::::
+:::::
+
+::: {.callout-tip}
+1. The number of homicides by handguns and firearms, where the type is not stated, varies in the years 2012-2016 a lot.
+2. Both distributions are skewed as the median is not in the middle of the box. Firearms, whose types are not stated, has the median on the far left of the box. The distribution is right skewed because is has some large values to the right.
+3. The situation for handguns is reversed: It is a left skewed distribution because there are some small values to the left of the median resulting in a smaller mean.
+
+
+:::
+###### header2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-boxplots-guns-data-points
+#| fig-cap: "Boxplot with data points: Annual homicides by firearm type in the United States, 2012–2016"
+
+fbi_deaths_clean <- base::readRDS("data/chap03/fbi_deaths_clean.rds")
+
+## if jitter should always result 
+## in the same horizontal position
+# set.seed(500) 
+
+fbi_deaths_clean |>
+    ggplot2::ggplot(
+        ggplot2::aes(x = stats::reorder(
+                         x = weapons, 
+                         X = -deaths),
+                     y = deaths)
+        ) +
+    ggplot2::geom_boxplot() +
+    ggplot2::geom_jitter() +
+    ggplot2::coord_flip() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Firearm type",
+                  y = "Number of homicides committed") 
+```
+***
+
+I didn't need `alpha = .8` as in the book, because I didn't fill the boxes with color.
+
+I noticed that whenever I run the code chunk the horizontal position of the data points changes. This is the effect of the `jitter` command. I you want to have always exactly the same position than you would have to add a `set.seed()` in front of the computation.
+
+It is interesting to see that just one data point far from the median cannot change its position. Compare the far right dot of firearms not reported. It has the same relative position to the box as the far right dot of the handguns category. But it didn't pull the median to its position. In contrast to the handguns where several other points on the right side support the one far right dot and drag the median to the right.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+
 #### Violin Plot {#sec-chap03-violin-plot}
+
+`r glossary("Violin plots")` can be seen as a graph type between `r glossary("boxplots")` and `r glossary("density plots")`. They are typically used to look at the distribution of continuous data within categories.
+
+For the homicide data they do not work because there are not enough data. There were too few cases in some categories. So the book applied the violin plot to the age by sex data from the `r glossary("NHANES")` survey.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: code-chunk-name
+
+nhanes_2012_clean <-  base::readRDS("data/chap03/nhanes_2012_clean.rds")
+
+nhanes_2012_clean |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = sex, y = RIDAGEYR)
+    ) +
+    ggplot2::geom_violin(
+        ggplot2::aes(fill = sex)
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Sex",
+        y = "Age in years"
+    ) + 
+    ggokabeito::scale_fill_okabe_ito(
+        guide = "none"
+    )
+
+```
+
+::::
+:::::
+
+
+
 
 ### Two continuous variables
 
@@ -5330,6 +6287,39 @@ Annotations for {**ggplot2**}
 
 :::
 :::
+
+### curl
+
+:::::{.my-resource}
+:::{.my-resource-header}
+curl: A Modern and Flexible Web Client for R 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-curl}
+
+***
+
+{**curl**}: [A Modern and Flexible Web Client for R](https://cran.r-project.org/web/packages/curl/vignettes/intro.html) [@curl]
+
+
+(*There is no hexagon logo for {**curl**} available*)
+
+The `curl()` and `curl_download(`) functions provide highly configurable drop-in replacements for base `url()` and `download.file()` with better performance, support for encryption (https, ftps), gzip compression, authentication, and other 'libcurl' goodies. 
+
+The core of the package implements a framework for performing fully customized requests where data can be processed either in memory, on disk, or streaming via the callback or connection interfaces. Some knowledge of 'libcurl' is recommended; for a more-user-friendly web client see the 'httr' package which builds on this package with http specific tools and logic.
+
+{**curl**}: A Modern and Flexible Web Client for R        
+:::
+
+
+***
+::::
+:::::
+
+
 
 ### dichromat
 

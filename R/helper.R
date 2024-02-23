@@ -125,3 +125,30 @@ list_plotter <- function(color_list, names, package_name) {
         )
     }
 }
+
+
+################################################################
+# save_data_file: Save data file for the specified chapter
+# Purpose:
+# If folder not exists, create it and save object as .rds file
+# Author: Peter Baumgartner
+# I have used the function in my notes on "Statistics with R"
+# # See: https://bookdown.org/pbaumgartner/swr-harris/
+################################################################
+
+save_data_file <- function(chapter_folder, object, file_name){
+    data_folder <- base::paste0(here::here(), "/data/")
+    if (!base::file.exists(data_folder))
+    {base::dir.create(data_folder)}
+
+    chap_folder <-
+        base::paste0(
+            here::here(),
+            paste0("/data/", chapter_folder, "/")
+        )
+    if (!base::file.exists(chap_folder))
+    {base::dir.create(chap_folder)}
+
+    base::saveRDS(object = object,
+                  file = paste0(chap_folder, "/", file_name))
+}
