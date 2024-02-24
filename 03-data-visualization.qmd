@@ -167,10 +167,14 @@ successfully in @lst-chap02-get-brfss-2014-data.
 
 There are different sources of data for this chapter. A special case are the data provided by Harris about guns manufactured in the US between 1990 and 2015. There is no source available because this dataset was not mentioned in the section about "Data, codebook, and R packages" (see: @sec-data-codebook-packages). But a Google searched revealed several interesting possible sources:
 
-- **ATF**: The original data are generated and published by the [Bureau of Alcohol, Tobacco, Firearms and Explosives](https://www.atf.gov/resource-center/data-statistics) (`r glossary("ATF agency", "ATF")`). Scrolling down you will find the header "Annual Firearms Manufacturers And Export Report" (AFMER). But the data are separated by year and only available as a summarized PDF fact sheet. But finally I found in a downloaded `.csv` file from [USAFacts](https://usafacts.org/) a reference to a [PDF file where all the data I am interesting in are listed](https://www.atf.gov/firearms/docs/report/2019-firearms-commerce-report/download). To the best of my knowledge there are no better accessible data on the ATF website.  
-- **Statista**: With a free account of `r glossary("statista")` it is possible to download [Number of firearms manufactured in the United States from 1986 to 2021](https://www.statista.com/statistics/215395/number-of-total-firearms-manufactured-in-the-us/). But here we are missing the detailed breakdown by type of firearms. Another restriction is that the publication of the data are only allowed if you have a professional or enterprise account, starting with € 199,- per month.
-- **The Trace**: Another option is to download the collected data by [The Trace](https://www.thetrace.org/2023/03/guns-america-data-atf-total/), an American non-profit journalism outlet devoted to gun-related news in the United States ([Wikipeda](https://en.wikipedia.org/wiki/The_Trace_(website))). The quoted article is referring to a [google spreadsheet](https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vShiwPP36HrjUyPztuIhoYjR3Xd3uhlQivMC3wPSNq1UCjVbj2wsPZIISqOtFQ0NbVVwwKBzyrDNuCz/pubhtml#) where you can access the collected data for the US gun production from 1899 (!) until today.
-- **USAFacts**: Finally I found the data I was looking for in a easy accessible format to download on the website of USAFacts, a not-for-profit organization and website that provides data and reports on the United States population, its government's finances, and government's impact on society.([Wikipedia](https://en.wikipedia.org/wiki/USAFacts)). The data range from 1986 to 2019 and they are based on the original ATF data from the PDF report. They are higher than the data provided by Harris because the include exports. The AFMER report excludes production for the U.S. military but includes  also firearms purchased by domestic law enforcement agencies. 
+- **[ATF](https://www.atf.gov/)**: The original data are generated and published by the [Bureau of Alcohol, Tobacco, Firearms and Explosives](https://www.atf.gov/resource-center/data-statistics) (`r glossary("ATF agency", "ATF")`). Scrolling down you will find the header "Annual Firearms Manufacturers And Export Report" (AFMER). But the data are separated by year and only available as a summarized PDF fact sheet. But finally I found in a downloaded `.csv` file from [USAFacts](https://usafacts.org/) a reference to a [PDF file where all the data I am interesting in are listed](https://www.atf.gov/firearms/docs/report/2019-firearms-commerce-report/download). To the best of my knowledge there are no better accessible data on the ATF website.  
+- **[Statista](https://www.statista.com/)**: With a free account of `r glossary("statista")` it is possible to download [Number of firearms manufactured in the United States from 1986 to 2021](https://www.statista.com/statistics/215395/number-of-total-firearms-manufactured-in-the-us/). But here we are missing the detailed breakdown by type of firearms. Another restriction is that the publication of the data are only allowed if you have a professional or enterprise account, starting with € 199,- per month.
+- **[The Trace](https://www.thetrace.org/)**: Another option is to download the collected data by [The Trace](https://www.thetrace.org/2023/03/guns-america-data-atf-total/), an American non-profit journalism outlet devoted to gun-related news in the United States ([Wikipeda](https://en.wikipedia.org/wiki/The_Trace_(website))). The quoted article is referring to a [google spreadsheet](https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vShiwPP36HrjUyPztuIhoYjR3Xd3uhlQivMC3wPSNq1UCjVbj2wsPZIISqOtFQ0NbVVwwKBzyrDNuCz/pubhtml#) where you can access the collected data for the US gun production from 1899 (!) until today.
+- **[USAFacts](https://usafacts.org/)**: Finally I found the [data I was looking for](https://usafacts.org/data/topics/security-safety/crime-and-justice/firearms/firearms-manufactured/) in a easy accessible format to download on the website of USAFacts.org, a not-for-profit organization and website that provides data and reports on the United States population, its government's finances, and government's impact on society.([Wikipedia](https://en.wikipedia.org/wiki/USAFacts)). The data range from 1986 to 2019 and they are based on the original ATF data from the PDF report. They are higher than the data provided by Harris because the include exports. The AFMER report excludes production for the U.S. military but includes  also firearms purchased by domestic law enforcement agencies.
+
+But even if you have data of manufactured, exported and imported guns, this does not provide the exact numbers of guns circulating in the US:
+
+> Although a few data points are consistently collected, there is a clear lack of data on firearms in the US. It is impossible, for instance, to know the total number of firearms owned in the United States, or how many guns were bought in the past year, or what the most commonly owned firearms are. Instead, Americans are left to draw limited conclusions from available data, such as the number of firearms processed by the National Firearm Administration (NFA), the number of background checks conducted for firearm purchase, and the number of firearms manufactured. However, none of these metrics provide a complete picture because state laws about background checks and gun registration differ widely. ([USAFact.org](https://usafacts.org/articles/2020-has-been-record-setting-year-background-checks-other-firearm-data-incomplete/))
 
 :::{#not-chap03-circulated-guns-us}
 :::::{.my-note}
@@ -1202,6 +1206,39 @@ Here applies similar note as in the previous tab:
 ::::
 :::::
 
+###### Gun production
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-recode-gun-production}
+: Recode firearms production dataset 1986-2019 from USAFact.org
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: recode-gun-production
+#| cache: true
+#| results: hold
+
+
+guns_manufactured_2019 <- base::readRDS("data/chap03/guns_manufactured_2019.rds")
+
+guns_manufactured_2019_clean <- guns_manufactured_2019 |> 
+    dplyr::select(-c(2:7)) |> 
+    dplyr::slice(c(1,3:7)) |> 
+    ## strange: `1986` is a character variable
+    dplyr::mutate(`1986` = as.numeric(`1986`))
+
+base::saveRDS(guns_manufactured_2019_clean, 
+              "data/chap03/guns_manufactured_2019_clean.rds")
+
+utils::str(guns_manufactured_2019_clean)
+skimr::skim(guns_manufactured_2019_clean)
+```
+
+::::
+:::::
+
 ###### Guns manufactured
 
 
@@ -1260,38 +1297,7 @@ Recoded: Prepare manufactured data to get an appropriate structure to add the im
 ::::
 :::::
 
-###### Gun production
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap03-recode-gun-production}
-: Recode firearms production dataset 1986-2019 from USAFact.org
-::::::
-:::
-::::{.my-r-code-container}
-```{r}
-#| label: recode-gun-production
-#| cache: true
-#| results: hold
-
-
-guns_manufactured_2019 <- base::readRDS("data/chap03/guns_manufactured_2019.rds")
-
-guns_manufactured_2019_clean <- guns_manufactured_2019 |> 
-    dplyr::select(-c(2:7)) |> 
-    dplyr::slice(c(1,3:7)) |> 
-    ## strange: `1986` is a character variable
-    dplyr::mutate(`1986` = as.numeric(`1986`))
-
-base::saveRDS(guns_manufactured_2019_clean, 
-              "data/chap03/guns_manufactured_2019_clean.rds")
-
-utils::str(guns_manufactured_2019_clean)
-skimr::skim(guns_manufactured_2019_clean)
-```
-
-::::
-:::::
 
 ###### Guns total
 
@@ -1312,10 +1318,14 @@ guns_manufactured_clean <-  base::readRDS("data/chap03/guns_manufactured_clean.r
 guns_exported_clean <- base::readRDS("data/chap03/guns_exported_clean.rds")
 guns_imported_clean <- base::readRDS("data/chap03/guns_imported_clean.rds")
 
-guns_total <- guns_manufactured_clean[, 2:5] - guns_exported_clean[, 2:5]
-guns_total_clean <- guns_total[, 1:4] + guns_imported_clean[, 2:5]
+guns_total_temp_1 <- guns_manufactured_clean[, 2:6] - guns_exported_clean[, 2:6]
+guns_total_temp_2 <- guns_total_temp_1[, 1:5] + guns_imported_clean[, 2:6]
 
-dplyr::bind_cols(guns_manufactured_clean[, 1], guns_total_clean)
+guns_total <- dplyr::bind_cols(guns_manufactured_clean[, 1], guns_total_temp_2)
+
+base::saveRDS(guns_total, "data/chap03/guns_total.rds")
+
+guns_total
 ```
 Manufactured guns - exported guns + imported guns
 :::
@@ -4355,7 +4365,7 @@ withr::with_options(
 :::::
 
 ::: {.callout-tip}
-This graph is not very informative because it is difficult to compare the type of firearms for different years. To get this information a line chart would be much better. (See @gun-types-line-graph)
+This graph is not very informative because it is difficult to compare the type of firearms for different years. To get this information a line chart would be much better (see @sec-chap03-line-graph).
 :::
 :::
 
@@ -4620,13 +4630,13 @@ For the homicide data they do not work because there are not enough data. There 
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-ID-text}
-: Numbered R Code Title
+:::::: {#cnj-chap03-violin-plot-sex-nhanes-2012}
+: Using a violin plot to compare respondent sex of the NHANES 2012 survey
 ::::::
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: code-chunk-name
+#| label: violin-plot-sex-nhanes-2012
 
 nhanes_2012_clean <-  base::readRDS("data/chap03/nhanes_2012_clean.rds")
 
@@ -4657,6 +4667,178 @@ nhanes_2012_clean |>
 ### Two continuous variables
 
 #### Line Graph {#sec-chap03-line-graph}
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-ID-text}
+: Firearms per type manufactured in the United States
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Circulating guns
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-manufactured-2017-line-graph}
+: Firearms circulating in the United States 1986-2017
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-manufactured-2017-line-graph
+#| fig-cap: "Firearms circulating in the United States 1986-2017"
+
+guns_total <-  
+    base::readRDS("data/chap03/guns_total.rds")
+
+guns_total |>
+    tidyr::pivot_longer(
+        cols = 2:6,
+        names_to = "gun_type",
+        values_to = "gun_count"
+    ) |> 
+    dplyr::mutate(Year = base::as.numeric(Year),
+                  gun_type = forcats::as_factor(gun_type)
+    ) |> 
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = Year, 
+            y = gun_count / 1e5)
+        ) +
+    ggplot2::geom_line(
+        ggplot2::aes(color = gun_type)
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        y = "Number of firearms (in 100,000s)",
+    ) + 
+    ggplot2::scale_x_continuous(
+        limits = c(1986, 2017), 
+        breaks = c(1986, 1990, 1995, 2000,
+                   2005, 2010, 2015, 2017)) +
+    ggokabeito::scale_color_okabe_ito(
+        order = c(1:3, 7, 9),
+        name = "Type of
+Firearm",
+        breaks = c('Total', 'Handguns', 'Rifles',
+                   'Shotguns',  'Misc'))
+
+# # # palette_okabe_ito(order = 1:9, alpha = NULL, recycle = FALSE)
+# "#E69F00" "#56B4E9" "#009E73" "#F0E442" "#0072B2" "#D55E00" "#CC79A7" "#999999" "#000000"
+
+
+```
+
+***
+
+There are four remarkable code lines:
+
+1. To prevent scientific notation on the y-axis I had changed the measure unit to 100000 guns (1e5).
+2. I added several breaks for the x-axis.
+3. I reordered the legend to match the position with the lines of the gun types.
+4. I used with the Okabe Ito color scale a colorblind friendly color palette and chose those colors that can be distinguished best. The function `palette_okabe_ito(order = 1:9, alpha = NULL, recycle = FALSE)` generates Hex color code for all nine colors of palette. If you copy the (not runable) resulted hex code into the R code chunk, you can examine the appropirate colors visually. --- I commented these two code line out.
+
+::::
+:::::
+
+I took the [ATF data form the PDF file](https://www.atf.gov/firearms/docs/report/2019-firearms-commerce-report/download) and had calculated guns manufactured (from the USAFact.org website) and subtracted exported guns (page 4 of the ATF PDF) and added imported guns (page 6 of the ATF PDF). For details of the sources see @sec-gun-production.
+
+
+
+###### Guns manufactured
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-manufactured-2019-line-graph}
+: Firearms manufactured in the United States 1986-2019
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: manufactured-2019-line-graph
+
+guns_manufactured_2019_clean <-  
+    base::readRDS("data/chap03/guns_manufactured_2019_clean.rds")
+
+lookup_manufactured <- c(
+    Total = "Firearms manufactured (Items)",
+    Pistols = "Pistols (Items)",
+    Rifles = "Rifles (Items)",
+    Shotguns = "Shotguns (Items)",
+    Revolvers = "Revolvers (Items)",
+    Misc = "Misc. Firearms (Items)"
+    )
+
+
+guns_manufactured_2019_clean |>
+    tidyr::pivot_longer(
+        cols = -Years,
+        names_to = "year",
+        values_to = "gun_count"
+    ) |> 
+    dplyr::rename(gun_type = "Years") |> 
+    dplyr::mutate(year = base::as.numeric(year),
+                  gun_type = forcats::as_factor(gun_type)
+    ) |>
+    tidyr::pivot_wider(
+        names_from = gun_type,
+        values_from = gun_count
+    ) |> 
+    dplyr::rename(
+        dplyr::all_of(lookup_manufactured)
+    ) |> 
+    tidyr::pivot_longer(
+        cols = -year,
+        names_to = "gun_type",
+        values_to = "gun_count"
+    ) |> 
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = year, 
+            y = gun_count / 1e5)
+        ) +
+    ggplot2::geom_line(
+        ggplot2::aes(color = gun_type)
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        y = "Number of firearms (in 100,000s)",
+        x = "Year manufactured"
+    ) +
+    ggplot2::scale_x_continuous(
+        limits = c(1986, 2019),
+        breaks = c(1986, 1990, 1995, 2000,
+                   2005, 2010, 2015, 2019)) +
+    ggokabeito::scale_color_okabe_ito(
+        order = c(1:3, 6, 7, 9),
+        name = "Type of
+Firearm",
+        breaks = c('Total', 'Pistols', 'Rifles',
+                   'Misc', 'Revolvers', 'Shotguns'))
+
+## palette_okabe_ito(order = 1:9, alpha = NULL, recycle = FALSE)
+# "#E69F00" "#56B4E9" "#009E73" "#F0E442" "#0072B2" "#D55E00" "#CC79A7" "#999999" "#000000"
+
+
+```
+
+Here applies the same comment from the previous tab "Circulating guns". 
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
 
 #### Scattterplot {#sec-chap03-scatterplot}
 
@@ -6918,6 +7100,15 @@ Color choice in information visualization is important in order to avoid being m
 ::::
 :::::
 
+
+### tabulizer
+
+pdftools
+PDF Data Extractor PDE
+
+https://www.youtube.com/watch?v=bJH-S2iaxNo (extract tables with pdftools)
+
+https://stackoverflow.com/questions/60127375/using-the-pdf-data-function-from-the-pdftools-package-efficiently?rq=2
 
 ### vcd
 
