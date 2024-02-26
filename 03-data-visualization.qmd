@@ -23,7 +23,7 @@ Objectives
     continuous variable (@sec-chap03-achievement-2)
 -   **Achievement 3**: Choosing and creating graphs for two variables at
     once (@sec-chap03-achievement-3)
--   **Achievement 4**: Ensuring graphs are well-formatted
+-   **Achievement 4**: Ensuring graphs are well-formatted (@sec-chap03-graph-well-formatted)
 :::
 :::
 
@@ -2084,6 +2084,8 @@ truncated. After some experimentation I learned that I had to use the `|` operat
 
 ### Pie Chart {#sec-chap03-pie-chart}
 
+#### Introduction
+
 `r glossary("Pie charts")` show parts of a whole. The pie, or circle,
 represents the whole. The slices of pie shown in different colors
 represent the parts. A similar graph type is the but they are **not
@@ -2123,8 +2125,9 @@ But there are some cases, where pie chart (or
 `r glossary("donut charts")` sometimes also called ring chart) are
 appropriate:
 
-1.  **Visualize an important number by highlighting just one junk of the
-    circle**
+#### Visualize an important number
+
+**Visualize an important number by highlighting just one junk of the circle**
 
 ------------------------------------------------------------------------
 
@@ -2154,8 +2157,10 @@ BTW: Donut charts are even worse than pie charts:
 > middle of the pie. Now we are left to judge curvature and … compare
 > wedges by both curvature and angle [@evergreen2019, p.32].
 
-2.  **Use a very limited number of wedges (best not more than two) for
-    making a clear point.**
+
+#### Making a clear point
+
+**Use a very limited number of wedges (best not more than two) for making a clear point.**
 
 ![Pie charts are acceptable with very few categories [@evergreen2019,
 p.176]](img/chap03/pie-chart-two-wedges-min.png){#fig-pie-chart-2
@@ -2357,6 +2362,173 @@ gun_use_big_hole |>
 :::
 :::
 :::
+
+#### Case Study
+
+It is a fact that pie chart are still very popular. I recently found for instance a pie chart in one of the most prestigious German weekly newspaper [Die Zeit](https://www.zeit.de/index) the following pie chart about the financing of the United Nations Relief and Works Agency for Palestine Refugees in the Near East ([UNRWA](https://www.unrwa.org/))
+
+![Who is financing the UNRWA?](img/chap03/die-zeit-pie-graph-min.png){#fig-zeit-pie-graph
+fig-alt="A German graph that shows as a doughnut the amount and proportion of financing the UNRWA through the ten biggest sponsors in 2022. In the middle (the whole) is written the total sum with 1.17 billion dollar. From right to left: USA 344 Mio, Several countries including Kuwait (13) and Qatar (12) with 278 Mio , Germany (202 Mio ), EU (114 Mio ), Sweden (61), Norway (34), Japan (39), France (29), Saudi Arabia (27), Switzerland (26), and Turkey with 25 Mio. US dollar."
+fig-align="center"}
+
+The figure is colorful and looks nice. More important is that is has all the important information (Country names and amount of funding) written as labels into the graphic. It seems that this a good example for a pie chart, a kind of an exception to the rule. 
+
+But if we get into the details, we see that the graph was a twofold simplification of the [complete data set](https://www.unrwa.org/sites/default/files/overall_donor_ranking_2022.pdf). Twofold because besides the overall ranking of 98 sponsors there is a simplified [ranking list of the top 20 donors](https://www.unrwa.org/sites/default/files/top_20_donors_2022_overall_ranking.pdf).The problem with `r glossary("pie charts")` (and also with `r glossary("waffle charts")`) is that you can't use them with many categories. 
+
+So it was generally a good choice of "Die Zeit" to contract financiers with less funding and to concentrate to the biggest sponsors. But this has the disadvantage not to get a complete picture that is especially cumbersome for political decisions. As a result we have a huge group of miscellaneous funding sources (2nd in the ranking!) that hides many countries that are important to understand the political commitment im the world for the UNRWA.
+
+But let's see how this graphic would be appear in alternative charts
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-chap03-top20-donors-2022}
+: Top 20 UNRWA Donors in 2022
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### Get data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-get-unrwa-data}
+: Get UNRWA data of top 20 donors from PDF file with {*+tabulizer**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-unrwa-data
+#| results: hold
+#| cache: true
+#| eval: false
+
+unrwa <- tabulizer::extract_tables(
+    "data/chap03/top_20_donors_2022_overall_ranking.pdf")
+
+unrwa_donors <- tibble::as_tibble(unrwa[[1]])
+
+base::saveRDS(unrwa_donors, "data/chap03/unrwa_donors.rds")
+```
+
+***
+
+(*For this R code chunk is no output available*)
+
+::::
+:::::
+
+
+###### Recode data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-recode-unrwa-data}
+: Recode and show UNRWA data of top 20 donors 2022
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: recode-unrwa-data
+#| results: hold
+#| cache: true
+
+unrwa_donors <- base::readRDS("data/chap03/unrwa_donors.rds")
+
+
+base::options(scipen = 999)
+unrwa_donor_ranking <- unrwa_donors |> 
+    dplyr::rename(
+        donor = "V1",
+        total = "V6"
+    ) |> 
+    dplyr::select(donor, total) |> 
+    dplyr::mutate(donor = forcats::as_factor(donor)) |> 
+    dplyr::mutate(donor = forcats::fct_recode(donor,
+          Spain = "Spain (including Regional Governments)*",
+          Belgium = "Belgium (including Government of Flanders)",
+          Kuwait = "Kuwait (including Kuwait Fund for Arab Economic Development)"
+          )
+    ) |> 
+    dplyr::slice(6:25) |> 
+    dplyr::mutate(dplyr::across(2, 
+    function(x)
+        { base::as.numeric(as.character(base::gsub(",", "", x))) })
+    ) 
+
+utils::str(unrwa_donor_ranking)
+skimr::skim(unrwa_donor_ranking)
+
+```
+
+::::
+:::::
+
+
+###### Plot data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-plot-unrwa-data}
+: Top 20 UNRWA donors in 2022
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-unrwa-data
+#| fig-cap: "Top 20 UNRWA donors in 2022 (in millions US dollar)"
+#| results: hold
+#| cache: true
+
+unrwa_donor_ranking |> 
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = stats::reorder(x = donor, X = total),
+            y = total / 1e6)
+        ) +
+    ggplot2::geom_point(size = 3) +
+    ggplot2::coord_flip() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Donor",
+        y = "Donation (in Million US Dollars)"
+    )
+    
+```
+***
+
+This graph is not as spectacular as "Die Zeit" figure, but carries more information. But what is much more important: 
+
+1. It shows much better the ranking.
+2. It makes it obvious that there are only 4 donors (USA, Germany, EU and Sweden) that stand out from all the other financiers.
+
+To adapt a quotation from Statistical Consulting Centre in its article [Why you shouldn’t use pie charts](https://scc.ms.unimelb.edu.au/resources/data-visualisation-and-exploration/no_pie-charts):
+
+> Some people might say this graph is boring, but as Edward Tufte warns in his book Envisioning information:
+>
+> "Cosmetic decoration, which frequently distorts the data, will never salvage an underlying lack of content."
+>
+> Why is my point chart so much better?
+>
+> - We can estimate the quantities – the gridlines are helpful here.
+> - We can immediately see the order of the donors.
+> - We can accurately compare the different donors.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+
+
 
 ------------------------------------------------------------------------
 
@@ -4384,27 +4556,27 @@ Point charts are an alternative for simple bar graphs. The use less ink and are 
 
 :::::{.my-example}
 :::{.my-example-header}
-:::::: {#exm-ID-text}
-: Numbered Example Title
+:::::: {#exm-chap03-point-charts}
+: Point charts
 ::::::
 :::
 ::::{.my-example-container}
 
 ::: {.panel-tabset}
 
-###### header1
+###### Point charts
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-code-name-a}
-: Numbered R Code Title (Original)
+: Point chart: Mean annual homicides by firearm type in the United States, 2012–2016
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
 #| label: fig-point-chart-mean-and-flipped
-#| fig-cap: "Point chart: Mean annual homicides by firearm type in the United States, 2012–2016"
+#| fig-cap: ""
 
 fbi_deaths_clean <- base::readRDS("data/chap03/fbi_deaths_clean.rds")
 
@@ -4436,12 +4608,12 @@ fbi_deaths_clean |>
 :::::
 
 
-###### header2
+###### Point chart with error bars
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-code-name-b}
-: Numbered R Code Title (Tidyverse)
+:::::: {#cnj-chap03-point-chart-mean-error-bars}
+: Point chart with error bars: Mean annual homicides by firearm type in the United States, 2012–2016
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -4518,20 +4690,20 @@ While the bar chart and point chart were great for comparing the means of the gr
 
 :::::{.my-example}
 :::{.my-example-header}
-:::::: {#exm-ID-text}
-: Numbered Example Title
+:::::: {#exm-chap03-box-plots}
+: Box Plots
 ::::::
 :::
 ::::{.my-example-container}
 
 ::: {.panel-tabset}
 
-###### header1
+###### Boxplot
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-code-name-a}
-: Numbered R Code Title (Original)
+:::::: {#cnj-chap03-box-plot}
+: Boxplot: Annual homicides by firearm type in the United States, 2012–2016
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -4571,12 +4743,12 @@ In the next tab we can see the distribution of the mean values in relation to th
 
 
 :::
-###### header2
+###### Box Plot with Data points
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-code-name-b}
-: Numbered R Code Title (Tidyverse)
+:::::: {#cnj-chap03-box-plot-with-data-point}
+: Boxplot with data points: Annual homicides by firearm type in the United States, 2012–2016
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -4666,6 +4838,23 @@ nhanes_2012_clean |>
 
 ### Two continuous variables
 
+:::::{.my-important}
+:::{.my-important-header}
+When to use line graphs and when to use scatterplots
+:::
+::::{.my-important-container}
+
+Situations where a `r glossary("line graph")` is more useful than a `r glossary("scatterplot")`: 
+
+- (a) when the graph is showing change over time, and 
+- (b) when there is not a lot of variation in the data. 
+
+Relationships where there is no measure of time and data that include a lot of variation are better shown with a scatterplot.
+
+::::
+:::::
+
+
 #### Line Graph {#sec-chap03-line-graph}
 
 :::::{.my-example}
@@ -4682,20 +4871,21 @@ nhanes_2012_clean |>
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap03-manufactured-2017-line-graph}
+:::::: {#cnj-chap03-circulated-2017-line-graph}
 : Firearms circulating in the United States 1986-2017
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: fig-manufactured-2017-line-graph
+#| label: fig-circulated-2017-line-graph
 #| fig-cap: "Firearms circulating in the United States 1986-2017"
+#| results: hold
 
 guns_total <-  
     base::readRDS("data/chap03/guns_total.rds")
 
-guns_total |>
+p_guns_total <- guns_total |>
     tidyr::pivot_longer(
         cols = 2:6,
         names_to = "gun_type",
@@ -4727,6 +4917,9 @@ guns_total |>
 Firearm",
         breaks = c('Total', 'Handguns', 'Rifles',
                    'Shotguns',  'Misc'))
+
+
+p_guns_total
 
 # # # palette_okabe_ito(order = 1:9, alpha = NULL, recycle = FALSE)
 # "#E69F00" "#56B4E9" "#009E73" "#F0E442" "#0072B2" "#D55E00" "#CC79A7" "#999999" "#000000"
@@ -4761,7 +4954,9 @@ I took the [ATF data form the PDF file](https://www.atf.gov/firearms/docs/report
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: manufactured-2019-line-graph
+#| label: fig-manufactured-2019-line-graph
+#| fig-cap: "Firearms manufactured in the United States 1986-2019"
+#| results: hold
 
 guns_manufactured_2019_clean <-  
     base::readRDS("data/chap03/guns_manufactured_2019_clean.rds")
@@ -4829,7 +5024,9 @@ Firearm",
 
 ```
 
-Here applies the same comment from the previous tab "Circulating guns". 
+***
+
+Here applies the same comment about the code structure as written for the previous tab "Circulating guns". 
 ::::
 :::::
 
@@ -4838,13 +5035,292 @@ Here applies the same comment from the previous tab "Circulating guns".
 ::::
 :::::
 
-***
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+Line graphs need an `ggplot2::aes()` specification inside the `ggplot2::geom_line()`
+:::
+::::{.my-watch-out-container}
+In contrast to other types of graph: Besides the definition of x and y variables, there is a second `aes()` specification inside the `geom_line()` necessary where you define `linetype` or the `color` of lines. Otherwise the graph would not work as line graph!
+::::
+:::::
+
+
+
+
 
 #### Scattterplot {#sec-chap03-scatterplot}
 
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-scatterplot-mortality-rate-funding}
+: Scatterplot for Mortality Rate versus Funding
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Metric x-axis
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-mortality-rate-funding-metric-x-scale}
+: Scatterplot: Mortality Rate versus Funding (with metric x-scale)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-scatterplot-mortality-rate-funding-metric-x-scale
+#| fig-cap: "Scatterplot: Mortality Rate versus Funding (with metric x-scale)"
+
+research_funding <- base::readRDS("data/chap03/research_funding.rds")
+
+research_funding |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = `Mortality Rate per 100,000 Population`,
+                     y = Funding)
+        ) +
+    ggplot2::geom_point() +
+    ggplot2::theme_bw()
+```
+
+::::
+:::::
+
+
+###### Log x-axis (1)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-mortality-rate-funding-log-x-scale-1}
+: Scatterplot: Mortality Rate versus Funding (with logarithmic x-scale and a 'loess' smoother)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-scatterplot-mortality-rate-funding-log-x-scale-1
+#| fig-cap: "Scatterplot: Mortality Rate versus Funding (with logarithmic x-scale and a 'loess' smoother)"
+
+## prevent exponential (scientific) notation
+base::options(scipen = 999) 
+
+research_funding |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = `Mortality Rate per 100,000 Population`,
+                     y = Funding / 1e9)
+        ) +
+    ggplot2::geom_point() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        y = "Funding, US $ billion"
+    ) +
+    ggplot2::geom_smooth(
+        method = "loess", 
+        formula = 'y ~ x'
+        ) +
+    ggplot2::scale_x_log10() + 
+    ggplot2::scale_y_log10()
+
+```
+***
+
+1. To produce the trend line I have used `ggplot2::geom_smooth()` and not `ggplot2::stat_smooth()` as in the book. Frankly, I do not understand the difference, because the output is the same. As parameters I have added the standard value for less than 1,000 observations `method = "loess"` and `formula = 'y ~x'`.
+2. To prevent scientific notation I have added `options(scipen = 999)`.
+
+> A penalty to be applied when deciding to print numeric values in fixed or exponential notation. Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than `scipen` digits wider. [Help page for Options Settings](https://web.mit.edu/r/current/lib/R/library/base/html/options.html)
+::::
+:::::
+
+###### Log x-axis (2)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-mortality-rate-funding-log-x-scale-2}
+: Scatterplot: Mortality Rate versus Funding (with logarithmic x-scale and a linear smoother)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-scatterplot-mortality-rate-funding-log-x-scale-2
+#| fig-cap: "Scatterplot: Mortality Rate versus Funding (with logarithmic x-scale and a linear model smoother)"
+
+research_funding |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = `Mortality Rate per 100,000 Population`,
+                     y = Funding / 1e9)
+        ) +
+    ggplot2::geom_point() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        y = "Funding, US $ billion"
+    ) +
+    ggplot2::geom_smooth(
+        method = "lm", 
+        formula = 'y ~ x'
+        ) +
+    ggplot2::scale_x_log10() + 
+    ggplot2::scale_y_log10()
+
+```
+***
+
+
+In contrast to @fig-scatterplot-mortality-rate-funding-log-x-scale-1 I have here used for the trend line, e.g. the line for the best fit, the smoother for the linear model ('lm').
+
+::::
+:::::
+
+###### Labelled (1)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-mortality-rate-funding-labelled-1}
+: Scatterplot: Mortality Rate versus Funding (with logarithmic x-scale, a linear smoother and points labelled)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-scatterplot-mortality-rate-funding-labelled-1
+#| fig-cap: "Scatterplot: Mortality Rate versus Funding (with logarithmic x-scale, a linear model smoother and points labelled)"
+
+
+research_funding |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = `Mortality Rate per 100,000 Population`,
+                     y = Funding / 1e9)
+        ) +
+    ggplot2::geom_point() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        y = "Funding, US $ billion"
+    ) +
+    ggplot2::geom_smooth(
+        method = "lm", 
+        formula = 'y ~ x'
+        ) +
+    ggplot2::scale_x_log10() + 
+    ggplot2::scale_y_log10() +
+    ggplot2::geom_text(
+        ggplot2::aes(label = `Cause of Death`)
+    )
+
+```
+***
+
+The problem here is that the label are overlapping each other. This can be repaired with the {**ggrepel**} package (see @pak-ggrepel). (See @fig-scatterplot-mortality-rate-funding-labelled-2)
+
+
+::::
+:::::
+
+###### Labelled (2)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-mortality-rate-funding-labelled-2}
+: Scatterplot: Mortality Rate versus Funding (with logarithmic x-scale, a linear smoother and points labelled with {ggrepel})
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-scatterplot-mortality-rate-funding-labelled-2
+#| fig-cap: "Scatterplot: Mortality Rate versus Funding (with logarithmic x-scale, a linear model smoother and points labelled with {ggrepel})"
+
+research_funding <- base::readRDS("data/chap03/research_funding.rds")
+
+
+research_funding |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = `Mortality Rate per 100,000 Population`,
+                     y = Funding / 1e9)
+        ) +
+    ggplot2::geom_point() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        y = "Funding, US $ billion"
+    ) +
+    ggplot2::geom_smooth(
+        method = "lm", 
+        formula = 'y ~ x'
+        ) +
+    ggplot2::scale_x_log10() + 
+    ggplot2::scale_y_log10() +
+    ggrepel::geom_text_repel(
+        ggplot2::aes(label = `Cause of Death`)
+        )
+
+## return from fixed to standard notation
+base::options(scipen = 0) 
+```
+***
+
+With the {**ggrepel**} package one prevents overlapping of labels in a scatterplot. Compare to @fig-scatterplot-mortality-rate-funding-labelled-1.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+
+## Ensuring graphs are well formatted {#sec-chap03-graph-well-formatted}
+
+> For a graph to stand alone, it should have as many of these features as possible: 
+
+> - Clear labels and titles on both axes 
+> - An overall title describing what is in the graph along with 
+    - Source of data (added, pb)
+    - Date of data collection 
+    - Units of analysis (e.g., people, organizations) 
+    - Sample size 
+    
+> In addition, researchers often use the following to improve a graph: 
+
+> - Scale variables with very large or very small values (e.g., using millions or billions).
+> - Color to draw attention to important or relevant features of a graph.
+
+Most of the content in this chapter were tutorial material to choose and produce appropriate graphs for the data at hand. Therefore I didn't always follow the above rules. Especially the source of the data, and the date of the data collection were most of the time not added. 
+
+In the next graph I try to add all the important information to fulfill the above advice.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-graph-with-all-meta-information}
+: Firearms circulating in the United States 1986-2017
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-graph-with-all-meta-information
+#| fig-cap: "Firearms Commerce in the United States FY 2019 Update (<a href='https://www.atf.gov/firearms/docs/report/2019-firearms-commerce-report/download'>ATF</a>)"
+
+p_guns_total +
+    ggplot2::labs(
+        title = "Firearms circulating in the United States 1986-2017",
+        subtitle = "Own Calculation: Firearms manufactured (p.2)\nsubtracted Exports (p.4) and added Imports (p.6).",
+        caption = "Source: Bureau of Alcohol, Tobacco, Firearms and Explosives (ATF)"
+    )
+
+```
+***
+
+- **Hyperlinks**: I could not manage to provide hyperlinks in title, subtitle or caption (= "Source"). Maybe it has to do with the `lightbox = true` directive in my `_quarto.yml` file, because the whole picture is an active link for the lightbox. But hyperlinks do work in the figure caption (`fig-cap`).
+- **New line**: Text for title, subtitle and caption can be split into different lines with `\n`. But this did not work for `fig-cap`.
+::::
+:::::
+
+
 ------------------------------------------------------------------------
 
-## Exercises
+## Exercises (empty)
 
 ------------------------------------------------------------------------
 
@@ -7094,21 +7570,79 @@ Color choice in information visualization is important in order to avoid being m
 {**scico**}: A Package for Colour Palettes Based on the Scientific Colour-Maps
 :::
 
-<Other text not included in the package reference>
-
-***
 ::::
 :::::
 
 
 ### tabulizer
 
-pdftools
-PDF Data Extractor PDE
+:::::{.my-resource}
+:::{.my-resource-header}
+tabulizer: Bindings for 'Tabula' PDF Table Extractor Library 
+:::
+::::{.my-resource-container}
 
-https://www.youtube.com/watch?v=bJH-S2iaxNo (extract tables with pdftools)
+***
 
-https://stackoverflow.com/questions/60127375/using-the-pdf-data-function-from-the-pdftools-package-efficiently?rq=2
+::: {#pak-tublizer}
+
+***
+
+{**tabulizer**}: [Bindings for 'Tabula' PDF Table Extractor Library](https://docs.ropensci.org/tabulizer) [@tabulizer]
+
+(*There is no hexagon logo for {**tabulizer**} available*)
+
+
+{**tabulizer**} provides R bindings to the [Tabula java library](https://github.com/tabulapdf/tabula-java/), which can be used to computationaly extract tables from PDF documents. The {**tabulizerjars**} package <https://github.com/ropensci/tabulizerjars> provides versioned 'Java' .jar files, including all dependencies, aligned to releases of 'Tabula'.
+
+tabulizer depends on {**rJava**}, which implies a system requirement for Java. This can be frustrating, especially on Windows.
+
+{**tabulizer**}: A Package for Bindings for 'Tabula' PDF Table Extractor Library
+:::
+
+
+:::
+:::::
+
+I just noticed that {**tabulizer**} was removed from the CRAN repository. But you can still install it from the [CRAN archive](https://cran.r-project.org/src/contrib/Archive/tabulizer/) --- or even better --- from the [GitHub site](https://github.com/ropensci/tabulizer/). I have installed it several years ago (version 0.2.3) and it works smoothly.
+
+I have looked and tested alternatives, but nothing worked satisfactorily:
+
+
+[{**pdftool**}](https://docs.ropensci.org/pdftools/): A great tool to scrap text from PDFs, but not so good with tables: "It is possible to use {**pdftools**} with some creativity to parse tables from PDF documents, which does not require Java to be installed." 
+
+An example how to do that is explained in [How to extract data tables from PDF in r Tutorial](How to extract data tables from PDF in r Tutorial), a video by Data Centrics Inc. Another approach can be found on [StackOverflow](https://stackoverflow.com/questions/60127375/using-the-pdf-data-function-from-the-pdftools-package-efficiently?rq=2). But both procedures are way to complex and I have to say that it does not repays the effort, especially with the small example table in the video tutorial. It would be much easier to use other tools, for instance on macOS with the app [TextSniper](https://www.textsniper.app/en) or even input the figures manually.
+
+[{**PDE**}](https://cran.r-project.org/web/packages/PDE/vignettes/PDE.html) PDF Data extractor (PDE) seems the right tool for the task because it should "Extract Tables and Sentences from PDFs with User Interface". I couldn't work with interactive user interface because I has many different options and I didn't have time to study them thoroughly. But I succeeded with the programming interface, although the result had some errors. Part of columns appeared in extra columns. So these errors were easy to detect and to repair.
+
+With the following code I could extract all 13 tables from the ATF document and could also scrap the pictures in the PDF and convert them to PNGs.
+
+```
+atf_tables <- PDE::PDE_pdfs2table(
+    pdfs = "data/chap03/firearms_commerce_2019.pdf",
+    out = "data/chap03/test/",
+    table.heading.words = "Exhibit",
+    out.table.format = ".csv (macintosh)"
+)
+```
+It took me about 20-30 seconds and I got the following message:
+
+> Following file is processing: 'firearms_commerce_2019.pdf'
+No filter words chosen for analysis.
+13 table(s) found in 'firearms_commerce_2019.pdf'.
+Analysis of 'firearms_commerce_2019.pdf' complete.
+
+Maybe the interactive UI would also work, but as I am very content with {**tabulizer**} I did not delve deeply into {**PDE**}.
+
+:::::{.my-important}
+:::{.my-important-header}
+My recommendation: As the first choice try to install and use {**tabulizer**}. If this does not work for you, try {**PDE**}. 
+
+***
+::::
+:::::
+
+
 
 ### vcd
 
