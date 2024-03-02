@@ -84,7 +84,7 @@ Two options:
 
 ::: {.panel-tabset}
 
-###### Book
+###### PDMP
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -106,6 +106,10 @@ save_data_file("chap04", pdmp_2017_book, "pdmp_2017_book.rds")
 
 ```
 
+***
+
+(*For this R code chunk is no output available*)
+
 ::::
 :::::
 
@@ -113,21 +117,30 @@ save_data_file("chap04", pdmp_2017_book, "pdmp_2017_book.rds")
 
 
 
-###### header2
+###### anfAR
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-code-name-b}
+:::::: {#cnj-chap04-amfAR}
 : Numbered R Code Title (Tidyverse)
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: text-byyyy
+#| label: get-amfar-data
+#| eval: false
 
-1 + 1
+## run only once, manually ############
+amfar_file <- "data/chap04/opioid_dist_to_facility_2017_ch4.csv"
+
+dist_mat <- readr::read_csv(amfar_file)
+save_data_file("chap04", dist_mat, "dist_mat.rds")
 ```
+
+***
+
+(*For this R code chunk is no output available*)
 
 ::::
 :::::
@@ -141,6 +154,79 @@ save_data_file("chap04", pdmp_2017_book, "pdmp_2017_book.rds")
 
 
 ### Show raw data
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-show-data}
+: Show raw data for chapter 4
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### PDMP
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-show-pdmp-data}
+: Show data for the prescription drug monitoring programs (PDMPs)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: show-pdmp-data
+#| results: hold
+
+pdmp_2017_book <- base::readRDS("data/chap04/pdmp_2017_book.rds")
+
+glue::glue("********************* Show summary *******************")
+base::summary(pdmp_2017_book)
+
+glue::glue("")
+glue::glue("****************** Show selected data ****************")
+glance_data(pdmp_2017_book)
+```
+
+::::
+:::::
+
+
+###### dist-mat
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-show-dist-mat}
+: Show the distances to nearest substance abuse facility providing medication assisted treatment (MAT)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: show-dist-mat
+#| results: hold
+
+dist_mat <- base::readRDS("data/chap04/dist_mat.rds")
+
+glue::glue("********************* Show summary *******************")
+base::summary(dist_mat)
+
+glue::glue("")
+glue::glue("****************** Show selected data ****************")
+glance_data(dist_mat)
+
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
 
 ### Recode data
 
@@ -486,6 +572,262 @@ binomial_data |>
 ***
 
 ## Achievement 3: Normal distribution of a continuous variable {#sec-chap04-achievement3}
+
+Binomial data in social sciences are only one type of data. Many data are continuous variables. Just as the shape of the binomial distribution is determined by `n` and `p`, the shape of the normal distribution for a variable in a sample is determined by `$mu$` and `$sigma$`.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-dist-mat-dist}
+: Distribution of the distances to nearest facility providing MAT
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Distances
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-dist-mat-normal}
+: Distribution of the original distance variable
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-dist-mat-normal
+#| fig-cap: "Distribution of the distance to the nearest facility with MAT"
+
+dist_mat <- base::readRDS("data/chap04/dist_mat.rds")
+
+dist_mat |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = VALUE) 
+    ) +
+    ggplot2::geom_histogram(
+        bins = 30,
+        fill = "grey",
+        color = "black"
+        ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Distance in miles",
+        y = "Number of counties"
+    )
+```
+
+::::
+:::::
+
+
+###### Distances transformed
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-dist-mat-transformed}
+: Distribution of the distance variable transformed by various factors
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-dist-mat-transformed
+#| fig-cap: "Distribution of the distance variable transformed by various factors"
+#| warning: false
+
+library(dplyr)
+
+dist_mat_clean <- dist_mat |> 
+    dplyr::mutate(square_root = sqrt(VALUE),
+                  cube_root = VALUE^(1/3),
+                  log = log(VALUE),
+                  inverse = 1/VALUE
+    )
+
+
+p_cube_root <- dist_mat_clean |>
+    ggplot2::ggplot(
+        ggplot2::aes(x = cube_root)
+    ) +
+    ggplot2::geom_density(
+        color = "black",
+        fill = "grey"
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Cube root of miles to nearest facility",
+        y = "Density"
+    )
+
+
+p_square_root <- dist_mat_clean |>
+    ggplot2::ggplot(
+        ggplot2::aes(x = square_root)
+    ) +
+    ggplot2::geom_density(
+        color = "black",
+        fill = "grey"
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Distance in square root of miles",
+        y = "Density"
+    )
+
+p_inverse <- dist_mat_clean |>
+    ggplot2::ggplot(
+        ggplot2::aes(x = inverse)
+    ) +
+    ggplot2::geom_density(
+        color = "black",
+        fill = "grey"
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::xlim(0, 1) +
+    ggplot2::labs(
+        x = "Inverse of miles to nearest facility",
+        y = "Density"
+    )
+
+p_log <- dist_mat_clean |>
+    ggplot2::ggplot(
+        ggplot2::aes(x = log)
+    ) +
+    ggplot2::geom_density(
+        color = "black",
+        fill = "grey"
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Log of miles to nearest facility",
+        y = "Density"
+    )
+gridExtra::grid.arrange(grobs = list(p_cube_root,
+                                     p_square_root,
+                                     p_inverse,
+                                     p_log),
+                        ncol = 2)
+```
+
+***
+
+The best result of these transformation was with cube root.
+
+I tried to write a function for these four graphs, but it was not easy to pass the dataframe and column to the function. I finally succeeded with passing the column name as character string and using `[[` inside the function to select the column. (See [StackOverflow](https://stackoverflow.com/a/36015931/7322615)) But I gave up with `xlim()` parameter for the inverse transformation.
+::::
+:::::
+
+###### Mean and sd
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-mean-sd-distance-transformed}
+: Mean and standard deviation for cube root of mile transformation
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: mean-sd-distance-transformed
+
+dist_mat_clean |> 
+    dplyr::summarize(mean = mean(cube_root),
+                  sd = sd(cube_root))
+
+```
+
+::::
+:::::
+
+###### Probability distribution
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-prob-distance-dist}
+: Probability density function for a variable with a mean of 2.66 and a standard deviation of .79
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-prob-distance-dist
+#| fig-cap: "Probability density function for a variable with a mean of 2.66 and a standard deviation of .79"
+#| cache: true
+
+base::set.seed(42)
+normal_data <- tibble::tibble(stats::rnorm(
+    n = 1e3, 
+    mean = 2.66, 
+    sd = .79)) |> 
+    dplyr::rename(data = 1) 
+
+normal_data |> 
+    ggplot2::ggplot() +
+    ggplot2::aes(x = data,
+                 y = ggplot2::after_stat(count) / 
+                     base::sum(count)
+                 ) +
+    ggplot2::geom_density() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = 'Cube root of miles to the nearest facility with MAT',
+       y = 'Probability density')
+```
+***
+
+In this plot I draw the probability density function with randomly generated data. The above curve will smooth out when I will take a bigger sample (for instance 1e5 instead 1e3).
+::::
+:::::
+
+###### with shaded area
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-prob-shaded}
+: Probability density function of the cube root transformation for 64 miles distance to a treatment facility
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-chap04-prob-shaded
+#| fig-cap: "Probability density function of the cube root transformation for 64 miles distance to a treatment facility"
+#| cache: true
+
+normal_data |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = data)
+    ) +
+    ggplot2::stat_function(
+        fun = dnorm, 
+        n = 1e3, 
+        args = list(mean = 2.66, 
+                    sd = .79),
+        linewidth = .5) +
+    # ggplot2::geom_density() +
+    ggplot2::geom_area(stat = 'function',
+            fun = dnorm,
+            fill = 'blue',
+            args = list(mean = 2.66, 
+                    sd = .79),
+            xlim = c(4, 6),
+            alpha = 0.3) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = 'Cube root of miles to the nearest facility with MAT',
+       y = 'Probability density')
+
+```
+***
+
+For this plot I have used the `dnorm()` function. Therefore this normal distribution curve is smooth.
+
+The shaded area is the probability for counties that are $4^3 = 64$ miles from a facility that provides medical assisted treatment (MAT) 
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
 
 ***
 
