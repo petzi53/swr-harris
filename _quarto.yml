@@ -17,6 +17,7 @@ book:
     - 01-preparing-data.qmd
     - 02-descriptive-statistics.qmd
     - 03-data-visualization.qmd
+    - 04-probability-distributions.qmd
     - 95-references.qmd
 
 bibliography:

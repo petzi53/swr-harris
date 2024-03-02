@@ -54,7 +54,7 @@ Objectives
 
 ## Resources & Chapter Outline
 
-### Data, codebook, and R packages {#sec-data-codebook-packages}
+### Data, codebook, and R packages {#sec-chap03-data-codebook-packages}
 
 ::: my-resource
 ::: my-resource-header
@@ -2394,7 +2394,7 @@ But let's see how this graphic would be appear in alternative charts
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap03-get-unrwa-data}
-: Get UNRWA data of top 20 donors from PDF file with {*+tabulizer**}
+: Get UNRWA data of top 20 donors from PDF file with {**tabulizer**}
 ::::::
 :::
 ::::{.my-r-code-container}

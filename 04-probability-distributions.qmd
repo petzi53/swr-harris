@@ -1,0 +1,753 @@
+# Probability distribution {#sec-chap04}
+
+```{r}
+#| label: setup
+#| include: false
+
+base::source(file = "R/helper.R")
+```
+
+## Achievements to unlock
+
+::: my-objectives
+::: my-objectives-header
+Objectives
+:::
+
+::: my-objectives-container
+**SwR Achievements**
+
+- **Achievement 1**: Defining and using probability distributions to infer from a sample (@sec-chap04-achievement1)
+- **Achievement 2**: Understanding the characteristics and uses of a binomial distribution of a binary variable (@sec-chap04-achievement2)
+- **Achievement 3**: Understanding the characteristics and uses of the normal distribution of a continuous variable (@sec-chap04-achievement3)
+- **Achievement 4**: Computing and interpreting z-scores to compare observations to groups (@sec-chap04-achievement4)
+- **Achievement 5**: Estimating population means from sample means using the normal distribution (@sec-chap04-achievement5)
+- **Achievement 6**: Computing and interpreting confidence intervals around means and proportions (@sec-chap04-achievement6)
+
+:::
+:::
+
+
+## The opioid overdose problem (empty)
+
+## Resources & Chapter Outline
+
+### Data, codebook, and R packages {#sec-chap04-data-codebook-packages}
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for learning about descriptive statistics
+:::
+
+::: my-resource-container
+
+**Data**
+
+1.  Download clean data sets `pdmp_2017_kff_ch4.csv` and `opioid_dist_to_facility_2017_ch4.csv` from
+    <https://edge.sagepub.com/harris1e>.
+2.  Download the county-level distance data files directly from the amfAR website (https://opioid.amfar.org/indicator/dist_MAT)
+3.  Import and clean the data for 2017 from Table 19 in the online report on the [KFF website](https://www.kff.org/report-section/implementing-coverage-and-payment-initiatives-benefits-and-pharmacy/)
+
+**Codebook**
+
+Two options:
+
+1.  Download the codebook file `opioid_county_codebook.xlsx` from
+    <https://edge.sagepub.com/harris1e>.
+2.  Use the online version of the codebook from the amfAR Opioid & Health Indicators Database website (https://opioid.amfar.org)
+
+
+
+**Packages**
+
+1. Packages used with the book (sorted alphabetically)
+
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+
+    
+2. My additional packages (sorted alphabetically)
+
+
+
+:::
+:::
+
+### Get data
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-get-data}
+: Get data for chapter 4
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Book
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-get-pdmp-book}
+: Get the cleaned PDMP data from the book `.csv` file
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-pdmp-book
+#| reslts: hold
+#| eval: false
+
+## run code only once manually ##########
+
+## get pdmp data from .csv file of the book
+pdmp_2017_book <- readr::read_csv("data/chap04/pdmp_2017_kff_ch4.csv")
+save_data_file("chap04", pdmp_2017_book, "pdmp_2017_book.rds")
+
+```
+
+::::
+:::::
+
+
+
+
+
+###### header2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: text-byyyy
+
+1 + 1
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+
+### Show raw data
+
+### Recode data
+
+
+## Achievement 1: Probability distributions to infer from a sample {#sec-chap04-achievement1}
+
+A `r glossary("probability distribution")` is the set of probabilities that each possible value (or range of values) of a variable occurs.
+
+Probability distributions have two characteristics:
+
+1. The probability of each real value of some variable is non-negative; it is either zero or positive. 2. The sum of the probabilities of all possible values of a variable is 1.
+
+There are two categories of probability distributions:
+
+1. Discrete probability distributions: An example is the binomial distribution.
+2. Continuous probability distributions: An example is the normal distribution.
+
+
+## Achievement 2: Binomial distribution of a binary variable {#sec-chap04-achievement2}
+
+### Characteristics of binomial random variables
+
+:::{#bul-chap04-binomial-random-variable}
+- A variable is measured in the same way n times. 
+- There are only two possible values of the variable, often called “success” and “failure.” 
+- Each observation is independent of the others. 
+- The probability of “success” is the same for each observation. 
+- The random variable is the number of successes in n measurements.
+
+The binomial distribution is defined by two things: 
+
+- **n**, which is the number of observations (e.g., coin flips, people surveyed, states selected) 
+- **p**, which is the probability of success (e.g., 50% chance of heads for a coin flip, 51% chance of a state having a PDMP)
+
+Characteristics of binomial random variables
+:::
+***
+
+### dbinomial() & pbinomial()
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-binomial-distributions}
+: Statistical properties of binomial distributions
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### `dbinomial()` with exact `n`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-comp-dbinomial-exact}
+: Compute binomial probability with exact number of success
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: comp-dbinomial-exact
+
+## exact 5 successes from 20 selections 
+## with 51% probability of success 
+stats::dbinom(x = 5, size = 20, prob = .51) * 100
+```
+***
+
+Computed the probability given 
+
+- the number of successes (`x`), 
+- the sample size (`size =`), and 
+- the probability of success (`prob =`).
+
+The probabilities are very small for scenarios of getting *exactly* 10 states with PDMPs in a sample.
+::::
+:::::
+
+The probabilities are very small for scenarios of getting *exactly* 10 states with `r glossary("PDMP")`s in a sample. The `r glossary("cumulative distribution function")` for the binomial distribution can determine the probability of getting some range of values, which is often more useful than finding the probability of one specific number of successes.
+
+
+###### `pbinomial()` with range
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-comp-dbinomial-range}
+: Compute binomial probability of getting some range of values
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: comp-pbinomial-range
+#| results: hold
+#| cache: true
+
+base::options(scipen = 999)
+
+
+
+## 5 or less successes from 20 selections 
+## with 51% probability of success 
+pbinom(q = 5, size = 20, prob = .51) * 100
+
+## 10 or more successes from 20 selections 
+### with 51% probability of success 
+pbinom(q = 5, size = 20, prob = .51, lower.tail = FALSE) * 100
+
+
+base::options(scipen = 0)
+```
+
+- **Exactly 5** successes with a success probability of 51% = `base::round(dbinom(x = 5, size = 20, prob = .51) * 100, 3)` : `r base::round(dbinom(x = 5, size = 20, prob = .51) * 100, 3)`%.
+- **5 or fewer** successes with a success probability of 51% = `base::round(pbinom(q = 5, size = 20, prob = .51) * 100, 3)`: `r base::round(pbinom(q = 5, size = 20, prob = .51) * 100, 3)`%.
+- **6 or more** successes with a success probability of 51% = `base::round(pbinom(q = 5, size = 20, prob = .51, lower.tail = FALSE) * 100, 3)`: 
+`r base::round(pbinom(q = 5, size = 20, prob = .51, lower.tail = FALSE) * 100, 3)`%.
+
+:::::{.my-important}
+:::{.my-important-header}
+For probabilities `q and more` you have to take `q - 1` and add `lower.tail = FALSE`.
+:::
+:::::
+
+::::
+:::::
+
+###### Sample PDMPs from data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-sample-pdmp}
+: Sample 25 states from population data (n = 51)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: sample-25-pmpd
+
+pdmp_2017_book <- base::readRDS("data/chap04/pdmp_2017_book.rds")
+
+## set a starting value for sampling 
+set.seed(seed = 10) 
+
+## sample 25 states and check 
+pdmp_2017_book |>  
+    dplyr::select(`Required Use of Prescription Drug Monitoring Programs`) |> 
+    dplyr::mutate(`Required Use of Prescription Drug Monitoring Programs` =
+          forcats::as_factor(`Required Use of Prescription Drug Monitoring Programs`)) |> 
+    dplyr::slice_sample(n = 25) |> 
+    base::summary()
+```
+***
+
+The book features a lengthy explication of the `set.seed()` function and their revised working after R version 3.6. But this important detail is now --- several years after 3.6.0 appeared in April 2019 --- not so relevant anymore.
+
+I had to recode the character variable to a factor and I used `dplyr::slice_sample()` instead of the superseded `dplyr::sample_n()` function.
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Visualizing the binomial distribution
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-visualize-binomial-dist}
+: Visualizing the binomial distribution
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Distribution only
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-binomial-dist-only}
+: Binomial distribution of 20 selected states when 51% have PDMPs
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-binomial-dist-only
+#| fig-cap: "Probability mass function plot showing probability of number of selected states \nwith PDMPs out of 20 total selected when 51% have PDMPs overall"
+
+
+base::set.seed(42)
+
+binomial_data <- tibble::tibble(stats::rbinom(1000, 20, .51)) |> 
+    dplyr::rename(data = 1) |> 
+    dplyr::mutate(my_color = 
+                dplyr::if_else(data <= 5, "purple", "grey")
+    )
+
+
+binomial_data |> 
+    ggplot2::ggplot() +
+    ggplot2::aes(x = data,
+                 y = ggplot2::after_stat(count) / 
+                     base::sum(count)
+                 ) +
+    ggplot2::geom_histogram(
+        color = "black", 
+        fill = "grey",
+        binwidth = 1
+        ) +
+    ggplot2::theme_bw() +
+    ggplot2::scale_x_continuous(
+        breaks = base::seq(0, 20, 2)) +
+    ggplot2::labs(x = 'States with monitoring programs',
+       y = 'Probability exactly this many selected')
+```
+
+
+::::
+:::::
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Helpful code snippet at "ECON 41 Lab"
+:::
+::::{.my-resource-container}
+I got help for the code from [15 Tutorial 4: The Binomial Distribution](https://bookdown.org/gabriel_butler/ECON41Labs/tutorial-4-the-binomial-distribution.html) [@butler2019].
+
+::::
+:::::
+
+
+###### Distribution with marker
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-binomial-dist-marker}
+: Probability of 5 or fewer selected states with PDMPs out of 20 total selected \nwhen 51% have PDMPs overall
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-binomial-dist-marker
+#| fig-cap: "Probability of 5 or fewer selected states with PDMPs out of 20 total selected when 51% have PDMPs overall"
+
+base::set.seed(42)
+
+colors <- c(rep("purple", 2), rep("grey", 13))
+
+binomial_data <- tibble::tibble(stats::rbinom(1000, 20, .51)) |> 
+    dplyr::rename(data = 1) |> 
+    dplyr::mutate(my_color = 
+                dplyr::if_else(data <= 5, "purple", "grey")
+    )
+
+
+binomial_data |> 
+    ggplot2::ggplot() +
+    ggplot2::aes(x = data,
+                 y = ggplot2::after_stat(count) / 
+                     base::sum(count)
+                 ) +
+    ggplot2::geom_histogram(
+        color = "black", 
+        fill = colors,
+        binwidth = 1
+        ) +
+    ggplot2::geom_vline(xintercept = 5, 
+             linewidth = 1, 
+             linetype = 'dashed',
+             color = 'red') +
+    ggplot2::theme_bw() +
+    ggplot2::scale_x_continuous(breaks = base::seq(0, 20, 2)) +
+    ggplot2::labs(x = 'States with monitoring programs',
+       y = 'Probability exactly this many selected') 
+```
+
+::::
+:::::
+
+###### Histogram colorized
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-binomial-dist-color}
+: Probability of 5 or fewer selected states with PDMPs out of 20 total selected \nwhen 51% have PDMPs overall
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-binomial-dist-color
+#| fig-cap: "Probability of 5 or fewer selected states with PDMPs out of 20 total selected when 51% have PDMPs overall"
+
+base::set.seed(42)
+
+binomial_data <- tibble::tibble(stats::rbinom(1000, 20, .51)) |> 
+    dplyr::rename(data = 1) |> 
+    dplyr::mutate(my_color = 
+            dplyr::if_else(data <= 5, "purple", "grey")
+    ) |> 
+    dplyr::mutate(my_color =
+            forcats::as_factor(my_color))
+
+
+binomial_data |> 
+    ggplot2::ggplot() +
+    ggplot2::aes(x = data,
+                 y = ggplot2::after_stat(count) / 
+                     base::sum(count),
+                 fill = my_color
+                 ) +
+    ggplot2::geom_histogram(
+        binwidth = 1,
+        color = "black"
+    ) +
+    ggplot2::geom_vline(xintercept = 5, 
+             linewidth = 1, 
+             linetype = 'dashed',
+             color = 'red') +
+    ggplot2::theme_bw() +
+    ggplot2::scale_x_continuous(breaks = base::seq(0, 20, 2)) +
+    ggplot2::scale_fill_manual(name = "Number of states\nwith PDMP",
+                               values = c("grey" = "grey",
+                               "purple" = "purple"),
+                               labels = c("> 5", "5 or fewer")) +
+    ggplot2::labs(x = 'States with monitoring programs',
+       y = 'Probability exactly this many selected') 
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+## Achievement 3: Normal distribution of a continuous variable {#sec-chap04-achievement3}
+
+***
+
+## Experiments
+
+### Get PDMP data
+
+
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-chap04-get-pdmp-data}
+: Get Prescription Drug Monitory Program (PMDP) data 
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### book
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-pdmp-book}
+: Get the cleaned PDMP data from the book `.csv` file
+::::::
+:::
+::::{.my-r-code-container}
+
+
+```{r}
+#| label: pdmp-book
+#| lst-label: lst-chap04-pdmp-book
+#| lst-cap: "Get the cleaned PDMP data from the book `.csv` file"
+#| results: hold
+#| eval: false
+
+## run code only once manually ##########
+
+## get pdmp data from books .csv
+pdmp_2017_book <- readr::read_csv("data/chap04/pdmp_2017_kff_ch4.csv")
+save_data_file("chap04", pdmp_2017_book, "pdmp_2017_book.rds")
+
+```
+
+
+***
+
+(*For this R code chunk is no output available*)
+
+::::
+:::::
+
+
+###### tabulizer
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-pdmp-tabulizer}
+: Get PDMP data with {**tabulizer**}
+::::::
+:::
+::::{.my-r-code-container}
+
+
+```{r}
+#| label: pdmp-tabulizer
+#| lst-label: lst-chap04-pdmp-tabulizer
+#| lst-cap: "Get PDMP data with {**tabulizer**}"
+#| results: hold
+#| eval: false
+
+## run only once (manually) ##########
+
+## get pdmp table via tabulizer
+pdmp_2017_temp <- tabulizer::extract_tables(
+    "data/chap04/PDMPs-2017.pdf")
+pdmp_2017_tabulizer <- pdmp_2017_temp[[1]]
+
+save_data_file("chap04", pdmp_2017_tabulizer, "pdmp_2017_tabulizer.rds")
+```
+
+***
+(*For this R code chunk is no output available*)
+
+
+::::
+:::::
+
+###### Clipboard
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-pdmp-clipboard}
+: Get PDMP data via clipboard
+::::::
+:::
+::::{.my-r-code-container}
+
+
+```{r}
+#| label: pdmp-clipboard
+#| lst-label: lst-chap04-pdmp-clipboard
+#| lst-cap: "Get PDMP data via clipboard"
+#| results: hold
+#| eval: false
+
+## run code only once manually ###########
+
+## readr::read_delim("clipboard") # Windows
+
+pdmp_2017_clipboard1 <- readr::read_table(pipe("pbpaste")) # normal copy & paste
+pdmp_2017_clipboard2 <- readr::read_table(pipe("pbpaste")) # TextSniper
+save_data_file("chap04", pdmp_2017_clipboard1, "pdmp_2017_clipboard1.rds")
+save_data_file("chap04", pdmp_2017_clipboard2, "pdmp_2017_clipboard2.rds")
+```
+
+***
+
+(*For this R code chunk is no output available*)
+
+With this approach I have selected the table data and copied it into the clipboard. Be aware that here are two different functions for Windows and macOS.
+
+::::
+:::::
+
+
+###### rvest 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-pdmp-rvest}
+: Get the PDMP data with {**rvest**}
+::::::
+:::
+::::{.my-r-code-container}
+
+
+```{r}
+#| label: pdmp-rvest
+#| lst-label: lst-chap04-pdmp-rvest
+#| lst-cap: "Get the PDMP data with {**rvest**}"
+#| results: hold
+#| eval: false
+
+## run code only once manually
+
+## 1. check if web scrapping is allowed
+url <- paste0("https://www.kff.org/report-section/",
+  "implementing-coverage-and-payment-initiatives-benefits-and-pharmacy/")
+robotstxt::paths_allowed((url))
+
+## 2. get the whole KFF page
+pdmp_2017_page <- rvest::read_html(url)
+save_data_file("chap04", pdmp_2017_page, "pdmp_2017_page.rds")
+
+## 3. extract PDMP table
+pdmp_2017_rvest <- pdmp_2017_page |> 
+    rvest::html_nodes("table") |> 
+    purrr::pluck(10) |> 
+    rvest::html_table()
+
+save_data_file("chap04", pdmp_2017_rvest, "pdmp_2017_rvest.rds")
+
+```
+
+
+***
+
+(*For this R code chunk is no output available*)
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
+In @def-chap04-get-pdmp-data I have data imported in four different ways: 
+
+1. @lst-chap04-pdmp-book: This is the reference data frame, imported form the `.csv` file of the book.
+2. @lst-chap04-pdmp-tabulizer: The package {**tabulizer**} worked fine, but the PDF table 19 (a) did not separate several columns with a vertical line and (b) did not put entries if there was no PDMP in place, but left the place entry. {**tabulizer**} could therefore not detect which entries belong to which column.
+3. @lst-chap04-pdmp-clipboard: Even if the web page has dividing vertical lines for all columns, the same problem (namely empty) prevents a correct data transfer.
+4. @lst-chap04-pdmp-rvest: This is the best option of my experiment: After confirming that web scraping is allowed, I scrapped all tables from the `r glossary("KFF")` web page, because there was no unique selector for table 19 available. I received 10 tables. That was strange because on the web page I could only visible detect seven tables. But luckily the last one was the table I was interested.
+
+Conclusion: If I would not have the data to work with, I would take for further recoding the table the data imported by web scparing with {**rvest**}.
+
+
+
+
+## Exercises (empty)
+
+## Packages introduced in this chapter
+
+### rvest
+
+:::::{.my-resource}
+:::{.my-resource-header}
+rvest: Easily Harvest (Scrape) Web Pages 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-rvest}
+
+***
+
+{**rvest**}: [Easily Harvest (Scrape) Web Pages](https://rvest.tidyverse.org/) [@rvest]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap04/logoi/logo-rvest-min.png){width="176"}
+
+
+Wrappers around the {**xml2**} and {**httr**} packages to make it easy to download, then manipulate, `r glossary("HTML")` and `r glossary("XML")`. --- {**rvest**} helps you scrape (or harvest) data from web pages. It is designed to work with {**magrittr**} to make it easy to express common web scraping tasks, inspired by libraries like [beautiful soup](https://www.crummy.com/software/BeautifulSoup/) and [RoboBrowser](https://robobrowser.readthedocs.io/en/latest/readme.html).
+
+:::
+
+If you’re scraping multiple pages, hadley Wickham highly recommends using {**rvest**} in concert with [{**polite**}](https://dmi3kno.github.io/polite/). The {**polite**} package ensures that you’re respecting the [robots.txt](https://en.wikipedia.org/wiki/Robots_exclusion_standard) and not hammering the site with too many requests.
+
+{**rvest**}: A Package for Easily Harvest (Scrape) Web Pages
+:::
+
+It is important to read the introductory vignette [Web scraping 101](https://rvest.tidyverse.org/articles/rvest.html). It introduces you to the basics of web scraping with {**rvest**}. You’ll first learn the basics of HTML and how to use `r glossary("CSS")` selectors to refer to specific elements, then you’ll learn how to use {**rvest**} functions to get data out of `r glossary("HTML")` and into R.
+
+A very important tool to get the appropriate CSS selector is SelectorGadget. To learn how to install and to use this tool read the [SelectorGadget help page]https://rvest.tidyverse.org/articles/selectorgadget.html) of {**rvest**}.
+
+***
+::::
+:::::
+
+
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+
+## Session Info {.unnumbered}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+Session Info
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+
+
+::::
+:::::
