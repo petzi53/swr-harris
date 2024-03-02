@@ -4,7 +4,7 @@
 #| label: setup
 #| include: false
 
-base::source(file = "../_glance_data.R")
+base::source(file = "R/helper.R")
 ```
 
 
@@ -359,12 +359,12 @@ book)
 #| label: replicate-data-fig-book
 #| results: hold
 
-chap01_gss_2016 <- readr::read_csv(
-    file = "data-harris/legal_weed_age_GSS2016_ch1.csv",
+gss_2016 <- readr::read_csv(
+    file = "data/chap01/legal_weed_age_GSS2016_ch1.csv",
     show_col_types = FALSE)
 
 
-chap01_gss_2016_clean <- chap01_gss_2016 |> 
+gss_2016_clean <- gss_2016 |> 
 
 #### (A) rework grass ##################
 ## convert grass to factor
@@ -402,22 +402,22 @@ chap01_gss_2016_clean <- chap01_gss_2016 |>
     tidyr::drop_na()
 
 ## save cleaned data gss_2016
-saveRDS(chap01_gss_2016_clean, "data-clean/chap01_gss_2016_clean.rds")
+save_data_file("chap01", gss_2016_clean, "gss_2016_clean.rds")
 
 ## (C) check result #########
 
 ## summarize
 print("************************   SUMMARY   ****************************")
-base::summary(chap01_gss_2016_clean)
+base::summary(gss_2016_clean)
 
 ## glance at the data
 print("*******************   GLANCE AT SOME DATA  **********************")
-chap01_gss_2016_clean |>
+gss_2016_clean |>
     dplyr::select(c(age_cat, grass)) |> 
     glance_data(N = 8, seed = 2016)
 ```
 
-Replicate data structure for Figures 1.1 and 1.2 f the book)
+Replicate data structure for Figures 1.1 and 1.2 of the book)
 
 :::
 
@@ -515,10 +515,10 @@ a: Reproducing bar chart Figure 1.1 using `geom_bar()`
 #| fig-width: 4
 #| fig-height: 4
 
-chap01_gss_2016_clean <-  readRDS("data-clean/chap01_gss_2016_clean.rds")
+gss_2016_clean <-  base::readRDS("data/chap01/gss_2016_clean.rds")
 
 ## create figure 1.1 #######
-chap01_gss_2016_clean |> 
+gss_2016_clean |> 
   ggplot2::ggplot(ggplot2::aes(x = grass,
              y = 100 * ggplot2::after_stat(count) / 
                  base::sum(ggplot2::after_stat(count)),
@@ -561,10 +561,10 @@ b: Reproducing bar chart Figure 1.2 using `geom_col()`
 #| label: fig-chap01-repr-fig-1-2
 #| fig-cap: Support for marijuana legalization by age group among participants in the 2016 General Social Survey (Figure 1.2)
 
-chap01_gss_2016_clean <-  readRDS("data-clean/chap01_gss_2016_clean.rds")
+gss_2016_clean <-  base::readRDS("data/chap01/gss_2016_clean.rds")
 
 ## create figure 1.2 ########
-chap01_gss_2016_clean |> 
+gss_2016_clean |> 
   dplyr::group_by(grass, age_cat) |> 
   dplyr::count() |> 
   dplyr::group_by(age_cat) |> 
@@ -745,7 +745,8 @@ utils::download.file(
     mode = "wb"
 )
 blood_pressure_demo <- haven::read_xpt(tf)
-saveRDS(blood_pressure_demo, file = "data-raw/blood_pressure_demo.rds")
+
+save_data_file("chap01", blood_pressure_demo, "blood_pressure_demo.rds")
 ```
 
 (*This code chunk has no visible output*)
@@ -804,7 +805,7 @@ I am planning to use this package when I am working with again with NHANES data 
 ```{r}
 #| label: str-blood-pressure-demo
 
-blood_pressure_demo <- base::readRDS("data-raw/blood_pressure_demo.rds")
+blood_pressure_demo <- base::readRDS("data/chap01/blood_pressure_demo.rds")
 
 blood_pressure_demo |> 
     dplyr::select(c(2, 4, 5)) |> 
@@ -868,7 +869,7 @@ blood_pressure_demo |>
 ```{r}
 #| label: show-random-blood-pressure-demo
 
-blood_pressure_demo <- base::readRDS("data-raw/blood_pressure_demo.rds")
+blood_pressure_demo <- base::readRDS("data/chap01/blood_pressure_demo.rds")
 
 ## display some values
 blood_pressure_demo |> 
@@ -912,8 +913,8 @@ blood_pressure_demo |>
 #| eval: false
 
 ## load and save it only once (manually) ########
-nhanes_2013_ch1 <- readr::read_csv("data-harris/nhanes_2013_ch1.csv")
-saveRDS(nhanes_2013_ch1, file = "data-raw/nhanes_2013_ch1.rds" )
+nhanes_2013 <- readr::read_csv("data/chap01/nhanes_2013_ch1.csv")
+save_data_file("chap01", nhanes_2013, "nhanes_2013.rds")
 ```
 
 
@@ -935,11 +936,11 @@ saveRDS(nhanes_2013_ch1, file = "data-raw/nhanes_2013_ch1.rds" )
 ```{r}
 #| label: NHANES-view-data
 
-nhanes_2013_ch1 <- readRDS("data-raw/nhanes_2013_ch1.rds")
+nhanes_2013 <- base::readRDS("data/chap01/nhanes_2013.rds")
 
-base::summary(nhanes_2013_ch1)
-utils::str(nhanes_2013_ch1)
-skimr::skim(nhanes_2013_ch1)
+base::summary(nhanes_2013)
+utils::str(nhanes_2013)
+skimr::skim(nhanes_2013)
 ```
 
 Look at the data with `utils::str()` and `skimr::skim()`
@@ -991,9 +992,9 @@ To facilitate the work I made screenshots from these four variables:
 ```{r}
 #| label: NHANES-data-cleaning
 
-nhanes_2013_ch1 <- readRDS("data-raw/nhanes_2013_ch1.rds")
+nhanes_2013 <- base::readRDS("data/chap01/nhanes_2013.rds")
 
-chap01_nhanes_2013_clean <- nhanes_2013_ch1 |> 
+nhanes_2013_clean <- nhanes_2013 |> 
     dplyr::rename(nr = ...1) |> 
     dplyr::rename(
         sex = RIAGENDR,
@@ -1015,10 +1016,10 @@ chap01_nhanes_2013_clean <- nhanes_2013_ch1 |>
           "Male" = "1", "Female" = "2"))
 
 ## save cleaned data ###############
-saveRDS(chap01_nhanes_2013_clean, "data-clean/chap01_nhanes_2013_clean.rds")
+save_data_file("chap01", nhanes_2013_clean, "nhanes_2013_clean.rds")
 
-base::summary(chap01_nhanes_2013_clean)
-skimr::skim(chap01_nhanes_2013_clean)
+base::summary(nhanes_2013_clean)
+skimr::skim(nhanes_2013_clean)
 ```
 
 :::::{.my-important}
@@ -1089,9 +1090,9 @@ My learning from the above procedure of data cleaning
 #| label: compute-grass-percentage
 #| cache: true
 
-chap01_nhanes_2013_clean <- readRDS("data-clean/chap01_nhanes_2013_clean.rds")
+nhanes_2013_clean <- base::readRDS("data/chap01/nhanes_2013_clean.rds")
 
-tibble::enframe(table(chap01_nhanes_2013_clean$grass)) |> 
+tibble::enframe(table(nhanes_2013_clean$grass)) |> 
     dplyr::rename(`Ever used grass or hash` = name, Freq = value) |> 
     dplyr::mutate(Perc = round(100 * Freq / sum(Freq), 2))
 ```
@@ -1121,9 +1122,9 @@ This is a manual calculation using the {**tidyverse**} approach: I am sure there
 #| fig-width: 4
 #| fig-height: 4
 
-chap01_nhanes_2013_clean <- readRDS("data-clean/chap01_nhanes_2013_clean.rds")
+nhanes_2013_clean <- base::readRDS("data/chap01/nhanes_2013_clean.rds")
 
-ggplot2::ggplot(chap01_nhanes_2013_clean,
+ggplot2::ggplot(nhanes_2013_clean,
     ggplot2::aes(grass, 
          y = 100 * ggplot2::after_stat(count) /
              base::sum(ggplot2::after_stat(count)),
@@ -1170,9 +1171,9 @@ The bars are very thick. I tried with `ggplot2::geom_bar(width = 0.5)` to make t
 #| fig-width: 4
 #| fig-height: 4
 
-chap01_nhanes_2013_clean <- readRDS("data-clean/chap01_nhanes_2013_clean.rds")
+nhanes_2013_clean <- base::readRDS("data/chap01/nhanes_2013_clean.rds")
 
-ggplot2::ggplot(chap01_nhanes_2013_clean,
+ggplot2::ggplot(nhanes_2013_clean,
     ggplot2::aes(grass, 
          y = 100 * ggplot2::after_stat(count) /
              base::sum(ggplot2::after_stat(count)),
@@ -1228,9 +1229,9 @@ All my trials with `position_dodge()` and `position_dodge2()` failed. The only t
 #| fig-width: 4
 #| fig-height: 4
 
-chap01_nhanes_2013_clean <- readRDS("data-clean/chap01_nhanes_2013_clean.rds")
+nhanes_2013_clean <- base::readRDS("data/chap01/nhanes_2013_clean.rds")
 
-ggplot2::ggplot(chap01_nhanes_2013_clean,
+ggplot2::ggplot(nhanes_2013_clean,
     ggplot2::aes(grass, 
          y = 100 * ggplot2::after_stat(count) /
              base::sum(ggplot2::after_stat(count)),
@@ -1308,9 +1309,9 @@ Even with this simple example of a bar chart I learned some new options:
 #| label: compute-grass-age-group-percentage
 #| results: hold
 
-chap01_nhanes_2013_clean <- readRDS("data-clean/chap01_nhanes_2013_clean.rds")
+nhanes_2013_clean <- base::readRDS("data/chap01/nhanes_2013_clean.rds")
 
-chap01_nhanes_2013_grouped <- chap01_nhanes_2013_clean |> 
+nhanes_2013_grouped <- nhanes_2013_clean |> 
     ## cut age into several defined age groups
     dplyr::mutate(age_cat = base::cut(age,
                    breaks = c(-Inf, 29, 39, 49, 59),
@@ -1319,11 +1320,11 @@ chap01_nhanes_2013_grouped <- chap01_nhanes_2013_clean |>
 
 
 ## older trial, without the knowledge of {gtsummary}
-# tibble::enframe(table(chap01_nhanes_2013_grouped$age_cat)) |>  
+# tibble::enframe(table(nhanes_2013_grouped$age_cat)) |>  
 #     dplyr::rename(`Ever used grass or hash` = 1, Freq = 2) |> 
 #     dplyr::mutate(Perc = round(100 * Freq / sum(Freq), 2))
 
-chap01_nhanes_2013_grouped |> 
+nhanes_2013_grouped |> 
     labelled::set_variable_labels(
         grass = "Ever used grass or hash?"
     ) |> 
@@ -1336,7 +1337,7 @@ chap01_nhanes_2013_grouped |>
     ) |> 
     gtsummary::bold_labels()
 
-saveRDS(chap01_nhanes_2013_grouped, "data-clean/chap01_nhanes_2013_grouped.rds")
+save_data_file("chap01", nhanes_2013_grouped, "nhanes_2013_grouped.rds")
 ```
 
 ***
@@ -1362,9 +1363,9 @@ This is a manual calculation using the {**tidyverse**} approach: I am sure there
 #| label: tbl-grass-age-group1
 #| tbl-cap: "Proportion of marijuana use of the participant by age group in percent of total responses in the NHANES 2013 survey"
 
-chap01_nhanes_2013_grouped <- readRDS("data-clean/chap01_nhanes_2013_grouped.rds")
+nhanes_2013_grouped <- base::readRDS("data/chap01/nhanes_2013_grouped.rds")
 
-chap01_nhanes_2013_grouped |> 
+nhanes_2013_grouped |> 
     labelled::set_variable_labels(
         grass = "**Ever used grass or hash?**"
     ) |> 
@@ -1410,7 +1411,7 @@ I have required {**gtsummary**} to calculate the percentage with one decimal pla
 
 
 ## age groups bar chart 1 ########
-chap01_nhanes_2013_grouped |> 
+nhanes_2013_grouped |> 
     ggplot2::ggplot(ggplot2::aes(
         x = age_cat, 
         fill = grass,
@@ -1445,9 +1446,9 @@ chap01_nhanes_2013_grouped |>
 #| label: tbl-grass-age-group2
 #| tbl-cap: "Proportion of marijuana use of the participant by age group in the NHANES 2013 survey"
 
-chap01_nhanes_2013_grouped <- readRDS("data-clean/chap01_nhanes_2013_grouped.rds")
+nhanes_2013_grouped <- base::readRDS("data/chap01/nhanes_2013_grouped.rds")
 
-chap01_nhanes_2013_grouped |> 
+nhanes_2013_grouped |> 
     labelled::set_variable_labels(
             grass = "**Ever used grass or hash?**"
         ) |> 
@@ -1491,7 +1492,7 @@ chap01_nhanes_2013_grouped |>
 #| fig-cap: "Percentage of NHANES participants of the 2013 survey answering yes and no to marijuana use in percent of age group"
 
 ## age groups bar chart 2 ########
-chap01_nhanes_2013_grouped |> 
+nhanes_2013_grouped |> 
   dplyr::group_by(grass, age_cat) |>
   dplyr::count() |> 
   dplyr::group_by(age_cat) |> 
@@ -1524,11 +1525,11 @@ chap01_nhanes_2013_grouped |>
 #| label: fig-grass-age-sex
 #| fig-cap: "Proportion of marijuana use of the participant by age group and sex in the NHANES 2013 survey"
 
-chap01_nhanes_2013_grouped <- 
-    readRDS("data-clean/chap01_nhanes_2013_grouped.rds")
+nhanes_2013_grouped <- 
+    base::readRDS("data/chap01/nhanes_2013_grouped.rds")
 
 ## age and sex bar chart ########
-chap01_nhanes_2013_grouped |> 
+nhanes_2013_grouped |> 
   dplyr::group_by(grass, age_cat, sex) |> 
   dplyr::count() |> 
   dplyr::group_by(age_cat, sex) |> 
@@ -1726,8 +1727,8 @@ that it can be easily used for your research question. (See
 #| eval: false
 
 ## run only once (manually) ###########
-gss_2016_man <- haven::read_dta("data-raw/GSS2016.dta")
-saveRDS(gss_2016_man, file = "data-raw/gss_2016_man.rds" )
+gss_2016_man <- haven::read_dta("data/chap01/GSS2016.dta")
+save_data_file("chap01", gss_2016_man, "gss_2016_man.rds")
 
 ```
 
@@ -1738,7 +1739,7 @@ saveRDS(gss_2016_man, file = "data-raw/gss_2016_man.rds" )
 #| label: glance-data-stata-file
 
 gss_2016_man <- 
-    readRDS("data-raw/gss_2016_man.rds")
+    base::readRDS("data/chap01/gss_2016_man.rds")
 
 gss_2016_man |>
     dplyr::select(c(age, grass)) |> 
@@ -1819,7 +1820,7 @@ temp <- base::tempfile()
 utils::download.file("https://gss.norc.org/documents/stata/2016_stata.zip",temp)
 gss_2016_aut <- haven::read_dta(base::unz(temp, "GSS2016.dta"))
 base::unlink(temp)
-base::saveRDS(gss_2016_aut, file = "data-raw/gss_2016_aut.rds" )
+save_data_file("chap01", gss_2016_aut, "gss_2016_aut.rds")
 ```
 
 Get year 2016 of GSS data set with `base::download.file()`
@@ -1835,7 +1836,7 @@ better in term of reproducibility. We don't need now to import the data
 ```{r}
 #| label: read-rds-data
 
-gss_2016_aut <- base::readRDS("data-raw/gss_2016_aut.rds")
+gss_2016_aut <- base::readRDS("data/chap01/gss_2016_aut.rds")
 
 gss_2016_aut |> 
     dplyr::select(c(age, grass)) |> 
@@ -1931,7 +1932,7 @@ base::file.rename(from = old_filename, to = new_filename)
 #| label: glance-data-gss-cat
 
 ## load and glance at data
-gss_2016_cat <- base::readRDS("data-raw/gss_2016_cat.rds")
+gss_2016_cat <- base::readRDS("data/chap01/gss_2016_cat.rds")
 gss_2016_cat |> 
     dplyr::select(c(age, grass)) |> 
     glance_data(N = 8, seed = 2016)
@@ -1978,14 +1979,15 @@ After downloaded the file we can --- as in the other tabs already done
 gss_2016_gssr <- gssr::gss_get_yr(year = 2016)
 gss_2016_gssr <- gss_2016_gssr |>
    dplyr::select(c(age, grass))
-base::saveRDS(gss_2016_gssr, file = "data-raw/gss_2016_gssr.rds" )
+
+save_data_file("chap01", gss_2016_gssr, "gss_2016_gssr.rds")
 ```
 
 ```{r}
 #| label: glance-data-gss2016
 
 ## load data ####################
-gss_2016_gssr <- base::readRDS("data-raw/gss_2016_gssr.rds")
+gss_2016_gssr <- base::readRDS("data/chap01/gss_2016_gssr.rds")
 
 ## glance at data
 gss_2016_gssr |> 
@@ -3139,10 +3141,10 @@ As a consequence of my table packages review I experimented with the {**gtsummar
 #| label: gtsummary-data
 #| cache: true
 
-chap01_nhanes_2013_clean <- 
-    base::readRDS("data-clean/chap01_nhanes_2013_clean.rds")
+nhanes_2013_clean <- 
+    base::readRDS("data/chap01/nhanes_2013_clean.rds")
 
-chap01_gtsummary_basic <- chap01_nhanes_2013_clean |> 
+gtsummary_basic <- nhanes_2013_clean |> 
  
     ## cut age into several defined age groups
     dplyr::mutate(age_cat = base::cut(age,
@@ -3150,10 +3152,10 @@ chap01_gtsummary_basic <- chap01_nhanes_2013_clean |>
                    labels = c("18 - 29", "30 - 39", "40 - 49", "50 - 59"))) |>
     dplyr::select(-c(nr, age))
 
-base::saveRDS(chap01_gtsummary_basic, "data-clean/chap01_gtsummary_clean.rds")
+save_data_file("chap01", gtsummary_basic, "gtsummary_clean.rds")
 
-base::summary(chap01_gtsummary_basic)
-chap01_gtsummary_basic
+base::summary(gtsummary_basic)
+gtsummary_basic
 ```
 
 ::::
@@ -3177,10 +3179,10 @@ I am going to use this dataset to experiment with  {**gtsummary**}.
 #| label: gts-basic
 #| cache: true
 
-chap01_gtsummary_basic <- 
-    base::readRDS("data-clean/chap01_gtsummary_clean.rds")
+gtsummary_basic <- 
+    base::readRDS("data/chap01/gtsummary_clean.rds")
 
-chap01_gtsummary_basic |> 
+gtsummary_basic |> 
     gtsummary::tbl_summary()
 ```
 
@@ -3207,15 +3209,15 @@ Here I am going to change level names of the `grass` variable to prevent that it
 #| label: gts-not-dichotomous1
 #| cache: true
 
-chap01_gtsummary_basic2 <- 
-    base::readRDS("data-clean/chap01_gtsummary_clean.rds") |> 
+gtsummary_basic2 <- 
+    base::readRDS("data/chap01/gtsummary_clean.rds") |> 
     dplyr::mutate(grass = 
       forcats::fct_recode(grass,
                           "used" = "Yes", 
                           "not used" = "No")
             ) 
 
-chap01_gtsummary_basic2 |>
+gtsummary_basic2 |>
     gtsummary::tbl_summary()
 ```
 
@@ -3382,10 +3384,10 @@ chap01_gtsummary_group |>
 #| label: gts-cross-table
 #| cache: true
 
-chap01_gtsummary_basic <- 
-    readRDS("data-clean/chap01_gtsummary_clean.rds")
+gtsummary_basic <- 
+    base::readRDS("data/chap01/gtsummary_clean.rds")
 
-chap01_gtsummary_cross1 <- chap01_gtsummary_basic |> 
+gtsummary_cross1 <- gtsummary_basic |> 
     labelled::set_variable_labels(
             grass = "**Ever used grass or hash?**"
         ) |> 
@@ -3404,7 +3406,7 @@ chap01_gtsummary_cross1 <- chap01_gtsummary_basic |>
       stat_0 = '**Total**'
     ) 
 
-chap01_gtsummary_cross2 <- chap01_gtsummary_basic |> 
+gtsummary_cross2 <- gtsummary_basic |> 
     labelled::set_variable_labels(
             grass = "**Ever used grass or hash?**"
         ) |> 
@@ -3424,8 +3426,8 @@ chap01_gtsummary_cross2 <- chap01_gtsummary_basic |>
     )
 
 gtsummary::tbl_stack(
-    list(chap01_gtsummary_cross1,
-         chap01_gtsummary_cross2)
+    list(gtsummary_cross1,
+         gtsummary_cross2)
     ) |> 
     gtsummary::bold_labels() 
 ```
@@ -3450,10 +3452,10 @@ gtsummary::tbl_stack(
 #| tbl-cap: "Did you ever use marijuana or hashish?"
 #| cache: true
 
-chap01_gtsummary_basic <- 
-    readRDS("data-clean/chap01_gtsummary_clean.rds")
+gtsummary_basic <- 
+    base::readRDS("data/chap01/gtsummary_clean.rds")
 
-chap01_gtsummary_basic |> 
+gtsummary_basic |> 
     gtsummary::tbl_strata(
         strata = grass,
         ~ .x |> 
@@ -3523,10 +3525,10 @@ chap01_gtsummary_basic |>
 library(gssr)   ## load package
 data(gss_all)   ## attach GSS data 
 data(gss_dict)  ## attach codebook
-chap01_gss_grass_legal <- gss_all |> 
+gss_grass_legal <- gss_all |> 
     dplyr::select(year, age, grass) 
 
-base::saveRDS(chap01_gss_grass_legal, "data-raw/chap01_gss_grass_legal.rds")
+save_data_file("chap01", gss_grass_legal, "gss_grass_legal.rds")
 
 base::unloadNamespace("gssr")
 ```
@@ -3552,10 +3554,10 @@ base::unloadNamespace("gssr")
 #| results: hold
 
 ## run only once (manually) ##########
-chap01_gss_grass_legal <- 
-    base::readRDS("data-raw/chap01_gss_grass_legal.rds")
+gss_grass_legal <- 
+    base::readRDS("data/chap01/gss_grass_legal.rds")
 
-chap01_gss_grass_legal_clean <- chap01_gss_grass_legal |> 
+gss_grass_legal_clean <- gss_grass_legal |> 
     tidyr::drop_na() |> 
     dplyr::mutate(
         grass = forcats::as_factor(grass),
@@ -3564,8 +3566,7 @@ chap01_gss_grass_legal_clean <- chap01_gss_grass_legal |>
         age = base::as.numeric(age)
     )
 
-base::saveRDS(chap01_gss_grass_legal_clean, file = 
-                "data-clean/chap01_gss_grass_legal_clean.rds")
+save_data_file("chap01", gss_grass_legal_clean, "gss_grass_legal_clean.rds")
 ```
 
 ::::
@@ -3589,7 +3590,7 @@ base::saveRDS(chap01_gss_grass_legal_clean, file =
 #| warning: false
 
 grass_legal <- 
-    base::readRDS("data-clean/chap01_gss_grass_legal_clean.rds")
+    base::readRDS("data/chap01/gss_grass_legal_clean.rds")
 
 ## remove comma from big numbers
 gtsummary::theme_gtsummary_language("en", big.mark = "")
@@ -3657,7 +3658,7 @@ But {**gtsummary**} warned me to see that this is only "an intermediate data str
 #| label: gss-grass-prepare-data
 
 grass_legal <- 
-    base::readRDS("data-clean/chap01_gss_grass_legal_clean.rds")
+    base::readRDS("data/chap01/gss_grass_legal_clean.rds")
 
 
 grass_legal2 <- grass_legal |> 
