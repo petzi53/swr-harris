@@ -28,7 +28,23 @@ Objectives
 :::
 
 
-## The opioid overdose problem (empty)
+## The opioid overdose problem
+
+There is an alarming increases in drug overdoses in the United States in recent years (see [County Health Rankings & Roadmaps website](https://https://www.countyhealthrankings.org/findings-and-insights/2023-county-health-rankings-national-findings-report) and [Data & Documentation](https://www.countyhealthrankings.org/health-data/methodology-and-sources/rankings-data-documentation#main)).
+
+The `r glossary("CDC")` Wonder website has data on the underlying cause of each death in the United States. For drug deaths, the CDC WONDER data include the drug implicated in each death, if available. 
+
+States had begun to adopt policies to try to combat the opioid epidemic. Some of the state-level policy solutions to addressing the increasing number of opioid overdoses: 
+
+- Imposition of quantity limits 
+- Required prior authorization for opioids 
+- Use of clinical criteria for prescribing opioids 
+- Step therapy requirements 
+- Required use of prescription drug monitoring programs.
+
+The Kaiser Family Foundation (`r glossary("KFF")`) keeps track of the adoption of these policies across all 50 states and the District of Columbia.
+
+Treatment programs as well as policies depend partly on the distance people have to travel to the nearest health facility. `r glossary("amfAR")`, the Foundation for AIDS Research, which has an Opioid & Health Indicators Database (https://opioid.amfar.org). The data in amfAR’s database includes distance to the nearest substance abuse treatment facility that has medication assisted therapies (MAT).
 
 ## Resources & Chapter Outline
 
@@ -229,6 +245,82 @@ glance_data(dist_mat)
 ***
 
 ### Recode data
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-recode}
+: Recode data for chapter 4
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Transform
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-a}
+: Extend amfAR data with transformed values
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: transform-amfar-distances
+#| results: hold
+#| cache: true
+
+dist_mat_clean <- dist_mat |> 
+    dplyr::mutate(square_root = sqrt(VALUE),
+                  cube_root = VALUE^(1/3),
+                  log = log(VALUE),
+                  inverse = 1/VALUE
+    )
+
+save_data_file("chap04", dist_mat_clean, "dist_mat_clean.rds")
+
+base::summary(dist_mat_clean)
+glance_data(dist_mat_clean)
+```
+
+::::
+:::::
+
+
+###### Rename `VALUE`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-rename-amfar-distance}
+: Rename amfAR `VALUE` to `distance`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: rename-amfar-distance
+#| cache: true
+
+dist_mat_clean2 <- dist_mat |> 
+    dplyr::rename(distance = VALUE) 
+
+save_data_file("chap04", dist_mat_clean2, "dist_mat_clean2.rds")
+```
+
+***
+
+(*For this R code chunk is no output available*)
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
 
 
 ## Achievement 1: Probability distributions to infer from a sample {#sec-chap04-achievement1}
@@ -573,6 +665,8 @@ binomial_data |>
 
 ## Achievement 3: Normal distribution of a continuous variable {#sec-chap04-achievement3}
 
+### Working with normal distributions
+
 Binomial data in social sciences are only one type of data. Many data are continuous variables. Just as the shape of the binomial distribution is determined by `n` and `p`, the shape of the normal distribution for a variable in a sample is determined by `$mu$` and `$sigma$`.
 
 :::::{.my-example}
@@ -636,15 +730,8 @@ dist_mat |>
 #| fig-cap: "Distribution of the distance variable transformed by various factors"
 #| warning: false
 
-library(dplyr)
-
-dist_mat_clean <- dist_mat |> 
-    dplyr::mutate(square_root = sqrt(VALUE),
-                  cube_root = VALUE^(1/3),
-                  log = log(VALUE),
-                  inverse = 1/VALUE
-    )
-
+## using the extended data frame 
+## with square root, cube root, inverse $ log values
 
 p_cube_root <- dist_mat_clean |>
     ggplot2::ggplot(
@@ -801,7 +888,6 @@ normal_data |>
         args = list(mean = 2.66, 
                     sd = .79),
         linewidth = .5) +
-    # ggplot2::geom_density() +
     ggplot2::geom_area(stat = 'function',
             fun = dnorm,
             fill = 'blue',
@@ -822,14 +908,630 @@ The shaded area is the probability for counties that are $4^3 = 64$ miles from a
 ::::
 :::::
 
+###### Compute shaded area
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-comp-shaded-area}
+: Compute shaded area: Percentage of counties where the nearest facility with MAT is 64 miles or more far away
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: comp-shaded-area
+
+stats::pnorm(4, 2.66, .79, lower.tail = FALSE)
+
+```
+***
+
+If you want to calculate the right part of the distribution then you need to change the default value from `lower.tail = TRUE` to `lower.tail = FALSE`.
+::::
+:::::
+
+4.49% of observations were in the shaded part of this distribution and therefore had a value for the distance variable of 4 or greater. Reversing the transformation, this indicated that residents of 4.49% of counties have to travel 43 or 64 miles or more to get to the nearest substance abuse facility providing medication-assisted treatment.
+
 :::
 
 ::::
 :::::
 
+### Check understanding
+
+Shows shading for the part of the distribution that is less than 2. Estimate (without computing the answer) the percentage of counties in the shaded area.
+
+:::::{.my-exercise}
+:::{.my-exercise-header}
+:::::: {#exr-chap04-check-achievement3}
+: Achievement 3: Check understanding
+::::::
+:::
+::::{.my-exercise-container}
+
+::: {.panel-tabset}
+
+###### Show shaded graph
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-achievement3-graph}
+: Shows shading for the part of the distribution that is less than 2
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-chap04-achievement3-graph
+#| fig-cap: "Probability density function for a variable with a mean of 2.66 and a standard deviation of .79 with the shaded area for counties that are 16 miles or less from the nearest facility with MAT"
+
+
+dist_mat_clean |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = cube_root)
+    ) +
+    ggplot2::stat_function(
+            fun = dnorm, 
+            n = 1e3, 
+            args = list(mean = 2.66,
+                        sd = .79),
+            linewidth = .5) +
+    ggplot2::geom_area(stat = 'function',
+            fun = dnorm,
+            fill = 'blue',
+            args = list(mean = 2.66, 
+                    sd = .79),
+            xlim = c(0, 2),
+            alpha = 0.3) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = 'Cube root of miles to the nearest facility with MAT',
+       y = 'Probability density')
+
+
+```
+
+::::
+:::::
+
+###### Computation shaded area
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-achievement3-computation}
+: Compute area of the shading for the part of the distribution that is 8 miles or less from the nearest facility with MAT
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: achievement3-computation
+
+stats::pnorm(2, mean = 2.66, sd = .79)
+
+```
 ***
 
+About 20% of the counties are 8 miles or less from the nearest facility with MAT. My estimation of the shaded area without computation would have been much more (about 30-35%).
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+
+## Achievement 4: z-scores {#sec-chap04-achievement4}
+
+:::::{.my-important}
+:::{.my-important-header}
+Values of normally distributed variables
+:::
+::::{.my-important-container}
+Regardless of what the mean and standard deviation are, a normally distributed variable has approximately 
+
+- 68% of values within one standard deviation of the mean 
+- 95% of values within two standard deviations of the mean 
+- 99.7% of values within three standard deviations of the mean
+
+These characteristics of the normal distribution can be used to describe and compare how far individual observations are from a mean value.
+
+::::
+:::::
+
+### Defining z-score
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap04-z-score}
+: Z-Score formula
+::::::
+:::
+::::{.my-theorem-container}
+$$
+z_{i} = \frac{x_{i} - m_{x}}{s_{x}}
+$$ {#eq-z-score}
+
+The `r glossary("z-score")` for an observation is the number of standard deviations it is from the mean.
+
+::::
+:::::
+
+### z-score calculation & interpretation
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-calc-z-scores}
+: Calculation and interpretation of z-scores
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Example 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-z-score1}
+: Z-score for a county with residents who have to travel 50 miles to the nearest facility
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: z-score1
+#| results: hold
+
+cube_miles <- 50^(1/3)
+mean = 2.66
+sd = .79
+
+(cube_miles - mean) / sd
+```
 ***
+
+This example county is farther than the mean away from the nearest facility with MAT.
+::::
+:::::
+
+
+###### Example 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Z-score for a county with residents who have to travel 10 miles to the nearest facility
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: z-score2
+
+cube_miles <- 10^(1/3)
+mean = 2.66
+sd = .79
+
+(cube_miles - mean) / sd
+```
+***
+
+This example county is less than the mean away from the nearest facility with MAT.
+
+::::
+:::::
+
+###### Achievement 4
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-z-score3}
+: Z-score for a county where you have to drive 15 miles to the nearest facility with MAT.
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: z-score3
+
+cube_miles <- 15^(1/3)
+mean = 2.66
+sd = .79
+
+(cube_miles - mean) / sd
+
+```
+
+This example county is less than the mean away from the nearest facility with MAT. (The mean of our transformed data is $2.66^3$ miles = `r 2.66^3`).
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+## Achievement 5: Estimating population means {#sec-chap04-achievement5}
+
+### Samples and populations
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-sample-and-population}
+: Estimating population means
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Summarize all
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-summarize-all-distances}
+: Summarize distances from the `r glossary("amfAR")` database 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: summarize-all-distances
+
+## load data with renamed `VALUE` column to `distance`
+dist_mat_clean2 <- base::readRDS("data/chap04/dist_mat_clean2.rds")
+
+dist_mat_clean2 |> 
+    dplyr::summarize(
+        mean_distance = base::mean(distance),
+        sd_distance = stats::sd(distance),
+        n = dplyr::n()
+    )
+```
+
+***
+
+These are the value for the population of (almost all) counties of the US (n = 3214). We are going now to get a sample of 500 counties to see how near we will come with the sample summaries to mean and sd of the population .
+::::
+:::::
+
+
+###### Summarize sample
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-summarize-sample-distances}
+: Draw a sample of 500 counties and compute the summaries
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: summarize-sample-distances
+#| results: hold
+#| cache: true
+
+set.seed(seed = 1945)
+dist_mat_clean2 |> 
+    dplyr::slice_sample(n = 500, replace = TRUE) |> 
+    dplyr::summarize(
+    mean_distance = base::mean(distance),
+    sd_distance = stats::sd(distance),
+    n = dplyr::n()
+    )
+
+set.seed(seed = 48)
+dist_mat_clean2 |> 
+    dplyr::slice_sample(n = 500, replace = TRUE) |> 
+    dplyr::summarize(
+    mean_distance = base::mean(distance),
+    sd_distance = stats::sd(distance),
+    n = dplyr::n()
+    )
+```
+
+***
+
+One sample is somewhat higher, the other a little lower than the population mean.
+::::
+:::::
+
+###### Sample of 20 samples
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-sample-of-20-samples}
+: Examining a sample of 20 samples from a population
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: sample-of-20-samples
+#| results: hold
+#| cache: true
+
+## get 20 samples 
+## each sample has 500 counties 
+## put samples in a data frame with each sample 
+## having a unique id called "sample_num"
+
+base::set.seed(111)
+dist_mat_sample_20 <- 
+    dplyr::bind_rows(
+        base::replicate(n = 20, dist_mat_clean2 |> 
+                        dplyr::slice_sample(n = 500, replace = TRUE),
+                        simplify = FALSE),
+        .id = "sample_num")
+
+## find the mean for each sample 
+dist_mat_sample_20_means <- dist_mat_sample_20 |> 
+    dplyr::group_by(sample_num) |> 
+    dplyr::summarize(
+        mean_distance = mean(x = distance, na.rm = TRUE))
+
+dist_mat_sample_20_means
+
+## find the mean of the 20 sample means
+dist_mat_sample_20_means |> 
+    dplyr::summarize(mean_20_means = mean(mean_distance))
+```
+
+::::
+:::::
+
+###### Sample 100 samples
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-sample-100-samples}
+: Examining a sample of 100 samples from a population
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: sample-100-samples
+#| results: hold
+#| cache: true
+
+## get 100 samples 
+## each sample has 500 counties 
+## put samples in a data frame with each sample 
+## having a unique id called "sample_num"
+
+base::set.seed(143)
+dist_mat_sample_100 <- 
+    dplyr::bind_rows(
+        base::replicate(n = 100, dist_mat_clean2 |> 
+                        dplyr::slice_sample(n = 500, replace = TRUE),
+                        simplify = FALSE),
+        .id = "sample_num")
+
+## find the mean for each sample 
+dist_mat_sample_100_means <- dist_mat_sample_100 |> 
+    dplyr::group_by(sample_num) |> 
+    dplyr::summarize(
+        mean_distance = mean(x = distance, na.rm = TRUE))
+
+dist_mat_sample_100_means
+
+## find the mean of the 100 sample means
+dist_mat_sample_100_means |> 
+    dplyr::summarize(mean_100_means = mean(mean_distance))
+
+dist_mat_sample_100_means |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = mean_distance)
+    ) +
+    ggplot2::geom_histogram(
+        bins = 30,
+        color = "black",
+        fill = "grey") +
+    ggplot2::theme_bw()
+```
+
+
+***
+
+Even if the mean of the 100 sample means is already very near from the population value (`r dist_mat_sample_100_means |> dplyr::summarize(mean_100_means = mean(mean_distance)) |> dplyr::pull()` versus `r dist_mat_clean2 |> dplyr::summarize(mean_distance = base::mean(distance)) |> dplyr::pull()`, difference = `r dist_mat_sample_100_means |> dplyr::summarize(mean_100_means = mean(mean_distance)) |> dplyr::pull() - dist_mat_clean2 |> dplyr::summarize(mean_distance = base::mean(distance)) |> dplyr::pull()`) the sampling distribution is still far from a nice normal distribution. This will change if we are going to generate 1000 sample means.
+::::
+:::::
+
+###### Sample 1000 samples
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-sample-1000-distribution}
+: Plot the sample distribution of 1000 samples
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-sample-distributions}
+```{r}
+#| label: fig-sample-1000-distribution
+#| fig-cap: "Sample distribution of 1000 samples"
+#| results: hold
+#| cache: true
+
+## get 1000 samples 
+## each sample has 500 counties 
+## put samples in a data frame with each sample 
+## having a unique id called "sample_num"
+
+base::set.seed(159)
+dist_mat_sample_1000 <- 
+    dplyr::bind_rows(
+        base::replicate(n = 1000, dist_mat_clean2 |> 
+                        dplyr::slice_sample(n = 500, replace = TRUE),
+                        simplify = FALSE),
+        .id = "sample_num")
+
+## find the mean for each sample 
+dist_mat_sample_1000_means <- dist_mat_sample_1000 |> 
+    dplyr::group_by(sample_num) |> 
+    dplyr::summarize(
+        mean_distance = mean(x = distance, na.rm = TRUE))
+
+dist_mat_sample_1000_means
+
+## find the mean of the 100 sample means
+dist_mat_sample_1000_means |> 
+    dplyr::summarize(mean_1000_means = mean(mean_distance))
+
+dist_mat_sample_1000_means |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = mean_distance)
+    ) +
+    ggplot2::geom_histogram(
+        bins = 30,
+        color = "black",
+        fill = "grey") +
+    ggplot2::theme_bw()
+
+
+```
+
+Sample distribution of 1000 samples
+:::
+
+***
+
+Taking a lot of large samples and graphing their means results in a `r glossary("sampling distribution")` that looks like a normal distribution, and, more importantly, the mean of the sample means is nearly the same as the population mean (`r dist_mat_sample_1000_means |> dplyr::summarize(mean_1000_means = mean(mean_distance)) |> dplyr::pull()` versus `r dist_mat_clean2 |> dplyr::summarize(mean_distance = base::mean(distance)) |> dplyr::pull()`, difference = `r dist_mat_sample_1000_means |> dplyr::summarize(mean_1000_means = mean(mean_distance)) |> dplyr::pull() - dist_mat_clean2 |> dplyr::summarize(mean_distance = base::mean(distance)) |> dplyr::pull()`).
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Central Limit Theorem
+
+The fact that the mean of the sample distribution of many samples approximates the population mean is called `r glossary("Central Limit Theorem")`. It holds true for continuous variables that both are and are not normally distributed.
+
+Another characteristic of the Central Limit Theorem is that the standard deviation of the sample means can be estimated using the population standard deviation and the size of the samples that make up the distribution:
+
+$$
+s_{sample\space distribution} = \frac{\sigma}{\sqrt{n}}
+$$ {#eq-sd-sample-means}
+
+If we want to calculate the standard deviation of the population we cannot use the `stats::sd()`. The reason is that `stats::sd()` uses the `r glossary("Bessel’s correction")` for samples which is not correct for the standard deviation of the population.
+
+Instead to apply the rather complex procedure in the book, I recommend to use the `sd_pop()` function from the {**sjstats**} package (see @pak-sjstats).
+
+### Standard deviation (sd)
+
+The standard deviation of the sampling distribution shows how much we expect sample means to vary from the population mean.
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-estimated-sd}
+: Compute estimated standard deviation of the sampling distributions
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: estimated-sd
+#| results: hold
+
+## compute estimated standard dev of sampling dist
+dist_mat_clean2  |>  
+    tidyr::drop_na(distance) |> # not necessary - no NAs
+    dplyr::summarize(n = dplyr::n(), 
+                     pop.var = sjstats::var_pop(distance),
+                     pop.sd = sjstats::sd_pop(distance),
+                     samp_dist_est = pop.sd / base::sqrt(x = 500)
+    )
+
+## computing the sample dist standard deviation 
+## directly from the 1000 sample means
+
+sd(x = dist_mat_sample_1000_means$mean_distance, 
+   na.rm = T)
+```
+
+::::
+:::::
+
+### Standard error (se)
+
+Since it is unusual to have the entire population for computing the population `r glossary("standard deviation")`, and it is also unusual to have a large number of samples from one population, a close approximation to this value is called the `r glossary("standard error")` of the mean (often referred to simply as the “standard error”). The standard error is computed by dividing the standard deviation of a variable by the square root of the sample size.
+
+$$
+se = \frac{s}{\sqrt{n}}
+$$ {#eq-chap04-se}
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-compute-se}
+: Compute standard error of the mean
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compute-se
+#| results: hold
+
+## mean, sd, se for first sample of 500 counties
+set.seed(seed = 1945)
+dist_mat_clean2 |> 
+    dplyr::slice_sample(n = 500, replace = TRUE) |> 
+    dplyr::summarize(
+    mean_distance = base::mean(distance),
+    sd_distance = stats::sd(distance),
+    se.dist = stats::sd(x = distance) /
+        base::sqrt(x = base::length(x = distance)),
+    n = dplyr::n()
+    )
+
+set.seed(seed = 48)
+dist_mat_clean2 |> 
+    dplyr::slice_sample(n = 500, replace = TRUE) |> 
+    dplyr::summarize(
+    mean_distance = base::mean(distance),
+    se.dist = stats::sd(x = distance) /
+        base::sqrt(x = base::length(x = distance)),
+    sd_distance = stats::sd(distance),
+    n = dplyr::n()
+    )
+```
+***
+
+Both of the standard error (se) values are close to the sampling distribution standard deviation of 1.05, but they are not exactly the same. The first sample standard error of 1.06 was a little above and the second sample standard error of .90 was a little below.
+
+::::
+:::::
+
+::: {.callout-note}
+**Summary**
+
+- The standard deviation of the sampling distribution is 1.05. 
+- The standard error from the first sample is 1.06. 
+- The standard error from the second sample is 0.90.
+
+Most of the time researchers have a single sample and so the only feasible way to determine the `r glossary("standard deviation")` of the `r glossary("sampling distribution")` is by computing the `r glossary("standard error")` of the single sample. This value tends to be a good estimate of the standard deviation of sample means.
+
+**The sample standard error is a good estimate of the sampling distribution standard deviation!**
+:::
+
+:::::{.my-important}
+:::{.my-important-header}
+Difference between standard deviation and standard error
+:::
+::::{.my-important-container}
+
+The `r glossary("standard deviation")` is a measure of the variability in the sample, while the `r glossary("standard error")` is an estimate of how closely the sample represents the population.
+::::
+:::::
+
+## Achievement 6: Confidence intervals {#sec-chap04-achievement6}
+
+
 
 ## Experiments
 
@@ -1057,6 +1759,50 @@ If you’re scraping multiple pages, hadley Wickham highly recommends using {**r
 It is important to read the introductory vignette [Web scraping 101](https://rvest.tidyverse.org/articles/rvest.html). It introduces you to the basics of web scraping with {**rvest**}. You’ll first learn the basics of HTML and how to use `r glossary("CSS")` selectors to refer to specific elements, then you’ll learn how to use {**rvest**} functions to get data out of `r glossary("HTML")` and into R.
 
 A very important tool to get the appropriate CSS selector is SelectorGadget. To learn how to install and to use this tool read the [SelectorGadget help page]https://rvest.tidyverse.org/articles/selectorgadget.html) of {**rvest**}.
+
+***
+
+
+
+::::
+:::::
+
+### sjstats
+
+:::::{.my-resource}
+:::{.my-resource-header}
+sjstats: Collection of Convenient Functions for Common Statistical Computations 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-sjstats}
+
+***
+
+{**sjstats**}: [Collection of Convenient Functions for Common Statistical Computations](https://strengejacke.github.io/sjstats/) [@sjstats]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap04/logoi/logo-sjstats-min.png){width="176"}
+
+Collection of convenient functions for common statistical computations, which are not directly provided by R’s base or stats packages.
+
+:::
+
+This package aims at providing, *first*, shortcuts for statistical measures, which otherwise could only be calculated with additional effort (like Cramer’s V, Phi, or effict size statistics like Eta or Omega squared), or for which currently no functions available.
+
+*Second*, another focus lies on weighted variants of common statistical measures and tests like weighted standard error, mean, t-test, correlation, and more.
+
+The comprised tools include:
+
+- Especially for mixed models: design effect, sample size calculation
+- Weighted statistics and tests for: mean, median, standard error, standard deviation, correlation, Chi-squared test, t-test, Mann-Whitney-U-test
+
+
+{**sjstats**}: A Collection of Convenient Functions for Common Statistical Computations
+:::
+
 
 ***
 ::::
