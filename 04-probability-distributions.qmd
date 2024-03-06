@@ -256,7 +256,7 @@ glance_data(dist_mat)
 
 ::: {.panel-tabset}
 
-###### Transform
+###### Transform amfAR
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -288,7 +288,7 @@ glance_data(dist_mat_clean)
 :::::
 
 
-###### Rename `VALUE`
+###### Rename `VALUE` in amfAR
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -314,6 +314,43 @@ save_data_file("chap04", dist_mat_clean2, "dist_mat_clean2.rds")
 
 ::::
 :::::
+
+###### Prepare PDMP data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-prepare-pdmp}
+: Rename column in PDMP and recode Yes/No to 1/0
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: prepare-bdmp
+
+pdmp_2017_book <- base::readRDS("data/chap04/pdmp_2017_book.rds")
+
+## recode Yes to 1 and No to 0
+pdmp_2017_book_clean <- pdmp_2017_book |> 
+    dplyr::rename(PDMP = 6) |> 
+    dplyr::mutate(PDMP =
+          dplyr::if_else(PDMP == "Yes", 1, 0)
+          ) |> 
+    dplyr::mutate(PDMP = as.numeric(PDMP))
+
+save_data_file("chap04", pdmp_2017_book_clean, "pdmp_2017_book_clean.rds")
+    
+
+```
+
+***
+
+(*For this R code chunk is no output available*)
+
+::::
+:::::
+
+
+
 
 :::
 
@@ -693,9 +730,9 @@ Binomial data in social sciences are only one type of data. Many data are contin
 #| label: fig-dist-mat-normal
 #| fig-cap: "Distribution of the distance to the nearest facility with MAT"
 
-dist_mat <- base::readRDS("data/chap04/dist_mat.rds")
+dist_mat_clean <- base::readRDS("data/chap04/dist_mat_clean.rds")
 
-dist_mat |> 
+dist_mat_clean |> 
     ggplot2::ggplot(
         ggplot2::aes(x = VALUE) 
     ) +
@@ -729,6 +766,7 @@ dist_mat |>
 #| label: fig-dist-mat-transformed
 #| fig-cap: "Distribution of the distance variable transformed by various factors"
 #| warning: false
+#| cache: true
 
 ## using the extended data frame 
 ## with square root, cube root, inverse $ log values
@@ -1414,7 +1452,7 @@ Another characteristic of the Central Limit Theorem is that the standard deviati
 
 $$
 s_{sample\space distribution} = \frac{\sigma}{\sqrt{n}}
-$$ {#eq-sd-sample-means}
+$$ {#eq-chap04-sd-sample-means}
 
 If we want to calculate the standard deviation of the population we cannot use the `stats::sd()`. The reason is that `stats::sd()` uses the `r glossary("Bessel’s correction")` for samples which is not correct for the standard deviation of the population.
 
@@ -1437,7 +1475,7 @@ The standard deviation of the sampling distribution shows how much we expect sam
 #| label: estimated-sd
 #| results: hold
 
-## compute estimated standard dev of sampling dist
+## compute parameters for population
 dist_mat_clean2  |>  
     tidyr::drop_na(distance) |> # not necessary - no NAs
     dplyr::summarize(n = dplyr::n(), 
@@ -1484,7 +1522,7 @@ dist_mat_clean2 |>
     dplyr::summarize(
     mean_distance = base::mean(distance),
     sd_distance = stats::sd(distance),
-    se.dist = stats::sd(x = distance) /
+    se_distance = stats::sd(x = distance) /
         base::sqrt(x = base::length(x = distance)),
     n = dplyr::n()
     )
@@ -1494,7 +1532,7 @@ dist_mat_clean2 |>
     dplyr::slice_sample(n = 500, replace = TRUE) |> 
     dplyr::summarize(
     mean_distance = base::mean(distance),
-    se.dist = stats::sd(x = distance) /
+    se_distance = stats::sd(x = distance) /
         base::sqrt(x = base::length(x = distance)),
     sd_distance = stats::sd(distance),
     n = dplyr::n()
@@ -1531,7 +1569,886 @@ The `r glossary("standard deviation")` is a measure of the variability in the sa
 
 ## Achievement 6: Confidence intervals {#sec-chap04-achievement6}
 
+### Introduction
 
+95% `r glossary("confidence interval")` (CIs) show the range where the population value would likely be 95 times if the study were conducted 100 times.
+
+**The 95% interval idea summarized:**
+
+- About 95% of values lie within two `r glossary("standard deviation", "standard deviations")` of the mean for a variable that is normally distributed. 
+- The `r glossary("standard error")` of a sample is a good estimate of the standard deviation of the `r glossary("sampling distribution")`, which is normally distributed. 
+- The mean of the sampling distribution is a good estimate of the population mean. 
+- So, most sample means will be within two standard errors (or more exact 1.96) of the population mean.
+- The number of standard deviations some observation is away from the mean is called a `r glossary("z-score")`.
+
+In the following example I am going to replicate Figure 4.20 and 4.21 of the book. For these two graphs there exist no demonstration how to use R code to produce the figures in the book.
+
+### Working with 95% CIs
+
+#### Compute and plot stats: mean, sd, se and CIs
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-working-with.ci}
+: Working with 95% confidence intervals
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Compute 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-compute-ci1}
+: Compute with a sample of 500 counties CI together with mean, sd, and se 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compute-ci1
+#| results: hold
+#| cache: true
+
+
+## get the population mean
+dist_mat_clean2 <- base::readRDS("data/chap04/dist_mat_clean2.rds")
+mean_dist_pop <- dist_mat_clean2 |> 
+    dplyr::summarize(mean_pop = mean(distance)) |> 
+    dplyr::pull()
+
+## mean, sd, se and 95% ci for first sample of 500 counties
+set.seed(seed = 1945)
+dist_mat_sample1 <- dist_mat_clean2 |> 
+    dplyr::slice_sample(n = 500, replace = TRUE)
+
+dist_mat_param_sample1 <-  dist_mat_sample1 |> 
+    dplyr::summarize(
+    mean_distance = base::mean(distance),
+    sd_distance = stats::sd(distance),
+    se_distance = stats::sd(distance) /
+        base::sqrt(x = base::length(distance)),
+    lower_ci_distance = mean_distance - 1.96 * se_distance, 
+    upper_ci_distance = mean_distance + 1.96 * se_distance
+    )
+```
+***
+
+::: {.callout-tip}
+The mean distance in miles to the nearest substance abuse treatment facility with MAT in a sample of 500 counties is `r round(dist_mat_param_sample1$mean_distance, 2)`; the true or population mean distance in miles to a facility likely lies between `r round(dist_mat_param_sample1$lower_ci_distance, 2)` and `r round(dist_mat_param_sample1$upper_ci_distance, 2)` (m = `r round(dist_mat_param_sample1$mean_distance, 2)`; 95% CI = `r round(dist_mat_param_sample1$lower_ci_distance, 2)` – `r round(dist_mat_param_sample1$upper_ci_distance, 2)`).
+:::
+
+In this special case we have the population mean also available: So we can compare: The population mean = `r round(mean_dist_pop, 2)`, e.g., it lies withing the 95 CI!
+
+::::
+:::::
+
+###### Compute 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-compute-ci2}
+: Compute with another sample of 500 counties CI together with mean, sd, and se 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compute-ci2
+#| results: hold
+
+dist_mat_clean2 <-  base::readRDS("data/chap04/dist_mat_clean2.rds")
+
+## mean, sd, se and 95% ci for first sample of 500 counties
+set.seed(seed = 48)
+dist_mat_sample2 <- dist_mat_clean2 |> 
+    dplyr::slice_sample(n = 500, replace = TRUE)
+
+dist_mat_param_sample2 <-  dist_mat_sample2 |> 
+    dplyr::summarize(
+    mean_distance = base::mean(distance),
+    sd_distance = stats::sd(distance),
+    se_distance = stats::sd(distance) /
+        base::sqrt(x = base::length(distance)),
+    lower_ci_distance = mean_distance - 1.96 * se_distance, 
+    upper_ci_distance = mean_distance + 1.96 * se_distance
+    )
+```
+
+***
+
+::: {.callout-tip}
+The mean distance in miles to the nearest substance abuse treatment facility with MAT in a sample of 500 counties is `r round(dist_mat_param_sample2$mean_distance, 2)`; the true or population mean distance in miles to a facility likely lies between `r round(dist_mat_param_sample2$lower_ci_distance, 2)` and `r round(dist_mat_param_sample2$upper_ci_distance, 2)` (m = `r round(dist_mat_param_sample2$mean_distance, 2)`; 95% CI = `r round(dist_mat_param_sample2$lower_ci_distance, 2)` – `r round(dist_mat_param_sample2$upper_ci_distance, 2)`).
+
+:::
+
+In this special case we have the population mean also available: So we can compare: The population mean = `r round(mean_dist_pop, 2)`, e.g., it lies withing the 95 CI!
+
+::::
+:::::
+
+
+###### Plot 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-plot-ci1}
+: Plot CI of a sample 0f 500 counties compared with population mean
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-plot-ci1
+#| fig-cap: "Distribution of the distance to the nearest facility with MAT with a 95% cofindence interval and compared to the population mean"
+#| cache: true
+
+## create data frame for the 4 different vertical lines
+vlines <- tibble::tibble(labels = c(
+        "Lower CI", "Upper CI", 
+        "Sample Mean", "Population Mean"
+        ),
+    xintercepts = c(
+        dist_mat_param_sample1$lower_ci_distance,
+        dist_mat_param_sample1$upper_ci_distance,
+        dist_mat_param_sample1$mean_distance,
+        mean_dist_pop
+        ),
+    colors = c("coral", "blue4", "seagreen", "yellow"),
+    linetypes = c("solid", "solid", "dotted", "dashed" )
+     )
+
+## plot with scale & legend ##############
+dist_mat_sample1 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = distance)
+        ) +
+    ggplot2::geom_histogram(
+        bins = 30,
+        fill = "grey",
+        color = "black"
+        ) + 
+    
+    ## add all vertical lines via data frame
+    ggplot2::geom_vline(
+        data = vlines,
+        ggplot2::aes(
+            xintercept = xintercepts,
+            color = colors, # color order is alphabetically
+            linetype = linetypes)
+    ) +
+    
+    ## change / prepare legend
+    ggplot2::scale_color_identity(        
+        name = "Parameter",
+        labels = vlines$labels, 
+        guide = "legend",
+        breaks = c("coral", "blue4", "seagreen", "yellow")
+        ) +
+    
+    ## prevent second legend for line type
+    ## `guide = "none"` as default not necessary
+    ggplot2::scale_linetype_identity(guide = "none") + 
+    ggplot2::theme_bw() +
+    
+    ## make legend bigger so that the lines are better visible
+    ## and position legend on top with a border around
+    ggplot2::guides(color = 
+        ggplot2::guide_legend(override.aes = base::list(size = 8))) +
+    ggplot2::theme(
+        legend.position = "top",
+        legend.background = 
+           ## color = legend border,
+           ## fill would be background, here not used
+           ggplot2::element_rect(color = "black")
+        ) +       
+    ggplot2::labs(
+        x = "Distance in miles",
+        y = "Number of counties"
+    )
+```
+***
+The 95% interval is very small. The population mean is inside the sample CI, very near and therefore almost overlapping the sample mean.
+
+- The population mean = `r mean_dist_pop`
+- The sample mean = `r dist_mat_param_sample1$mean_distance`
+- The difference = `r mean_dist_pop - dist_mat_param_sample1$mean_distance`
+
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+Order of legend labels
+:::
+::::{.my-watch-out-container}
+The standard for the order of the legend label is alphabetically. For instance I could manage my desired order with `colors = c("blue4", "coral", "seagreen", "yellow")` in the `vlines` data frame.
+
+But I wanted to learn how to re-order the colors if they are not sorted. So I have changed my color code to `colors = c("coral", "blue4", "seagreen", "yellow")` in the `vlines` data frame. The first two colors are exchanged and not alphabetically sorted anymore.
+
+It turned out that in this case I need to add the `breaks` argument with the correct order of colors inside my scale specification. So I have added `breaks = c("coral", "blue4", "seagreen", "yellow")` into `ggplot2::scale_color_identity()`.
+
+BTW: `ggplot2::scale_color_identity()` was necessary because I have passed the color names to be used for the vertical lines directly from the data frame (and not via a color palette). Calling `scale_color_indentity()` tells ggplot2 that it doesn’t need to create a new color scale in that situation.
+
+
+::::
+:::::
+
+
+###### Plot 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-plot-ci2}
+: Plot CI of another sample 0f 500 counties compared with population mean
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-plot-ci2
+#| fig-cap: "Distribution of the distance to the nearest facility with MAT with a 95% cofindence interval and compared to the population mean"
+#| cache: true
+
+## plot with scale & legend ##############
+dist_mat_sample2 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = distance)
+        ) +
+    ggplot2::geom_histogram(
+        bins = 30,
+        fill = "grey",
+        color = "black"
+        ) + 
+    
+    ## add all vertical lines via data frame
+    ggplot2::geom_vline(
+        data = vlines,
+        ggplot2::aes(
+            xintercept = xintercepts,
+            color = colors, # color order is alphabetically
+            linetype = linetypes)
+    ) +
+    
+    ## change / prepare legend
+    ggplot2::scale_color_identity(        
+        name = "Parameter",
+        labels = vlines$labels, 
+        guide = "legend",
+        breaks = c("coral", "blue4", "seagreen", "yellow")
+        ) +
+    
+    ## prevent second legend for line type
+    ## `guide = "none"` as default not necessary
+    ggplot2::scale_linetype_identity(guide = "none") + 
+    ggplot2::theme_bw() +
+    
+    ## make legend bigger so that the lines are better visible
+    ## and position legend on top with a border around
+    ggplot2::guides(color = 
+        ggplot2::guide_legend(override.aes = base::list(size = 8))) +
+    ggplot2::theme(
+        legend.position = "top",
+        legend.background = 
+           ## color = legend border,
+           ## fill would be background, here not used
+           ggplot2::element_rect(color = "black")
+        ) +       
+    ggplot2::labs(
+        x = "Distance in miles",
+        y = "Number of counties"
+    )
+```
+***
+
+
+The 95% interval is very small. The population mean is inside the sample CI, very near and therefore almost overlapping the sample mean.
+
+- The population mean = `r mean_dist_pop`
+- The sample mean = `r dist_mat_param_sample2$mean_distance`
+- The difference = `r mean_dist_pop - dist_mat_param_sample2$mean_distance`
+
+::::
+:::::
+
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+Order of legend labels
+:::
+::::{.my-watch-out-container}
+The standard for the order of the legend label is alphabetically. For instance I could manage my desired order with `colors = c("blue4", "coral", "seagreen", "yellow")` in the `vlines` data frame.
+
+But I wanted to learn how to re-order the colors if they are not sorted. So I have changed my color code to `colors = c("coral", "blue4", "seagreen", "yellow")` in the `vlines` data frame. The first two colors are exchanged and not alphabetically sorted anymore.
+
+It turned out that in this case I need to add the `breaks` argument with the correct order of colors inside my scale specification. So I have added `breaks = c("coral", "blue4", "seagreen", "yellow")` into `ggplot2::scale_color_identity()`.
+
+BTW: `ggplot2::scale_color_identity()` was necessary because I have passed the color names to be used for the vertical lines directly from the data frame (and not via a color palette). Calling `scale_color_indentity()` tells ggplot2 that it doesn’t need to create a new color scale in that situation.
+
+::::
+:::::
+
+
+
+
+
+:::
+
+::::
+:::::
+
+#### Population mean & sample CIs for continuous variable
+
+We have seen that the population mean of both samples is inside the 95% confidence intervals. But lets get more calculation and see if 5% of the samples --- per definition --- really fall outside the CIs.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-ci-samples-with-mean}
+: Check how often the population mean falls outside the sample CIs
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+20 Sample stats
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-sample-stats-20}
+: Means and 95% confidence intervals of 20 samples
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: sample-stats-20
+#| cache: true
+
+sample_stats_20 <- dist_mat_sample_20 |> 
+    dplyr::group_by(sample_num) |> 
+    dplyr::summarize(mean_20 = mean(distance),
+                     sd_20 = sd(distance),
+                     se_20 = sd_20 / 
+                         base::sqrt(dplyr::n()),
+                     ci_lower_20 = mean_20 - 2 * se_20,
+                     ci_upper_20 = mean_20 + 2 * se_20
+                     )
+sample_stats_20
+```
+
+::::
+:::::
+
+###### 20 samples graph
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-ci-sample-stats-20}
+: Visualizing position of population mean in relation to 95% confidence intervals of 20 samples
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-ci-sample-stats-20
+#| fig-cap: "Means and 95% confidence intervals of miles to the nearest substance abuse treatment facility with MAT from 20 samples of counties in the United States"
+#| cache: true
+
+sample_stats_20 |> 
+    dplyr::group_by(sample_num) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = sample_num,
+                     y = mean_20
+        )
+    ) +
+    ggplot2::geom_errorbar(
+        ggplot2::aes(
+            ymin = ci_lower_20, 
+            ymax = ci_upper_20,
+            linetype = "95% CI\nof sample mean"
+        )
+    ) +
+    ggplot2::geom_point(
+        ggplot2::aes(
+            x = sample_num,
+            y = mean_20,
+            size = "Sample mean"
+        )
+    ) +
+    ggplot2::geom_hline(
+        ggplot2::aes(
+            yintercept = mean_dist_pop,
+            color = "darkred"
+        ),
+        linewidth = 1.5
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Sample",
+        y = "Mean distance to treatment facility (95% CI)"
+    ) +
+    ggplot2::scale_color_discrete(
+        name = "",
+        labels = "Population mean"
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = c(1, NULL) 
+    ) +
+    ggplot2::scale_size_manual(
+        name = "",
+        values = 4
+    ) +
+    ggplot2::theme(
+        legend.position = "top"
+    ) 
+```
+***
+
+One confidence interval did not contain the population mean. This is 5% of 20 sample, which corresponds exactly to the definition of the 95% CI!
+::::
+:::::
+
+
+###### 100 samples graph
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-ci-sample-stats-100}
+: Visualizing position of population mean in relation to 95% confidence intervals of 100 samples
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-ci-sample-stats-100
+#| fig-cap: "Means and 95% confidence intervals of miles to the nearest substance abuse treatment facility with MAT from 100 samples of counties in the United States"
+#| cache: true
+#| results: hold
+
+sample_stats_100 <- dist_mat_sample_100 |> 
+    dplyr::group_by(sample_num) |> 
+    dplyr::summarize(mean_100 = mean(distance),
+                     sd_100 = sd(distance),
+                     se_100 = sd_100 / 
+                         base::sqrt(dplyr::n()),
+                     ci_lower_100 = mean_100 - 2 * se_100,
+                     ci_upper_100 = mean_100 + 2 * se_100
+                     )
+
+sample_stats_100 |> 
+    dplyr::group_by(sample_num) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = sample_num,
+                     y = mean_100
+        )
+    ) +
+    ggplot2::geom_errorbar(
+        ggplot2::aes(
+            ymin = ci_lower_100, 
+            ymax = ci_upper_100,
+            linetype = "95% CI\nof sample mean"
+        )
+    ) +
+    ggplot2::geom_point(
+        ggplot2::aes(
+            x = sample_num,
+            y = mean_100,
+            size = "Sample mean"
+        )
+    ) +
+    ggplot2::geom_hline(
+        ggplot2::aes(
+            yintercept = mean_dist_pop,
+            color = "darkred"
+        ),
+        linewidth = .5
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Sample",
+        y = "Mean distance to treatment facility (95% CI)"
+    ) +
+    ggplot2::scale_color_discrete(
+        name = "",
+        labels = "Population mean"
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = c(1, NULL) 
+    ) +
+    ggplot2::scale_size_manual(
+        name = "",
+        labels = "Sample mean",
+        values = 1
+    ) +
+    ggplot2::scale_x_discrete(
+        breaks = NULL
+    ) +
+    ggplot2::theme(
+        legend.position = "top"
+    ) 
+```
+***
+
+This time four confidence intervals that did contain the population mean. This is within the tolerance limit of the 95% CI: With 100 samples 5 would be allowed not to contain the population mean.
+
+Form the graph it is difficult to find those CIs that do not contain the population mean. In the next tab I am trying to colorize those intervals. 
+
+::::
+:::::
+
+::: {.callout-note}
+In the book the scale of the x-axis was removed with `ggplot2::theme(axis.text.x = ggplot2::element_blank())`. I have used `ggplot2::scale_x_discrete(breaks = NULL)` with the same effect. 
+:::
+
+###### 100 samples graph colored
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-ci-sample-stats-100-colored}
+: Visualizing position of population mean in relation to 95% confidence intervals of 100 samples, colorizing those CIs that do not include the population mean
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-ci-sample-stats-100-colored
+#| fig-cap: "Means and 95% confidence intervals of miles to the nearest substance abuse treatment facility with MAT from 100 samples of counties in the United States"
+#| cache: true
+#| results: hold
+
+sample_stats_100 <- dist_mat_sample_100 |> 
+    dplyr::group_by(sample_num) |> 
+    dplyr::summarize(mean_100 = mean(distance),
+                     sd_100 = sd(distance),
+                     se_100 = sd_100 / 
+                         base::sqrt(dplyr::n()),
+                     ci_lower_100 = mean_100 - 2 * se_100,
+                     ci_upper_100 = mean_100 + 2 * se_100
+                     )
+
+sample_stats_100 |> 
+    dplyr::group_by(sample_num) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = sample_num,
+                     y = mean_100
+        )
+    ) +
+    ggplot2::geom_errorbar(
+        ggplot2::aes(
+            ymin = ci_lower_100, 
+            ymax = ci_upper_100,
+            linetype = "95% CI\nof sample mean"
+        ),
+        color = dplyr::if_else(
+            mean_dist_pop >= sample_stats_100$ci_lower_100 & 
+            mean_dist_pop <= sample_stats_100$ci_upper_100,
+            "black",
+            "orange"
+        )
+    ) +
+    ggplot2::geom_point(
+        ggplot2::aes(
+            x = sample_num,
+            y = mean_100,
+            size = "Sample mean"
+        )
+    ) +
+    ggplot2::geom_hline(
+        ggplot2::aes(
+            yintercept = mean_dist_pop,
+            color = "darkred"
+        ),
+        linewidth = .5
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Sample",
+        y = "Mean distance to treatment facility (95% CI)"
+    ) +
+    ggplot2::scale_color_discrete(
+        name = "",
+        labels = "Population mean"
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = c(1, NULL) 
+    ) +
+    ggplot2::scale_size_manual(
+        name = "",
+        labels = "Sample mean",
+        values = 1
+    ) +
+    ggplot2::scale_x_discrete(
+        breaks = NULL
+    ) +
+    ggplot2::theme(
+        legend.position = "top"
+    ) 
+```
+***
+
+Now you can better see that 4 CIs do not include the population mean. The graph is a reproduction of book’s Figure 4.24 which is not accompanied with the appropriate R code.
+
+::::
+:::::
+
+::: {.callout-note}
+In the book the scale of the x-axis was removed with `ggplot2::theme(axis.text.x = ggplot2::element_blank())`. I have used `ggplot2::scale_x_discrete(breaks = NULL)` with the same effect. 
+:::
+
+
+
+:::
+
+::::
+:::::
+
+#### Population mean & sample CIs for binomial variable
+
+Given that the sampling distribution is normally distributed, 95% of sample means would be within two standard deviations of the mean of the means. This is also valid for binomial distributions, e.g. there are also confidence interval around the proportion of successes for a binary variable.
+
+But there are two points to observe:
+
+1. For variables that have only two values (e.g., Yes and No, success and failure, 1 and 0), the mean of the variable is the same as the percentage of the group of interest. (The mean of a binary variable is typically abbreviated as `p` for proportion rather than `m` for mean.)
+2. For any given sample, then, the 95% confidence interval for the mean (which is the percentage in the category of interest) can be computed using the same formula of $m + (1.96 × se)$ and $m – (1.96 × se)$. **But there is a difference in the calculation of the standard error!**
+
+
+
+:::::{.my-note}
+:::{.my-note-header}
+How to calculate the standard error for binomial distributions?
+:::
+::::{.my-note-container}
+Instead of the formula for standard error for continuous variables (see @eq-chap04-se) the standard error for binomial distribution is:
+
+$$
+\sqrt\frac{p (1 - p)}{n}
+$$ {#eq-chap04-se-binomial}
+::::
+:::::
+
+The essence of this difference: Instead of computing the CI via the `r glossary("standard deviation")` you have to calculate the CIs directly from mean and `r glossary("standard error")`.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-ci-binomial}
+: Population mean & sample CIs for binomial variable
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Sample PDMP
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-prop-sample-pdmp}
+: Get 100 samples of 30 states for PDMPs
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: prop-ci-pdmp
+#| results: hold
+#| cache: true
+
+
+pdmp_2017_book_clean <- base::readRDS("data/chap04/pdmp_2017_book_clean.rds")
+
+## find the mean of pdmp
+pdmp_mean_2017 <- pdmp_2017_book_clean |> 
+    dplyr::summarize(p = base::mean(PDMP)) |> 
+    dplyr::pull()
+
+
+## get 100 samples: each sample has 30 states 
+## put samples in a data frame with each sample having 
+## a unique id called sample_num
+
+base::set.seed(143)
+pdmp_2017_book_samples <- 
+    dplyr::bind_rows(
+        base::replicate(n = 100, 
+            pdmp_2017_book_clean |> 
+                        dplyr::slice_sample(n = 30, replace = TRUE),
+                        simplify = FALSE),
+        .id = "sample_num")  
+
+## find the mean for each sample
+pdmp_2017_book_samples_states <-  pdmp_2017_book_samples |> 
+    dplyr::group_by(sample_num) |> 
+    dplyr::summarize(pdmp_p = base::mean(PDMP))
+    
+pdmp_mean_2017 
+pdmp_2017_book_samples_states
+```
+
+::::
+:::::
+
+###### Histogram samples PDMP 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-graph-ci-pdmp}
+: Histogram of 100 samples of states with PDMPs (2017)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-histo-bdmp-100-samples
+#| fig-cap: "Histogram of 100 samples of states with PDMPs (2017)"
+#| results: hold
+#| cache: true
+
+pdmp_2017_book_samples_states |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = pdmp_p)
+    ) +
+    ggplot2::geom_histogram(
+        bins = 10,
+        color = "black",
+        fill = "grey") +
+    ggplot2::theme_bw()
+```
+***
+
+The group looks normally distributed and it would even look more normally distributed with more samples. Given that the sampling distribution is normally distributed, 95% of sample means would be within 1.96 standard deviations of the mean of the means. 
+
+::::
+:::::
+
+###### 100 samples binomial
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-ci-sample-binomial-100-colored}
+: Visualizing position of population mean in relation to 95% confidence intervals of 100 samples of the binomial distribution of the BDMPs, colorizing those CIs that do not include the population mean
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-ci-sample-binomial-100-colored
+#| fig-cap: "Mean and 95% CI for proportion of states with PDMPs from 100 samples of 30 states from a population where 62.75% of states have PDMPs"
+#| results: hold
+#| cache: true
+
+
+sample_binomial_100 <- pdmp_2017_book_samples |> 
+    dplyr::group_by(sample_num) |>
+    dplyr::summarize(mean_100 = base::mean(PDMP),
+                     se_100 = base::sqrt(mean_100 * (1 - mean_100) / 
+                              dplyr::n()),
+                     ci_lower_100 = mean_100 - 2 * se_100,
+                     ci_upper_100 = mean_100 + 2 * se_100
+                     )
+
+sample_binomial_100 |> 
+    dplyr::group_by(sample_num) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = sample_num,
+                     y = mean_100
+        )
+    ) +
+    ggplot2::geom_errorbar(
+        ggplot2::aes(
+            ymin = ci_lower_100, 
+            ymax = ci_upper_100,
+            linetype = "95% CI\nof sample mean"
+        ),
+        color = dplyr::if_else(
+            pdmp_mean_2017 >= sample_binomial_100$ci_lower_100 & 
+            pdmp_mean_2017 <= sample_binomial_100$ci_upper_100,
+            "black",
+            "orange"
+        )
+    ) +
+    ggplot2::geom_point(
+        ggplot2::aes(
+            x = sample_num,
+            y = mean_100,
+            size = "Sample mean"
+        )
+    ) +
+    ggplot2::geom_hline(
+        ggplot2::aes(
+            yintercept = pdmp_mean_2017,
+            color = "darkred"
+        ),
+        linewidth = .5
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Sample",
+        y = "Mean distance to treatment facility (95% CI)"
+    ) +
+    ggplot2::scale_color_discrete(
+        name = "",
+        labels = "Population mean"
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = c(1, NULL) 
+    ) +
+    ggplot2::scale_size_manual(
+        name = "",
+        labels = "Sample mean",
+        values = 1
+    ) +
+    ggplot2::scale_x_discrete(
+        breaks = NULL
+    ) +
+    ggplot2::theme(
+        legend.position = "top"
+    ) 
+```
+***
+
+We see that 2 CIs do not include the population mean. The graph is a reproduction of book’s Figure 4.26 which is not accompanied with the appropriate R code.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+#### Other confidence intervals
+
+The three most common intervals have the following z-scores: 
+
+***
+:::{#bul-three-cis}
+- 90% confidence interval z-score = 1.645 
+- 95% confidence interval z-score = 1.96 
+- 99% confidence interval z-score = 2.576
+
+The three most common intervals with its z-scores
+:::
+***
+
+Confidence intervals for small samples, usually defined as samples with fewer than 30 observations [@field2012], use a `r glossary("t-statistic")` instead of a `r glossary("z-score")` in computing `r glossary("confidence interval")` for means and in other types of analyses.
+
+> The t-statistic is from the t-distribution and, like the z-score, it measures the distance from the mean. However, the t-statistic does this using the standard deviation of the sampling distribution, also known as the standard error, rather than the standard deviation of the sample.
+
+$$
+\begin{align*}
+t = \frac{m}{\frac{s}{\sqrt{n}}} \\
+m = \text{sample mean for a variable} \\
+s = \text{sample standard deviation for the same variable} \\
+n = \text{sample size} \\
+note = \text{the denominator for t is} \frac{s}{\sqrt(n)}\text{is the standard error}
+\end{align*}
+$$ {#eq-chap04-t-statistic}
+
+The main practical difference between the two is that the t-statistic works better when samples are small; once samples are very large (n > 1,000), the two values will be virtually identical. (See @sec-chap06 for more about the t-statistics.)
 
 ## Experiments
 

@@ -1,7 +1,7 @@
 # Preface {.unnumbered}
 
 ::: {.callout-note style="color: blue;"}
-#### This is work in progress: I have finished chapter 1, 2 and 3 (about 19% of the book). These chapters also contains experiments and additional self-created exercises. Currently I have started working on chapter 4.
+#### This is work in progress: I have finished chapter 1-4 (about 37% of the book). These chapters also contains experiments and additional self-created exercises. Currently I have started working on chapter 5.
 :::
 
 ::: my-watch-out
@@ -152,8 +152,28 @@ entries.\]
 
 ::: my-r-code-container
 ::: {#lst-preview-load-glossary}
-``` {.r include="../_my-glossary.R"}
+
+```{r}
+## 1. Install the glossary package:
+## https://debruine.github.io/glossary/
+
+library(glossary)
+
+## If you want to use my glossary.yml file:
+
+## 1. fork my repo
+##    https://github.com/petzi53/glossary-pb
+
+## 2. Download the `glossary.yml` file from
+##    https://github.com/petzi53/glossary-pb/blob/master/glossary.yml)
+
+## 3. Store the file on your hard disk
+##    and change the following path accordingly
+
+glossary::glossary_path("../glossary-pb/glossary.yml")
+
 ```
+
 
 Install and load the glossary package with the appropriate glossary.yml
 file
@@ -162,8 +182,7 @@ file
 :::
 
 If you hover with your mouse over the double underlined links it opens
-an window with the appropriate glossary text. Try this example:
-`r glossary("Centering")`.
+an window with the appropriate glossary text. Try this example: `r glossary("Z-Score")`.
 
 ::: my-watch-out
 ::: my-watch-out-header
