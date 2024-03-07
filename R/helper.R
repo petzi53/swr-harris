@@ -132,6 +132,10 @@ list_plotter <- function(color_list, names, package_name) {
 # Purpose:
 # If folder not exists, create it and save object as .rds file
 # Author: Peter Baumgartner
+# chapter_folder = character: folder inside "data" folder
+#                  example "chap05"
+# object = data to save
+# file_name = character: example "xy_object.rds"
 # I have used the function in my notes on "Statistics with R"
 # # See: https://bookdown.org/pbaumgartner/swr-harris/
 ################################################################

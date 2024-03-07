@@ -18,6 +18,7 @@ book:
     - 02-descriptive-statistics.qmd
     - 03-data-visualization.qmd
     - 04-probability-distributions.qmd
+    - 05-chi-squared.qmd
     - 95-references.qmd
 
 bibliography:

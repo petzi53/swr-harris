@@ -2444,7 +2444,7 @@ t = \frac{m}{\frac{s}{\sqrt{n}}} \\
 m = \text{sample mean for a variable} \\
 s = \text{sample standard deviation for the same variable} \\
 n = \text{sample size} \\
-note = \text{the denominator for t is} \frac{s}{\sqrt(n)}\text{is the standard error}
+note = \text{the denominator for t is} \frac{s}{\sqrt(n)}\text{This is the standard error!}
 \end{align*}
 $$ {#eq-chap04-t-statistic}
 

@@ -1,0 +1,467 @@
+# Computing Chi-Squared {#sec-chap05}
+
+```{r}
+#| label: setup
+#| include: false
+
+base::source(file = "R/helper.R")
+```
+
+## Achievements to unlock
+
+::: my-objectives
+::: my-objectives-header
+Objectives
+:::
+
+::: my-objectives-container
+**SwR Achievements**
+
+-   **Achievement 1**: Understanding the relationship between two
+    categorical variables using bar charts, frequencies, and percentages (@sec-chap05-achievement1)
+-   **Achievement 2**: Computing and comparing observed and expected
+    values for the groups (@sec-chap05-achievement2)
+-   **Achievement 3**: Calculating the chi-squared statistic for the
+    test of independence (@sec-chap05-achievement3)
+-   **Achievement 4**: Interpreting the chi-squared statistic and making
+    a conclusion about whether or not there is a relationship (@sec-chap05-achievement4)
+-   **Achievement 5**: Using Null Hypothesis Significance Testing to
+    organize statistical testing (@sec-chap05-achievement5)
+-   **Achievement 6**: Using standardized residuals to understand which
+    groups contributed to significant relationships (@sec-chap05-achievement6)
+-   **Achievement 7**: Computing and interpreting effect sizes to
+    understand the strength of a significant chi-squared relationship (@sec-chap05-achievement7)
+-   **Achievement 8**: Understanding the options for failed chi-squared
+    assumptions (@sec-chap05-achievement8)
+:::
+:::
+
+## The voter fraud problem
+
+Information from studies suggests that voter fraud does happen but it
+is rare. In contrast to these studies a great minority of people (20-30%) in
+the US believe that voter fraud is a big problem. Many states are
+building barriers to vote, and other states make voting more easily, for
+instance with automatic voter registration bills.
+
+## Resources & Chapter Outline
+
+### Data, codebook, and R packages {#sec-chap05-data-codebook-packages}
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for learning about descriptive statistics
+:::
+
+::: my-resource-container
+**Data**
+
+Two options for assessing the data:
+
+1.  Download the data set `pew_apr_19-23_2017_weekly_ch5.sav` from
+    <https://edge.sagepub.com/harris1e>
+2.  Download the data set from the `r glossary("Pew Research Center")`
+    website
+    (<https://www.people-press.org/2017/06/28/public-supports-aimof-making-it-easy-for-all-citizens-to-vote/>)
+
+**Codebook**
+
+Two options for assessing the documentation:
+
+1.  Download the documentation files `pew_voting_april_2017_ch5.pdf`,
+    `pew_voting_demographics_april_2017_ch5.docx`, and
+    `pew_chap5_readme.txt` from <https://edge.sagepub.com/harris1e>
+2.  Download the data set from the [Pew Research Center website](https://www.pewresearch.org/download-datasets/) and the
+    documentation will be included with the zipped file.
+
+**Packages**
+
+1.  Packages used with the book (sorted alphabetically)
+
+-   {**desc**}: @pak-descr (Jakson Alves de Aquino)
+-   {**fmsb**}: @pak-fmsb (Minato Nakazawa)
+-   {**haven**}: @pak-haven (Hadley Wickham)
+-   {**lsr**}: @pak-lsr (Danielle Navarro[^05-chi-squared-1])
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+
+2.  My additional packages (sorted alphabetically)
+:::
+:::
+
+[^05-chi-squared-1]: Not Daniel Navarro as mentioned in the book.
+    Danielle has changed her gender.
+
+### Get data
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-get-data}
+: Get data for chapter 5
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Pew data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-get-pew-data}
+: Get pew data about public support for making it easy to vote
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: get-pew-data
+#| eval: false
+
+## run only once manually #########
+vote <- haven::read_sav("data/chap05/pew_apr_19-23_2017_weekly_ch5.sav")
+
+vote <- vote |> 
+    labelled::remove_labels()
+save_data_file("chap05", vote, "vote.rds")
+
+```
+
+***
+
+(*For this R code chunk is no output available*)
+
+:::::{.my-note}
+:::{.my-note-header}
+Removing labels
+:::
+::::{.my-note-container}
+`haven::zap_labels()` as used in the book removes value labels and not variable labels. The correct function would be `haven::zap_label()`. I have used the {**labelled**} package where you can use `labelled::remove_labels()` to delete both (variable & value labels).
+::::
+:::::
+
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+Error message with labelled data
+:::
+::::{.my-watch-out-container}
+I have removed the labelled data immediately, because I got an error message caused by summary statistics (e.g., `base::summary()`, `skimr::skim()`, `dplyr::summarize()`) whenever I rendered the file (but not when I compiled the code chunk.) 
+
+I didn't have time to look into this issue --- and I had to remove the labels anyway. 
+
+What follows is the error message:
+
+```
+Quitting from lines 180-186 [show-pew-raw-data] (05-chi-squared.qmd)
+Error in `dplyr::summarize()`:
+ℹ In argument: `skimmed = purrr::map2(...)`.
+Caused by error in `purrr::map2()`:
+ℹ In index: 1.
+ℹ With name: character.
+Caused by error in `dplyr::summarize()`:
+ℹ In argument: `dplyr::across(tidyselect::any_of(variable_names),
+  mangled_skimmers$funs)`.
+Caused by error in `across()`:
+! Can't compute column `state_~!@#$%^&*()-+character.empty`.
+Caused by error in `as.character()`:
+! Can't convert `x` <haven_labelled> to <character>.
+Backtrace:
+  1. skimr::skim(vote)
+ 28. skimr (local) `<fn>`(state)
+ 29. x %in% empty_strings
+ 31. base::mtfrm.default(`<hvn_lbll>`)
+ 33. vctrs:::as.character.vctrs_vctr(x)
+ ```
+::::
+:::::
+
+
+
+
+
+###### header2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: text-bxx
+
+1 + 1
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+### Show raw data
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-show-data}
+: Show raw data for chapter 5
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Vote
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-show-pew-raw-data}
+: Get pew data about public support for making it easy to vote
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: show-pew-raw-data
+#| results: hold
+#| cache: true
+
+vote <-  base::readRDS("data/chap05/vote.rds")
+skimr::skim(vote)
+```
+
+::::
+:::::
+
+
+###### header2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: text-byyyy
+
+1 + 1
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+### Recode data for chapter 5
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-recode-data}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Pew data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-recode-pew-data}
+: Select some columns from the pew data set
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: recode-pew-data
+#| results: hold
+
+vote <-  base::readRDS("data/chap05/vote.rds")
+
+vote_clean <-  vote |> 
+    dplyr::select(pew1a, pew1b, race, sex, 
+                  mstatus, ownhome, employ, polparty) |> 
+    labelled::remove_labels() |> 
+    dplyr::mutate(dplyr::across(1:8, forcats::as_factor)) |> 
+    naniar::replace_with_na(replace = list(
+        pew1a = c(5, 9),
+        pew1b = c(5, 9),
+        race = 99,
+        ownhome = c(8, 9)
+    )) |> 
+    dplyr::mutate(pew1a = forcats::fct_recode(pew1a,
+             "Register to vote" = "1",
+             "Make easy to vote" = "2",
+             )) |> 
+    dplyr::mutate(pew1b = forcats::fct_recode(pew1b,
+             "Require to vote" = "1",
+             "Choose to vote" = "2",
+             )) |> 
+    dplyr::mutate(race = forcats::fct_recode(race,
+             "White non-Hispanic" = "1",
+             "Black non-Hispanic" = "2",
+             )) |> 
+    dplyr::mutate(race = forcats::fct_collapse(race,
+             "Hispanic" = c("3", "4", "5"),
+             "Other" = c("6", "7", "8", "9", "10")
+    )) |> 
+    dplyr::mutate(sex = forcats::fct_recode(sex,
+             "Male" = "1",
+             "Female" = "2",
+             )) |> 
+    dplyr::mutate(ownhome = forcats::fct_recode(ownhome,
+             "Owned" = "1",
+             "Rented" = "2",
+             )) |> 
+    dplyr::mutate(dplyr::across(1:8, forcats::fct_drop)) |> 
+    dplyr::rename(ease_vote = "pew1a",
+                  require_vote = "pew1b")
+    
+skimr::skim(vote_clean)
+```
+
+
+
+
+::::
+:::::
+
+
+###### header2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: text-bzzzz
+#| results: hold
+
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+## Achievement 1: Relationship of two categorical variables {#sec-chap05-achievement1}
+
+
+
+------------------------------------------------------------------------
+
+## Exercises (empty)
+
+## Packages introduced in this chapter 
+
+### fmsb
+
+:::::{.my-resource}
+:::{.my-resource-header}
+fmsb: Functions for Medical Statistics Book with some Demographic Data 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-fmsb}
+
+***
+
+{**fmsb**}: [Functions for Medical Statistics Book with some Demographic Data](https://cran.r-project.org/package=fmsb) [@fmsb]
+
+(*There is no hexagon logo for {**fmsb**} available*)
+
+
+Several utility functions for the book entitled "Practices of Medical and Health Data Analysis using R" (Pearson Education Japan, 2007) with Japanese demographic data and some demographic analysis related functions.
+
+{**fmsb**}: Functions for Medical Statistics Book with some Demographic Data
+:::
+
+***
+::::
+:::::
+
+### lsr
+
+:::::{.my-resource}
+:::{.my-resource-header}
+lsr: Companion to "Learning Statistics with R" 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-lsr}
+
+***
+
+{**lsr**}: [Companion to "Learning Statistics with R"](https://learningstatisticswithr.com/) [@lsr]
+
+(*There is no hexagon logo for {**lsr**} available*)
+
+A collection of tools intended to make introductory statistics easier to teach, including wrappers for common hypothesis tests and basic data manipulation. It accompanies Navarro, D. J. (2015). Learning Statistics with R: A Tutorial for Psychology Students and Other Beginners, Version 0.6. 
+
+
+{**lsr**}: Companion to "Learning Statistics with R"
+:::
+
+***
+::::
+:::::
+
+
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+## Session Info {.unnumbered}
+
+::: my-r-code
+::: my-r-code-header
+Session Info
+:::
+
+::: my-r-code-container
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+:::
+:::
