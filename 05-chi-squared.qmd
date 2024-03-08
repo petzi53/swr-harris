@@ -334,11 +334,19 @@ vote_clean <-  vote |>
     dplyr::mutate(dplyr::across(1:8, forcats::fct_drop)) |> 
     dplyr::rename(ease_vote = "pew1a",
                   require_vote = "pew1b")
+
+save_data_file("chap05", vote_clean, "vote_clean.rds")
     
 skimr::skim(vote_clean)
 ```
 
+***
+I have used in this recoding R chunk several functions for the first time:
 
+- I turned all character columns into factor variables with just one line of code using `dplyr::across()` in combination with `forcats::as_factor()`.
+- I replaced missing values (NAs) with the `replace_with_na()` function of the {**naniar**} package (see @pak-naniar).
+- I combined several levels with `forcats::fct_collapse()`.
+- And finally I dropped all unused levels in the whole data.frame using `dplyr::across()` in conjunction with `forcats::fct_drop()`.
 
 
 ::::
@@ -372,6 +380,423 @@ skimr::skim(vote_clean)
 ***
 
 ## Achievement 1: Relationship of two categorical variables {#sec-chap05-achievement1}
+
+### Descriptive statistics
+
+For better display I have reversed the order of the variables: Instead of grouping y ease of vote I will group by race/ethnicity. This will give a smaller table with only two columns instead of four that will not fit on the sceen without horizontal scrolling.
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-stats-voting-data}
+: Frequencies between two categorical variables
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### summarize()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-summarize-voting-data}
+: Summarize relationship ease of vote and race/ethnicity
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: summarize-voting-data
+#| results: hold
+#| cache: true
+
+vote_clean <-  base::readRDS("data/chap05/vote_clean.rds")
+
+vote_clean |> 
+    tidyr::drop_na(ease_vote) |> 
+    tidyr::drop_na(race) |> 
+    dplyr::group_by(race, ease_vote) |> 
+    ## either summarize
+    dplyr::summarize(n = dplyr::n(),
+                     .groups = "keep")
+    ## or count the observation in each group
+    # dplyr::count()
+```
+***
+Here I used "standard" tidyverse code to count frequencies. Instead of the somewhat complex last code line I could have used just `dplyr::count()` with the same result.
+
+
+
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Prevent warning with `.groups` argument
+:::
+::::{.my-watch-out-container}
+By using two variables inside `dplyr::group_by()` I got a warning message:
+
+> `summarise()` has grouped output by 'ease_vote'. 
+> You can override using the `.groups` argument.
+
+At first I had to set the chunk option `warning: false` to turn off this warning. But finally I managed to prevent the warning with R code. See the [summarize help page](https://dplyr.tidyverse.org/reference/summarise.html) under arguments `.groups`. Another option to suppress the warning would have been `options(dplyr.summarise.inform = FALSE)`. See also the two [comments in StackOverflow](https://stackoverflow.com/questions/71914704/override-using-groups-argument) and [r-stats-tips](https://rstats-tips.net/2020/07/31/get-rid-of-info-of-dplyr-when-grouping-summarise-regrouping-output-by-species-override-with-groups-argument/).
+::::
+:::::
+
+
+###### pivot_wider()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-pivot-wider-voting-data}
+: Summarize by converting data from long to wide with `pivot_wider()` from {**tidyr**}
+::::::
+:::
+::::{.my-r-code-container}
+
+:::{#lst-chap05-pivot-wider-voting-data}
+```{r}
+#| label: pivot-wider-voting-data
+#| warning: false
+#| cache: true
+
+vote_clean |> 
+    tidyr::drop_na(ease_vote) |> 
+    tidyr::drop_na(race) |> 
+    dplyr::group_by(race, ease_vote) |> 
+    dplyr::summarize(freq_n = dplyr::n()) |> 
+    tidyr::pivot_wider(
+        names_from = ease_vote,
+        values_from = freq_n
+    )
+```
+Summarizing and converting data from long to wide with `pivot_wider()` from {**tidyr**}
+:::
+
+***
+
+We get with `dplyr::pivot_wider()` a more neatly arranged table.
+::::
+:::::
+
+###### table()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-contingency-table-voting-data}
+: Summarize with a base R contingency table 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: contingency-table-voting-data
+#| results: hold
+
+base::table(vote_clean$race, vote_clean$ease_vote)
+```
+***
+
+Note that NA's are automatically excluded from the table.
+
+
+
+
+
+::::
+:::::
+
+With the simple `base::table()` we will get a very similar result as in the more complex `dplyr::pivot_wider()` code variant in @lst-chap05-pivot-wider-voting-data. 
+
+But I prefer in any case the tidyverse version for several reasons:
+
+:::::{.my-note}
+:::{.my-note-header}
+Some deficiencies of `base::table()` 
+:::
+::::{.my-note-container}
+
+- `table()` does not accept data.frame as input and you can't therefore chain several commands together with the ` |> ` pipe.
+- `table()` does not output data.frames
+- `table()` is very difficult to format and to make it print ready.
+::::
+:::::
+
+###### tabyl()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-tabyl-voting-data}
+: Frequencies with `tabyl()` from {**janitor**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tabyl-voting-data
+#| results: hold
+
+vote_clean |> 
+    janitor::tabyl(race, ease_vote, show_na = FALSE)
+```
+***
+
+`janitor::tabyl()` prevents the weaknesses of the `base::table()` function. It works with data.frames, is tidyverse compatible and has many `adorn_*` functions (`adorn_` stands for "adornment") to format the output values.
+::::
+:::::
+
+###### prop.table()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-contingency-prop-table-voting-data}
+: Summarize with a base R proportion contingency table 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: prop-contingency-table-voting-data
+#| results: hold
+
+base::prop.table(
+    base::table(`Race / Ethnicity` = vote_clean$race,
+          `Ease of voting` = vote_clean$ease_vote), margin = 1)
+```
+***
+All was I said about flaws for `base::table()` is of course valid for the `base::prop.table()` function as well.
+
+::::
+:::::
+
+###### tabyl() formatted
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-janitor-voting-data}
+: Frequencies with `tabyl()` from {**janitor**} formatted
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: janitor-voting-data
+#| results: hold
+
+vote_clean |> 
+    janitor::tabyl(race, ease_vote, show_na = FALSE) |> 
+    janitor::adorn_percentages("row")  |> 
+    janitor::adorn_pct_formatting(digits = 2)  |> 
+    janitor::adorn_ns() |> 
+    janitor::adorn_title(row_name = "Race / Ethnicity",
+                         col_name = "Ease of voting")
+```
+***
+
+In this example you can see the power of the {**janitor**} package. The main purpose of the {**janitor**} is data cleaning, but because counting is such a fundamental part of data cleaning and exploration the `tabyl()` and `adorn_*()` has been included in this package.
+::::
+:::::
+
+###### Ease of voting
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-ease-voting-data}
+: Ease of voting by race / ethnicity
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: ease-voting-data
+#| results: hold
+
+vote_clean |> 
+    janitor::tabyl(race, ease_vote, show_na = FALSE) |> 
+    janitor::adorn_percentages("row")  |> 
+    janitor::adorn_pct_formatting(digits = 2)  |> 
+    janitor::adorn_ns() |> 
+    janitor::adorn_title(row_name = "Race / Ethnicity",
+                         col_name = "Ease of voting")
+```
+***
+
+::: {.callout-tip}
+The voting registration policy a person favors differed by race/ethnicity.
+
+- White non-Hispanic participants were fairly evenly divided between those who thought people should register if they want to vote and those who thought voting should be made as easy as possible.
+- The other three race-ethnicity groups had larger percentages in favor of making it as easy as possible to vote.
+- Black non-Hispanic participants have the highest percentage (77.78%) in favor of making it easy to vote.
+:::
+
+
+::::
+:::::
+
+###### Require to vote
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-ease-voting-data}
+: Voting as requirement or free choice by race /ethnicity
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: require-voting-data
+#| results: hold
+
+vote_clean |> 
+    janitor::tabyl(race, require_vote, show_na = FALSE) |> 
+    janitor::adorn_percentages("row")  |> 
+    janitor::adorn_pct_formatting(digits = 2)  |> 
+    janitor::adorn_ns() |> 
+    janitor::adorn_title(row_name = "Race / Ethnicity",
+                         col_name = "Voting as citizen duty or as a free choice?")
+```
+***
+
+::: {.callout-tip}
+Different ethnicities have distinct opinions about the character of voting. 
+
+- About one-third of Black non-Hispanic and Hispanic believe that voting should be a requirement. But this means on the other hand, that at least two-third of both groups see voting as a free choice. 
+- In contrast to this proportion are white non-Hispanic and other non-Hispanic ethnicities: In those groups more than 80% favor voting as a free choice.
+
+:::
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+### Graphs
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-ID-text}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### geom_col()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-pew-voting-geom-col-graph}
+: Visualizing opinions about voting by race /ethnicity 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-pew-voting-geom-col-graph
+#| fig-cap: "Opinion on voter registration and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
+
+vote_clean |> 
+    tidyr::drop_na(ease_vote) |>
+    tidyr::drop_na(race) |>
+    dplyr::group_by(race, ease_vote) |>
+    dplyr::count() |>
+    dplyr::group_by(race) |>
+    dplyr::mutate(perc = n / base::sum(n)) |>
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = race, 
+            y = perc,
+            fill = ease_vote)
+    ) +
+    ggplot2::geom_col(position = "dodge") +
+    ggplot2::geom_label(
+        ggplot2::aes(
+            x = race,
+            y = perc,
+            # label = paste0(n, "(", round(perc, 1),"%)"),
+            label = paste0(round(100 * perc, 1),"%"),
+            vjust = 1.5, hjust = -.035
+        ),
+        color = "white"
+    ) +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Race / Ethnicity",
+        y = "Percent"
+    )
+    
+```
+***
+
+I had several difficulties by drawing this graph:
+
+1. I didn't know that I have to group by race again (line after `dplyr::count()`)
+2. I thought that I could calculate the percentages with ggplot2::after_stat()
+
+Instead of the last line I could have used with the same result: `ggplot2::geom_bar(position = "dodge", stat = "identity")`. `geom_bar()` uses as standard option `ggplot2::stat_count()`. It is however possible to override the default value as was done in the book code. But it easier here to use `geom_col()` because it uses as default `stat_identity()` e.g., it leaves the data as is.
+
+::::
+:::::
+
+###### geom_bar()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-pew-voting-geom-bar-graph}
+: Visualizing opinions about voting by race / ethnicity 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-pew-voting-geom-bar-graph
+#| fig-cap: "Opinion on voter registration and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
+
+
+vote_clean |> 
+    tidyr::drop_na(ease_vote) |>
+    tidyr::drop_na(race) |>
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = race, 
+            y = ggplot2::after_stat(count / base::sum(count)),
+            fill = ease_vote)
+    ) +
+    ggplot2::geom_bar(position = "dodge") +
+    ggplot2::scale_y_continuous(labels = scales::percent)
+```
+***
+
+I had several difficulties by drawing this graph:
+
+1. I didn't know that I have to group by race again (line after `dplyr::count())
+2. I thought that I could calculate 
+
+@pak-scales
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
+***
+
+
+
+
 
 
 
@@ -437,6 +862,39 @@ A collection of tools intended to make introductory statistics easier to teach, 
 ::::
 :::::
 
+### naniar
+
+:::::{.my-resource}
+:::{.my-resource-header}
+naniar: Data Structures, Summaries, and Visualisations for Missing Data 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-naniar}
+
+***
+
+{**naniar**}: [https://github.com/njtierney/naniar](https://naniar.njtierney.com/) [@naniar]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap05/logoi/logo-naniar-min.png){width="176"}
+
+
+{**naniar**} provides principled, tidy ways to summarise, visualise, and manipulate missing data with minimal deviations from the workflows in ggplot2 and tidy data.
+
+:::
+
+Missing values are ubiquitous in data and need to be explored and handled in the initial stages of analysis. {**naniar**} provides data structures and functions that facilitate the plotting of missing values and examination of imputations. This allows missing data dependencies to be  explored with minimal deviation from the common work patterns of 'ggplot2' and tidy data. The work is fully discussed in Tierney & Cook [-@tierney2023].
+
+{**naniar**}: https://github.com/njtierney/naniar
+:::
+
+
+***
+::::
+:::::
 
 
 ## Glossary
