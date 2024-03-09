@@ -682,8 +682,8 @@ Different ethnicities have distinct opinions about the character of voting.
 
 :::::{.my-example}
 :::{.my-example-header}
-:::::: {#exm-ID-text}
-: Numbered Example Title
+:::::: {#exm-chap05-descriptive-graphs}
+: Descriptive graphs
 ::::::
 :::
 ::::{.my-example-container}
@@ -695,16 +695,16 @@ Different ethnicities have distinct opinions about the character of voting.
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap05-pew-voting-geom-col-graph}
-: Visualizing opinions about voting by race /ethnicity 
+: Visualizing opinions about ease of voting by race / ethnicity 
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
 #| label: fig-pew-voting-geom-col-graph
-#| fig-cap: "Opinion on voter registration and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
+#| fig-cap: "Opinion on ease of voting by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
 
-vote_clean |> 
+p_ease_vote <- vote_clean |> 
     ## prepare data
     tidyr::drop_na(ease_vote) |>
     tidyr::drop_na(race) |>
@@ -735,6 +735,8 @@ vote_clean |>
         direction = -1,
         option = "viridis"
     )
+
+p_ease_vote
 ```
 ***
 
@@ -762,14 +764,14 @@ Instead of the last line I could have used with the same result: `ggplot2::geom_
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap05-pew-voting-geom-bar-graph}
-: Visualizing opinions about voting by race / ethnicity 
+: Visualizing opinions about ease of voting by race / ethnicity 
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
 #| label: fig-pew-voting-geom-bar-graph
-#| fig-cap: "Opinion on voter registration and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
+#| fig-cap: "Opinion on ease of voting by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
 
 
 
@@ -805,7 +807,7 @@ vote_clean |>
 
 Here I have used `geom_bar()` with the `after_stat()` calculation. It turned out that the function computes the percentages of the different race categories for the two `ease_vote` values. This was not was I had intended.
 
-I tried for several hours to use `after_stat()` with the same result as in @chap05-pew-voting-geom-col-graph, but I didn't succeed. I do not know if the reason is my missing knowledge (for instance to generate another structure of the data.frame) or if you can't do that in general. 
+I tried for several hours to use `after_stat()` with the same result as in @cnj-chap05-pew-voting-geom-col-graph, but I didn't succeed. I do not know if the reason is my missing knowledge (for instance to generate another structure of the data.frame) or if you can't do that in general. 
 
 ::::
 :::::
@@ -815,14 +817,14 @@ I tried for several hours to use `after_stat()` with the same result as in @chap
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap05-pew-voting-geom-col-label-graph}
-: Visualizing opinions about voting by race /ethnicity 
+: Visualizing opinions about ease of voting by race / ethnicity 
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
 #| label: fig-pew-voting-geom-col-label-graph
-#| fig-cap: "Opinion on voter registration and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
+#| fig-cap: "Opinion on ease of voting by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
 
 vote_clean |> 
     tidyr::drop_na(ease_vote) |>
@@ -852,6 +854,14 @@ vote_clean |>
     ggplot2::labs(
         x = "Race / Ethnicity",
         y = "Percent"
+    ) +
+    ggplot2::scale_fill_viridis_d(
+        name = "Ease of voting",
+        alpha = .8, # here alpha works!!
+        begin = .25,
+         end = .75,
+        direction = -1,
+        option = "viridis"
     )
     
 ```
@@ -861,6 +871,109 @@ Here I have experimented with labels. It seems that with the argument `position 
 
 ::::
 :::::
+
+###### requirements
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-pew-voting-requirements-by-race}
+: Visualizing opinions about requirements of voting by race / ethnicity 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-pew-voting-requirements-by-race
+#| fig-cap: "Opinion on voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
+
+p_require_vote <- vote_clean |> 
+    ## prepare data
+    tidyr::drop_na(require_vote) |>
+    tidyr::drop_na(race) |>
+    dplyr::group_by(race, require_vote) |>
+    dplyr::count() |>
+    dplyr::group_by(race) |>
+    dplyr::mutate(perc = n / base::sum(n)) |>
+    
+    ## draw graph
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = race, 
+            y = perc,
+            fill = require_vote)
+    ) +
+    ggplot2::geom_col(position = "dodge") +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Race / Ethnicity",
+        y = "Percent"
+    ) +
+    ggplot2::scale_fill_viridis_d(
+        name = "Requirements of voting",
+        alpha = .8, # here alpha works!!
+        begin = .25,
+         end = .75,
+        direction = -1,
+        option = "viridis"
+    )
+
+p_require_vote
+```
+
+
+
+::::
+:::::
+
+###### Voting by race
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-voting-opinions-by-race}
+: Visualizing opinions about voting by race / ethnicity 
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-pew-voting-by-race
+#| fig-cap: "Opinion on ease of voting and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
+#| fig-height: 6
+#| warning: false
+
+p_ease <- p_ease_vote +
+    ggplot2::labs(
+        x = "",
+        y = "Percent within group"
+    ) +
+    ggplot2::scale_fill_viridis_d(
+        name = "Opinion on\nvoter registration",
+        alpha = .8, 
+        begin = .25,
+        end = .75,
+        direction = -1,
+        option = "viridis"
+    ) +
+    ggplot2::theme(axis.text.x = ggplot2::element_blank())
+
+p_require <- p_require_vote +
+    ggplot2::labs(y = "Percent within group") +
+    ggplot2::scale_fill_viridis_d(
+        name = "Opinion on\nvoting",
+        alpha = .8,
+        begin = .25,
+        end = .75,
+        direction = -1,
+        option = "viridis"
+    )
+
+gridExtra::grid.arrange(p_ease, p_require, ncol = 1)
+
+```
+
+::::
+:::::
+
 
 ###### Color test
 
