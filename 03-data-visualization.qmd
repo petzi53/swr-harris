@@ -2271,7 +2271,7 @@ gun_use_2012 |>
 I have used {**viridis**} to produce colorblind-friendly color maps (see
 @pak-viridis). Instead of using as the first default color yellow I have
 chosen with the color map options and the begin/end argument, what color
-shoud appear for this binary variable.
+should appear for this binary variable.
 :::
 :::
 
@@ -4004,7 +4004,7 @@ nhanes_2012_clean |>
 More concise code for the proportional stacked bar chart: Gun use by sex
 :::
 
-This is the reduced code of the book snippet from @lst-chap03-stacked-bar-geom-col-group-percent. It does not need a special preparation for proportional bar parts. Instead just add `position = "fill` into the `ggplot2::geom_bar()` or `ggplot2::geom_col()` function.
+This is the reduced code of the book snippet from @lst-chap03-stacked-bar-geom-col-group-percent. It does not need a special preparation for proportional bar parts. Instead just add `position = "fill"` into the `ggplot2::geom_bar()` or `ggplot2::geom_col()` function.
 
 
 ::::
@@ -5638,22 +5638,22 @@ In this chapter I preferred "viridis::turbo" because it is the most colorful pal
 
 
 
-###### Practice test
+###### Practice test {#sec-chap03-practice-test}
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap03-color-test-bw}
-: Test how the colors you used for your graph look for printing in black & write
+: Test how my used colors look for printing in black & white
 ::::::
 :::
 ::::{.my-r-code-container}
 
 
-::: {#lst-color-test-bw}
+::: {#lst-chap03-color-test-bw}
 
 ```{r}
 #| label: fig-color-test-bw
-#| fig-cap: "Test if used colors of my graph gun-use by sex are also readable for black & white printing"
+#| fig-cap: "Test if used colors of my graph gun-use by sex are also readable in black & white printing"
 #| fig-height: 3
 #| results: hold
 
@@ -5703,13 +5703,6 @@ Other colorblind friendly palettes
 ::::
 :::::
 
-
-:::::{.my-resource}
-:::{.my-resource-header}
-Other colorblind friendly palettes
-
-:::
-:::::
 
 
 ***
@@ -6188,7 +6181,7 @@ pal_data <- list(names = c("Normal", "deuteranopia", "protanopia", "tritanopia")
           dichromat::dichromat(my_colors, type = "tritan")))
 
 list_plotter(pal_data$color, pal_data$names, 
-             "Color blindness effects for my waffle graph: rounds fired with cividis color scale")
+             "Color blindness effects for my waffle graph:\nrounds fired with cividis color scale")
 
 
 ```
@@ -6519,10 +6512,16 @@ I have learned to add palettes with different approaches. The following experime
 
 ```{r}
 #| label: fig-providing-gg-object
-#| fig-cap: "This is the graph with the standard {**ggplot2**} palette."
+#| fig-cap: "This is the graph with the default {**ggplot2**} palette."
 
 library(ggmosaic)
 library(ggplot2)
+
+## restore ggplot2 colors #############
+options(
+  ggplot2.discrete.color = NULL,
+  ggplot2.discrete.fill = NULL
+)
 
 nhanes_2012_clean <- base::readRDS("data/chap03/nhanes_2012_clean.rds")
 
@@ -6708,6 +6707,8 @@ WATCH OUT! Changing the `alpha` argument does not work
 ::::{.my-watch-out-container}
 
 All the options to add the {**viridis**} palette does not change the `alpha` argument. I believe that this is an error on the {**ggmosiac**} package. 
+
+**Update**: Yes, In the meanwhile I have confirmed my assumption! @cnj-chap05-pew-voting-geom-col-graph shows an example where the `alpha` argument is working! 
 
 ::::
 :::::

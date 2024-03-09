@@ -296,6 +296,7 @@ skimr::skim(vote)
 
 vote <-  base::readRDS("data/chap05/vote.rds")
 
+## create vote_clean #############
 vote_clean <-  vote |> 
     dplyr::select(pew1a, pew1b, race, sex, 
                   mstatus, ownhome, employ, polparty) |> 
@@ -411,6 +412,7 @@ For better display I have reversed the order of the variables: Instead of groupi
 #| results: hold
 #| cache: true
 
+## load vote_clean ##########
 vote_clean <-  base::readRDS("data/chap05/vote_clean.rds")
 
 vote_clean |> 
@@ -703,12 +705,15 @@ Different ethnicities have distinct opinions about the character of voting.
 #| fig-cap: "Opinion on voter registration and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
 
 vote_clean |> 
+    ## prepare data
     tidyr::drop_na(ease_vote) |>
     tidyr::drop_na(race) |>
     dplyr::group_by(race, ease_vote) |>
     dplyr::count() |>
     dplyr::group_by(race) |>
     dplyr::mutate(perc = n / base::sum(n)) |>
+    
+    ## draw graph
     ggplot2::ggplot(
         ggplot2::aes(
             x = race, 
@@ -716,32 +721,38 @@ vote_clean |>
             fill = ease_vote)
     ) +
     ggplot2::geom_col(position = "dodge") +
-    ggplot2::geom_label(
-        ggplot2::aes(
-            x = race,
-            y = perc,
-            # label = paste0(n, "(", round(perc, 1),"%)"),
-            label = paste0(round(100 * perc, 1),"%"),
-            vjust = 1.5, hjust = -.035
-        ),
-        color = "white"
-    ) +
     ggplot2::scale_y_continuous(labels = scales::percent) +
     ggplot2::theme_bw() +
     ggplot2::labs(
         x = "Race / Ethnicity",
         y = "Percent"
+    ) +
+    ggplot2::scale_fill_viridis_d(
+        name = "Ease of voting",
+        alpha = .8, # here alpha works!!
+        begin = .25,
+         end = .75,
+        direction = -1,
+        option = "viridis"
     )
-    
 ```
 ***
 
 I had several difficulties by drawing this graph:
 
-1. I didn't know that I have to group by race again (line after `dplyr::count()`)
-2. I thought that I could calculate the percentages with ggplot2::after_stat()
+1. Most important: I did not know that the second variable `ease_vote` has to be included by the `fill` argument. That seems not logical but together with `position = dodge` it make sense.
+2. I didn't know that I have to group by race again (the line after `dplyr::count()`)
+3. I thought that I could calculate the percentages with `ggplot2::after_stat()`. The solution was more trivial: Creating a new column with the calculated percentages and using `geom_col()` instead of `geom_bar()`.
 
 Instead of the last line I could have used with the same result: `ggplot2::geom_bar(position = "dodge", stat = "identity")`. `geom_bar()` uses as standard option `ggplot2::stat_count()`. It is however possible to override the default value as was done in the book code. But it easier here to use `geom_col()` because it uses as default `stat_identity()` e.g., it leaves the data as is.
+
+::: {.callout-note}
+**Two additional remarks**:
+
+1. I have used here the percent scale from the {**scales**} package to get percent signs on the y-axis.
+2. I practiced my learnings from @sec-chap03 about adding a color-friendly palette (see @sec-chap03-practice-test). (See also my color test in @cnj-chap05-color-test-bw.)
+:::
+
 
 ::::
 :::::
@@ -761,31 +772,139 @@ Instead of the last line I could have used with the same result: `ggplot2::geom_
 #| fig-cap: "Opinion on voter registration and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
 
 
+
 vote_clean |> 
     tidyr::drop_na(ease_vote) |>
     tidyr::drop_na(race) |>
     ggplot2::ggplot(
         ggplot2::aes(
             x = race, 
-            y = ggplot2::after_stat(count / base::sum(count)),
-            fill = ease_vote)
+            fill = ease_vote
+        )
     ) +
-    ggplot2::geom_bar(position = "dodge") +
-    ggplot2::scale_y_continuous(labels = scales::percent)
+    ggplot2::geom_bar(position = "dodge",
+        ggplot2::aes(
+            y = ggplot2::after_stat(count / base::sum(count))
+        )) +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Race / Ethnicity",
+        y = "Percent"
+    ) +
+    ggplot2::scale_fill_viridis_d(
+        name = "Ease of voting",
+        alpha = .8, # here alpha works!!
+        begin = .25,
+         end = .75,
+        direction = -1,
+        option = "viridis"
+    )
 ```
 ***
 
-I had several difficulties by drawing this graph:
+Here I have used `geom_bar()` with the `after_stat()` calculation. It turned out that the function computes the percentages of the different race categories for the two `ease_vote` values. This was not was I had intended.
 
-1. I didn't know that I have to group by race again (line after `dplyr::count())
-2. I thought that I could calculate 
-
-@pak-scales
+I tried for several hours to use `after_stat()` with the same result as in @chap05-pew-voting-geom-col-graph, but I didn't succeed. I do not know if the reason is my missing knowledge (for instance to generate another structure of the data.frame) or if you can't do that in general. 
 
 ::::
 :::::
 
+###### geom_col() with labels
 
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-pew-voting-geom-col-label-graph}
+: Visualizing opinions about voting by race /ethnicity 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-pew-voting-geom-col-label-graph
+#| fig-cap: "Opinion on voter registration and voting requirements by race / ethnicity from a study of the Pew Research Center 2017 (n = 1,028)"
+
+vote_clean |> 
+    tidyr::drop_na(ease_vote) |>
+    tidyr::drop_na(race) |>
+    dplyr::group_by(race, ease_vote) |>
+    dplyr::count() |>
+    dplyr::group_by(race) |>
+    dplyr::mutate(perc = n / base::sum(n)) |>
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = race, 
+            y = perc,
+            fill = ease_vote)
+    ) +
+    ggplot2::geom_col(position = "dodge") +
+    ggplot2::geom_label(
+        ggplot2::aes(
+            x = race,
+            y = perc,
+            label = paste0(round(100 * perc, 1),"%"),
+            vjust = 1.5, hjust = -.035
+        ),
+        color = "white"
+    ) +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        x = "Race / Ethnicity",
+        y = "Percent"
+    )
+    
+```
+***
+
+Here I have experimented with labels. It seems that with the argument `position = dodge` the labels can't appear on each of the appropriate bars.
+
+::::
+:::::
+
+###### Color test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-color-test-bw}
+: Test how the colors used for the graph race by ease of voting look for printing in black & white
+::::::
+:::
+::::{.my-r-code-container}
+
+
+::: {#lst-chap05-color-test-bw}
+
+```{r}
+#| label: fig-color-test-bw
+#| fig-cap: "Test if used colors of my graph race by ease of voting look are also readable for black & white printing"
+#| fig-height: 3
+#| results: hold
+
+pal_data <- list(names = c("Normal", "desaturated"),
+    color = list(scales::viridis_pal(
+                                alpha = .8, 
+                                begin = .25, 
+                                 end = .75, 
+                                direction = -1, 
+                                option = "viridis")(2),
+    colorspace::desaturate(scales::viridis_pal(
+                                alpha = .8, 
+                                begin = .25, 
+                                end = .75, 
+                                direction = -1, 
+                                option = "viridis")(2)))
+    )
+list_plotter(pal_data$color, pal_data$names, 
+    "Colors and black & white of graph race by ease of voting")
+
+```
+
+Test how the colors I have used for my graphs about race by ease of voting look in black & white
+:::
+
+::::
+:::::
 
 :::
 
