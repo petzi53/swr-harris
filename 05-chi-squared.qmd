@@ -401,21 +401,21 @@ For better display I have reversed the order of the variables: Instead of groupi
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap05-summarize-voting-data}
+:::::: {#cnj-chap05-summarize-ease-voting}
 : Summarize relationship ease of vote and race/ethnicity
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: summarize-voting-data
+#| label: summarize-ease-voting
 #| results: hold
 #| cache: true
 
 ## load vote_clean ##########
 vote_clean <-  base::readRDS("data/chap05/vote_clean.rds")
 
-vote_clean |> 
+ease_vote_sum <- vote_clean |> 
     tidyr::drop_na(ease_vote) |> 
     tidyr::drop_na(race) |> 
     dplyr::group_by(race, ease_vote) |> 
@@ -424,6 +424,7 @@ vote_clean |>
                      .groups = "keep")
     ## or count the observation in each group
     # dplyr::count()
+ease_vote_sum
 ```
 ***
 Here I used "standard" tidyverse code to count frequencies. Instead of the somewhat complex last code line I could have used just `dplyr::count()` with the same result.
@@ -452,27 +453,29 @@ At first I had to set the chunk option `warning: false` to turn off this warning
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap05-pivot-wider-voting-data}
+:::::: {#cnj-chap05-pivot-wider-ease-voting}
 : Summarize by converting data from long to wide with `pivot_wider()` from {**tidyr**}
 ::::::
 :::
 ::::{.my-r-code-container}
 
-:::{#lst-chap05-pivot-wider-voting-data}
+:::{#lst-chap05-pivot-wider-ease-voting}
 ```{r}
-#| label: pivot-wider-voting-data
-#| warning: false
+#| label: pivot-wider-ease-voting
 #| cache: true
 
-vote_clean |> 
+ease_vote_wider <- vote_clean |> 
     tidyr::drop_na(ease_vote) |> 
     tidyr::drop_na(race) |> 
     dplyr::group_by(race, ease_vote) |> 
-    dplyr::summarize(freq_n = dplyr::n()) |> 
+    dplyr::summarize(
+        n = dplyr::n(),
+        .groups = "keep") |> 
     tidyr::pivot_wider(
         names_from = ease_vote,
-        values_from = freq_n
+        values_from = n
     )
+ease_vote_wider
 ```
 Summarizing and converting data from long to wide with `pivot_wider()` from {**tidyr**}
 :::
@@ -487,17 +490,18 @@ We get with `dplyr::pivot_wider()` a more neatly arranged table.
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap05-contingency-table-voting-data}
-: Summarize with a base R contingency table 
+:::::: {#cnj-chap05-base-table-ease-voting}
+: Summarize with `base::table()`
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: contingency-table-voting-data
+#| label: base-table-ease-voting
 #| results: hold
 
-base::table(vote_clean$race, vote_clean$ease_vote)
+ease_vote_table <- base::table(vote_clean$race, vote_clean$ease_vote)
+ease_vote_table
 ```
 ***
 
@@ -510,7 +514,7 @@ Note that NA's are automatically excluded from the table.
 ::::
 :::::
 
-With the simple `base::table()` we will get a very similar result as in the more complex `dplyr::pivot_wider()` code variant in @lst-chap05-pivot-wider-voting-data. 
+With the simple `base::table()` we will get a very similar result as in the more complex `dplyr::pivot_wider()` code variant in @lst-chap05-pivot-wider-ease-voting. 
 
 But I prefer in any case the tidyverse version for several reasons:
 
@@ -525,6 +529,26 @@ Some deficiencies of `base::table()`
 - `table()` is very difficult to format and to make it print ready.
 ::::
 :::::
+
+###### xtabs()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-base-xtabs-ease-voting}
+: Summarize with a `stats::xtabs()`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: base-xtabs-ease-voting
+
+ease_vote_xtabs <- stats::xtabs(n ~ race + ease_vote, data = ease_vote_sum)
+ease_vote_xtabs
+```
+
+::::
+:::::
+
 
 ###### tabyl()
 
@@ -611,6 +635,7 @@ In this example you can see the power of the {**janitor**} package. The main pur
 :::
 ::::{.my-r-code-container}
 
+::: {#lst-chap05-ease-voting}
 ```{r}
 #| label: ease-voting-data
 #| results: hold
@@ -623,6 +648,10 @@ vote_clean |>
     janitor::adorn_title(row_name = "Race / Ethnicity",
                          col_name = "Ease of voting")
 ```
+
+Ease of voting by race / ethnicity
+:::
+
 ***
 
 ::: {.callout-tip}
@@ -641,12 +670,13 @@ The voting registration policy a person favors differed by race/ethnicity.
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap05-ease-voting-data}
+:::::: {#cnj-chap05-require-voting-data}
 : Voting as requirement or free choice by race /ethnicity
 ::::::
 :::
 ::::{.my-r-code-container}
 
+::: {#lst-chap05-require-voting}
 ```{r}
 #| label: require-voting-data
 #| results: hold
@@ -659,6 +689,10 @@ vote_clean |>
     janitor::adorn_title(row_name = "Race / Ethnicity",
                          col_name = "Voting as citizen duty or as a free choice?")
 ```
+Voting as requirement or free choice by race /ethnicity
+
+:::
+
 ***
 
 ::: {.callout-tip}
@@ -677,6 +711,21 @@ Different ethnicities have distinct opinions about the character of voting.
 
 ::::
 :::::
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Cross-Tabulation
+:::
+::::{.my-resource-container}
+
+- [Working with Tables in R](https://bookdown.org/kdonovan125/ibis_data_analysis_r4/working-with-tables-in-r.html) in [@donovan2019a].
+- [Cross-Tabulation in R](https://www.marsja.se/cross-tabulation-in-r-creating-interpreting-contingency-tables/): Creating & Interpreting Contingency Tables [@marsja2023].
+- [Tables in R](https://cran.r-project.org/web/packages/DescTools/vignettes/TablesInR.pdf): A Quick Practical Overview [@signorell2021], see also [@pak-DescTools].
+- [Introduction to Crosstable](https://cran.r-project.org/web/packages/crosstable/vignettes/crosstable.html) [@chalthiel2023], see also [@pak-crosstable].
+
+::::
+:::::
+
 
 ### Graphs
 
@@ -1024,19 +1073,524 @@ Test how the colors I have used for my graphs about race by ease of voting look 
 ::::
 :::::
 
+
+## Achievement 2: Comparing groups {#sec-chap05-achievement2}
+
+The `r glossary("chi-squared")` test is useful for testing to see if there may be a statistical relationship between two categorical variables. The chi-squared test is based on the observed values, and the values expected to occur if there were no relationship between the variables.
+
+### Observed values
+
+We will use the observed values from @lst-chap05-ease-voting and @lst-chap05-require-voting.
+
+### Expected values
+
+For each cell in the table, multiply the row total for that row by the column total for that column and divide by the overall total.
+
+To prevent manually computing the values I have used `CrossTable()` from the {**descr**} package (see @pak-descr and [StackOverflow](https://stackoverflow.com/a/34214973/7322615)).
+
+$$
+\text{Expected Values} = \frac{rowTotal \times columnTotal}{Total}
+$$ {#eq-expected-values}
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-expected-values}
+: Show observed and expected values
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Ease
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-expected-ease-vote}
+: Ease of voting by race / ethnicity
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: expected-race-by-ease-vote
+#| results: hold
+#| cache: true
+
+vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
+
+vote_opinions <- vote_clean |> 
+    dplyr::select(race, ease_vote, require_vote) |>
+    tidyr::drop_na()
+
+ct_ease <- descr::CrossTable(
+    x = vote_opinions$race,
+    y = vote_opinions$ease_vote,
+    dnn = c("Race", "Ease of voting"),
+    prop.r = FALSE, 
+    prop.c = FALSE, 
+    prop.t = FALSE,
+    prop.chisq = FALSE,
+    expected = TRUE
+    )
+ct_ease
+```
+
 ***
 
+::: {.callout-tip}
+
+- Some of the cells have observed and expected values that are very close to each other. For example, the observed number of Other race-ethnicity people who want to make it easy to vote is 46, while the expected is 43.3. 
+- But other categories show bigger differences. For example, the observed number of Black non-Hispanics who think people should register to vote is 28, and the expected value is nearly twice as high at 51.3.
+:::
+
+::::
+:::::
+
+###### Require
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-exprected-race-by-require}
+: Status of voting by race / ethnicity
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: expected-race-by-require
+#| results: hold
+#| cache: true
+
+ct_require <- descr::CrossTable(
+        x = vote_opinions$race,
+        y = vote_opinions$require_vote,
+        dnn = c("Race", "Status of voting"),
+        prop.r = FALSE, 
+        prop.c = FALSE, 
+        prop.t = FALSE,
+        prop.chisq = FALSE,
+        expected = TRUE
+    )
+ct_require
+```
+
+***
+
+::: {.callout-tip}
+The cell "Other" has similar observed and expected values, but the rest have bigger differences.
+:::
+
+::::
+:::::
+
+###### Both
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-expected-voting-data}
+: Computing ease and require of voting using the {**sjstats**} package
+::::::
+:::
+::::{.my-r-code-container}
 
 
 
+```{r}
+#| label: expected-voting-data
+#| results: hold
+#| cache: true
+
+## load vote_clean ##########
+vote_clean <-  base::readRDS("data/chap05/vote_clean.rds")
+
+vote_clean2 <- vote_clean |> 
+    dplyr::select(race, ease_vote, require_vote) |> 
+    tidyr::drop_na()
+
+ease_vote_n <- vote_clean2 |> 
+    dplyr::select(race, ease_vote) |> 
+    dplyr::group_by(race, ease_vote) |> 
+    dplyr::summarize(n_ease = dplyr::n(),
+                     .groups = "keep")
+
+ease_expected  <-  
+    tibble::as_tibble(
+        base::as.data.frame(
+            sjstats::table_values(
+                base::table(
+                    vote_clean$race, 
+                    vote_clean$ease_vote)
+                )$expected,
+                .name_repair = "unique")) |> 
+    dplyr::arrange(Var1)
+
+(
+    ease_expected2 <- dplyr::bind_cols(
+    ease_vote_n,
+    exp_ease = ease_expected$Freq)
+)
+
+glue::glue(" ")
+glue::glue("**********************************************************")
+glue::glue(" ")
+
+require_vote_n <- vote_clean2 |> 
+    dplyr::select(race, require_vote) |> 
+    dplyr::group_by(race, require_vote) |> 
+    dplyr::summarize(n_require = dplyr::n(),
+                     .groups = "keep")
+
+require_expected  <-  
+    tibble::as_tibble(
+        base::as.data.frame(
+            sjstats::table_values(
+                base::table(
+                    vote_clean$race, 
+                    vote_clean$require_vote)
+                )$expected,
+                .name_repair = "unique")) |> 
+    dplyr::arrange(Var1)
+
+(
+    require_expected2 <- dplyr::bind_cols(
+    require_vote_n,
+    exp_require = require_expected$Freq)
+)
+```
+
+***
+
+The `sjstats::table_values()` function has the advantage that it can be converted to a data.frame. We can therefore manipulate the data and --- for example --- combine expected data for different variables.
 
 
+::::
+:::::
 
+###### Together
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-expected-vote-data}
+: : Combining ease and require of voting
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: expacted-vote-data
+#| results: hold
+
+require_expected3 <- require_expected2 |> 
+    dplyr::ungroup() |> 
+    dplyr::select(-1)
+
+vote_expected <- dplyr::bind_cols(
+    ease_expected2,
+    require_expected3
+)
+
+vote_expected
+```
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+:::::{.my-important}
+:::{.my-important-header}
+Differences between observed values and expected indicates that there may be a relationship between the variables. 
+:::
+:::::
+
+### Assumptions of the chi-squared test of independence
+
+***
+
+::: {#bul-chap05-assumptions-chi-squared}
+- **The variables must be nominal or ordinal (usually nominal)**. We have categorical data with no order, e.g., nominal data: *The assumption is met.*
+- **The expected values should be 5 or higher in at least 80% of groups**. We have 8 cells with values. None of these cells are 5 or lower: *The assumption is met.*
+- **The observations must be independent**. We have neither the same set of people asked before and after an intervention nor do are the respondents family members or other affiliated with each other: *The assumption is met. *
+
+Assumptions for the chi-squared test
+
+:::
 ------------------------------------------------------------------------
+
+## Calculating the chi-squared statistic {#sec-chap05-achievement3}
+
+The differences between observed values and expected values can be combined into an overall statistic. But adding (resp. subtracting) does not work as the result is always 0. So we will again --- like in the variance --- square the difference.
+
+To prevent huge differences when observed and expected values are very large, there is an additional step in the computation of $\chi^2$: Divide the squared differences by the expected value of the appropriate cells.
+
+$$
+\chi^2 = \sum\frac{(observed - expected)^2}{expected}
+$$ {#eq-chi-squared}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-chi-squared-ease-voting}
+: Compute chi-squared for race by ease of voting
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: chi-squared-ease-voting
+#| cache: true
+
+vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
+
+stats::chisq.test(
+    x = vote_clean$ease_vote,
+    y = vote_clean$race
+)
+
+```
+
+::::
+:::::
+
+## Achievement 4: Interpreting the chi-squared statistic {#sec-chap05-achievement4}
+
+In contrast to the binomial and normal distribution which both have two parameters (n and p, resp. $\mu$ and $\sigma$), the `r glossary("chi-squared")` distribution has only one `r glossary("parameter")`: the `r glossary("degrees of freedom")`. The `df` can be used to find the population `r glossary("standard deviation")` for the distribution:
+
+$$
+\sqrt{2df}
+$$ {#eq-pop-sd-df}
+
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-chi-squared-dist}
+: Chi-square probability distributions with different degrees of freedom
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### 4 $\chi^2$ dist extra
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-chi-squared-separately}
+: Four chi-square probability distributions with different degrees of freedom
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-chi-squared-dist
+#| fig-cap: "Chi-square probability distributions with different degrees of freedom"
+
+# Define sequence of x-values
+tib <- tibble::tibble(x = seq(0, 30, length.out = 600))
+
+tib <- tib |> 
+# Compute density values
+    dplyr::mutate(
+        y1 = stats::dchisq(x, df = 1),
+        y3 = stats::dchisq(x, df = 3),
+        y5 = stats::dchisq(x, df = 5),
+        y7 = stats::dchisq(x, df = 7)
+    )  
+chi_sq1 <- tib |> 
+# Plot the Chi-square distribution: df = 1
+    ggplot2::ggplot(ggplot2::aes(x = x, y = y1)) +
+    ggplot2::geom_line(color = "blue") +
+    ggplot2::labs(x = "x", y = "Density", 
+      title = paste("Chi-square with 1 degree of freedom")) +
+    ggplot2::theme_bw()
+
+chi_sq3 <- tib |> 
+# Plot the Chi-square distribution: df = 3
+    ggplot2::ggplot(ggplot2::aes(x = x, y = y3)) +
+    ggplot2::geom_line(color = "blue") +
+    ggplot2::labs(x = "x", y = "Density", 
+      title = paste("Chi-square with 3 degrees of freedom")) +
+    ggplot2::theme_bw()
+
+chi_sq5 <- tib |> 
+# Plot the Chi-square distribution: df = 5
+    ggplot2::ggplot(ggplot2::aes(x = x, y = y5)) +
+    ggplot2::geom_line(color = "blue") +
+    ggplot2::labs(x = "x", y = "Density", 
+      title = paste("Chi-square with 5 degrees of freedom")) +
+    ggplot2::theme_bw()
+
+chi_sq7 <- tib |> 
+# Plot the Chi-square distribution: df = 7
+    ggplot2::ggplot(ggplot2::aes(x = x, y = y7)) +
+    ggplot2::geom_line(color = "blue") +
+    ggplot2::labs(x = "x", y = "Density", 
+      title = paste("Chi-square with 7 degrees of freedom")) +
+    ggplot2::theme_bw()
+
+gridExtra::grid.arrange(chi_sq1, chi_sq3, chi_sq5, chi_sq7, ncol = 2)
+```
+***
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! The graphs have different y scales!
+:::
+::::{.my-watch-out-container}
+This is the replication of Figure 5.7 from the book.
+
+Note: The first impression --- that all probability distributions have same height --- is wrong! All four graphs have very different density scales! 
+
+We will see that all four distributions overlaid into one graphic will give a different impression.
+::::
+:::::
+
+
+
+
+::::
+:::::
+
+
+###### 4 $\chi^2$ dist together
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-chi-squared-dist-together}
+: Four chi-square probability distributions with different degrees of freedom in one graph
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-chi-squared-dist-together
+#| fig-cap: "Four chi-square probability distributions with different degrees of freedom"
+
+# Define sequence of x-values
+tib_chisq <- tibble::tibble(x = seq(0, 30, length.out = 600))
+
+tib_chisq |> 
+# Compute density values
+    dplyr::mutate(
+        y1 = stats::dchisq(x, df = 1),
+        y3 = stats::dchisq(x, df = 3),
+        y5 = stats::dchisq(x, df = 5),
+        y7 = stats::dchisq(x, df = 7)
+    ) |> 
+
+    ggplot2::ggplot() +
+    ggplot2::geom_line(
+        ggplot2::aes(x = x, y = y1),
+        color = "blue"
+    ) +
+    ggplot2::geom_line(
+        ggplot2::aes(x = x, y = y3),
+        color = "red"
+    ) +
+    ggplot2::geom_line(
+    ggplot2::aes(x = x, y = y5),
+    color = "darkgreen"
+    ) +
+    ggplot2::geom_line(
+    ggplot2::aes(x = x, y = y7),
+    color = "black"
+    ) +
+    ggplot2::ylim(0, .3) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+        y = "Density"
+    )
+
+# sjPlot::dist_chisq(deg.f = 4) +
+# sjPlot::dist_chisq(deg.f = 6) +
+#     ggplot2::theme_bw()
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
 
 ## Exercises (empty)
 
 ## Packages introduced in this chapter 
+
+### crosstable
+
+:::::{.my-resource}
+:::{.my-resource-header}
+crosstable: Crosstables for Descriptive Analyses 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-crosstable}
+
+***
+
+{**crosstable**}: [Crosstables for Descriptive Analyses](https://danchaltiel.github.io/crosstable/) [@crosstable]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap05/logoi/logo-crosstable-min.png){width="176"}
+
+
+Crosstable is a package centered on a single function, crosstable, which easily computes descriptive statistics on datasets. It can use the {**tidyverse**} syntax and is interfaced with the package {**officer**} to create automatized reports.
+
+:::
+
+Create descriptive tables for continuous and categorical variables. Apply summary statistics and counting function, with or without a grouping variable, and create beautiful reports using {**rmarkdown**} or {**officer**}. You can also compute effect sizes and statistical tests if needed.
+
+{**crosstable**}: Crosstables for Descriptive Analyses
+:::
+
+
+***
+::::
+:::::
+
+### DescTools
+
+:::::{.my-resource}
+:::{.my-resource-header}
+DescTools: Tools for Descriptive Statistics 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-DescTools}
+
+***
+
+{**DescTools**}: [Tools for Descriptive Statistics](https://andrisignorell.github.io/DescTools/) [@DescTools]
+
+
+(*There is no hexagon logo for {**DescTools**} available*)
+
+:::
+
+A collection of miscellaneous basic statistic functions and convenience wrappers for efficiently describing data. The author's intention was to create a toolbox, which facilitates the (notoriously time consuming) first descriptive tasks in data analysis, consisting of calculating descriptive statistics, drawing graphical summaries and reporting the results. 
+
+The package contains furthermore functions to produce documents using MS Word (or PowerPoint) and functions to import data from Excel. Many of the included functions can be found scattered in other packages and other sources written partly by Titans of R. The reason for collecting them here, was primarily to have them consolidated in ONE instead of dozens of packages (which themselves might depend on other packages which are not needed at all), and to provide a common and consistent interface as far as function and arguments naming, NA handling, recycling rules etc. are concerned. Google style guides were used as naming rules (in absence of convincing alternatives). The 'BigCamelCase' style was consequently applied to functions borrowed from contributed R packages as well.
+
+{**DescTools**}: Tools for Descriptive Statistics
+:::
+
+***
+::::
+:::::
+
+
 
 ### fmsb
 
