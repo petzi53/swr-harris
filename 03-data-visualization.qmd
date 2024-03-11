@@ -5690,7 +5690,7 @@ Read more details about {**viridis**} scales in the vignette [Introduction to th
 - The default scale is "D" (`viridis`) which is easier to read for most of the CVDs. `cividis` is a corrected version providing easiness for all kinds of CVDs.
 - `turbo` stands out, because it is a rainbow scale developed to address the shortcomings of the Jet rainbow color map. It is not perceptually uniform.
 - I do not like yellow (mostly at the end of the color scale and therefore always used, even with binary factors). But one can prevent the appearance with a different choice of the end point of the scale.
-- If you do not use all colors you can exactly provide all parameters of your scale & color choice to `colorspace::desaturate()`. For instance: `colorspace::desaturate(viridis::turbo(5, 0.5, .25, .75, -1))` See for a practice test @lst-color-test-bw.
+- If you do not use all colors you can exactly provide all parameters of your scale & color choice to `colorspace::desaturate()`. For instance: `colorspace::desaturate(viridis::turbo(5, 0.5, .25, .75, -1))` See for a practice test @lst-chap03-color-test-bw.
 
 :::::{.my-resource}
 :::{.my-resource-header}
