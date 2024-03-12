@@ -1,4 +1,4 @@
-# Computing Chi-Squared {#sec-chap05}
+# Chi-Squared Test {#sec-chap05}
 
 ```{r}
 #| label: setup
@@ -501,7 +501,11 @@ We get with `dplyr::pivot_wider()` a more neatly arranged table.
 #| label: base-table-ease-voting
 #| results: hold
 
-ease_vote_table <- base::table(vote_clean$race, vote_clean$ease_vote)
+ease_vote_table <- base::table(
+    vote_clean$race, 
+    vote_clean$ease_vote,
+    dnn = c("Race", "Ease of voting")
+)
 ease_vote_table
 ```
 ***
@@ -565,8 +569,9 @@ ease_vote_xtabs
 #| label: tabyl-voting-data
 #| results: hold
 
-vote_clean |> 
+ease_vote_tabyl <- vote_clean |> 
     janitor::tabyl(race, ease_vote, show_na = FALSE)
+ease_vote_tabyl
 ```
 ***
 
@@ -1706,14 +1711,14 @@ Even if the standard version of the plot is easy to create, to adapt the graph i
 
 vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
 
-chisq_ease_vote <- stats::chisq.test(
+chisq_ease_vote_stats <- stats::chisq.test(
     x = vote_clean$ease_vote,
     y = vote_clean$race
 )
 
 chisq_sjplot <- sjPlot::dist_chisq(
-    chi2 = chisq_ease_vote[["statistic"]], 
-    deg.f = chisq_ease_vote[["parameter"]])
+    chi2 = chisq_ease_vote_stats[["statistic"]], 
+    deg.f = chisq_ease_vote_stats[["parameter"]])
 
 
 ```
@@ -1724,8 +1729,8 @@ There is a statistically significant association between views on voting ease an
 :::
 
 
-- **$\chi^2$**: The shaded area equal or greater than `r round(chisq_ease_vote[["statistic"]], 2)` is so small that you can’t see it.
-- **p-value**: The p-value `r chisq_ease_vote[["p.value"]]` is far below the statistically significant level of 0.05. 
+- **$\chi^2$**: The shaded area equal or greater than `r round(chisq_ease_vote_stats[["statistic"]], 2)` is so small that you can’t see it.
+- **p-value**: The p-value `r chisq_ease_vote_stats[["p.value"]]` is far below the statistically significant level of 0.05. 
 - The limit $\chi^2$ where a statistically significant p-value < 0.05 would start is with `r chisq_sjplot[["plot_env"]][["cs"]]` much lower.
 
 
@@ -1810,7 +1815,7 @@ We used the chi-squared test to test the null hypothesis that there was no relat
 WATCH OUT! Chi-squared test and chi-squared goodness-of-fit test are not the same!
 :::
 ::::{.my-watch-out-container}
-The chi-squared goodness-of-fit test is used for comparing the values of a single categorical variable to values from a hypothesized or `r glossary("population")` variable. The goodness-of-fit test is often used when trying to determine if a `r glossary("sample")` is a good representation of the population.
+The chi-squared goodness-of-fit test is used for comparing the values of a single categorical variable to values from a hypothesized or `r glossary("population")` variable. The goodness-of-fit test is often used when trying to determine if a `r glossary("samples")` are a good representation of the population.
 
 
 ::::
@@ -1818,11 +1823,412 @@ The chi-squared goodness-of-fit test is used for comparing the values of a singl
 
 ## Achievement 6: Standardized residuals {#sec-chap05-achievement6}
 
+### Introduction
 
+One limitation of the chi-squared independence test is that it determines whether or not there is a statistically significant relationship between two categorical variables but does not identify what makes the relationship significant. The name for this type of test is `r glossary("omnibus")`.
+
+`r glossary("Standardized residuals")` (like `r glossary("z-score", "z-scores")` can aid analysts in determining which of the observed frequencies are significantly larger or smaller than expected. The standardized residual is computed by subtracting the expected value in a cell from the observed value in a cell and dividing by the square root of the expected value.
+
+$$
+\text{Standardized residual} = \frac{observed - expected}{\sqrt{expected}}
+$$ {#eq-standardized-residuals}
+
+The standardized residual is distributed like a z-score. Values of the standardized residuals that are higher than 1.96 or lower than –1.96 indicate that the observed value in that group is much higher or lower than the expected value. These are the groups that are contributing the most to a large chi-squared statistic and could be examined further and included in the interpretation.
+
+::: {#not-adjusted-standardized-residuals}
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Adjusted Standardized Residuals
+:::
+::::{.my-watch-out-container}
+There are also *adjusted* standardized residuals. To increase the confusion Alan Agresti [-@agresti2018a] calls these residuals "Standardized Pearson Residual". To understand the difference between standardized and *adjusted* standardized residuals read see [Standardized Residuals in Statistics: What are They?](https://www.statisticshowto.com/what-is-a-standardized-residuals/) [@glenn.d]. Adjusted standardized residuals have higher values and are therefore not interpretable with the z-score values (e.g., looking for values greater or smaller than 2, res. 1.96 standard deviations). I will therefore stick with the (normal) standardized residuals.
+
+$$
+\begin{align*}
+& \text{Adjusted residual} =  \\
+& \frac{observed - expected}{\sqrt{expected \times (1-\text{row total proportion}) \times (1-\text{col total proportion}) )}}
+\end{align*}
+$$ {#eq-adjusted-standardized-residuals}
+
+What are Adjusted Standardized Residuals?
+:::
+::::
+:::::
+
+
+
+
+The book recommends to get the standardized residuals with `Descr::CrossTable()`. But I have checked out that there are other possibilities as well. 
+
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Function to get standardized residuals of chi-squared tests
+:::
+::::{.my-resource-container}
+The following list collects these resources I have found together with the approximate average download data of the appropriate package. This figures will give you an idea about package use, but will not say anything about the quality of the package or the standardized residual function we are looking for.
+
+- `stats::chisq.test()$residuals`: (no data)
+- `descr::CrossTable()`: It has arguments to show residuals, standardized residuals and adjusted standardized residuals  (500)
+- `janitor::chisq.test(<tabyl>)$residuals` (3000)
+- `questionr::chisq.residuals()` (300)
+- `rstatix::pearson_residuals()`, `rstatix::std_residuals()` (7000)
+
+There is also the possibility to use `graphics::mosaicplot()` with the option `shade = TRUE` to examine residuals for the source of differences (See [@greenwood2022]).
+
+::::
+:::::
+
+### Computation
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-compute-standardized-residuals}
+: Compute standardized residuals with functions of different packages
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### `desc::CrossTable()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-standardized-residuals-desc}
+: Compute standardized residuals with `descr::CrossTable()`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: standardized-residuals-desc
+
+## load vote_clean ##########
+vote_clean <-  base::readRDS("data/chap05/vote_clean.rds")
+
+descr::CrossTable(
+    x = ease_vote_table,
+    expected = TRUE,
+    prop.r = FALSE,
+    prop.c = FALSE,
+    prop.t = FALSE,
+    prop.chisq = FALSE,
+    chisq = TRUE,
+    resid = TRUE,
+    sresid = TRUE,
+    asresid = TRUE 
+)
+
+```
+
+***
+
+Here I have displayed the first and only time also the adjusted standardized residuals. As you can see they are much higher and do not obey the z-score distribution. I do not want how to interpret them. As far as I a understood they are only used for some software packages as e.g., [SDA](https://sda.berkeley.edu/) to highlight outstanding values. (See @not-adjusted-standardized-residuals)
+
+***
+
+::: {#bul-prepare-interpretation-standardized-residuals}
+
+- From the very small p-value (which is almost 0) we see that we have a statistically relevant association between opinions about opinions for ease of voting and race / ethnicity. 
+- The biggest part for rejecting the null hypotheses, that there is not association has the group of black non-Hispanic. A much bigger proportion as we would have expected of black non-Hispanic support ease of voting and are against registration for voting.
+- Another trend that goes in the reverse direction concerns the white non-Hispanic group. This group endorse that people should register for voting with a higher proportion as expected.
+
+What does the standardized residuals tell us?
+:::
+
+::::
+:::::
+
+::: {.callout-tip}
+We used the chi-squared test to test the null hypothesis that there was no relationship between opinions on voter registration by race/ethnicity group. We rejected the null hypothesis and concluded that there was a statistically significant association between views on voter registration and race-ethnicity [$\chi^2(3) = 28.95; p < .05$]. Based on standardized residuals, the statistically significant chi-squared test result was driven by more White non-Hispanic participants and fewer Black non-Hispanic participants than expected believe that people should prove they want to vote by registering, and more Black non-Hispanic participants than expected believe that the voting process should be made easier.
+:::
+
+
+###### `stats::chisq.test()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-standardized-residuals-stats}
+: Compute standardized residuals with `stats::chisq.test()`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: standardized-residuals-stats
+#| results: hold
+
+stats::chisq.test(ease_vote_table)$residuals
+
+graphics::mosaicplot(
+    x = ease_vote_table,
+    shade = TRUE,
+    main = "Ease of voting by race / ethnicity"
+)
+```
+
+***
+
+I think that this result using base R tools is easier to understand and interpret as the presentation provided by `descr::CrossTable()`.  Especially the graph highlights the important differences. Solid lines represent values higher whereas dashed lines point to proportion that are smaller than expected. And the color scale gives you immediate feedback about the size of difference.
+
+::::
+:::::
+
+###### `janitor::chis.test()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-standardized-residuals-janitor}
+: Compute standardized residuals with `janitor::chisq.test()`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: standardized-residuals-janitor
+
+janitor::chisq.test(ease_vote_table)$residuals
+
+```
+***
+
+Exactly the same result as with `stats::chisq.test()`.
+::::
+:::::
+
+###### `questionr::chis.test()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-standardized-residuals-questionr}
+: Compute standardized residuals with `questionr::chisq.residuals()`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: standardized-residuals-questionr
+
+questionr::chisq.residuals(ease_vote_table)
+
+```
+***
+
+The only difference of this result is that the values are rounded. This is nice because for the interpretation we do not need the detailed values.
+
+
+::::
+:::::
+
+###### `rstatix::chisq_test()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-standardized-residuals-rstatix}
+: Compute standardized residuals with `rstatix::chisq_.residuals_test()`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: standardized-residuals-rstatix
+#| results: hold
+
+
+(chisq_ease_vote_rstatix <- rstatix::chisq_test(ease_vote_table))
+
+rstatix::chisq_descriptives(chisq_ease_vote_rstatix)
+
+```
+***
+
+The result with {**rstatix**} is very detailed. Using {**rstatix**} has the additioonal advantage that it is {**tidyverse**} compatible and you can use the pipe. The package includes many different tests and has with `r cranlogs::cran_downloads(package = "rstatix")$count` downloads from the RStudio CRAN mirror in one day (`r cranlogs::cran_downloads(package = "rstatix")$date`) a pretty big user group.
+
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
+:::::{.my-important}
+:::{.my-important-header}
+Which package should I use to show standardized residuals?
+:::
+::::{.my-important-container}
+3. `descr::CrossTable()` is used in the book, but I can't recommend it. The result cannot be transformed into a data.frame or tibble and it is therefore neither {**tidyverse**} compatible nor can you use the pipe.
+
+2. A good solution is the combination of `stats::chisq.test()` and `graphics::mosaicplot()`. Especially the mosaic plot helps to figure out quickly which cells are important.
+
+1. The best solution in my opinion is {**rstatix**}: Its results can be very detailed. {**rstatix**} is {**tidyverse**} compatible and you can use the pipe. The result with {**rstatix**} is very detailed. Using {**rstatix**} has the additional advantage that it is {**tidyverse**} compatible and you can use the pipe. The package includes [many different tests](https://rpkgs.datanovia.com/rstatix/) and has with `r cranlogs::cran_downloads(package = "rstatix")$count` downloads from the RStudio CRAN mirror in one day (`r cranlogs::cran_downloads(package = "rstatix")$date`) a pretty big user group.) and can therefore used or other tasks as well. With `r cranlogs::cran_downloads(package = "rstatix")$count` downloads from the RStudio CRAN mirror in one day (`r cranlogs::cran_downloads(package = "rstatix")$date`) it has a pretty big user group.
+
+**Because of the wide range of tests and the bi user basis I will apply {**rstatix**} as the predominant alternative  whenever the result is the same with other packages.**
+::::
+:::::
+
+
+## Achievement 7: Effect sizes {#sec-chap05-achievement7}
+
+### Introduction to Cramér’s V 
+
+Concerning out data about opinions about ease of voting we have two established two facts:
+
+1. There is an association between ease of voting opinions and race /ethnicity.
+2. This relation is driven mainly by black non-Hispanic preferring to a higher degree ease of voting and --- to a lesser degree -- white non-Hispanic supporting in a higher proportion than expected that people need to register for voting.
+
+But we do not know the strength of this relationships. The strength of a relationship in statistics is referred to as `r glossary("effect size")`. For `r glossary("chi-squared")`, there are a few options, including the commonly used effect size statistic of `r glossary("Cramér’s V")`.
+
+***
+
+$$
+V = \sqrt{\frac{\chi^2}{n(k-1)}}
+$$ {#eq-cramers-v-formula}
+
+- $\chi^2$: The chi-squared is the test statistic for the analysis.
+- $n$: The sample size.
+- $k$: The number of categories in the variable with the *fewest* categories.
+
+***
+
+$$
+V = \sqrt{\frac{29.852}{977(2-1)}} = 0.17
+$$ {#eq-cramers-v-example-calculation}
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap05-cramers-v}
+: Interpretation of Cramér’s V
+::::::
+:::
+::::{.my-assessment-container}
+`r glossary("Cramér’s V")` is a measure of the strength of association between two nominal variables. It ranges from 0 to 1 where:
+
+- Small or weak effect size for V = .1 
+- Medium or moderate effect size for V = .3 
+- Large or strong effect size for V = .5
+
+More detailed interpretation based on the degrees of freedom in [How to Interpret Cramér’s V (with Examples)](https://www.statology.org/interpret-cramers-v/) [@bobbittn.d].
+
+| Degrees of freedom | Small | Medium | Large |
+|--------------------|-------|--------|-------|
+| 1                  | 0.10  | 0.30   | 0.50  |
+| 2                  | 0.07  | 0.21   | 0.35  |
+| 3                  | 0.06  | 0.17   | 0.29  |
+| 4                  | 0.05  | 0.15   | 0.25  |
+| 5                  | 0.04  | 0.13   | 0.22  |
+
+: How to interpret Cramér’s V?  {#tbl-cramers-v} {.striped .hover}
+
+::::
+:::::
+
+### Compute Cramér’s V
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-computing-cramers-v}
+: Computing Cramér’s V
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### `lsr::cramersV()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-computing-cramers-v-lsr}
+: Computing Cramér’s V with {**lsr**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: computing-cramers-v-lsr
+
+lsr::cramersV(ease_vote_table)
+```
+
+::::
+:::::
+
+
+###### `statix::cramer_v()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Computing Cramér’s V with {**rstatix**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: computing-cramers-v-rstatix
+
+rstatix::cramer_v(ease_vote_table)
+```
+
+::: {.callout-tip}
+In this case, the effect size is between small and medium. There is a statistically significant relationship between opinions on voter registration and race-ethnicity, and the relationship is weak to moderate. This is consistent with the frequencies, which are different from expected, but not by an enormous amount in most of the groups.
+:::
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
 
 ## Exercises (empty)
 
 ## Packages introduced in this chapter 
+
+### cranlogs
+
+:::::{.my-resource}
+:::{.my-resource-header}
+cranlogs: Download Logs from the 'RStudio' 'CRAN' Mirror 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-cranlogs}
+
+***
+
+{**cranlogs**}: [Download Logs from the RStudio CRAN Mirror](https://r-hub.github.io/cranlogs/) [@cranlogs]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap05/logoi/logo-cranlogs-min.png){width="176"}
+
+
+`r glossary("API")` to the database of `r glossary("CRAN")` package downloads from the RStudio CRAN mirror. The database itself is at <http://cranlogs.r-pkg.org>,
+    see <https://github.com/r-hub/cranlogs.app> for the raw API.
+
+:::
+
+RStudio publishes the download logs from their CRAN package mirror daily at http://cran-logs.rstudio.com.
+
+This R package queries a web API maintained by R-hub that contains the daily download numbers for each package.
+
+The RStudio CRAN mirror is not the only CRAN mirror, but it’s a popular one: it’s the default choice for RStudio users. The actual number of downloads over all CRAN mirrors is unknown.
+
+
+{**cranlogs**}: Download Logs from the 'RStudio' 'CRAN' Mirror
+:::
+
+***
+::::
+:::::
+
 
 ### crosstable
 
@@ -1853,6 +2259,9 @@ Create descriptive tables for continuous and categorical variables. Apply summar
 {**crosstable**}: Crosstables for Descriptive Analyses
 :::
 
+I believe that the main usage for this package is to prepare ready-to-print tables. Similar like {**gtsummary**} (see @pak-gtsummary) it provides some descriptive statistics with many display options. But I got the impression that analysis of data is not the main usage of these packages. 
+
+For instance you could use `crosstable::display_test(chisq.test(x, y))` to get as result a string, for instance: p value: <0.0001 \n(Pearson's Chi-squared test)". This is nice to include for a table, but for the analysis one would also need the values of the different cells.
 
 ***
 ::::
@@ -1981,6 +2390,41 @@ Missing values are ubiquitous in data and need to be explored and handled in the
 ***
 ::::
 :::::
+
+### rstatix
+
+:::::{.my-resource}
+:::{.my-resource-header}
+rstatix: Pipe-Friendly Framework for Basic Statistical Tests 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-rstatix}
+
+***
+
+{**rstatix**}: [Pipe-Friendly Framework for Basic Statistical Tests](https://rpkgs.datanovia.com/rstatix/) [@rstatix]
+
+
+(*There is no hexagon logo for {**rstatix**} available*)
+
+Provides a simple and intuitive pipe-friendly framework, coherent with the {**tidyverse**} design philosophy, for performing basic statistical tests, including t-test, Wilcoxon test, ANOVA, Kruskal-Wallis and correlation analyses.
+
+The output of each test is automatically transformed into a tidy data frame to facilitate visualization.
+
+Additional functions are available for reshaping, reordering, manipulating and visualizing correlation matrix. Functions are also included to facilitate the analysis of factorial experiments, including purely ‘within-Ss’ designs (repeated measures), purely ‘between-Ss’ designs, and mixed ‘within-and-between-Ss’ designs.
+
+It’s also possible to compute several effect size metrics, including “eta squared” for ANOVA, “Cohen’s d” for t-test and “Cramer’s V” for the association between categorical variables. The package contains helper functions for identifying univariate and multivariate outliers, assessing normality and homogeneity of variances.
+
+{**rstatix**}: Pipe-Friendly Framework for Basic Statistical Tests
+:::
+
+***
+::::
+:::::
+
 
 ### sjPlot
 
