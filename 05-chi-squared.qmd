@@ -1092,7 +1092,7 @@ To prevent manually computing the values I have used `CrossTable()` from the {**
 
 $$
 \text{Expected Values} = \frac{rowTotal \times columnTotal}{Total}
-$$ {#eq-expected-values}
+$$ {#eq-chap05-expected-values}
 
 
 :::::{.my-example}
@@ -1332,7 +1332,7 @@ To prevent huge differences when observed and expected values are very large, th
 
 $$
 \chi^2 = \sum\frac{(observed - expected)^2}{expected}
-$$ {#eq-chi-squared}
+$$ {#eq-chap05-chi-squared}
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1367,7 +1367,7 @@ In contrast to the binomial and normal distribution which both have two paramete
 
 $$
 \sqrt{2df}
-$$ {#eq-pop-sd-df}
+$$ {#eq-chap05-pop-sd-df}
 
 
 
@@ -1643,13 +1643,13 @@ tib |>
 ```
 ***
 
-The probability that the differences between observed and expected values would result in a chi-squared of exactly 10 is pretty small. Looking into the data it would be around 2.8%. 
+The probability that the differences between observed and expected values would result in a chi-squared of exactly 10 is --- looking into the data --- around 2.8%, e.g., very small. 
 
-It might be more useful to know what the probability is of getting a chi-squared of 10 or higher. The probability of the chi-squared value being 10 or higher would be the area under the curve from 10 to the end of the distribution at the far right. 
+It is more useful to know what the probability is of getting a chi-squared of *10 or higher*. The probability of the chi-squared value being 10 or higher would be the area under the curve from 10 to the end of the distribution at the far right. 
 
-While not as small as 2.8%, the probability of the chi-squared value being 10 or higher is still a relatively small number. The probability of the squared differences between observed and expected adding up to 10 or more is low when there is no relationship between the variables.
+The probability of the chi-squared value being 10 or higher is about 15%. Even if this value is not very probable it is way above to be statistically significant (5%). The probability of the squared differences between observed and expected adding up to 10 or more is low when there is no relationship between the variables and result in a chi-squared value well inside the probability density function (PDF).
 
-In this text case we would not have a statistically significant value, because the p-value is greater than 0.05. This can be seen clearly in another graph created with {**sjPlot**} (see @pak-sjPlot and the next tab).
+For instance: In our test case the $\chi^2$-value of 10.0 lies well inside the probability curve. The probability that this value can occur when there is no statistically relevant relationship is relatively high (15%). We can't therefore reject the H0, because we do not have a statistically significant value of 5% or less. This can be seen clearly in the resulting graph of @lst-pdf-test-example-2, created with the {**sjPlot**} package (see @pak-sjPlot).
 
 
 
@@ -1667,6 +1667,7 @@ In this text case we would not have a statistically significant value, because t
 :::
 ::::{.my-r-code-container}
 
+::: {#lst-pdf-test-example-2}
 ```{r}
 #| label: fig-pdf-test-example2
 #| fig-cap: "Chi-squared probability distribution (df = 5)"
@@ -1674,6 +1675,8 @@ In this text case we would not have a statistically significant value, because t
 sjPlot::dist_chisq(chi2 = 10, deg.f = 5)
 ```
 
+Chi-squared probability distribution (df = 5) created with {**sjPlot**}
+:::
 ***
 
 This graph uses the {**sjPlot**) package and is very easy to produce. It shows that the p-value for x = 10 is 0.08 (8%), e.g., higher as the standard value of 0.05 (5%). To be statistically significant, the $\chi^2$ value would need to be equal or higher than 11.07.
@@ -1708,30 +1711,34 @@ Even if the standard version of the plot is easy to create, to adapt the graph i
 ```{r}
 #| label: chap05-chisq-voting
 #| fig-cap: "Chi-squared probability distribution of `ease_vote` by `race`"
+#| results: hold
 
 vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
 
-chisq_ease_vote_stats <- stats::chisq.test(
-    x = vote_clean$ease_vote,
-    y = vote_clean$race
+(
+    chisq_ease_vote_stats <- stats::chisq.test(ease_vote_table)
 )
 
-chisq_sjplot <- sjPlot::dist_chisq(
-    chi2 = chisq_ease_vote_stats[["statistic"]], 
-    deg.f = chisq_ease_vote_stats[["parameter"]])
-
+base::invisible(
+    chisq_sjplot <- sjPlot::dist_chisq(
+        chi2 = chisq_ease_vote_stats[["statistic"]][["X-squared"]],
+        deg.f = chisq_ease_vote_stats[["parameter"]][["df"]]
+        )
+)
 
 ```
 ***
+
+- The limit $\chi^2$ where a statistically significant p-value < 0.05 would start is with `r chisq_sjplot[["plot_env"]][["cs"]]` much lower. The label of $\chi^2$ = `r round(chisq_sjplot[["plot_env"]][["cs"]], 2)` therefore is not the actual chi-squared value (which is `r round(chisq_ease_vote_stats[["statistic"]][["X-squared"]],2)`), but it is the chi-squared value where the `r glossary("p-value")` is .05. From here on we will get with bigger chi-squared values even smaller statistically significant p-values until we finally reach at $\chi^2$ = `r round(chisq_ease_vote_stats[["statistic"]][["X-squared"]], 2)` a p-value of `r chisq_ease_vote_stats[["p.value"]]`.
+- **p-value**: The p-value `r chisq_ease_vote_stats[["p.value"]]` is far below the statistically significant level of 0.05. 
+- **$\chi^2$**: The shaded area equal or greater than `r round(chisq_ease_vote_stats[["statistic"]], 2)` is so small that you can’t see it.
 
 ::: {.callout-tip}
 There is a statistically significant association between views on voting ease and race-ethnicity [$\chi^2(3) = 28.95; p < .05$].
 :::
 
 
-- **$\chi^2$**: The shaded area equal or greater than `r round(chisq_ease_vote_stats[["statistic"]], 2)` is so small that you can’t see it.
-- **p-value**: The p-value `r chisq_ease_vote_stats[["p.value"]]` is far below the statistically significant level of 0.05. 
-- The limit $\chi^2$ where a statistically significant p-value < 0.05 would start is with `r chisq_sjplot[["plot_env"]][["cs"]]` much lower.
+
 
 
 
@@ -1831,7 +1838,7 @@ One limitation of the chi-squared independence test is that it determines whethe
 
 $$
 \text{Standardized residual} = \frac{observed - expected}{\sqrt{expected}}
-$$ {#eq-standardized-residuals}
+$$ {#eq-chap05-standardized-residuals}
 
 The standardized residual is distributed like a z-score. Values of the standardized residuals that are higher than 1.96 or lower than –1.96 indicate that the observed value in that group is much higher or lower than the expected value. These are the groups that are contributing the most to a large chi-squared statistic and could be examined further and included in the interpretation.
 
@@ -1848,7 +1855,7 @@ $$
 & \text{Adjusted residual} =  \\
 & \frac{observed - expected}{\sqrt{expected \times (1-\text{row total proportion}) \times (1-\text{col total proportion}) )}}
 \end{align*}
-$$ {#eq-adjusted-standardized-residuals}
+$$ {#eq-chap05-adjusted-standardized-residuals}
 
 What are Adjusted Standardized Residuals?
 :::
@@ -1863,18 +1870,39 @@ The book recommends to get the standardized residuals with `Descr::CrossTable()`
 
 :::::{.my-resource}
 :::{.my-resource-header}
-Function to get standardized residuals of chi-squared tests
+Packages with functions to get standardized residuals of chi-squared tests
 :::
 ::::{.my-resource-container}
 The following list collects these resources I have found together with the approximate average download data of the appropriate package. This figures will give you an idea about package use, but will not say anything about the quality of the package or the standardized residual function we are looking for.
 
-- `stats::chisq.test()$residuals`: (no data)
-- `descr::CrossTable()`: It has arguments to show residuals, standardized residuals and adjusted standardized residuals  (500)
-- `janitor::chisq.test(<tabyl>)$residuals` (3000)
-- `questionr::chisq.residuals()` (300)
-- `rstatix::pearson_residuals()`, `rstatix::std_residuals()` (7000)
+- {**stats**}: `stats::chisq.test()$residuals`
+- {**descr**}: `descr::CrossTable()`: It has arguments to show residuals, standardized residuals and adjusted standardized residuals 
+- {**janitor**}: `janitor::chisq.test(<tabyl>)$residuals`
+- {**questionr**}`questionr::chisq.residuals()` 
+- {**rstatix**}: `rstatix::pearson_residuals()`, `rstatix::std_residuals()` 
 
-There is also the possibility to use `graphics::mosaicplot()` with the option `shade = TRUE` to examine residuals for the source of differences (See [@greenwood2022]).
+There is also the possibility to use `graphics::mosaicplot()` with the option `shade = TRUE` to examine residuals visually for the source of differences (See [@greenwood2022]).
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-pkgs-chisq-residuals}
+: Number of daily downloads for packages with functions to display chi-squared residuals
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: pkgs-chisq-residuals
+#| tbl-cap: "Daily donwloads of packages with functions to display chi-squared residuals"
+#| cache: TRUE
+
+pkgs = c("janitor", "questionr", "rstatix", "descr")
+pkgs_dl(pkgs)
+
+```
+
+::::
+:::::
+
 
 ::::
 :::::
@@ -2071,7 +2099,7 @@ Which package should I use to show standardized residuals?
 
 ## Achievement 7: Effect sizes {#sec-chap05-achievement7}
 
-### Introduction to Cramér’s V 
+### ICramér’s V 
 
 Concerning out data about opinions about ease of voting we have two established two facts:
 
@@ -2084,7 +2112,7 @@ But we do not know the strength of this relationships. The strength of a relatio
 
 $$
 V = \sqrt{\frac{\chi^2}{n(k-1)}}
-$$ {#eq-cramers-v-formula}
+$$ {#eq-chap05-cramers-v-formula}
 
 - $\chi^2$: The chi-squared is the test statistic for the analysis.
 - $n$: The sample size.
@@ -2094,7 +2122,7 @@ $$ {#eq-cramers-v-formula}
 
 $$
 V = \sqrt{\frac{29.852}{977(2-1)}} = 0.17
-$$ {#eq-cramers-v-example-calculation}
+$$ {#eq-chap05-cramers-v-example-calculation}
 
 :::::{.my-assessment}
 :::{.my-assessment-header}
@@ -2124,7 +2152,45 @@ More detailed interpretation based on the degrees of freedom in [How to Interpre
 ::::
 :::::
 
-### Compute Cramér’s V
+:::::{.my-resource}
+:::{.my-resource-header}
+Number of daily downloads for packages with functions to compute Cramér’s V
+:::
+::::{.my-resource-container}
+
+- {**lsr**}: `lsr::cramersV()`
+- {**rcompanion**}: `rcompanion::cramerV()`
+- {**DescTools**}: `DescTools::CramerV()`
+- {**sjstats**}: `sjstats::cramer()`
+- {**rstatix**}: `rstatix::cramer_v()`
+- {**collinear**}: `collinear::cramber_v()`
+- {**confintr**}: `confintr::cramersv()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-pkgs-cramers-v}
+: Number of daily downloads for packages with functions to compute Cramèr’s V
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: pkgs-cramers-v
+#| tbl-cap: "Daily donwloads of packages with functions to to compute Cramèr’s V"
+#| cache: TRUE
+
+pkgs = c("lsr", "rcompanion", "rstatix", "DescTools",
+         "confintr", "sjstats", "collinear")
+pkgs_dl(pkgs)
+
+```
+I have checked only {**lsr**} and {**rstatix**} as I was happy with the result of the {**rstatix**} package.
+::::
+:::::
+
+
+::::
+:::::
+
 
 :::::{.my-example}
 :::{.my-example-header}
@@ -2156,7 +2222,7 @@ lsr::cramersV(ease_vote_table)
 :::::
 
 
-###### `statix::cramer_v()`
+###### `rstatix::cramer_v()`
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2172,8 +2238,12 @@ lsr::cramersV(ease_vote_table)
 rstatix::cramer_v(ease_vote_table)
 ```
 
+***
+
+The more conservative interpretation from the book sees the effect size between small and medium, corresponding to a relationship between weak to moderate  Including the degrees of freedom we get the starting point for a moderate relationship. I will use the more conservative interpretation.
+
 ::: {.callout-tip}
-In this case, the effect size is between small and medium. There is a statistically significant relationship between opinions on voter registration and race-ethnicity, and the relationship is weak to moderate. This is consistent with the frequencies, which are different from expected, but not by an enormous amount in most of the groups.
+There is a statistically significant relationship between opinions on voter registration and race-ethnicity, and the relationship is weak to moderate. This is consistent with the frequencies, which are different from expected, but not by an enormous amount in most of the groups.
 :::
 
 ::::
@@ -2183,8 +2253,468 @@ In this case, the effect size is between small and medium. There is a statistica
 
 ::::
 :::::
+
+
+### Yates continuity correction
+
+When both variables have just two categories then you should apply the `r glossary("Yates continuity correction")`. It subtracts an additional .5 from the difference between observed and expected in each group, or cell of the table, making the chi-squared test statistic value smaller, making it therefore harder to reach statistical significance.
+
+The correction is necessary because the chi-squared distribution is not a perfect representation of the distribution of differences between observed and expected of a chi-squared test in the situation where both variables are binary. Normally functions apply the correction as default whenever two binary variables are tested but you can decide via an argument whether you want to apply the correction or not.
+
+An exception is `descr::CrossTable()` which provides automatically both versions whenever you compute the test statistic for a 2 by 2 table. This is somewhat illogical because you would always need only the version with the correction for a 2 by 2 table (and not both) and sometimes you would also want to apply it when there are few observations in one or more of the cells. 
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-yates}
+: Computing a chi-squared test statistic with the Yates continuity correction
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### descr::CrossTable() only test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-yates-descr-only-test}
+: Chi-squared test for ease of voting and home ownership
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: yates-descr-only-test
+#| results: hold
+
+## load vote_clean ##########
+vote_clean <-  base::readRDS("data/chap05/vote_clean.rds")
+
+descr::CrossTable(
+    x = vote_clean$ease_vote,
+    y = vote_clean$ownhome,
+    expected = FALSE,
+    prop.r = FALSE,
+    prop.c = FALSE,
+    prop.t = FALSE,
+    prop.chisq = FALSE,
+    chisq = TRUE,
+    resid = FALSE,
+    sresid = FALSE,
+    asresid = FALSE
+)
+```
+
+::::
+:::::
+
+###### rstatix::chisq_test() only test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-yates-rstatix-only-test}
+: Chi-squared test for ease of voting and home ownership with and without Yates continuity correction
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: yates-rstatix-only-test
+#| results: hold
+
+vote_ownhome_chisq1 <- rstatix::chisq_test(
+    vote_clean$ease_vote,
+    vote_clean$ownhome,
+    correct = FALSE
+)
+
+vote_ownhome_chisq2 <- rstatix::chisq_test(
+    vote_clean$ease_vote,
+    vote_clean$ownhome,
+    correct = TRUE
+)
+
+vote_ownhome_chisq <- 
+    dplyr::bind_rows(
+        vote_ownhome_chisq1,
+        vote_ownhome_chisq2
+        ) |> 
+    tibble::add_column(
+        "Yates" = c("No", "Yes"),
+        .before = "p.signif"
+        )
+
+vote_ownhome_chisq
+```
 
 ***
+
+To compare the differences I have computed the chi-squared test twice with and without Yates correction. Then I have combined the results and added a column with the label yes/no.
+
+::::
+:::::
+
+
+###### descr::CrossTable() full data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-yates-descr}
+: Chi-squared test for ease of voting and home ownership
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: yates-descr
+#| results: hold
+
+descr::CrossTable(
+    x = vote_clean$ease_vote,
+    y = vote_clean$ownhome,
+    expected = TRUE,
+    prop.r = FALSE,
+    prop.c = FALSE,
+    prop.t = FALSE,
+    prop.chisq = FALSE,
+    chisq = TRUE,
+    resid = TRUE,
+    sresid = TRUE,
+    asresid = FALSE
+)
+```
+
+::::
+:::::
+
+###### rstatix::chisq_test() full data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-yates-rstatix}
+: Chi-squared test for ease of voting and home ownership with and without Yates continuity correction
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: yates-rstatix
+#| results: hold
+
+vote_ownhome_chisq
+
+glue::glue(" ")
+glue::glue("#####################################################################")
+glue::glue(" ")
+
+rstatix::chisq_descriptives(vote_ownhome_chisq)
+
+```
+
+***
+
+To compare the differences I have computed the chi-squared test twice with and without Yates correction. Then I have combined the results and added a column with the label yes/no.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+In all tabs of @exm-chap05-yates you can see that with the Yates continuity correction the $\chi^2$ value is smaller and results in a somewhat higher p-value. But that does not matter in this case: Both versions are statistically significant $p < .05$.
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-statistically-signifant}
+: What do the stars under the heading `p-signif` in the results of the chi-squared tests with {**rstatix**} mean?
+::::::
+:::
+::::{.my-assessment-container}
+
+| significance <br>code          | p-value       |
+|:------------------------------:|---------------|
+|               ***              | [0, 0.001]    |
+|               **               | (0.001, 0.01] |
+|                *               | (0.01, 0.05]  |
+|                .               | (0.05, 0.1]   |
+|                                | (0.1, 1]      |
+
+: How to interpret stars as significance levels?  {#tbl-stars-significance} {.striped .hover}
+
+::::
+:::::
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-cramers-v-voting-homeowner}
+: Comuting the effect size with Cramér’s V
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: cramers-v-voting-homeowner
+
+rstatix::cramer_v(
+    vote_clean$ease_vote,
+    vote_clean$ownhome,
+    correct = TRUE
+)
+
+```
+
+The Yates continuity corrections also applies for the Cramér’s V effect size calculation. In this case the value of V falls into the weak or small effect size range.
+
+::::
+:::::
+
+:::::{.my-note}
+:::{.my-note-header}
+Summary abbreviated
+:::
+::::{.my-note-container}
+I have not followed the `r glossary("NHST")` procedure and the analysis of the relationship for ease of voting and home ownership. I understand and feel save about most of the content, therefore I focus only on material where I have difficulties or where I need more practice (as with the `r glossary("Yates continuity correction")` and `r glossary("Cramér’s V")`.
+::::
+:::::
+
+
+### Phi coefficient
+
+For 2 × 2 tables, the $k – 1$ term in the denominator of the Cramér’s V formula is always 1, so this term is not needed in the calculation. The formula without this term is called the `r glossary("phi coefficient")`.
+
+***
+$$
+\phi = \sqrt{\frac{\chi^2}{n}}
+$$ {#eq-chap05-phi-coefficient}
+
+n = sample size
+
+***
+
+### Odds ratio
+
+`r glossary("Odds Ratio")` is a measure of the likelihood of a particular `r glossary("outcome")`. They are calculated as the ratio of the number of events that produce or are exposed to that outcome to the number of events that do not produce, resp. are not exposed to the outcome. The odds ratio measures the odds of some event or outcome occurring given a particular `r glossary("exposure")` compared to the odds of it happening without that exposure.
+
+In our case the odds ratio would measure the odds of people that think one should register to vote given owning a home, compared to the odds of people that think one should register to vote given not owning a home. Or more generally: The odds ratio tells us the ratio of the odds of an event occurring in a treatment group compared to the odds of an event occurring in a control group.
+
+$$
+OR = \frac{\text{exposed with outcome} / \text{unexposed with outcome}}{\text{exposed no outcome} / \text{unexposed no outcome}}
+$$ {#eq-chap05-odds-ratio}
+
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Packages with odds ratio function
+:::
+::::{.my-resource-container}
+The book explains the manual calculation and recommends the {**fmsb**} package. I found via internet research some other packages with an odds ratio function: The following list is alphaetically sorted:
+
+- {**DescTools**}: `DescTools::OddsRatio()`
+- {**epitools**}: `epitools::oddsratio()`
+- {**fmsb**}: `fmsb::oddsratio()`
+
+The packages {**tern**} and {**BioProbability**} feature also a odds ratio function. But I haven't looked into these packages because they have less than 100 downloads daily form the RStudio CRAN Mirror server.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-pkgs-dl-odds-ratio}
+: Number of daily downloads for packages with an odds ratio function
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-odds-ratio-pkgs
+#| tbl-cap: "Daily donwloads of packages with odds ratio function"
+#| cache: TRUE
+
+pkgs = c("DescTools", "epitools", "fmsb", "tern", "BioProbability")
+pkgs_dl(pkgs)
+```
+
+::::
+:::::
+
+::::
+:::::
+
+
+
+
+
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap05-odds-ratio}
+: Computing the odds ratio
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Manually
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-odds-ratio-by-hand}
+: Odds ratio of ease of voting by home ownership computed manually
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: odds-ratio-by-hand
+#| results: hold
+
+## load vote_clean ##########
+vote_clean <-  base::readRDS("data/chap05/vote_clean.rds")
+(
+    vote_housing_table <- base::table(
+        vote_clean$ease_vote,
+        vote_clean$ownhome,
+        dnn = c("Voting opinion", "Housing status")
+    )
+)
+
+odds_ratio <-  round((287 / 112) / (375 / 208), 2)
+
+glue::glue(" ")
+glue::glue("###################################################")
+glue::glue("Oddsratio: {odds_ratio}")
+```
+***
+
+The calculation uses the frequencies in the 2 × 2 table where the rows are the exposure and the columns are the outcome.
+::::
+:::::
+
+
+###### {**fmsb**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-odds-ratio-fmsb}
+: Odds ratio of ease of voting by home ownership using `fmsb::oddsratio()`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: odds-ratio-fmsb
+#| results: hold
+
+vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
+
+## table for voting and housing #######
+vote_housing_table <-  base::table(
+        vote_clean$ownhome,
+        vote_clean$ease_vote
+    )
+
+
+glue::glue("*****************   Input counts manually   ***********")
+fmsb::oddsratio(a = 287, b = 112, c = 375, d = 208)
+
+glue::glue(" ")
+glue::glue("*******************************************************")
+
+fmsb::oddsratio(vote_housing_table)
+
+```
+
+***
+
+Here I have replicated the code from the book. {**fmsb**} has a disadvantage: You have to specify the values manually, you can't use a table object. It is said that the function will also work with a matrix but then I got a warning message:
+
+> Warning in N1 * N0 * M1 * M0: NAs produced by integer overflow
+
+As a result of the produced NA's the p-value is not computed. (But the calculated odds ratio is correct.)
+
+So the best option is to stick with manually input. Besides of this inconvenience there is also a somewhat improper medical summary of the table ("Disease" / "Nondisease"). 
+
+
+
+::::
+:::::
+
+###### {**DescTools**}
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-odds-ratio-desctools}
+: Odds ratio of ease of voting by home ownership using `DescTools::OddsRatio()`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: odds-ratio-desctools
+
+DescTools::OddsRatio(
+    x = vote_housing_table, 
+    conf.level = .95,
+    method = "midp")
+```
+***
+
+This is a very sparse output. In contrast to the two other packages it misses the table summary and the p-value.
+
+
+::::
+:::::
+
+###### {**epitools**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-odds-ratio-epitools}
+: Odds ratio of ease of voting by home ownership using `epitools::oddsratio()`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: odds-ratio-epitools
+
+epitools::oddsratio.midp(vote_housing_table, 
+                    correction = TRUE,
+                    verbose = TRUE)
+```
+
+***
+
+This is the most detailed output. There exist also a less verbose version without 
+
+- replicating the raw data $x$
+- calculation of exposed proportions
+- calculation of outcome proportions
+- repeating the confidence level
+
+This more stringent version has the most important information and is in my opinion the best option for calculating the odds ratio.
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+:::::{.my-important}
+:::{.my-important-header}
+{**epitools**} is my preferred method for the odds ratio calculation
+:::
+::::{.my-important-container}
+
+Because of the somewhat inconvenient data input for the `oddsratio()` function of the {**fmsb**} package and the sparse output `OddsRatio()` function of the {**DescTool**} package I prefer the more stringent version (`verbose = FALSE`) of the {**epitools**}.
+
+::::
+:::::
+
+
+## Achievement 8: When chi-squared assumption fail {#sec-chap05-achievement8}
+
 
 ## Exercises (empty)
 

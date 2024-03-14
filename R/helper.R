@@ -156,3 +156,23 @@ save_data_file <- function(chapter_folder, object, file_name){
     base::saveRDS(object = object,
                   file = paste0(chap_folder, "/", file_name))
 }
+
+
+################################################################
+# pkgs_downloads: Get number of downloads from RStudio CRAN Mirror
+# Purpose:
+# Compare popularity of different packages
+# Author: Peter Baumgartner
+# pkgs = character vector of package names
+# period = "last-day" "last-week", "last-month"
+# days: period days = 1, 7, 30
+# returns: tibble with packages sorted by download figures
+# I have used the function in my notes on "Statistics with R"
+# # See: https://bookdown.org/pbaumgartner/swr-harris/
+################################################################
+pkgs_dl <-  function(pkgs, period = "last-week", days = 7) {
+    cranlogs::cran_downloads(when = period, packages = pkgs) |>
+        dplyr::group_by(package) |>
+        dplyr::summarize(n = trunc(sum(count) / days)) |>
+        dplyr::arrange(desc(n))
+}
