@@ -2494,14 +2494,149 @@ n = sample size
 
 ### Odds ratio
 
-`r glossary("Odds Ratio")` is a measure of the likelihood of a particular `r glossary("outcome")`. They are calculated as the ratio of the number of events that produce or are exposed to that outcome to the number of events that do not produce, resp. are not exposed to the outcome. The odds ratio measures the odds of some event or outcome occurring given a particular `r glossary("exposure")` compared to the odds of it happening without that exposure.
+:::::{.my-resource}
+:::{.my-resource-header}
+Explaining the odds ratio
+:::
+::::{.my-resource-container}
+The explication in `r glossary("SwR")` is not easy to understand. So I have used other material a well:
 
-In our case the odds ratio would measure the odds of people that think one should register to vote given owning a home, compared to the odds of people that think one should register to vote given not owning a home. Or more generally: The odds ratio tells us the ratio of the odds of an event occurring in a treatment group compared to the odds of an event occurring in a control group.
+- Frost, J. (2022, January 11). Odds Ratio: Formula, Calculating & Interpreting. Statistics By Jim. https://statisticsbyjim.com/probability/odds-ratio/
+- Glen, S. (n.d). Odds Ratio Calculation and Interpretation. Statistics How To. https://www.statisticshowto.com/probability-and-statistics/probability-main-index/odds-ratio/
+- Poldrack, R. A. (2020, January 13). 10.12: Odds and Odds Ratios. Statistics LibreTexts. https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Statistical_Thinking_for_the_21st_Century_(Poldrack)/10%3A_Probability/10.12%3A_Odds_and_Odds_Ratios
+- Szumilas, M. (2010). Explaining Odds Ratios. Journal of the Canadian Academy of Child and Adolescent Psychiatry, 19(3), 227–229. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2938757/
+- Tenny, S., & Hoffman, M. R. (2024). Odds Ratio. In StatPearls. StatPearls Publishing. http://www.ncbi.nlm.nih.gov/books/NBK431098/
+
+::::
+:::::
+
+Odds is usually defined in statistics as the probability an event will occur divided by the probability that it will not occur. In other words, it’s a ratio of successes (or wins) to losses (or failures). As an example, if a racehorse runs 100 races and wins 20 times, the odds of the horse winning a race is 20/80 = 1/4 = 0.25.  
+
+The odds definition is different to the somewhat similar definition of probability, which is the fraction of times an event occurs in a certain number of trials. In the horse example, the probability of a win is 20/100 = 0.2. (see [@glenn.da])
+
+$$
+Odds = \frac{\text{Probability Event Occurs (p)}}{{\text{Probability Event Does Not Occur (1-p)}}}
+$$ {#eq-chap05-odds}
+
+Odds ratios with groups quantify the strength of the relationship between two conditions. They indicate how likely an outcome is to occur in one context relative to another. 
+
+$$
+\text{Odds Ratio} = \frac{\text{Odss of an Event (Condition A)}}{{\text{Odds of an Event (Condition B)}}}
+$$ {#eq-chap05-odds-ratio}
+
+The denominator (condition B) in the odds ratio formula is the baseline or control group. Consequently, the OR tells you how much more or less likely the numerator events (condition A) are likely to occur relative to the denominator events. If you have a treatment and control group, the treatment will be in the numerator while the control group is in the denominator of the formula [@frost2022].
+
+Taken the definition of odds and odds ratio together we get the formula:
+
+$$
+\begin{align*}
+\text{Odds Ratio} = \frac{\text{Odds of an Event (Condition A)}}{{\text{Odds of an Event (Condition B)}}} = \\
+\frac{\text{Odds of an Event (A)} / \text{Odds of an Non Event (A)}}{\text{Odds of an Event (B)} / \text{Odds of an Non Event (B)}} = \\
+\frac{\text{Odds of an Event (A)} \times \text{Odds of an Non Event (B)}}{\text{Odds of Non Event (A)} \times \text{Odds of a Event (B)}}
+\end{align*}
+$$ {#eq-chap05-odds-ratio2}
+
+
+The book explanation of the `r glossary("odds ratio")` uses with `r glossary("exposure")` and `r glossary("outcome")` two new concepts and is therefore more difficult to understand. Under this terminology is the odds ratio a measure of the likelihood of a particular outcome. The odds ratio is calculated as the ratio of the number of events that produce or are exposed to that outcome to the number of events that do not produce, resp. are not exposed to the outcome. The odds ratio measures the odds of some event or outcome occurring given a particular exposure compared to the odds of it happening without that exposure. Or more generally: The odds ratio tells us the ratio of the odds of an event occurring in a treatment group compared to the odds of an event occurring in a control group. (Still pretty difficult…)
+
+In our case of voting opinion and housing status the odds ratio would measure the odds of people that think one should register to vote given owning a home, compared to the odds of people that think one should register to vote given not owning a home. 
 
 $$
 OR = \frac{\text{exposed with outcome} / \text{unexposed with outcome}}{\text{exposed no outcome} / \text{unexposed no outcome}}
-$$ {#eq-chap05-odds-ratio}
+$$ {#eq-chap05-odds-ratio3}
 
+To fill in the correct values one has to conceptualize a 2x2 table:
+
+```{r}
+#| label: odds-tatio-table
+#| results: markup
+
+tibble::tribble(
+  ~Exposure,      ~Cases,  ~Control,
+  "Exposed",     "a",     "b",
+  "Not Exposed", "c",     "d"
+)
+```
+The columns "Cases" and "Control" are the Outcomes:
+
+- a = Number of exposed cases
+- b = Number of exposed non-cases
+- c = Number of unexposed cases
+- d = Number of unexposed non-cases
+
+$$
+OR = \frac{a / c}{b / d} = \frac{a \times d}{b \times c}
+$$ {#eq-chap05-odds-ratio-4}
+
+Now let's think what this general structure mean in our case with voting opinions (easy versus register) and housing status (owner or renter). 
+
+
+```{r}
+#| label: voting-housing-table
+#| results: markup
+
+vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
+(
+    vote_housing_table <- base::table(
+        vote_clean$ownhome,
+        vote_clean$ease_vote,
+        dnn = c("Housing status", "Voting opinion")
+    )
+)
+```
+
+***
+
+::: {#bul-chap05-or-example}
+
+**Exposure and Outcome**
+
+- Exposed: Landlords 
+- Not Exposed: Renter (tenants)
+- Cases: People that favor register for voting
+- Control: People that want easy voting
+
+**Cells and their values**
+
+- Number of exposed cases [1,1] = (a) = House owner that want people to register for voting = 287.
+- Number of exposed non-cases [1,2] = (c) = House owner that want easy voting = 375.
+- Number of unexposed cases [2,1] = (b) = Renter that want people to register for voting = 112.
+- Number of unexposed non-cases [2,2] = (d) = Renter that want easy voting = 208.
+
+Calculation of the odds ratio (OR) using the two-by-two frequency table of voting opinion by housing status
+
+:::
+
+***
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap05-odds-ratio}
+: Interpretation of odds ratios using our example of voting opinion by housing status
+::::::
+:::
+::::{.my-assessment-container}
+
+**General rule**
+
+- **OR = 1** indicates that the likelihood of the outcome for exposed is the same as for unexposed
+- **OR > 1** indicates higher odds of the outcome for exposed compared to unexposed, e.g. the event/outcome is more likely to occur.
+- **OR < 1** indicates lower odds of the outcome for exposed compared to unexposed, e.g. the event/outcome is less likely to occur.
+
+**Our example**
+
+- Home owners have 1.42 times the odds of thinking people should register to vote compared to people who do not own homes. 
+- Or alternatively: Home owners have 42% higher odds of thinking people should register to vote compared to people who do not own homes.
+
+::::
+:::::
+
+
+$$
+OR = \frac{a / c}{b / d} = \frac{287 / 112}{375 / 208} = \frac{2.5625}{1.802885} = 1.42
+$$ {#eq-chap05-odds-ratio-example}
+
+The p-value for odds ratios has the same broad meaning as p-values for the chi-squared. But instead of being based on the area under the curve for the chi-squared distribution, it is based on the area under the curve for the log of the odds ratio, which is approximately normally distributed. The odds ratio can only be a positive number, and it results in a right-skewed distribution, which the log function can often transform to something close to normal.
 
 :::::{.my-resource}
 :::{.my-resource-header}
@@ -2568,16 +2703,15 @@ pkgs_dl(pkgs)
 #| label: odds-ratio-by-hand
 #| results: hold
 
-## load vote_clean ##########
-vote_clean <-  base::readRDS("data/chap05/vote_clean.rds")
+
+glue::glue("############### Table format used ################## ")
 (
     vote_housing_table <- base::table(
-        vote_clean$ease_vote,
         vote_clean$ownhome,
+        vote_clean$ease_vote,
         dnn = c("Voting opinion", "Housing status")
     )
 )
-
 odds_ratio <-  round((287 / 112) / (375 / 208), 2)
 
 glue::glue(" ")
@@ -2604,15 +2738,6 @@ The calculation uses the frequencies in the 2 × 2 table where the rows are the 
 ```{r}
 #| label: odds-ratio-fmsb
 #| results: hold
-
-vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
-
-## table for voting and housing #######
-vote_housing_table <-  base::table(
-        vote_clean$ownhome,
-        vote_clean$ease_vote
-    )
-
 
 glue::glue("*****************   Input counts manually   ***********")
 fmsb::oddsratio(a = 287, b = 112, c = 375, d = 208)
@@ -2707,13 +2832,30 @@ This more stringent version has the most important information and is in my opin
 :::
 ::::{.my-important-container}
 
-Because of the somewhat inconvenient data input for the `oddsratio()` function of the {**fmsb**} package and the sparse output `OddsRatio()` function of the {**DescTool**} package I prefer the more stringent version (`verbose = FALSE`) of the {**epitools**}.
+Because of the somewhat inconvenient data input for the `oddsratio()` function of the {**fmsb**} package and the sparse output `OddsRatio()` function of the {**DescTool**} package I prefer the computation with {**epitools**} in its more stringent option (`verbose = FALSE`).
 
 ::::
 :::::
 
 
-## Achievement 8: When chi-squared assumption fail {#sec-chap05-achievement8}
+## Achievement 8: When chi-squared assumptions fail {#sec-chap05-achievement8}
+
+What is to do when one of the chi-squared assumption fails?
+
+### Variables not nominal or ordinal
+
+Use a different statistical test. Chi-squared is only appropriate for categorical variables.
+
+### Sample too small
+
+The assumption of expected values of 5 or higher in at least 80% of groups is necessary because the sampling distribution for the chi-squared statistic only approximates the actual chi-squared distribution but does not capture it completely accurately. When a sample is large, the approximation is better and using the chi-squared distribution to determine statistical significance works well.
+
+However, for very small samples, the approximation is not great, so a different method of computing the p-value is better. The method most commonly used is the `r glossary("Fisher’s exact test")` (`stats::fisher.test()`, `rstatix::fisher_test()`, `janitor::fisher.test()`, `fmsb::pairwise.fisher.test()`).
+
+### Observation not independent
+
+- If both variables are binary (have only two categories) use `r glossary("McNemar’s test")` (`stats::mcnemar.test()`)
+- If there are three or more groups for one variable and a binary second variable use `r glossary("Cochran’s Q-test")`. Besides the book recommendation `nonpar::cochrans.q()` the test is also availabe in other packages, that I used already for this book: `DescTools::CochranQTest()`, `rstatix::cochran_qtest()`.
 
 
 ## Exercises (empty)
