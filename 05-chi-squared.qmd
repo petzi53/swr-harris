@@ -94,18 +94,6 @@ Two options for assessing the documentation:
 
 ### Get data
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap05-get-data}
-: Get data for chapter 5
-::::::
-:::
-::::{.my-example-container}
-
-::: {.panel-tabset}
-
-###### Pew data
-
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap05-get-pew-data}
@@ -180,47 +168,7 @@ Backtrace:
 
 
 
-
-
-###### header2
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-code-name-b}
-: Numbered R Code Title (Tidyverse)
-::::::
-:::
-::::{.my-r-code-container}
-
-```{r}
-#| label: text-bxx
-
-1 + 1
-```
-
-::::
-:::::
-
-:::
-
-::::
-:::::
-
-***
-
 ### Show raw data
-
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap05-show-data}
-: Show raw data for chapter 5
-::::::
-:::
-::::{.my-example-container}
-
-::: {.panel-tabset}
-
-###### Vote
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -243,45 +191,8 @@ skimr::skim(vote)
 :::::
 
 
-###### header2
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-code-name-b}
-: Numbered R Code Title (Tidyverse)
-::::::
-:::
-::::{.my-r-code-container}
-
-```{r}
-#| label: text-byyyy
-
-1 + 1
-```
-
-::::
-:::::
-
-:::
-
-::::
-:::::
-
-***
 
 ### Recode data for chapter 5
-
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap05-recode-data}
-: Numbered Example Title
-::::::
-:::
-::::{.my-example-container}
-
-::: {.panel-tabset}
-
-###### Pew data
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -355,37 +266,11 @@ I have used in this recoding R chunk several functions for the first time:
 :::::
 
 
-###### header2
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-code-name-b}
-: Numbered R Code Title (Tidyverse)
-::::::
-:::
-::::{.my-r-code-container}
-
-```{r}
-#| label: text-bzzzz
-#| results: hold
-
-```
-
-::::
-:::::
-
-:::
-
-::::
-:::::
-
-***
-
 ## Achievement 1: Relationship of two categorical variables {#sec-chap05-achievement1}
 
 ### Descriptive statistics
 
-For better display I have reversed the order of the variables: Instead of grouping y ease of vote I will group by race/ethnicity. This will give a smaller table with only two columns instead of four that will not fit on the sceen without horizontal scrolling.
+For better display I have reversed the order of the variables: Instead of grouping y ease of vote I will group by race/ethnicity. This will give a smaller table with only two columns instead of four that will not fit on the screen without horizontal scrolling.
 
 
 :::::{.my-example}

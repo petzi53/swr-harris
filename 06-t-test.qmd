@@ -19,8 +19,8 @@ Objectives
 
 - **Achievement 1**: Understanding the relationship between one categorical variable and one continuous variable using histograms, means, and standard deviations {#sec-chap06-achievement1}
 - **Achievement 2**: Comparing a sample mean to a population mean with a `r glossary("one-sample t-test")` {#sec-chap06-achievement2}
-- **Achievement 3**: Comparing two unrelated sample means with an `r glossary("independent-samples t-test")` {#sec-chap06-achievement3}
-- **Achievement 4**: Comparing two related sample means with a `r glossary("dependent-samples t-test")` {#sec-chap06-achievement4}
+- **Achievement 3**: Comparing two unrelated sample means with an `r glossary("unpaired",  "independent-samples t-test")` {#sec-chap06-achievement3}
+- **Achievement 4**: Comparing two related sample means with a `r glossary("paired", "dependent-samples t-test")` {#sec-chap06-achievement4}
 - **Achievement 5**: Computing and interpreting an `r glossary("effect size")` for significant t-tests {#sec-chap06-achievement5}
 - **Achievement 6**: Examining and checking the underlying assumptions for using the t-test {#sec-chap06-achievement6}
 - **Achievement 7**: Identifying and using alternate tests when t-test assumptions are not met {#sec-chap06-achievement7}
