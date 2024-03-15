@@ -19,6 +19,7 @@ book:
     - 03-data-visualization.qmd
     - 04-probability-distributions.qmd
     - 05-chi-squared.qmd
+    - 06-t-test.qmd
     - 95-references.qmd
 
 bibliography:
