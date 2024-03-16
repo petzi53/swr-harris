@@ -17,13 +17,13 @@ Objectives
 ::: my-objectives-container
 **SwR Achievements**
 
-- **Achievement 1**: Understanding the relationship between one categorical variable and one continuous variable using histograms, means, and standard deviations {#sec-chap06-achievement1}
-- **Achievement 2**: Comparing a sample mean to a population mean with a `r glossary("one-sample t-test")` {#sec-chap06-achievement2}
-- **Achievement 3**: Comparing two unrelated sample means with an `r glossary("unpaired",  "independent-samples t-test")` {#sec-chap06-achievement3}
-- **Achievement 4**: Comparing two related sample means with a `r glossary("paired", "dependent-samples t-test")` {#sec-chap06-achievement4}
-- **Achievement 5**: Computing and interpreting an `r glossary("effect size")` for significant t-tests {#sec-chap06-achievement5}
-- **Achievement 6**: Examining and checking the underlying assumptions for using the t-test {#sec-chap06-achievement6}
-- **Achievement 7**: Identifying and using alternate tests when t-test assumptions are not met {#sec-chap06-achievement7}
+- **Achievement 1**: Understanding the relationship between one categorical variable and one continuous variable using histograms, means, and standard deviations (@sec-chap06-achievement1)
+- **Achievement 2**: Comparing a sample mean to a population mean with a `r glossary("one-sample t-test")` (@sec-chap06-achievement2)
+- **Achievement 3**: Comparing two unrelated sample means with an `r glossary("independent",  "independent-samples t-test")` (@sec-chap06-achievement3)
+- **Achievement 4**: Comparing two related sample means with a `r glossary("paired", "dependent-samples t-test")` (@sec-chap06-achievement4)
+- **Achievement 5**: Computing and interpreting an `r glossary("effect size")` for significant t-tests (@sec-chap06-achievement5)
+- **Achievement 6**: Examining and checking the underlying assumptions for using the t-test (@sec-chap06-achievement6)
+- **Achievement 7**: Identifying and using alternate tests when t-test assumptions are not met (@sec-chap06-achievement7)
 
 :::
 :::
@@ -50,7 +50,7 @@ Data, codebook, and R packages for learning about t-test
 Two options for accessing the data:
 
 - Download the data set `nhanes_2015–2016_ch6.csv` from <https://edge.sagepub.com/harris1e>. 
-- Follow the instructions in Box 6.1 to import the data directly from the Internet into R.
+- Follow the instructions in Box 6.1 to import the data directly with the halp of {**NHANES**} from the Internet into R.
 
 **Codebook**
 
@@ -78,11 +78,517 @@ Two options for accessing the codebook:
 :::
 :::
 
-### Get data (empty)
+### Get data
 
-### Show raw data (empty)
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-get-data}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### NHANES data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-get-nhanes-data}
+: Get NHANES data for blood pressure examination with demographics variable for 2015-2016
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-nhanes-data
+#| cache: true
+#| eval: false
+
+## run one once manually #########
+
+## list EXAM tables for 2016 to get file names
+exam_tables_2016 <- nhanesA::nhanesTables('EXAM', 2016)
+
+## list variables in BPX_I (Blood Pressure file)
+bpx_i_variables <- nhanesA::nhanesTableVars('EXAM', 'BPX_I')
+
+bpx_i <- nhanesA::nhanes('BPX_I')
+demo_i <-  nhanesA::nhanes('DEMO_I')
+
+bpx_2016 <- dplyr::full_join(demo_i, bpx_i, by = "SEQN")
+
+save_data_file("chap06", bpx_2016, "bpx_2016.rds")
+```
+
+(*For this R code chunk is no output available. For the raw data see *)
+
+::::
+:::::
+
+
+###### NHANES codebook
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-get-nhanes-codebook}
+: Get NHANES codebook for blood pressure examination with demographics variable for 2015-2016
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: get-nhanes-codebook
+
+cb_systolic <- nhanesA::nhanesCodebook("BPX_I", "BPXSY1")
+cb_diastolic <- nhanesA::nhanesCodebook("BPX_I", "BPXDI1")
+
+
+```
+
+***
+
+(*For this R code chunk is no output available. For the raw data see*)
+
+Besides to call the appropriate website for 2015-2016 [examination codebook](nhanes_examination_20152016_codebook.html) and [demographic codebook](nhanes_demographics_20152016_codebook.html) there is also the option to download information via {**nhanesA**}.
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+
+
+
+### Show raw data 
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-show-raw-data}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Blood pressure data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-glance-nhanes-data}
+: Glance at NHANES data for blood pressure examination with demographics variable for 2015-2016
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-glance-nhanes-data}
+```{r}
+#| label: glance-nhanes-data
+
+bpx_2016 <- base::readRDS("data/chap06/bpx_2016.rds")
+
+skimr::skim(bpx_2016)
+glance_data(bpx_2016)
+```
+Glance at NHANES data for blood pressure examination with demographics variable for 2015-2016
+
+:::
+
+::::
+:::::
+
+
+
+###### Blood pressure codebook
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-glance-nhanes-codebook}
+: Glance at NHANES codebook for systolic & diastolic blood pressure (2015-2016)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: glance-nhanes-codebook
+#| results: hold
+
+glue::glue("*********************** Systolic blood pressure ******************")
+cb_systolic
+glue::glue(" ")
+glue::glue("*********************** Diastolic blood pressure ******************")
+cb_diastolic
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+
 
 ### Recode data (empty)
+
+## Achievement 1: Relationship between one categorical and one continuous variable {#sec-chap06-achievement1}
+
+For this first achievement we are going to look into the relationship between one categorical variable and one continuous variable using histograms, means, and standard deviations.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-descriptive}
+: Description of blood pressure data from NHANES 2015-2016
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Histogram 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-systolic-histo1}
+: Histogram of systolic blood pressure (NHANES 2015-2016)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: systolic-histo1
+#| fig-cap: "Histogram of systolic blood pressure (NHANES 2015-2016)"
+
+## load bpx_2016 #######
+bpx_2016 <- base::readRDS("data/chap06/bpx_2016.rds")
+
+## graph systolic blood pressure variable BPXSY1 (Figure 6.1)
+sys_histo <- bpx_2016  |>  
+    ggplot2::ggplot(
+        ggplot2::aes(x = BPXSY1)
+        ) + 
+    ggplot2::geom_histogram(
+        fill =  "mediumpurple",
+        color = "white",
+        bins = 30,
+        na.rm = TRUE
+        ) + 
+    ggplot2::theme_bw() + 
+    ggplot2::labs(
+        x = "Systolic blood pressure (mmHg)", 
+        y = "NHANES participants"
+        ) 
+
+sys_histo
+```
+***
+
+This is the replication of the book’s Figure 6.1.
+
+The graph is not exactly normally distributed; it has a little right skew.  The `r glossary("quantile")` values (0%  25%  50%  75%  100%) are `r quantile(bpx_2016$BPXSY1, na.rm = TRUE)`. The middle 50% lies in the range between `r quantile(bpx_2016$BPXSY1, 0.25, na.rm = TRUE)` and `r quantile(bpx_2016$BPXSY1, 0.75, na.rm = TRUE)` mmHG. You can't see the highest values because their frequencies are too small.  
+::::
+:::::
+
+
+###### Histogram 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-systolic-histo2}
+: Histogram of systolic blood pressure with risk factors (NHANES 2015-2016)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: systolic-histo2
+#| fig-cap: "Histogram of systolic blood pressure with risk factors (NHANES 2015-2016)"
+
+## graph systolic blood pressure with risk factors (Figure 6.2)
+sys_histo2 <- bpx_2016 |>  
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = BPXSY1, 
+            fill = BPXSY1 > 120)
+        ) + 
+    ggplot2::geom_histogram(
+        color = "white",
+        bins = 30,
+        na.rm = TRUE) + 
+    ggplot2::theme_bw() + 
+    ggplot2::labs(
+        x = "Systolic blood pressure (mmHg)", 
+        y = "NHANES participants"
+        ) +
+    ggplot2::scale_fill_manual(
+        values = c("mediumpurple", "grey"),
+        labels = c("Normal range",
+                   "at-risk or high"),
+        name = "Systolic\nBlood Pressure"
+    )
+
+sys_histo2
+```
+***
+
+This is the replication of the book’s Figure 6.2.
+::::
+:::::
+
+###### Experiment
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-systolic-histo3}
+: Blood pressure histogram with several colors according to their medical conditions
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: systolic-histo3
+
+## graph systolic blood pressure differentiated
+sys_histo3 <- bpx_2016 |>  
+    dplyr::select(BPXSY1) |> 
+    dplyr::mutate(sys = dplyr::case_when(
+        BPXSY1 < 105 ~ "0",
+        BPXSY1 >= 105 & BPXSY1 < 120 ~ "1",
+        BPXSY1 >= 120 & BPXSY1 < 130 ~ "2",
+        BPXSY1 >= 130 & BPXSY1 < 140 ~ "3",
+        BPXSY1 >= 140 ~ "4"
+        )
+    ) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = BPXSY1, fill = sys)
+        ) + 
+    ggplot2::geom_histogram(
+        color = "white",
+        binwidth = 2,
+        na.rm = TRUE) + 
+    ggplot2::theme_bw() + 
+    ggplot2::theme(legend.position = "bottom") +
+    ggplot2::labs(
+        x = "Systolic blood pressure (mmHg)", 
+        y = "NHANES participants"
+        ) +
+    ggplot2::scale_fill_manual(
+        values = c(
+            "0" = "grey", 
+            "1" = "mediumpurple", 
+            "2" = "yellow", 
+            "3" = "darkorange", 
+            "4" = "red"
+            ),
+        labels = c("Low",
+                   "Optimal",
+                   "Normal",
+                   "At-risk",
+                   "High"
+                  ),
+        name = "Systolic\nBlood Pressure"
+    ) +
+    ggplot2::xlim(70, 240)
+
+sys_histo3
+```
+***
+Here I have experimented to colorize the histogram with different colors. I took as borders the medical condition for isolated blood pressure measures:
+
+- Low: < 105
+- Optimal: >= 105 & < 120
+- Normal: >= 120 & < 130
+- At Risk: >= 130 & < 140
+- High: >= 140
+
+In this case I can’t use the color directly as `fill` variable into the `ggplots::aes()` function. Besides I learned two other solve two other issues:
+
+- The sequence of colors are aligned to the values alphabetically. Therefore I had to take characters that are sorted in the correct order. I took c("0", "1", "2", "3", "4") but c("a", "b", "c", "d" ,"e") would have worked too.
+- Wider bins brought the problem that the color has changed in the middle of the bar length. I did not know how to solve this issue generally, for instance with providing `breaks` or to provide borders conforming to the medical status. Only `binwidth` of 1 and 2 worked, 3 already showed the problem. Other people had the same problem, see for instance the section "Example 2: Draw Histogram with Different Colors Using ggplot2 Package" in [Draw Histogram with Different Colors in R (2 Examples)](https://statisticsglobe.com/draw-histogram-with-different-colors-in-r) [@schorkn.d].
+
+::::
+:::::
+
+###### Histogram 3
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-diastolic-histo}
+: Histogram of diastolic blood pressure with risk factors (NHANES 2015-2016)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: diastolic-histo
+#| fig-cap: "Histogram of diastolic blood pressure with risk factors (NHANES 2015-2016)"
+
+## graph systolic blood pressure with risk factors (Figure 6.3)
+dia_histo <- bpx_2016 |>  
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = BPXDI1, 
+            fill = BPXDI1 > 80)
+        ) + 
+    ggplot2::geom_histogram(
+        color = "white",
+        bins = 30,
+        na.rm = TRUE) + 
+    ggplot2::theme_bw() + 
+    ggplot2::labs(
+        x = "Diastolic blood pressure (mmHg)", 
+        y = "NHANES participants"
+        ) +
+    ggplot2::scale_fill_manual(
+        values = c("mediumpurple", "grey"),
+        labels = c("Normal range",
+                   "at-risk or high"),
+        name = "Diastolic\nBlood Pressure"
+    )
+
+dia_histo
+```
+***
+
+This is the replication of the book’s Figure 6.3.
+::::
+:::::
+
+###### `mean()` & `sd()`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-systolic-mean-sd}
+: Mean and standard deviation of systolic blood pressure in the NHANES data sample (2015-2016)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: systolic-mean-sd
+
+bpx_2016 |> 
+    tidyr::drop_na(BPXSY1) |> 
+    dplyr::summarize(
+        mean = base::mean(BPXSY1),
+        sd = stats::sd(BPXSY1),
+        n = dplyr::n()
+        )
+
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+## Achievement 2: One-Sample t-test {#sec-chap06-achievement2}
+
+
+We have a mean of the systolic blood pressure a little bit above 120.54 mmHG. This is almost exactly the upper cutoff value of 120 mmHG for the "normal range" of blood pressure. Is this only valid for the sample of also for the whole population? Have about half of the US people high systolic blood pressure, e.g. more than 120mmHG? The question can be answered with a `r glossary("one-sample t-test")`. The one sample t-test compares a sample mean to a *hypothesized or population* mean.
+
+:::::{.my-important}
+:::{.my-important-header}
+There are three different t-tests
+:::
+::::{.my-important-container}
+
+- **One-sample t-test**: compares a mean to a population or hypothesized value 
+- **Independent-samples t-test**: compares the means of two unrelated groups 
+- **Dependent-samples t-test**: compares the means of two related groups
+
+::::
+:::::
+
+
+We are following @prp-chap05-nhst from @sec-chap05-achievement5.
+
+
+### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+Two considerations:
+
+1. The Null relates most of the times to a situation where no change occurs. In this case that there is no difference in the means of the systolic blood pressure. This is different to the assumption that the mean difference is not higher than 120 mmHG!
+2. In the one-sample t-test we are comparing sample mean with population mean. In this case the NHANES sample from the 2015-2016 data with the population mean of the US population.
+
+::: {.callout-note}
+- **H0**: There is no difference in the mean systolic blood pressure in the US population and the cutoff for normal blood pressure of 120 mmHG in the NHANES 2015-2016 data set.
+- **HA**: There is a difference in the mean systolic blood pressure in the US population and the cutoff for normal blood pressure of 120 mmHG in the NHANES 2015-2016 data set.
+:::
+
+### NHST Step 2
+
+Compute the test statistic. The one-sample t-test uses the `r glossary("t-statistic")` (sort of like a z-statistic) 
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap06-t-statistic}
+: t-test formula
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+t = \frac{m_{x} - \mu_{x}}{\frac{s_x}{\sqrt{n_{x}}}}
+$$ {#eq-chap06-t-statistic}
+
+- $m_{x}$ represents the mean of the variable x, the variable to be tested, 
+- $\mu_{x}$ is the *population mean or hypothesized value* of the variable, 
+- $s_{x}$ is the sample standard deviation of x, and 
+- $n_{x}$ is the sample size
+::::
+:::::
+
+The formula is very similar as the `r glossary("Z-score")` statistic in @eq-z-score. The only difference is that in the above `r glossary("t-statistic")` the denominator is the `r glossary("standard error")` rather than the `r glossary("standard deviation")`.
+
+- `z` shows how many sample standard deviations some value is away from the mean.
+- `t` shows how many standard errors (i.e., population standard deviations) some value is away from the mean.
+
+$$
+t = \frac{120.5394 - 120}{\frac{18.61692}{\sqrt{7145}}} = 2.45
+$$
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-t-statistic-systolic}
+: t-statistic of systolic blood pressure aof NHANES sample with hypothesized population mean
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: t-statistic-systolic
+
+stats::t.test(
+    bpx_2016$BPXSY1,
+    alternative = "two.sided",
+    mu = 120)
+
+```
+
+::::
+:::::
+
+
+
+### NHST Step 3
+
+Calculate p-value.
+
+### NHST Step 4
+
+Interpret the p-value.
+
 
 
 ***
@@ -178,6 +684,48 @@ Functions and datasets to support Summary and Analysis of Extension Program Eval
 ::::
 :::::
 
+### nhanesA
+
+:::::{.my-resource}
+:::{.my-resource-header}
+nhanesA: NHANES Data Retrieval 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-nhanesA}
+
+***
+
+{**nhanesA**}: [NHANES Data Retrieval](https://github.com/cjendres1/nhanes/) [@nhanesA]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap06/logoi/logo-nhanesA-min.png){width="176"}
+
+
+Utility to retrieve data from the National Health and Nutrition Examination Survey (NHANES) website <https://www.cdc.gov/nchs/nhanes/index.htm>.
+
+:::
+
+{**nhanesA**} is an R package for browsing and retrieving data from the National Health And Nutrition Examination Survey (NHANES). This package is designed to be useful for research and instructional purposes.
+
+The functions in the {**nhanesA**} package allow for fully customizable selection and import of data directly from the NHANES website thus it is essential to have an active network connection.
+
+There are other similar packages also available, but the are more restricted as newer data than 2014 cant be downloaded: 
+
+- {**NHANES**}: For the years 2009-2012
+- {**RNHANES**}: For the years 1999-2014
+
+
+{**nhanesA**}: NHANES Data Retrieval
+:::
+
+See for my other reflection of packages for downloading NHANES data in @not-chap01-nhanesA-pkg and @sec-chap03-rnhanes.
+
+***
+::::
+:::::
 
 
 ## Glossary

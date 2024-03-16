@@ -1682,7 +1682,7 @@ In the book the above @prp-chap05-nhst has 5 options. But the last two steps (4 
 The null (`r glossary("null hypothesis", "H0")`) and alternate (`r glossary("alternate hypothesis", "HA")`) are written about the population and are tested using a sample from the population.
 
 ::: {.callout-note}
-- **H0**: People’s opinions on voter registration are the same across raceethnicity groups. 
+- **H0**: People’s opinions on voter registration are the same across race-ethnicity groups. 
 - **HA**: People’s opinions on voter registration are not the same across race-ethnicity groups.
 :::
 

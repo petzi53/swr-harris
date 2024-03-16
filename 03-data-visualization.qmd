@@ -7503,7 +7503,7 @@ binary format. To parse `.xlsx`, we use the
 :::
 :::
 
-### RNHANES
+### RNHANES {#sec-chap03-rnhanes}
 
 ::: my-resource
 ::: my-resource-header
@@ -7530,6 +7530,29 @@ Institute](https://silentspring.org/).
 
 {**RNHANES**}: A Package for Facilitating Analysis of CDC NHANES Data
 :::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! {**RNHANES**} downloads data only until 2013-2014
+:::
+::::{.my-watch-out-container}
+
+The CRAN version of {**RNHANES**} only works with data before 2015. It is said in the book that for the year 2015-2016 you could use the GitHub developer version. But this didn't work for me.
+
+The problem is the function `RNHANES::validate_year()` that is not up-to-date. It has the valid years included as fixed strings which I see as bad programming. (One could generate these pair of years programmatically, checking with the modulo operator `%%`, subtracting from the current year 4 years, because the data has to be prepared to make it public available.)
+
+```{r}
+#| label: rnhanes-validate-year.function
+
+RNHANES:::validate_year
+```
+
+I therefore used in @lst-chap03-get-NHANES-2018-data code to download data directly from the website. Currently I learned that there is another --- more updated --- {**nhanesA**} packages that I am going to test in chapter 6, where I need NHANES data again.
+
+::::
+:::::
+
+
 
 :::
 :::

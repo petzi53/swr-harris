@@ -1088,7 +1088,7 @@ $$
 z_{i} = \frac{x_{i} - m_{x}}{s_{x}}
 $$ {#eq-z-score}
 
-The `r glossary("z-score")` for an observation is the number of standard deviations it is from the mean.
+The `r glossary("z-score")` for an observation is the number of standard deviations from the mean.
 
 ::::
 :::::
