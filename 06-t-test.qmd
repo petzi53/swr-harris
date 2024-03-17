@@ -493,6 +493,7 @@ bpx_2016 |>
 
 ## Achievement 2: One-Sample t-test {#sec-chap06-achievement2}
 
+### Introduction
 
 We have a mean of the systolic blood pressure a little bit above 120.54 mmHG. This is almost exactly the upper cutoff value of 120 mmHG for the "normal range" of blood pressure. Is this only valid for the sample of also for the whole population? Have about half of the US people high systolic blood pressure, e.g. more than 120mmHG? The question can be answered with a `r glossary("one-sample t-test")`. The one sample t-test compares a sample mean to a *hypothesized or population* mean.
 
@@ -509,8 +510,10 @@ There are three different t-tests
 ::::
 :::::
 
+The t-distribution has a bell shape like the normal distribution. But unlike the normal distribution its variance is not known but approximated with its only parameter `r glossary("degrees of freedom")` (df). `df` is calculated by the number of observations minus one ($n-1$). With higher degrees of freedom the t-distribution will get closer to the normal distribution. Often the number 30 is recommended as the cutting point where t-distribution and normal distribution are equivalent.
 
-We are following @prp-chap05-nhst from @sec-chap05-achievement5.
+
+I am following @prp-chap05-nhst from @sec-chap05-achievement5.
 
 
 ### NHST Step 1
@@ -550,7 +553,7 @@ $$ {#eq-chap06-t-statistic}
 ::::
 :::::
 
-The formula is very similar as the `r glossary("Z-score")` statistic in @eq-z-score. The only difference is that in the above `r glossary("t-statistic")` the denominator is the `r glossary("standard error")` rather than the `r glossary("standard deviation")`.
+The formula is very similar as the `r glossary("Z-score")` statistic in @eq-z-score. The only difference is that in the above `r glossary("t-statistic")` the denominator is the `r glossary("standard deviation")` rather than the `r glossary("standard error")`.
 
 - `z` shows how many sample standard deviations some value is away from the mean.
 - `t` shows how many standard errors (i.e., population standard deviations) some value is away from the mean.
@@ -569,12 +572,22 @@ $$
 ```{r}
 #| label: t-statistic-systolic
 
-stats::t.test(
-    bpx_2016$BPXSY1,
-    alternative = "two.sided",
-    mu = 120)
-
+(
+    t_test_systolic <- stats::t.test(
+        bpx_2016$BPXSY1,
+        alternative = "greater",
+        mu = 120)
+)
 ```
+
+**Explications of the t-test output**
+
+1. Line: Data (variable) used.
+2. Line: 
+    - `t`: value of the t-test statistic
+    - `df`: degrees of freedom, with t-statistic = subtracting 1 from sample size = $n - 1$.
+    - `p-value`: 
+
 
 ::::
 :::::
@@ -583,11 +596,259 @@ stats::t.test(
 
 ### NHST Step 3
 
-Calculate p-value.
+Review and interpret the test statistics: Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The following examples replicates Figure 6.4, 6.5 and 6.6. I will break down the final code into several steps following the nice article [Visualizing Sampling Distributions: Learn how to add areas under the curve in sampling distributions]https://ggplot2tutor.com/tutorials/sampling_distributions [@burkhart2021].
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-prob-dist-t-test}
+: Probability distribution of t-test statistic
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### t (df=1)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-two-t-prob-dist}
+: Student t distributions with 1 degree of freedom (df)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-t-prob-dist
+#| fig-cap: Student t distributions with 1 degree of freedom (df)
+
+
+ggplot2::ggplot() +
+    ggplot2::xlim(-7, 7) +
+
+## or as an alternative
+# ggplot2::ggplot(tibble::tibble(x = c(-7, 7)), 
+#          ggplot2::aes(x)) +
+    
+    ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = 1),
+             geom = "line",
+             linewidth = 0.7
+         ) 
+
+
+    
+```
+
+::::
+:::::
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap06-plot-dist}
+: Plotting a distribution with {**ggplot2**}
+::::::
+:::
+::::{.my-procedure-container}
+
+1. As there is no data (just the formula for the function) we need to specify the x-limits.
+2. `ggplot2::stat_function` draws the function. We can specify the function extra or create an anonymous function or --- as I have done here --- use a function from an R package. Note that there is no parenthesis behind the function name.
+
+::::
+:::::
+
+
+###### comparing t
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-two-t-prob-dist}
+: Student t distributions with 1 and 7144 degree of freedom (df) and normal distribution compared
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-two-t-prob-dist
+#| fig-cap: Student t distributions with 1 and 7144 degree of freedom (df) and normal distribution compared
+
+ggplot2::ggplot(tibble::tibble(x = c(-7, 7)), 
+         ggplot2::aes(x)) +
+         ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = 1),
+             geom = "line",
+             linewidth = 0.7,
+             ggplot2::aes(linetype = "1")
+         ) +
+         ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = 7144),
+             geom = "line",
+             linewidth = 0.7,
+             ggplot2::aes(linetype = "5")
+         ) + 
+         ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = 30),
+             geom = "line",
+             linewidth = 0.7,
+             ggplot2::aes(linetype = "3")
+         ) +
+         ggplot2::stat_function(
+            fun = stats::dnorm,
+            geom = "line",
+            linewidth = 0.7,
+            ggplot2::aes(color = "red")
+         ) +
+         ggplot2::scale_linetype_discrete(
+             name = "t dist",
+             labels = c("df = 1", "df = 30", "df = 7144")
+         ) +
+         ggplot2::scale_color_discrete(
+             name = "normal dist",
+             labels = "mean = 0, sd = 1"
+         )
+    
+    
+```
+***
+
+The plot shows the two things:
+
+1. There is a big difference between a t distribution with df = 1 and df = 30.
+2. There is no visible difference between t with df = 30, df = 7144 and a normal distribution.
+
+
+::::
+:::::
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap06-plot-several-dist}
+: Plotting several distributions with {**ggplot2**}
+::::::
+:::
+::::{.my-procedure-container}
+
+1. Use for every distribution `ggplot2::stat_function()`.
+2. Put the aesthetic into an `ggplot2::aes()` function.
+3. Add for each legend a corresponding scale with name and labels.
+
+::::
+:::::
+
+
+###### header2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: text-b
+
+1 + 1
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+```{r}
+#| label: test1
+#| eval: FALSE
+
+ggplot2::ggplot(data.frame(x = c(-5, 5)), ggplot2::aes(x)) +
+  ggplot2::stat_function(fun = dt, args = list(df = 7144),
+                geom = "line",
+                xlim = c(-5, +5)
+                ) +
+  ggplot2::stat_function(
+      fun = dt, 
+      args = list(df = 7144),
+      geom = "area",
+      fill = "steelblue",
+      alpha = 0.3,
+      xlim = c(0, 5)
+      ) +
+  ggplot2::xlim(c(-5,5))
+
+```
+
+
+```{r}
+#| label: test2
+#| eval: FALSE
+
+t_sjplot <- sjPlot::dist_t(
+    t = t_test_systolic[["statistic"]][["t"]],
+    deg.f = t_test_systolic[["parameter"]][["df"]],
+    p = t_test_systolic[["p.value"]]
+    )
+
+base::invisible(t_sjplot)
+```
+
+
+```{r}
+#| label: test3
+#| eval: FALSE
+
+
+df <- data.frame(
+  name = "t(7144,0)",
+  dist = distributional::dist_student_t(
+      df = 7144,
+      mu = 120.5394,
+      sigma = 18.61692
+      )
+)
+
+ggplot2::ggplot(df, ggplot2::aes(y = name)) +
+  ggdist::stat_dist_halfeye(
+      ggplot2::aes(dist = dist))
+```
+
+```{r}
+#| label: test4
+#| eval: FALSE
+
+bpx_2016 <-  base::readRDS("data/chap06/bpx_2016.rds")
+
+sjPlot::dist_t(deg.f = 7144)
+
+bpx_2016 |> 
+    tidyr::drop_na(BPXSY1) |> 
+    
+    ggplot2::ggplot() +
+        ggplot2::xlim(-5, 5) +
+        ggplot2::geom_function(
+            fun = dt,
+            args = list(
+                df = 7144
+            )
+        )
+
+```
+
 
 ### NHST Step 4
 
-Interpret the p-value.
+Conclude and write report.
 
 
 

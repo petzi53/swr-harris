@@ -1598,8 +1598,6 @@ Even if the standard version of the plot is easy to create, to adapt the graph i
 #| fig-cap: "Chi-squared probability distribution of `ease_vote` by `race`"
 #| results: hold
 
-vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
-
 (
     chisq_ease_vote_stats <- stats::chisq.test(ease_vote_table)
 )
@@ -2334,7 +2332,7 @@ In all tabs of @exm-chap05-yates you can see that with the Yates continuity corr
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap05-cramers-v-voting-homeowner}
-: Comuting the effect size with Cramér’s V
+: Computing the effect size with Cramér’s V
 ::::::
 :::
 ::::{.my-r-code-container}
