@@ -236,7 +236,36 @@ cb_diastolic
 
 
 
-### Recode data (empty)
+### Recode data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-clean-data}
+: Clean NHANES blood pressure data (2015-2016)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: clean-data
+
+## load bpx_2016 #######
+bpx_2016 <- base::readRDS("data/chap06/bpx_2016.rds")
+
+bp_clean <-  bpx_2016 |> 
+    dplyr::rename(
+        systolic = BPXSY1,
+        sex = RIAGENDR
+        ) |> 
+    dplyr::relocate(systolic, .before = sex)
+
+save_data_file("chap06", bp_clean, "bp_clean.rds")
+```
+
+***
+(*For this R code chunk is no output available*)
+::::
+:::::
+
 
 ## Achievement 1: Relationship between one categorical and one continuous variable {#sec-chap06-achievement1}
 
@@ -964,11 +993,151 @@ Even though the difference between the mean systolic blood pressure of `r round(
 The mean systolic blood pressure in a sample of `r df_sys + 1` people was `r round(estimate_sys, 2)` (sd = `r round(bpx_stats$sd, 2)`). A one-sample t-test found this mean to be statistically significantly different from the hypothesized mean of `r null_sys` [t(`r df_sys`) = `r round(t_sys, 3)`; p = `r round(p_value_sys, 3)`]. The sample likely came from a population with a mean systolic blood pressure not equal to `r null_sys`.
 :::
 
-## Achievement 3: Independent-samples t-test {#chap06-achievement3}
+## Achievement 3: Independent-samples t-test {#sec-chap06-achievement3}
 
 Instead of comparing one mean to a hypothesized or population mean, the `r glossary("independent", "independent-samples t-test")` compares the means of two groups to each other.
 
 We could for instance be interested to see if the blood pressure for persons of different sex are the same. Or the question statistically formulated: Do males and females in the sample come from a population where males and females have the same mean systolic blood pressure?
+
+I am not going into the details of achievement 3 because there is no much difference between the procedure for the one-sample t-test and the independent-samples t-test. Essentially there are only two differences:
+
+### Formula
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap06-t-independent-test}
+: Independent-samples t-test formula
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+t = \frac{m_{1} - m_{2}}{\sqrt{\frac{s_1^2}{n_{1}} + \frac{s_2^2}{n_{2}}}}
+$$ {#eq-chap06-t-independent-test}
+
+- $m_{1}$ represents the mean of one group, 
+- $m_{2}$ represents the mean of another group, 
+- $s_{1}^2$ is the variance of the first group,
+- $s_{2}^2$ is the variance of the second group,
+- $n_{1}$ is the size of the first group,
+- $n_{2}$ is the size of the second group.
+::::
+:::::
+
+### Computing
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-t-indpendent-test}
+: Independent-samples t-test for systolic blood pressure of males and females
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap06-t-indpendent-test}
+```{r}
+#| label: t-independent-test
+#| results: hold
+
+bp_clean = base::readRDS("data/chap06/bp_clean.rds")
+
+bp_clean |> 
+    tidyr::drop_na(systolic) |> 
+    dplyr::group_by(sex) |> 
+    dplyr::summarize(
+        mean_systolic = mean(systolic),
+        var_systolic = var(systolic),
+        sample_size = dplyr::n()
+    )
+
+two_sample_t <- t.test(formula = 
+           bp_clean$systolic ~ bp_clean$sex)
+two_sample_t
+```
+
+Independent-samples t-test for systolic blood pressure of males and females
+:::
+::::
+:::::
+
+It is important to note that category variables like `sex` do not work with the default `x, y` version of the t-test. Therefore we have to apply the method with class `formula`.
+
+In R formulae a single variable on the left-hand side is followed by the tilde sign `~` and one ore more objects that predict or explain the left-hand side.
+
+> In a lot of statistical tests, the object on the left-hand side of the formula is the `r glossary("outcome")` or dependent variable while the object(s) on the right-hand side of the formula are the `r glossary("predictor variable", "predictors")` or independent variables. (SwR)
+
+> It is commonly used to generate *design matrices* for modeling function (e.g. `lm`) [@kuhn2017].
+
+In our case, systolic blood pressure is the *outcome* being explained by the *predictor* of sex.
+
+In R the default t-test for independent samples is the `r glossary("Welch", "Welch’s t-test")` and not the student t-test. 
+
+> Welch’s t-test is slightly different from the original formula for t, which used pooled variance in the denominator. `r glossary("Pooled variance")` assumes that the variances in the two groups are equal and combines them. (SwR)
+
+There is an scientific article explaining why Welch's t-test should be used in any case, even if the assumption of homogeneity of variance is met: 
+
+> We show that the Welch’s t-test provides a better control of Type 1 error rates when the assumption of homogeneity of variance is not met, and it loses little robustness compared to Student’s t-test when the assumptions are met. We argue that Welch’s t-test should be used as a default strategy. [@delacre2017; see also: @delacre2022]
+
+Just to conclude this abbreviated section I quote the final summary reporting the independent t-test results.
+
+::: {.callout-tip}
+> There was a statistically significant difference [t(7143) = 7.31; p < .05] in mean systolic blood pressure between males (m = 122.18) and females (m = 118.97) in the sample. The sample was taken from the U.S. population, indicating that males in the United States likely have a different mean systolic blood pressure than females in the United States. The difference between male and female mean systolic blood pressure was 3.21 in the sample; in the population this sample came from, the difference between male and female mean blood pressure was likely to be between 2.35 and 4.07 (d = 3.21; 95% CI: 2.35–4.07). (SwR)
+:::
+
+
+## Achievement 4: Dependent-samples t-test {#sec-chap06-achievement4}
+
+Again: I am not going to summarize this section because it resembles achievement 2 (one-sample t-test) and achievement 3 (independent.samples t-test).
+
+### Formula
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap06-t-dependent-test}
+: Independent-samples t-test formula
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+t = \frac{m_{d} - 0}{\sqrt{\frac{s_d}{n_{d}}}}
+$$ {#eq-chap06-t-dependent-test}
+
+- $m_{d}$ represents the mean of differences between to measures, 
+- $s_{d}^2$ is the variance of the mean differences between to measures,
+- $n_{d}$ is the sample size,
+- $0$ subtracting represents the null hypothesis; zero is the mean difference if the two measures were exactly the same.
+::::
+:::::
+
+### Computing
+
+:::::{.my-important}
+:::{.my-important-header}
+General advice before starting a test statistics
+:::
+::::{.my-important-container}
+Always look at some visuals and descriptive statistics before you are starting the test procedure and following the NHST procedure as outlined in @prp-chap05-nhst.
+::::
+:::::
+
+This shows that the *difference of the mean* between two measures is very small (0.55 mmHG). But it turned out that this value is highly statistically significant. But from a clinical point of view it is irrelevant!
+
+:::::{.my-important}
+:::{.my-important-header}
+Statistically significant != meaningful!
+:::
+::::{.my-important-container}
+All our three t-tests result in small but statistically significant values. This is an important reminder that statistically significant p-values are not necessarily of relevance.
+
+By the way: The reason for our small but statistically significant values are very large samples.
+::::
+:::::
+
+
+The computation in R is the same as in @lst-chap06-t-indpendent-test. Again apply the formula version of Welch’s t-test with the only difference to add the argument `paired = TRUE`.
+
+## Achievement 5: Effect size {#sec-chap06-achievement5}
 
 
 
