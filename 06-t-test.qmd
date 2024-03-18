@@ -473,14 +473,15 @@ This is the replication of the book’s Figure 6.3.
 ```{r}
 #| label: systolic-mean-sd
 
-bpx_2016 |> 
-    tidyr::drop_na(BPXSY1) |> 
-    dplyr::summarize(
-        mean = base::mean(BPXSY1),
-        sd = stats::sd(BPXSY1),
-        n = dplyr::n()
-        )
-
+bpx_stats <- 
+    bpx_2016 |> 
+        tidyr::drop_na(BPXSY1) |> 
+        dplyr::summarize(
+            mean = base::mean(BPXSY1),
+            sd = stats::sd(BPXSY1),
+            n = dplyr::n()
+            )
+bpx_stats
 ```
 
 ::::
@@ -575,24 +576,49 @@ $$
 (
     t_test_systolic <- stats::t.test(
         bpx_2016$BPXSY1,
-        alternative = "greater",
+        alternative = "two.sided",
         mu = 120)
 )
+
+## for later use #########
+t_sys = t_test_systolic[["statistic"]][["t"]]
+df_sys = t_test_systolic[["parameter"]][["df"]]
+null_sys = t_test_systolic[["null.value"]][["mean"]]
+estimate_sys = t_test_systolic[["estimate"]][["mean of x"]]
+p_value_sys = t_test_systolic[["p.value"]]
+se_sys = t_test_systolic[["stderr"]]
+
 ```
 
-**Explications of the t-test output**
+***
 
-1. Line: Data (variable) used.
-2. Line: 
-    - `t`: value of the t-test statistic
-    - `df`: degrees of freedom, with t-statistic = subtracting 1 from sample size = $n - 1$.
-    - `p-value`: 
+I have stored the result of the t-test into variables for later use.
+
 
 
 ::::
 :::::
 
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap06-t-test-output}
+: Explications of the t-test output
+::::::
+:::
+::::{.my-assessment-container}
 
+**1. Line**: Data (variable) used.
+**2. Line**: 
+    - `t`: value of the t-test statistic.
+    - `df`: degrees of freedom, with t-statistic = subtracting 1 from sample size = $n - 1$.
+    - `p-value`: The probability of the sample coming from a population where the null hypothesis is true. 
+**3. Line**: wording of the alternative hypothesis.
+**4. Line**: Chosen confidence interval.
+**5. Line**: The lower and upper boundary of the confidence interval.
+**6. Line**: Sample estimates that has to be compared to the value of the null hypothesis.
+
+::::
+:::::
 
 ### NHST Step 3
 
@@ -637,7 +663,8 @@ ggplot2::ggplot() +
              args = list(df = 1),
              geom = "line",
              linewidth = 0.7
-         ) 
+         ) +
+    ggplot2::theme_bw()
 
 
     
@@ -665,14 +692,14 @@ ggplot2::ggplot() +
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap06-two-t-prob-dist}
+:::::: {#cnj-chap06-compare-t-prob-dist}
 : Student t distributions with 1 and 7144 degree of freedom (df) and normal distribution compared
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: fig-two-t-prob-dist
+#| label: fig-compare-t-prob-dist
 #| fig-cap: Student t distributions with 1 and 7144 degree of freedom (df) and normal distribution compared
 
 ggplot2::ggplot(tibble::tibble(x = c(-7, 7)), 
@@ -711,13 +738,14 @@ ggplot2::ggplot(tibble::tibble(x = c(-7, 7)),
          ggplot2::scale_color_discrete(
              name = "normal dist",
              labels = "mean = 0, sd = 1"
-         )
+         ) +
+         ggplot2::theme_bw()
     
     
 ```
 ***
 
-The plot shows the two things:
+The plot shows two things:
 
 1. There is a big difference between a t distribution with df = 1 and df = 30.
 2. There is no visible difference between t with df = 30, df = 7144 and a normal distribution.
@@ -742,22 +770,182 @@ The plot shows the two things:
 :::::
 
 
-###### header2
+###### t systolic
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-code-name-b}
-: Numbered R Code Title (Tidyverse)
+: t-distribution (df = 7,144) shaded for values of 2.4491 or higher (replicating Figure 6.5)
 ::::::
 :::
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: text-b
+#| label: fig-t-test-systolic
+#| fig-cap: "t-distribution (df = 7,144) shaded for values of 2.4491 or higher (replicating Figure 6.5)"
 
-1 + 1
+ggplot2::ggplot() +
+    ggplot2::xlim(-4, 4) +
+    ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = df_sys),
+             geom = "line",
+             linewidth = 0.7
+             ) +
+    ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = df_sys),
+             geom = "area",
+             xlim = c(t_sys, 4),
+             ggplot2::aes(fill = 
+                paste("t >=", round(t_sys, 3))
+                ) 
+             ) +
+    ggplot2::theme_bw() +
+    ggplot2::scale_fill_manual(
+        name = "",
+        values = "steelblue"
+    )
 ```
+***
 
+The plot shows that the t-value of 2.499 is very unlikely if the null hypotheses were true, e.g. if the sample comes from a population with a systolic blodd pressure mean of 240.
+
+
+::::
+:::::
+
+###### 2.5% shaded
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-two-sided-shaded}
+: t-distribution (df = 7,144) with 2.5% shaded in each tail of the distribution (replicating Figure 6.6)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-two-sided-shaded
+#| fig-cap: "t-distribution (df = 7,144) with 2.5% shaded in each tail of the distribution (replicating Figure 6.6)"
+
+ggplot2::ggplot() +
+    ggplot2::xlim(-4, 4) +
+    ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = df_sys),
+             geom = "line",
+             linewidth = 0.7
+             ) +
+    ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = df_sys),
+             geom = "area",
+             xlim = c(1.96, 4),
+             ggplot2::aes(fill = 
+                paste("Rejection region")
+                ) 
+             ) +
+    ggplot2::stat_function(
+         fun = stats::dt,
+         args = list(df = df_sys),
+         geom = "area",
+         xlim = c(-4, -1.96),
+         ggplot2::aes(fill = 
+            paste("Rejection region")
+            ) 
+         ) +
+    ggplot2::theme_bw() +
+    ggplot2::scale_fill_manual(
+        name = "",
+        values = "purple3"
+    ) +
+    ggplot2::labs(
+        x = "t-statistic",
+        y = "Probability density"
+    )
+```
+***
+
+The plot shows the rejection regions for the probability of 95%.
+
+$$
+\begin{align*}
+p_{low}(x > 1.96) \approx 0.025 \\
+p_{high}(x < 1.96) \approx 0.975 \\
+p_{high} - p_{low} = \\
+0.975 - 0.025 = 0.95
+\end{align*}
+$$ 
+
+::::
+:::::
+
+###### t systolic & 2.5% shaded overlaid
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-t-two-sided-shaded}
+: t-distribution (df = 7,144) with 2.5% shaded in each tail of the distribution (replicating Figure 6.6)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-t-two-sided-shaded
+#| fig-cap: "t-distribution (df = 7,144) with 2.5% shaded in each tail of the distribution (replicating Figure 6.6)"
+
+ggplot2::ggplot() +
+    ggplot2::xlim(-4, 4) +
+    ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = df_sys),
+             geom = "line",
+             linewidth = 0.7
+             ) +
+    ggplot2::stat_function(
+             fun = stats::dt,
+             args = list(df = df_sys),
+             geom = "area",
+             xlim = c(1.96, 4),
+             alpha = 0.5,
+             ggplot2::aes(fill = 
+                paste("Rejection region"),
+                ) 
+             ) +
+    ggplot2::stat_function(
+         fun = stats::dt,
+         args = list(df = df_sys),
+         geom = "area",
+         xlim = c(-4, -1.96),
+        alpha = 0.5,
+         ggplot2::aes(fill = 
+            paste("Rejection region"),
+            ),
+         ) +
+    ggplot2::stat_function(
+     fun = stats::dt,
+     args = list(df = df_sys),
+     geom = "area",
+     xlim = c(t_sys, 4),
+     alpha = 0.5,
+     ggplot2::aes(fill = 
+        paste("t >=", round(t_sys, 3))
+        ) 
+     ) +
+    ggplot2::theme_bw() +
+    ggplot2::scale_fill_manual(
+        name = "",
+        values = c("purple3", "red")
+    ) +
+    ggplot2::labs(
+        x = "t-statistic",
+        y = "Probability density"
+    )
+```
+***
+
+The plot shows that the t-value is in the `r glossary("rejection region", "rejection area")`, e.g., the null has to be rejected.
 ::::
 :::::
 
@@ -766,93 +954,23 @@ The plot shows the two things:
 ::::
 :::::
 
-***
-
-```{r}
-#| label: test1
-#| eval: FALSE
-
-ggplot2::ggplot(data.frame(x = c(-5, 5)), ggplot2::aes(x)) +
-  ggplot2::stat_function(fun = dt, args = list(df = 7144),
-                geom = "line",
-                xlim = c(-5, +5)
-                ) +
-  ggplot2::stat_function(
-      fun = dt, 
-      args = list(df = 7144),
-      geom = "area",
-      fill = "steelblue",
-      alpha = 0.3,
-      xlim = c(0, 5)
-      ) +
-  ggplot2::xlim(c(-5,5))
-
-```
-
-
-```{r}
-#| label: test2
-#| eval: FALSE
-
-t_sjplot <- sjPlot::dist_t(
-    t = t_test_systolic[["statistic"]][["t"]],
-    deg.f = t_test_systolic[["parameter"]][["df"]],
-    p = t_test_systolic[["p.value"]]
-    )
-
-base::invisible(t_sjplot)
-```
-
-
-```{r}
-#| label: test3
-#| eval: FALSE
-
-
-df <- data.frame(
-  name = "t(7144,0)",
-  dist = distributional::dist_student_t(
-      df = 7144,
-      mu = 120.5394,
-      sigma = 18.61692
-      )
-)
-
-ggplot2::ggplot(df, ggplot2::aes(y = name)) +
-  ggdist::stat_dist_halfeye(
-      ggplot2::aes(dist = dist))
-```
-
-```{r}
-#| label: test4
-#| eval: FALSE
-
-bpx_2016 <-  base::readRDS("data/chap06/bpx_2016.rds")
-
-sjPlot::dist_t(deg.f = 7144)
-
-bpx_2016 |> 
-    tidyr::drop_na(BPXSY1) |> 
-    
-    ggplot2::ggplot() +
-        ggplot2::xlim(-5, 5) +
-        ggplot2::geom_function(
-            fun = dt,
-            args = list(
-                df = 7144
-            )
-        )
-
-```
-
-
 ### NHST Step 4
 
-Conclude and write report.
+Conclude and write the report.
+
+Even though the difference between the mean systolic blood pressure of `r round(estimate_sys, 2)` and the hypothesized value of `r null_sys` is small, it is statistically significant. The probability of this sample that it comes from a population where the mean systolic blood pressure is actually `r null_sys` is just `r round(p_value_sys, 3)*100`%. This sample is likely to be from a population with a higher mean blood pressure.
+
+::: {.callout-tip}
+The mean systolic blood pressure in a sample of `r df_sys + 1` people was `r round(estimate_sys, 2)` (sd = `r round(bpx_stats$sd, 2)`). A one-sample t-test found this mean to be statistically significantly different from the hypothesized mean of `r null_sys` [t(`r df_sys`) = `r round(t_sys, 3)`; p = `r round(p_value_sys, 3)`]. The sample likely came from a population with a mean systolic blood pressure not equal to `r null_sys`.
+:::
+
+## Achievement 3: Independent-samples t-test {#chap06-achievement3}
+
+Instead of comparing one mean to a hypothesized or population mean, the `r glossary("independent", "independent-samples t-test")` compares the means of two groups to each other.
+
+We could for instance be interested to see if the blood pressure for persons of different sex are the same. Or the question statistically formulated: Do males and females in the sample come from a population where males and females have the same mean systolic blood pressure?
 
 
-
-***
 
 ## Exercises (empty)
 
