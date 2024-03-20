@@ -1086,7 +1086,7 @@ These characteristics of the normal distribution can be used to describe and com
 ::::{.my-theorem-container}
 $$
 z_{i} = \frac{x_{i} - m_{x}}{s_{x}}
-$$ {#eq-z-score}
+$$ {#eq-chap04-z-score}
 
 The `r glossary("z-score")` for an observation is the number of standard deviations from the mean.
 

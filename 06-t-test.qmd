@@ -254,9 +254,11 @@ bpx_2016 <- base::readRDS("data/chap06/bpx_2016.rds")
 bp_clean <-  bpx_2016 |> 
     dplyr::rename(
         systolic = BPXSY1,
+        systolic2 = BPXSY2,
         sex = RIAGENDR
         ) |> 
-    dplyr::relocate(systolic, .before = sex)
+    dplyr::mutate(diff_syst = systolic - systolic2) |> 
+    dplyr::relocate(c(systolic, systolic2, diff_syst), .before = sex)
 
 save_data_file("chap06", bp_clean, "bp_clean.rds")
 ```
@@ -583,7 +585,7 @@ $$ {#eq-chap06-t-statistic}
 ::::
 :::::
 
-The formula is very similar as the `r glossary("Z-score")` statistic in @eq-z-score. The only difference is that in the above `r glossary("t-statistic")` the denominator is the `r glossary("standard deviation")` rather than the `r glossary("standard error")`.
+The formula is very similar as the `r glossary("Z-score")` statistic in @eq-chap04-z-score. The only difference is that in the above `r glossary("t-statistic")` the denominator is the `r glossary("standard deviation")` rather than the `r glossary("standard error")`.
 
 - `z` shows how many sample standard deviations some value is away from the mean.
 - `t` shows how many standard errors (i.e., population standard deviations) some value is away from the mean.
@@ -1139,7 +1141,528 @@ The computation in R is the same as in @lst-chap06-t-indpendent-test. Again appl
 
 ## Achievement 5: Effect size {#sec-chap06-achievement5}
 
+### Introduction
 
+We haven seen that even the very small difference of 0.54 mmHG systolic blood pressure is with a large sample size statistically significant. But this small difference is clinically not relevant. To judge the importance of some statistically significant results we need effect sizes as another criteria. 
+
+The proportion of people that believe that effect sizes are even more important than p-values is rising. P-values only report whether a difference or relationship from a sample is likely to be true in the population, while effect sizes provide information about the strength or size of a difference or relationship.
+
+In @sec-chap05 we discussed for the Chi-squared test as effect sizes 
+
+- Cramèrs V (@sec-chap05-cramers-v)
+- Phi coefficient $\phi$ (@sec-chap05-phi-coefficient) and
+- Odds ratio (@sec-chap05-odds-ratio)
+
+For t-test the appropriate effect size measure is `r glossary("Cohen’s d")`. 
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap06-cohens-d}
+: Formula for Cohen’s d one-sample t-test
+::::::
+:::
+::::{.my-theorem-container}
+$$
+d = \frac{m_{x} - \mu_{x}}{s_{x}}
+$$ {#eq-chap06-cohens-d-one-sample}
+
+$m_{x}$ = sample mean for $x$
+$\mu_{x}$ = hypothesized or population mean
+$s_{x}$ = sample standard deviation for $x$
+::::
+:::::
+
+The formula is similar to the already well-known z-score calculation (@eq-chap04-z-score).
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap06-cohens-d}
+: Classification of Cohen’s d values
+::::::
+:::
+::::{.my-assessment-container}
+
+- **Small effect size**: Cohen’s d = .2 to d < .5 
+- **Medium effect size**: Cohen’s d = .5 to d < .8 
+- **Large effect size**: Cohen’s d ≥ .8
+
+::::
+:::::
+
+### Cohen’s d computation
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Packages with Cohen’s d functions
+:::
+::::{.my-resource-container}
+
+- {**lsr**}: The recommendation from the book (see @pak-lsr)
+- {**effectsize**}: Indices of effect sizes (see @pak-effectsize)
+- {**rstatix**}: (see @pak-rstatix)
+
+Thee is another package {**effsize**} that I have not used. I had problems to use it, because it has no argument for $\mu$ but it also has not many downloads.
+
+The packages {**effectsize**} and {**rstatix**} are important as they have many other computation for effect soze parameters.
+
+
+```{r}
+#| label: donwload-numbers-cohens-d-packages
+
+pkgs_dl(c("lsr", "effectsize", "rstatix", "effsize"))
+```
+
+::::
+:::::
+
+### Cohen’s d for one-sample t-tests
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-cohens-d}
+: Computation of Cohen’s d for one-sample t-tests
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Manual
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-manual}
+: Computation of Cohen’s d for one-sample t-tests manually (by hand)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: cohens-d-manual
+
+bp_clean <-  base::readRDS("data/chap06/bp_clean.rds")
+
+(estimate_sys - null_sys) / sd(bp_clean$systolic, na.rm = TRUE)
+
+
+
+```
+
+The effect size is very small, it is not even close the starting value for "small effect size".
+
+::: {.callout-tip}
+The mean systolic blood pressure in a sample of 7,145 people was 120.54 (sd = 18.62). A one-sample t-test found this mean to be statistically significantly different from the hypothesized mean of 120 [t(7144) = 2.45; p = 0.014]. The sample likely came from a population with a mean systolic blood pressure not equal to 120. While the sample mean was statistically significantly different from 120, is has a very small effect size (Cohen’s d = .03).
+:::
+
+::::
+:::::
+
+
+###### {**lsr**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-one-sample-lsr}
+: Compute Cohen’s d with for one-sample t-tests {**lsr**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cohens-d-one-sample-lsr
+
+
+lsr::cohensD(bp_clean$systolic, mu = 120)
+```
+***
+
+
+
+
+::::
+:::::
+
+
+###### {**effectsize**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-one-sample-effectsize}
+: Compute Cohen’s d for one-sample t-tests with {**effectsize**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cohens-d-one-sample-effectsize
+
+effectsize::cohens_d(
+    x = bp_clean$systolic,
+    mu = 120
+)
+```
+***
+
+The {**effectsize**} packages discusses two alternatives for Cohen’s d:
+
+- **Hedges' g** provides a correction for small-sample bias (using the exact method) to Cohen's d. For sample sizes > 20, the results for both statistics are roughly equivalent. 
+- **Glass’s delta** is appropriate when the standard deviations are significantly different between the populations, as it uses only the second group's standard deviation.
+::::
+:::::
+
+###### {**rstatix**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-one-sample-rstatix}
+: Compute Cohen’s d for one-sample t-tests with {**rstatix**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: cohens-d-one-sample-rstatix
+
+rstatix::cohens_d(
+    data = bp_clean,
+    formula = systolic ~ 1,
+    mu = 120
+)
+```
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Cohen’s d for independent-samples t-tests
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap06-dependent-samples-cohens-d}
+: Formula for independent-samples cohen’s d
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+d = \frac{m_{1}-{m_{2}}}{\sqrt{\frac{s_{1}^2 + s_{2}^2}{2}}}
+$$ {#eq-chap06-cohens-d-independent-samples}
+***
+
+- $m_{1}, m_{2}$: sample means 
+- $s_{1}^2, s_{2}^2$: sample variances
+::::
+:::::
+
+
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-cohens-d}
+: Computation of Cohen’s d for independent-samples t-tests
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Manual
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-independent-samples-manual}
+: Computation of Cohen’s d for independent-samples t-tests manually (by hand)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: cohens-d-independent-samples-manual
+#| results: hold
+
+bp_clean <-  base::readRDS("data/chap06/bp_clean.rds")
+
+bp_ind_samples <- 
+    bp_clean |> 
+    tidyr::drop_na(systolic) |> 
+    dplyr::group_by(sex) |> 
+    dplyr::summarize(
+        mean_sys_sex = mean(systolic),
+        var_sys_sex = var(systolic)
+    )
+bp_ind_samples
+
+m1 <- bp_ind_samples[[1,2]] 
+m2 <- bp_ind_samples[[2,2]] 
+var1 <- bp_ind_samples[[1,3]]
+var2 <- bp_ind_samples[[2,3]]
+
+(m1 - m2) / (sqrt((var1 + var2) / 2))
+```
+
+The effect size is very small.
+
+::::
+:::::
+
+
+
+
+
+###### {**lsr**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-independent-samples-lsr}
+: Compute Cohen’s d of independent samples with {**lsr**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cohens-d-independent-samples-lsr
+
+
+lsr::cohensD(
+    x = systolic ~ sex,
+    data = bp_clean,
+    method = "unequal"
+)
+```
+***
+
+1. Instead of a vector variable we are using the formula interface.
+2. Because we are using the Welch's t-test we change the default method "pooled", to "unequal", e.g., we are not assuming equal variances.
+
+
+::::
+:::::
+
+
+###### {**effectsize**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-independent-samples-effectsize}
+: Compute Cohen’s d for independent-samples t-tests with {**effectsize**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cohens-d-independent-samples-effectsize
+
+effectsize::cohens_d(
+    x = bp_clean$systolic,
+    y = bp_clean$sex,
+    pooled_sd = FALSE,
+    paired = FALSE
+)
+```
+***
+
+The {**effectsize**} packages discusses two alternatives for Cohen’s d:
+
+- **Hedges' g** provides a correction for small-sample bias (using the exact method) to Cohen's d. For sample sizes > 20, the results for both statistics are roughly equivalent. 
+- **Glass’s delta** is appropriate when the standard deviations are significantly different between the populations, as it uses only the second group's standard deviation.
+::::
+:::::
+
+###### {**rstatix**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-independent-samples-rstatix}
+: Compute Cohen’s d for independent-samples t-tests with {**rstatix**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: cohens-d-independent-samples-rstatix
+
+rstatix::cohens_d(
+    data = bp_clean,
+    formula = systolic ~ sex
+)
+```
+***
+
+- We have used the default value for `paired = FALSE` because we have an independent samples t-test.
+- We have used the default value for `var.equal = FALSE` because we have used the Welch’s t-test taht does not assume equal variances.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Cohen’s d for dependent-samples t-tests
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap06-dependent-samples-cohens-d}
+: Formula for dependent-samples cohen’s d
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+d = \frac{m_{d}-0}{s_{d}}
+$$ {#eq-chap06-cohens-d-dependent-samples}
+
+***
+- $m_{d}$: mean difference between the two measures (for instance in our case, systolic and systolic2)
+- $s_{d}$: standard deviation of the differences between the two measures
+::::
+:::::
+
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-cohens-d-dependent-samples}
+: Computation of Cohen’s d for dependent-samples t-tests
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Manual
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-dependent-samples-manual}
+: Computation of Cohen’s d for dependent-samples t-tests manually (by hand)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: cohens-d-dependent-samples-manual
+#| results: hold
+
+bp_clean <-  base::readRDS("data/chap06/bp_clean.rds")
+
+bp_ind_samples <- bp_clean |> 
+    tidyr::drop_na(diff_syst) |> 
+    dplyr::summarize(
+        mean_diff = mean(diff_syst),
+        sd_diff = sd(diff_syst)
+    )
+bp_ind_samples
+
+
+(bp_ind_samples$mean_diff - 0) / bp_ind_samples$sd_diff
+
+```
+
+The effect size is very small.
+
+::::
+:::::
+
+
+
+
+
+###### {**lsr**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-dependent-samples-lsr}
+: Compute Cohen’s d of dependent samples with {**lsr**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cohens-d-dependent-samples-lsr
+
+
+lsr::cohensD(
+    x = bp_clean$systolic, 
+    y = bp_clean$systolic2, 
+    method = "paired")
+```
+***
+
+Instead of the default method ("pooled") we need "paired" as method for the dependent-samples t-test.
+
+
+::::
+:::::
+
+
+###### {**effectsize**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-dependent-samples-effectsize}
+: Compute Cohen’s d for dependent-samples t-tests with {**effectsize**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cohens-d-dependent-samples-effectsize
+
+effectsize::cohens_d(
+    x = bp_clean$systolic,
+    y = bp_clean$systolic2,
+    paired = TRUE
+)
+```
+***
+
+The {**effectsize**} packages discusses two alternatives for Cohen’s d:
+
+- **Hedges' g** provides a correction for small-sample bias (using the exact method) to Cohen's d. For sample sizes > 20, the results for both statistics are roughly equivalent. 
+- **Glass’s delta** is appropriate when the standard deviations are significantly different between the populations, as it uses only the second group's standard deviation.
+::::
+:::::
+
+###### {**rstatix**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-cohens-d-dependent-samples-rstatix}
+: Compute Cohen’s d for dependent-samples t-tests with {**rstatix**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: cohens-d-dependent-samples-rstatix
+
+bp_clean |> 
+    dplyr::select(systolic, systolic2) |> 
+    tidyr::drop_na() |> 
+    tidyr::pivot_longer(
+        cols = c("systolic", "systolic2"), 
+        names_to = "treatment", 
+        values_to = "value") |> 
+    rstatix::cohens_d(
+        formula = value ~ treatment,
+        paired = TRUE   
+    )
+
+```
+
+In order to get a working cohen’s d computation with {**rstatix**} I had to apply `tidyr::pivot_longer()`.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
 
 ## Exercises (empty)
 
@@ -1231,6 +1754,44 @@ Functions and datasets to support Summary and Analysis of Extension Program Eval
 ***
 ::::
 :::::
+
+### effectsize
+
+:::::{.my-resource}
+:::{.my-resource-header}
+effectsize: Indices of Effect Size 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-effectsize}
+
+***
+
+{**effectsize**}: [Indices of Effect Size](https://easystats.github.io/effectsize/) [@effectsize]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap06/logoi/logo-effectsize-min.png){width="176"}
+
+The goal of this package is to provide utilities to work with indices of effect size and standardized parameters, allowing computation and conversion of indices such as Cohen’s d, r, odds-ratios, etc.
+
+:::
+
+Provide utilities to work with indices of effect size for a wide  variety of models and hypothesis tests (see list of supported models using the function 'insight::supported_models()'), allowing computation of and  conversion between indices such as Cohen's d, r, odds, etc.
+
+{**effectsize**}: Indices of Effect Size
+:::
+
+
+
+***
+::::
+:::::
+
+
+
+
 
 ### nhanesA
 

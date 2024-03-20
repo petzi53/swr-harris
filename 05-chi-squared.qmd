@@ -1,4 +1,4 @@
-# Chi-Squared Test {#sec-chap05}
+# Chi-squared Test {#sec-chap05}
 
 ```{r}
 #| label: setup
@@ -1982,7 +1982,7 @@ Which package should I use to show standardized residuals?
 
 ## Achievement 7: Effect sizes {#sec-chap05-achievement7}
 
-### ICramér’s V 
+### Cramér’s V {#sec-chap05-cramers-v}
 
 Concerning out data about opinions about ease of voting we have two established two facts:
 
@@ -2362,20 +2362,29 @@ I have not followed the `r glossary("NHST")` procedure and the analysis of the r
 :::::
 
 
-### Phi coefficient
+### Phi coefficient {#sec-chap05-phi-coefficient}
 
 For 2 × 2 tables, the $k – 1$ term in the denominator of the Cramér’s V formula is always 1, so this term is not needed in the calculation. The formula without this term is called the `r glossary("phi coefficient")`.
 
-***
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap05-phi-coefficient}
+: Formula for phi coefficient $\phi$
+::::::
+:::
+::::{.my-theorem-container}
 $$
 \phi = \sqrt{\frac{\chi^2}{n}}
 $$ {#eq-chap05-phi-coefficient}
 
 n = sample size
 
-***
+::::
+:::::
 
-### Odds ratio
+
+
+### Odds ratio {#sec-chap05-odds-ratio}
 
 :::::{.my-resource}
 :::{.my-resource-header}
@@ -2397,19 +2406,52 @@ Odds is usually defined in statistics as the probability an event will occur div
 
 The odds definition is different to the somewhat similar definition of probability, which is the fraction of times an event occurs in a certain number of trials. In the horse example, the probability of a win is 20/100 = 0.2. (see [@glenn.da])
 
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap05-odds}
+: Formula for odds
+::::::
+:::
+::::{.my-theorem-container}
+
 $$
 Odds = \frac{\text{Probability Event Occurs (p)}}{{\text{Probability Event Does Not Occur (1-p)}}}
 $$ {#eq-chap05-odds}
 
+::::
+:::::
+
+
 Odds ratios with groups quantify the strength of the relationship between two conditions. They indicate how likely an outcome is to occur in one context relative to another. 
+
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap05-odds-ratio}
+: Formula for odds ratio
+::::::
+:::
+::::{.my-theorem-container}
 
 $$
 \text{Odds Ratio} = \frac{\text{Odss of an Event (Condition A)}}{{\text{Odds of an Event (Condition B)}}}
 $$ {#eq-chap05-odds-ratio}
 
+::::
+:::::
+
+
 The denominator (condition B) in the odds ratio formula is the baseline or control group. Consequently, the OR tells you how much more or less likely the numerator events (condition A) are likely to occur relative to the denominator events. If you have a treatment and control group, the treatment will be in the numerator while the control group is in the denominator of the formula [@frost2022].
 
 Taken the definition of odds and odds ratio together we get the formula:
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap05-odds-ratio2}
+: Formula for odds ration (2)
+::::::
+:::
+::::{.my-theorem-container}
 
 $$
 \begin{align*}
@@ -2419,17 +2461,42 @@ $$
 \end{align*}
 $$ {#eq-chap05-odds-ratio2}
 
+::::
+:::::
+
+
+
 
 The book explanation of the `r glossary("odds ratio")` uses with `r glossary("exposure")` and `r glossary("outcome")` two new concepts and is therefore more difficult to understand. Under this terminology is the odds ratio a measure of the likelihood of a particular outcome. The odds ratio is calculated as the ratio of the number of events that produce or are exposed to that outcome to the number of events that do not produce, resp. are not exposed to the outcome. The odds ratio measures the odds of some event or outcome occurring given a particular exposure compared to the odds of it happening without that exposure. Or more generally: The odds ratio tells us the ratio of the odds of an event occurring in a treatment group compared to the odds of an event occurring in a control group. (Still pretty difficult…)
 
 In our case of voting opinion and housing status the odds ratio would measure the odds of people that think one should register to vote given owning a home, compared to the odds of people that think one should register to vote given not owning a home. 
 
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap05-odds-ratio3}
+: Formula for odds ratio (3)
+::::::
+:::
+::::{.my-theorem-container}
+
 $$
 OR = \frac{\text{exposed with outcome} / \text{unexposed with outcome}}{\text{exposed no outcome} / \text{unexposed no outcome}}
 $$ {#eq-chap05-odds-ratio3}
 
+::::
+:::::
+
+
+
 To fill in the correct values one has to conceptualize a 2x2 table:
 
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-odds-ratio-table}
+: Odds ratio table
+::::::
+:::
+::::{.my-r-code-container}
 ```{r}
 #| label: odds-tatio-table
 #| results: markup
@@ -2439,17 +2506,35 @@ tibble::tribble(
   "Exposed",     "a",     "b",
   "Not Exposed", "c",     "d"
 )
+
 ```
+
+***
+
 The columns "Cases" and "Control" are the Outcomes:
 
 - a = Number of exposed cases
 - b = Number of exposed non-cases
 - c = Number of unexposed cases
 - d = Number of unexposed non-cases
+::::
+:::::
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap05-odds-ratio4}
+: Formula odds ratio (4)
+::::::
+:::
+::::{.my-theorem-container}
 
 $$
 OR = \frac{a / c}{b / d} = \frac{a \times d}{b \times c}
 $$ {#eq-chap05-odds-ratio-4}
+
+::::
+:::::
+
 
 Now let's think what this general structure mean in our case with voting opinions (easy versus register) and housing status (owner or renter). 
 
@@ -2470,7 +2555,7 @@ vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
 
 ***
 
-::: {#bul-chap05-or-example}
+::: {#bul-chap05-odds-ratio-example}
 
 **Exposure and Outcome**
 
