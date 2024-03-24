@@ -5,6 +5,7 @@
 #| include: false
 
 base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw()) 
 ```
 
 ## Achievements to unlock
@@ -63,7 +64,7 @@ Two options for accessing the codebook:
 
 1. Packages used with the book (sorted alphabetically)
 
--   {**BSDA**} @pak-bsda (Alan T. Arnholt) 
+-   {**BSDA**} @pak-BDSA (Alan T. Arnholt) 
 -   {**car**} @pak-car (John Fox)
 -   {**lsr**} @pak-lsr (Danielle Navarro)  
 -   {**rcompanion**} @pak-rcompanion (Salvatore Mangiafico)
@@ -71,9 +72,17 @@ Two options for accessing the codebook:
 -   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
 
     
-2. My additional packages (sorted alphabetically)
+2. My additional packages new introduced (sorted alphabetically)
 
-
+- {**datawizard**} @pak-datawizard (Etienne Bacher)
+- {**e1071**} @pak-e1071 (David Meyer)
+- {**effectsize**} @pak-effectsize (Mattan S. Ben-Shachar)
+- {**moments**} @pak-moments (Lukasz Komsta)
+- {**misty**} @pak-misty (Takuya Yanagida)
+- {**nhanesA**} @pak-nhanesA (Christopher Endres)
+- {**nortest**} @pak-nortest (Uwe Ligges)
+- {**psych**} @pak-psych (William Revelle)
+- {**rcompanion**} @pak-rcompanion (Salvatore Mangiafico)
 
 :::
 :::
@@ -1155,6 +1164,23 @@ In @sec-chap05 we discussed for the Chi-squared test as effect sizes
 
 For t-test the appropriate effect size measure is `r glossary("Cohen’s d")`. 
 
+:::::{.my-resource}
+:::{.my-resource-header}
+Delving into effects size assessment
+:::
+::::{.my-resource-container}
+
+Derived from the importance of effect size parameter I need to know more how to use and interpret different kind of effect sizes. What follows are some resources
+
+- [Effect Size](https://en.wikipedia.org/wiki/Effect_size) (Wikipedia)
+- [Effect size](https://www.psy.gla.ac.uk/~steve/best/effect.html) [@draper2023]
+- [Effect size calculator](https://www.ai-therapy.com/psychology-statistics/effect-size-calculator) (AI-Thearpie Statistics)
+- [Rules of thumb on magnitudes of effect sizes](https://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/effectSize) (MRC Cognition and Brain Sciences Unit, University of Cambridge)
+
+::::
+:::::
+
+
 :::::{.my-theorem}
 :::{.my-theorem-header}
 :::::: {#thm-chap06-cohens-d}
@@ -1208,6 +1234,8 @@ The packages {**effectsize**} and {**rstatix**} are important as they have many 
 
 ```{r}
 #| label: donwload-numbers-cohens-d-packages
+#| include: false
+#| eval: false
 
 pkgs_dl(c("lsr", "effectsize", "rstatix", "effsize"))
 ```
@@ -1664,6 +1692,1585 @@ In order to get a working cohen’s d computation with {**rstatix**} I had to ap
 ::::
 :::::
 
+## Achievement 6: t-test assumptions {#sec-chap06-achievement6}
+
+### Introduction
+
+In this section I am not following the sequence of the book. I start with an overview and will separate 
+- checking visually the normality assumption
+- testing with different approaches the normality assumption
+
+***
+::: {#bul-t-test-assumptions}
+
+- One-sample t-test assumptions 
+    - Continuous variable 
+    - Independent observations 
+    - Normal distribution 
+- Independent-samples t-test assumptions 
+    - Continuous variable and two independent groups 
+    - Independent observations 
+    - Normal distribution in each group 
+    - Equal variances for each group
+- Dependent-samples t-test assumptions 
+    - Continuous variable and two dependent groups 
+    - Independent observations 
+    - Normal distribution of differences
+   
+Assumptions for the different t-tests
+:::
+***
+
+
+
+### Checking normality assumption visually
+
+#### One-sample t-test
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-normality-one-sample}
+: One-sample t-test: Checking the normality assumption visually
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### 30 bins
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-normality-one-sample30}
+: Checking normality visually (30 bins)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-normality-one-sample30
+#| fig-cap: "Distribution of systolic blood pressure in mmHg for 20152016 NHANES participants (30 bins)"
+#| cache: true
+
+bp_clean <-  base::readRDS("data/chap06/bp_clean.rds")
+bp_clean2 <- bp_clean |> 
+    dplyr::select(systolic) |> 
+    tidyr::drop_na() 
+    
+hist_dnorm(
+    df = bp_clean2,
+    v = bp_clean2$systolic,
+    n_bins = 30,
+    x_label = "Systolic blood pressure (mmHg)"
+)
+```
+
+***
+
+The data appear right-skewed, e.g. the right tail is longer than the left tail. There is also the assumption that the distribution is bimodal, e.g., has two modes.
+
+The best way to check if this assumption is correct is to change the number of bins.
+
+::::
+:::::
+
+
+###### 60 bins
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-normality-one-sample60}
+: Checking normality visually (60 bins)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-normality-one-sample60
+#| fig-cap: "Distribution of systolic blood pressure in mmHg for 20152016 NHANES participants (60 bins)"
+#| cache: true
+
+hist_dnorm(
+    df = bp_clean2,
+    v = bp_clean2$systolic,
+    n_bins = 60,
+    x_label = "Systolic blood pressure (mmHg)"
+)
+```
+***
+Another graph --- this time with 60 bins --- shows that we have a unimodal distribution.
+::::
+:::::
+
+###### q-q-plot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-normality-one-sample-q-q-plot}
+: Checking normality visually with a Q-Q plot
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-normality-one-sample-q-q-plot
+#| fig-cap: "Distribution of systolic blood pressure in mmHg for 2015-2016 NHANES participants"
+#| cache: true
+
+bp_clean2 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(sample = systolic)
+    ) +
+    ggplot2::stat_qq(
+        ggplot2::aes(color = "NHANES participant")
+    ) +
+    ggplot2::stat_qq_line(
+        ggplot2::aes(linetype = "Normally distributed"),
+        linewidth = 1
+    ) +
+    ggplot2::labs(
+        x = "Theoretical normal distribution",
+        y = "Observes systolic blood pressure (mmHG)"
+    ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = ("NHANES participant" = "purple3")
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = ("Normally distributed" = "solid")
+    )
+```
+***
+
+(This is the replication of book Figure 6.12, that has no accompanying code.)
+
+This `r glossary("q-q-plot")` shows clearly that we have failed the assumption of a normal distribution. But often the visible check is not so obvious. Then we would need a statistical test to check for normality.
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+#### Independent-samples t-test
+
+Normality has to be checked for each group for the independent-samples t-test (and dependent-samples t-test).
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-normality-independent-samples}
+: Independent-samples t-test: Checking the normality assumption visually
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Histograms
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-normality-independent-histograms}
+: Checking normality with histogram
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-normality-independent-histograms
+#| fig-cap: "Distribution of systolic blood pressurein mmHg for 20152016 NHANES participants by sex"
+#| cache: true
+
+
+bp_clean <- base::readRDS("data/chap06/bp_clean.rds")
+
+bp_clean |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = systolic)
+    ) +
+    ggplot2::geom_histogram(
+        fill = "purple3",
+        col = "white",
+        na.rm = TRUE,
+        bins = 30
+    ) +
+    ggplot2::facet_grid(
+        cols = ggplot2::vars(sex)
+    ) +
+    ggplot2::labs(
+        x = "Systolic blood pressure (mmHg)", 
+        y = "NHANES participants"
+    )
+```
+***
+
+Both histograms look right-skewed.
+::::
+:::::
+
+
+###### Q-Q plot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-normality-independent-q-q-plot}
+: Checking normality with Q-Q plot
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: normality-independent-q-q-plot
+#| fig-cap: "Checking normality of systolic blood pressure in mmHg for 20152016 NHANES participants by sex with Q-Q plots"
+#| cache: true
+
+bp_clean |> 
+    tidyr::drop_na(systolic) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(sample = systolic)
+    ) +
+    ggplot2::stat_qq(
+        ggplot2::aes(color = "NHANES participant"),
+        alpha = 0.5
+    ) +
+    ggplot2::stat_qq_line(
+        ggplot2::aes(linetype = "Normally distributed"),
+        linewidth = 1
+    ) +
+    ggplot2::facet_grid(
+        cols = ggplot2::vars(sex)
+    ) +
+    ggplot2::labs(
+        x = "Theoretical normal distribution",
+        y = "Observes systolic blood pressure (mmHG)"
+    ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = ("NHANES participant" = "purple3")
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = ("Normally distributed" = "solid")
+    )
+    
+```
+
+Harris uses in the book a more complicated code passage to build the line for the normal distribution. Instead using the function `ggplot2::stat_qq_line()` she calculates intercept and slopes and applies the `ggplot2::abline()` function.
+
+The q-q plot shows that both blood pressures (males and females) are not normally distributed.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+#### Dependent samples t-test
+
+Here we are going to check the distribution of the difference between the first (systolic) and second blood pressure measure (systolic2).
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-normality-dependent}
+: Dependent-samples t-test: Checking the normality assumption visually
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Histogram
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-normality-dependent-histogram}
+: Checking the normality assumption visually with a histogram and an overlaid normal distribution
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-normality-dependent-histogram
+#| fig-cap: "Checking the normality assumption visually of a dependent group distribution with a histogram and an overlaid normal distribution"
+#| cache: true
+
+bp_clean <- base::readRDS("data/chap06/bp_clean.rds")
+
+bp_clean3 <- bp_clean |> 
+    tidyr::drop_na(diff_syst)
+    
+hist_dnorm(
+    df = bp_clean3,
+    v = bp_clean3$diff_syst,
+    n_bins = 30,
+    x_label = "Difference of two systolic blood pressures in mmHg taken from the same person"
+)
+```
+***
+
+The histogram looks like a normal distribution. But let's verify this rsult with a q-q plot.
+::::
+:::::
+
+
+###### Q-Q plot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-normality-dependent-q-q-plot}
+: Checking the normality assumption visually with a quantile-quantile plot
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-normality-dependent-q-q-plot
+#| fig-cap: "Checking the normality assumption visually of a dependent group distribution with a quantile-qunatile plot"
+
+bp_clean3 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(sample = diff_syst)
+    ) +
+    ggplot2::stat_qq(
+        ggplot2::aes(color = "NHANES participant")
+    ) +
+    ggplot2::stat_qq_line(
+        ggplot2::aes(linetype = "Normally distributed"),
+        linewidth = 1
+    ) +
+    ggplot2::labs(
+        x = "Theoretical normal distribution",
+        y = "Observes systolic blood pressure (mmHG)"
+    ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = ("NHANES participant" = "purple3")
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = ("Normally distributed" = "solid")
+    )
+```
+***
+
+Bad news! This is a disappointing result: Th Q-Q plot shows that we do not have normal distribution. It just looked like one as the lower and higher values cancel each out.
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+
+#### Summary of the visual inspections
+
+For all t-tests we applied in this chapter we got the clear result that they all failed the normality assumption. 
+
+But often the visual inspection is not conclusive. Therefore it is important also to apply statistical tests.
+
+### Checking normality assumption with statistical tests
+
+#### Skewness
+
+:::::{.my-important}
+:::{.my-important-header}
+Different statistical checks for normality for different situations
+:::
+::::{.my-important-container}
+
+Different statistical checks of normality are useful in different situations. 
+
+- The mean of a variable is sensitive to skew, so checking for `r glossary("skewness")` (@sec-chap02-skewness) is important when a statistical test relies on means (like t-tests). 
+- When the focus of a statistical test is on variance, it is a good idea to examine `r glossary("kurtosis")` (@sec-chap02-kurtosis) because variance is sensitive to problems with kurtosis (e.g., a `r glossary("platykurtic")` or `r glossary("leptokurtic")` distribution)
+::::
+:::::
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Packages with tests for skewness 
+:::
+::::{.my-resource-container}
+After another research I will --- in addition to @sec-chap02-skewness --- propose other packages with tests for skewness. A comparison shows that these tests are much more popular given their download figures as the two packages (@pak-semTools and @pak-statpsych) I have already reviewed. All of the mentioned packages have functions for tests for kurtosis as well.
+
+- {**datavizard**}: Easy Data Wrangling and Statistical Transformations
+- {**e1071**}: Misc Functions of the Department of Statistics, Probability Theory Group (Formerly: E1071), TU Wien
+- {**moments**}: Moments, Cumulants, Skewness, Kurtosis and Related Tests
+- {**psych**}: Procedures for Psychological, Psychometric, and Personality Research 
+
+```{r}
+#| label: donwload-pkgs-skewness
+#| include: false
+#| eval: false
+
+pkgs_dl(c("datawizard", "e1071", "moments", "psych", "semTools", "statpsych"))
+```
+
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-skewness-systolic-bp}
+: Skewness of systolic blood pressure
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### {**semTools**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-skewness-systolic-bp-semtools}
+: Compute skewness of systolic blood pressure with {**semTools**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: skewness-systolic-bp-semTools
+
+semTools::skew(bp_clean$systolic)
+```
+***
+
+Comparing the z-value in @tbl-chap02-skewness we see that our value is 5 times higher than 7, meaning our distribution is highly right skewed. With a p-value < 0.001 we have to reject the null (that we have a normal distribution).
+
+::::
+:::::
+
+
+###### {**e1071**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-skewness-systolic-bp-e1071}
+: Compute skewness of systolic blood pressure with {**e1071**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: skewness-systolic-bp-e1071
+
+e1071::skewness(
+    x = bp_clean$systolic,
+    na.rm = TRUE,
+    type = 2)
+```
+***
+
+There are three slightly different types of skewness computation with {**e1071**}.
+
+- Type 1: Older textbooks ('classic')
+- Type 2: SAS and SPSS
+- Type 3: MINITAB and BMDP (default value)
+
+If we compare with the skewness computation  of {**semTools**} we see that SAS/SPSSS calculation is used with type 2 in {**e1071**}.
+
+We can't assess the skewness with @tbl-chap02-skewness, because {**e1071**} does not calculate the z- and p-value. We therefore add another assessment criteria for skewness:
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap06-assessment-skewness}
+: Magnitude of skewness
+::::::
+:::
+::::{.my-assessment-container}
+
+- If the skewness value is close to 0 (between -0.5 and 0.5), the distribution is approximately symmetric.
+- If the skewness value is significantly negative (below -1), it suggests strong left skewness.
+- If the skewness value is significantly positive (above 1), it suggests strong right skewness. ([GeeksforGeeks](https://www.geeksforgeeks.org/skewness-measures-and-interpretation/)) [@parmarraman442023].
+::::
+:::::
+ 
+A value above 1.0 suggests a strong right skewness.
+
+::::
+:::::
+
+###### {**moments**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-skewness-systolic-bp-moments}
+: Compute skewness of systolic blood pressure with {**moments**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: skewness-systolic-bp-moments
+
+moments::skewness(
+    x = bp_clean$systolic,
+    na.rm = TRUE)
+
+```
+***
+
+This slightly different value would be the result in {**e1071**} with `type = 1` (older textbooks).
+::::
+:::::
+
+###### {**datawizard**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-skewness-systolic-bp-datawizard}
+: Compute skewness of systolic blood pressure with {**datawizard**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: skewness-systolic-bp-datawizard
+#| results: hold
+
+(
+    sys_skew_datawizard <- datawizard::skewness(
+        x = bp_clean$systolic,
+        remove.na = TRUE,
+        type = 2 # default
+    )
+)
+
+base::summary(
+    sys_skew_datawizard, 
+    test = TRUE
+)
+
+```
+***
+
+There are two versions with {**datawizard**}. One with just the skewness and standard error, another one --- similar as with {**semTools**} --- with skewness, standard error, z-value and p-value.
+
+::::
+:::::
+
+###### {**psych**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-skewness-systolic-bp-psych}
+: Compute skewness of systolic blood pressure with {**psych**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: skewness-systolic-bp-psych
+#| results: hold
+
+psych::skew(
+    x = bp_clean$systolic,
+    type = 2
+)
+
+(
+    sys_mardia_psych <- psych::mardia(bp_clean$systolic)
+)
+```
+
+***
+
+There are two different approaches with {**psych**}:
+
+- A simple calculation of the skewness, very similar to the computation of {**e1071**}
+- A much more detailed result with the option to plot a q-q- plot to test normality.
+::::
+:::::
+
+###### Independent t-test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-skewness-systolic-independent}
+: Statistical test of normality for systolic blood pressure by sex
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: skewness-systolic-independent
+
+bp_clean |> 
+    tidyr::drop_na(systolic) |> 
+    dplyr::group_by(sex) |> 
+    dplyr::summarize(
+        skew = semTools::skew(object = systolic)[1],
+        se_skew = semTools::skew(object = systolic)[2],
+        z_skew = semTools::skew(object = systolic)[3],
+        p_skew = semTools::skew(object = systolic)[4],
+        e1071 = e1071::skewness(x = systolic, type = 2),
+        moments = moments::skewness(x = systolic),
+        psych = psych::skew(x = systolic, type = 2)
+        )
+
+```
+***
+
+Our data fail the assumption for normality for the independent-samples t-test.
+
+The columns 2-5 are calculated with {**semTools**}. For comparison I have added other the result of other packages as well.
+::::
+:::::
+
+###### Dependent t-test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-skewness-systolic-dependent}
+: Statistical test of normality for difference of systolic blood pressure measure 1 and 2
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: skewness-systolic-dependent
+
+semTools::skew(object = bp_clean3$diff_syst)
+```
+
+***
+The skewness value is much lower but still over the limit of 7 for our sample size. So the null has to be rejected (p-value < 0001).
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+***
+
+
+#### Different omnibus tests
+
+Besides of testing skewness there are also other statistical tests available. I have researched the following `r glossary("omnibus")` tests:
+
+- `r glossary("Shapiro-Wilk")`: This is the book recommendation. The test is also called Shapiro-Francia and is a built-in test in R, available with `stats::shapiro.test()`. The test statistic of the Shapiro-Francia test is simply the squared correlation between the ordered sample values and the (approximated) expected ordered quantiles from the standard normal distribution. The Shapiro-Wilk test is known to perform well. But this test is very sensitive and can only be applied when the non-missing values are between 5 and 5000. With samples greater than 5.000 it will always result in statistically significant p-values. Therefore we can't use it as we have a sample size of about 7000 non-missing values.
+- **Anderson-Darling**: The Anderson-Darling test is the recommended `r glossary("ECDF", "EDF")` test if there are more than seven values. It can be assessed via the {**nortest**} package, which is specialized for *nor*mality *test*s.
+- **Cramer von Mises**: It needs also more than 7 data values. Compared to the Anderson-Darling test (as a first choice) it gives less weight to the tails of the distribution.
+- **Kolmogorov-Smirnov**: Also called Liliefors test, needs at least 4 data values. The Lilliefors (Kolomorov-Smirnov) test is the most famous EDF omnibus test for normality. Compared to the Anderson-Darling test and the Cramer-von Mises test it is known to perform worse. Although the test statistic obtained from `nortest::lillie.test()` is the same as that obtained from `stats::ks.test()`, it is not correct to use the p-value from the latter for the composite hypothesis of normality (mean and variance unknown), since the distribution of the test statistic is different when the parameters are estimated.
+- **Pearson**: The Pearson chi-square test for normality is usually not recommended for testing the composite hypothesis of normality due to its inferior power properties compared to other tests. 
+
+#### Anderson-Darling test
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Packages for the Anderson-Darling test
+:::
+::::{.my-resource-container}
+- {**cmstatr**}: Statistical Methods for Composite Material Data (aerospace applications)
+- {**DescTools**}: Tools for Descriptive Statistics (@pak-DescTools)
+- {**kSamples**}: K-Sample Rank Tests and their Combinations
+- {**nortest**}: Tests for Normality (@pak-nortest)
+
+```{r}
+#| label: pkgs-anderson-darling-test
+#| include: false
+#| eval: false
+
+pkgs_dl(c("cmstatr", "DescTools", "kSamples", "nortest"))
+```
+
+I will use only the two most downloaded packages: {**DescTools**} because I have already installed it (see @pak-DescTools) and {**nortest**} because it is a specialized package for test for normality and most articles refer to its usage.
+
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-anderson-darling-tests}
+: Anderson-Darling Test of Normality
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### {**nortest**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-anderson-darling-test-nortest}
+: One-sample t-test: Test of normality using the Anderson-Darling test with the {**nortest**} package
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: anderson-darling-test-nortest
+
+nortest::ad.test(bp_clean$systolic)
+```
+
+***
+
+We've got a very tiny p-value so we have to reject the null hypothesis that the systolic blood pressure is normally distributed.
+
+
+::::
+:::::
+
+
+###### DescTools
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-anderson-darling-test-desctools}
+: One-sample t-test: Test of normality using the Anderson-Darling test with the {**DescTools**} package
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: anderson-darling-test-desctools
+
+DescTools::AndersonDarlingTest(
+    x = bp_clean2$systolic, 
+    null = "pnorm", 
+    mean = mean(bp_clean2$systolic), 
+    sd = sd(bp_clean2$systolic)
+    )
+```
+
+***
+Again, we have to reject the Null. 
+
+The {**DescTools**} packages has the advantage that it is a general test of goodness-of-fit. Besides normality it could also be used to test other kind of distributions.
+
+::::
+:::::
+
+###### Dependent t-test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-anderson-darling-dependent-test-nortest-desctools}
+: Dependent-samples t-test: Test of normality using the Anderson-Darling test with {**nortest**} and {**DescTools**} package
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: anderson-darling-dependent-test-nortest-desctools
+#| results: hold
+
+
+glue::glue("Computation with nortest package")
+nortest::ad.test(bp_clean$diff_syst)
+
+glue::glue(" ")
+glue::glue("###################################################")
+glue::glue("Computation with DescTools package")
+DescTools::AndersonDarlingTest(
+    x = bp_clean3$diff_syst, 
+    null = "pnorm", 
+    mean = mean(bp_clean3$diff_syst), 
+    sd = sd(bp_clean3$diff_syst)
+    )
+```
+
+***
+
+Both tests agree, even their p-values differ: We have to reject the Null. 
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+### Testing homogeneity of variances
+
+#### Levene’s test
+
+`r glossary("Homogeneity of variances")` is another assumption valid for the independent t-test. The data should be equally spread out in each group. Although we had used the `r glossary("Welch", "Welch’s")` version of the t-test, which does not require homogeneity of variances, we will apply Levene’s test anyway. (An additional visual inspection via group-specific `r glossary("boxplots")` would helpful to gain a visual understanding of Levene’s test results.)
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Packages for Levene's test
+:::
+::::{.my-resource-container}
+{**car**}: Companion to Applied Regression
+{**DescTools**}: Tools for Descriptive Statistics
+{**misty**}: Miscellaneous Functions 'T. Yanagida'
+{**rstatix**}: Pipe-Friendly Framework for Basic Statistical Tests
+
+
+```{r}
+#| label: pkgs-downloads-levene-test
+#| include: false
+#| eval: false
+
+pkgs_dl(c("car", "DescTools", "misty", "rstatix"))
+```
+
+The {**car**} packages is most of time used for Levene’s test. There is also a specific `tidy()` function in {**broom**} for the results of `car::leveneTest()`.
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-levene-tests}
+: Levene’s test with different packages
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### {**car**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-levene-test-car}
+: Testing for equal variances for systolic by sex with {**car**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: levene-test-car
+
+car::leveneTest(
+    y = systolic ~ sex, 
+    data = bp_clean)
+```
+***
+
+::: {.callout-tip}
+The variances of systolic blood pressure for men and women are not statistically significantly different (p = .06), and the independent-samples t-test meets the assumption of homogeneity of variances.
+:::
+::::
+:::::
+
+
+###### {**DescTools**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-levene-test-desctools}
+: Testing for equal variances for systolic by sex with {**DescTools**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: levene-test-desctools
+
+DescTools::LeveneTest(
+    formula = systolic ~ sex, 
+    data = bp_clean
+)
+```
+***
+Exactyl the same result as with `car::leveneTest()`.
+
+::::
+:::::
+
+###### {**rstatix**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-levene-test-rstatix}
+: Testing for equal variances for systolic by sex with {**rstatix**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: levene-test-rstatix
+
+rstatix::levene_test(
+    formula = systolic ~ sex,
+    data = bp_clean
+)
+```
+***
+
+Again exact the same result but this time it returns a tibble which is easier to work with.
+::::
+:::::
+
+###### {**misty**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-levene-test-misty}
+: Testing for equal variances for systolic by sex with {**misty**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: levene-test-misty
+
+misty::test.levene(
+    formula = systolic ~ sex,
+    data = bp_clean,
+    plot = TRUE
+)
+```
+
+***
+
+This is most detailed computation! The function has 35 arguments, most of them are dedicated to the appearance of the plot.
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+## Alternate tests when assumptions fail {#sec-chap06-achievement7}
+
+### Introduction
+
+The systolic data fails the assumption of normality for *all* different kind of t-tests. This means that we cannot rely resp. apply the t-test as we had done in this chapter! Practically we would need to start with our analysis anew. 
+
+These are our alternatives:
+
+- One-sample t-test: `r glossary("Sign-test")`
+- Dependent-samples t-test: Wilcoxon Signed-Rank Test 
+- Independent-samples t-test: Mann-Whitney U or Kolmogorov-Smirnoff
+
+### Sign test (one-sample)
+
+If the normality assumption of the one-sample t-test fails, the median could be examined rather than the mean --- just like for descriptive statistics when the variable is not normally distributed.
+
+The median for the systolic distribution is `r stats::median(bp_clean$systolic, na.rm = TRUE)`. We will compare this value to our hypothetical population median of 120 mmHG. So our null hypothesis is, that the median of `r stats::median(bp_clean$systolic, na.rm = TRUE)` is coming from a population with a median of 120 mmHG systolic blood pressure.
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Packages with function for the sign test
+:::
+::::{.my-resource-container}
+- {**BSDA**}: Basic Statistics and Data Analysis 
+- {**DescTools**}: Tools for Descriptive Statistics
+- {**rstatix**}: Pipe-Friendly Framework for Basic Statistical Tests
+
+```{r}
+#| label: pkgs-downloads-sign-test
+#| include: false
+#| eval: false
+
+pkgs_dl(c("BSDA", "DescTools", "rstatix"))
+```
+Generally I prefer packages where I am using several functions *and* with a high number of downloads. This is the case for {rstatix} and {**DescTools**}. Additionally I will also test the {**BSDA**} recommendation of the book.
+
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-sign-tests}
+: Applying sign test to the systolic blood pressure of NHANES participants
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### {**BSDA**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-systolic-sign-test-bsda}
+: Compare observed median of systolic blood pressure with 120 mmHG using {**BSDA**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: systolic-sign-test-bsda
+
+BSDA::SIGN.test(
+    x = bp_clean$systolic,
+    md = 120
+)
+```
+
+We have reason to reject the null hypothesis, e.g. our observed median is not coming from a population median of 120 mmHG. Our sample came likely from a population where the median systolic blood pressure was between 116 and 118 mmHG.
+
+::: {.callout-tip}
+The median systolic blood pressure for NHANES participants was 118 mmHG. A sign test comparing the median to a hypothesized median of 120 mmHG had a statistically significant (s = 3004; p < .05) result. The sample with a median systolic blood pressure of 118 was unlikely to have come from a population with a median systolic blood pressure of 120. The 95% confidence interval indicates this sample likely came from a population where the median systolic blood pressure was between 116 and 118. This suggests that the median systolic blood pressure in the U.S. population is between 116 and 118.
+:::
+::::
+:::::
+
+
+###### {**DescTools}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-systolic-sign-test-desctools}
+: Compare observed median of systolic blood pressure with 120 mmHG using {**DescTools**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: systolic-sign-test-desctools
+
+DescTools::SignTest(
+    x = bp_clean$systolic,
+    mu = 120
+)
+```
+
+::::
+:::::
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-systolic-sign-test-rstatix}
+: Compare observed median of systolic blood pressure with 120 mmHG using {**rstatix**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: systolic-sign-test-rstatix
+
+rstatix::sign_test(
+    data = bp_clean,
+    formula = systolic ~ 1,
+    mu = 120,
+    detailed = TRUE
+)
+
+```
+
+***
+
+As always {**rstatix**} returns a tibble and has all the details. It is most of the time my favorite package for tests.  
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Wilcoxon signed-ranks test (dependent-samples)
+
+#### Introduction
+
+The Wilcoxon signed-ranks test is an alternative to the dependent-samples t-test when the continuous variable is not normally distributed. The Wilcoxon test determines if the differences between paired values of two related samples are symmetrical around zero. That is, instead of comparing the mean difference to zero, the test compares the distribution of the differences around zero.
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap06-wilcoxon-signed-ranks-test}
+: Wilcoxon signed-ranks test
+::::::
+:::
+::::{.my-procedure-container}
+- **Step 1**: Find the differences between the two paired measures (Measure 1 – Measure 2)
+- **Step 2**: Put the *absolute values* of the differences in order from smallest to largest and give each one a rank 
+- **Step 3**: Sum the ranks for all the *positive* differences 
+- **Step 4**: Sum the ranks for all the *negative* differences
+::::
+:::::
+
+Some confusing details:
+
+- The test statistic for the Wilcoxon test is usually `W`, although it was sometimes reported as `T` and called the Wilcoxon T-test. 
+    - If the sum of the ranks of all the *positive* differences is smaller, that sum is `W`.
+    - If the sum of the ranks of the *negative* values is smaller, that sum is `W`.
+- The distribution of `W` is approximately normal when the sample size is more than 20.
+- Because it approximates a normal distribution, a `r glossary("z-score", "z-statistic")` is used to test whether the `W` is statistically significant.
+- But the `stats::wilcox.test()` function shows neither `T` nor `W` bit `V` in its output. This is the sum of the *ranks of positive differences*. `V` would be the same as `W` when the sum of the ranks of positive differences was highest, but different from `W` when the sum of the ranks for negative differences was highest. In practical terms this difference is not important as I will take information for the decision (to reject or not to rejet the Null) from the `r glossary("p-value")`.
+
+
+#### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The distribution of the difference between the systolic blood pressure measures taken at Time 1 and Time 2 in the U.S. population is symmetric around zero.
+- **HA**: The distribution of the difference between the systolic blood pressure measures taken at Time 1 and Time 2 in the U.S. population is not symmetric around zero.
+:::
+
+#### NHST Step 2
+
+Compute the test statistic. 
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-compute-wilcoxon-test}
+: Compute Wilcoxon test with different packages 
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### {**stats**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-compute-wilcoxon-test-stats}
+: Compute Wilcoxon test with `stats::wilcox.test()` 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compute-wilcoxon-test-stats
+
+stats::wilcox.test(
+    x = bp_clean$systolic, 
+    y = bp_clean$systolic2 , 
+    conf.int = TRUE,
+    paired = TRUE)
+```
+
+::::
+:::::
+
+
+###### {**rstatix**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-compute-wilcoxon-test-rstatix}
+: Compute Wilcoxon test with `rstatix::pairwise_wilcox_test()` 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-compute-wilcoxon-test-rstatix
+#| tbl-cap: "Compute Wilcoxon test to judge the distribution of the difference between the systolic blood pressure measures taken at time 1 (`systolic`) and time 2 (`systolic2`)"
+
+wilcox_rstatix <- bp_clean |> 
+    dplyr::select(systolic, systolic2) |> 
+    tidyr::drop_na() |> 
+    tidyr::pivot_longer(
+        cols = c("systolic", "systolic2"), 
+        names_to = "treatment", 
+        values_to = "value") |> 
+    rstatix::pairwise_wilcox_test(
+        formula = value ~ treatment,
+        paired = TRUE,
+        detailed = TRUE
+    )
+
+knitr::kable(wilcox_rstatix)
+```
+
+***
+
+Similar as in @exm-chap06-cohens-d-dependent-samples we had to apply `tidyr::pivot_longer()` to get the data into the right shape.
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+
+#### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value is well below .05.
+
+#### NHST Step 4
+
+Conclude and write report.
+
+We have to reject the NULL and assume the alternative: The distribution of the difference between the systolic blood pressure measures taken at Time 1 and Time 2 in the U.S. population is not symmetric around zero.
+
+::: {.callout-tip}
+We used a `r glossary("Wilcoxon", "Wilcoxon signed-ranks test")` to determine whether the distribution of the difference in systolic blood pressure measured at Time 1 and Time 2 was symmetrical around zero. The resulting test statistic and p-value indicated that the sample likely came from a population where the differences were not symmetrical around zero (p < .05). That is, we found a significant difference between the first and second blood pressure measures.
+:::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Interpreting the results as comparing medians can be misleading 
+:::
+::::{.my-watch-out-container}
+
+- Wilcoxon signed-ranks test,
+- Mann-Whitney U test and
+- Kolmogorov-Smirnov test 
+
+are often interpreted as testing for *equal medians*. 
+
+> While none of these tests examine medians directly, the ordering and ranking of values is similar to how medians are identified, so there is logic to this interpretation. However, if the distribution shape or spread (or both) are different, interpreting the results as comparing medians can be misleading.
+
+:::::{.my-important}
+:::{.my-important-header}
+Conduct visual and descriptive analyses before (or with) these tests to make sure you interpret the results accurately.
+:::
+:::::
+
+::::
+:::::
+
+
+### Mann-Whitney U test (independent-samples)
+
+#### Introduction
+
+`r glossary("Mann-Whitney", "Mann-Whitney U test")` is used when the t-test assumption of normality for independent group is not met. It is considered to be the non-parametric equivalent to the two-sample independent t-test. The `U` test also relaxes the variable type assumption and can be used for ordinal variables in addition to continuous variables. It works similar as the `r glossary("Wilcoxon", "Wilcoxon signed-ranks test")`:
+
+- It puts puts the values for the continuous (or ordinal) variable in order.
+- It assigns each value a rank.
+- It compares ranks across the two groups of the categorical variable.
+- It The computes the test statistic using the sums of the ranks for each group.
+- It approximates normality as long as the sample size is greater than 20.
+- It uses a z-score to determine the corresponding p-value.
+
+
+#### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: There is no difference in ranked systolic blood pressure values for males and females in the U.S. population.
+- **HA**: There is a difference in ranked systolic blood pressure values for males and females in the U.S. population.
+:::
+
+#### NHST Step 2
+
+Compute the test statistic. 
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-compute-mann-whitney-u-test}
+: Compute Mann-Whitney U test with different packages 
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### {**stats**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-compute-mann-whitney-u-test-stats}
+: Compute Mann-Whitney U test with `stats::wilcox.test()` 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compute-mann-whitney-u-test-stats
+
+mann_whitney_stats <- stats::wilcox.test(
+    formula = bp_clean$systolic ~ bp_clean$sex,
+    conf.int = TRUE,
+    paired = FALSE)
+
+mann_whitney_stats
+```
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! `r glossary("Mann-Whitney", "Mann-Whitney U test")` is also called Wilcoxon rank sum test! And this is not the same as `r glossary("Wilcoxon", "Wilcoxon signed-ranks test")`.
+:::
+:::::
+
+For more information on the different Wilcoxon tests read [Wilcoxon Test in R](https://www.datanovia.com/en/lessons/wilcoxon-test-in-r/) [@kassambaran.d].
+
+
+::::
+:::::
+
+
+###### {**rstatix**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-compute-mann-whitney-u-test-rstatix}
+: Compute Mann-Whitney U test with `rstatix::pairwise_wilcox_test()` 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-compute-mann-whitney-u-test-rstatix
+#| tbl-cap: "Compute Mann-Whitney U test comparing the systolic blood pressure for male and females"
+
+wilcox_rstatix <- bp_clean |> 
+    dplyr::select(systolic, sex) |> 
+    tidyr::drop_na() |> 
+    rstatix::pairwise_wilcox_test(
+        formula = systolic ~ sex,
+        paired = FALSE,
+        detailed = TRUE
+    )
+
+knitr::kable(wilcox_rstatix)
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+##### Effect size for Mann-Whitney U
+
+$$
+r = \frac{z}{\sqrt{n}}
+$$ {#eq-chap06-effect-size-mann-whitney-u-test}
+
+The Pearson correlation coefficient `r` is calculated as `r glossary("z-score")` divided by square root of the total observations.
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap06-effect-size-mann-whitney-u-test}
+: Effect size `r` of the Mann-Whitney U test
+::::::
+:::
+::::{.my-assessment-container}
+- **Small**: r = .1 to r < .3 
+- **Medium**: r = .3 to r < .5
+- **Large**: r ≥ .5
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap06-effect-size-mann-whitney-u-test}
+: Compute effect size for the Mann-Whitney U test
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Manually
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-effect-size-mann-whitney-u-test-manually}
+: Compute effect size for the Mann-Whitney U test manually
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: effect-size-mann-whitney-u-test-manually
+
+stats::qnorm(mann_whitney_stats$p.value) / 
+    base::sqrt(base::nrow(bp_clean2))
+```
+We will interpret only the absolute value of the effect size because the direction is not of interest, just the size of the effect. An `r` with 0.11 is a small effect size.
+::::
+:::::
+
+
+###### {**rcompanion**}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-effect-size-mann-whitney-u-test-rcompanion}
+: Compute effect size for the Mann-Whitney U test with {**rcompanion**}
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: effect-size-mann-whitney-u-test-rcompanion
+
+bp_clean4 <- bp_clean |> 
+    tidyr::drop_na(systolic, sex)
+
+rcompanion::wilcoxonR(
+    x = bp_clean4$systolic, 
+    g = bp_clean4$sex)
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+#### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+As the p-value < 2.2e-16 with a small effect size of r = 0.11 is statistically significant, we reject the Null.
+
+#### NHST Step 4
+
+Conclude and write report.
+
+::: {.callout-tip}
+A Mann-Whitney U test comparing systolic blood pressure for males and females in the United States found a statistically significant difference between the two groups (p < .05). Histograms demonstrated the differences, with notably more females with systolic blood pressure below 100 compared to males along with some other differences. The effect size was small, r = .11, indicating a weak but statistically significant relationship between sex and systolic blood pressure.
+:::
+
+### Kolmogorov-Smirnov test: Variance assumption failed
+
+#### Introduction
+
+All the tests under the heading "Alternate tests" (@sec-chap06-achievement7) discussed so far are alternatives for a failed normality assumption. Kolmogorov-Smirnov test is an alternative when the assumption of equal variances (homogeneity of variances) has failed. 
+
+When the variances are unequal, the homogeneity of variances assumption is not met, whether or not the normality assumption is met. The larger variance has a bigger influence on the size of the t-statistic, so one group is dominating the t-statistic calculations.
+
+Although we have used the `r glossary("Welch", "Welch’s t-test")` the `r glossary("Kolmogorov-Smirnov", "Kolmogorov-Smirnov test")` is an alternative test when both (the normality *and* the variance assumption) have failed.
+
+
+#### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The distribution of systolic blood pressure for males and females is the same in the U.S. population.
+- **HA**: The distribution of systolic blood pressure for males and females is not the same in the U.S. population.
+:::
+
+#### NHST Step 2
+
+Compute the test statistic. 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-compute-ks-test-stats}
+: Compute the Kolmogorov-Smirnov test with {**stats**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: compute-ks-test-stats
+
+male_sys <- bp_clean |> 
+    dplyr::filter(sex == "Male") |> 
+    dplyr::pull(var = systolic)
+
+female_sys <- bp_clean |> 
+    dplyr::filter(sex == "Female") |> 
+    dplyr::pull(var = systolic)
+    
+stats::ks.test(
+    x = male_sys,
+    y = female_sys
+)
+```
+
+::::
+:::::
+
+Most of the examples in the Internet uses the base R version with `stats::ks.test()` for the Kolmogorov-Smirnov test. I have found with {**FSA**} and {**dgof**} two other packages with this test, but as they do not differ with their input parameters nor with their results I will stick with the {**stats**} function.
+
+
+#### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value is well below .05.
+
+#### NHST Step 4
+
+Conclude and write report.
+
+The test statistic, D, is the maximum distance between the two empirical cumulative distribution functions (`r glossary("ECDF", "ECDFs")`). ECDFs are a special type of probability distribution showing the cumulative probability of the values of a variable. We can examine the difference between the ECDFs for systolic blood pressure of males and females in the sample with the following graph:
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap06-ecdf}
+: Compute empirical cumulative distributions (ECDFs)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-ecdf
+#| fig-cap: "ECDF of systolic blood pressure in mmHg by sex for 20152016 NHANES participants"
+
+bp_clean |> 
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = systolic,
+            color = sex
+        )
+    ) +
+    ggplot2::stat_ecdf(
+        geom = "step",
+        linewidth = 1,
+        na.rm = TRUE
+        ) +
+    ggplot2::labs(
+        x = "Systolic blood pressure (mmHg)", 
+        y = "Cumulative probability"
+        ) + 
+    ggplot2::scale_color_manual(
+        values = c(
+            "Male" = "gray", 
+            "Female" = "purple3"
+            )
+    )
+
+
+```
+***
+
+At the widest gap between these two curves, males and females were $.11$ apart, giving a test statistic of $D = .11$.
+
+::: {.callout-tip}
+A K-S test comparing systolic blood pressure for males and females found a statistically significant difference between the two groups (D = .11; p < .05). This sample likely came from a population where the distribution of systolic blood pressure was different for males and females.
+:::
+::::
+:::::
+
+
+### Miscellaneous
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Miscellaneous packages for (possible) alternative tests
+:::
+::::{.my-resource-container}
+During my research for packages with functions for alternative test if the t-test assumption fail I came about several very interesting packages. Some of them work together with {**ggplot2**}, so that these statistics can be plotted easily as well.
+
+- {**rcompanion**}: I have outlined the table of content to demonstrate that this package contains many different tests. (See @pak-rcompanion)
+- {**ggstats**}: Provides new statistics, new geometries and new positions for 
+    {**ggplot2**} and a suite of functions to facilitate the creation of 
+    statistical plots.
+- {**ggstatsplot**}: As an extension of {**ggplot2**} the packages creates graphics with details from statistical tests included in the plots themselves.
+- {**statsExpressions**}: Tidy Data Frames and Expressions with Statistical Details. Utilities for producing data frames with rich details for the most common types of statistical approaches and tests.
+
+```{r}
+#| label: pkgs-dl-alternative-tests
+#| include: false
+#| eval: false
+
+pkgs_dl(c("ggstats", "ggstatsplot", "rcompanion", "statsExpressions"))
+```
+
+::::
+:::::
+
+
+
+
 ## Exercises (empty)
 
 ## Packages introduced in this chapter
@@ -1678,7 +3285,7 @@ BSDA: Basic Statistics and Data Analysis
 
 ***
 
-::: {#pak-bsda}
+::: {#pak-BDSA}
 
 ***
 
@@ -1689,7 +3296,7 @@ BSDA: Basic Statistics and Data Analysis
 Functions and data sets for the text Basic Statistics and Data Analysis (BSDA) [@kitchens2002].
 
 
-{**pkg-name**}: Basic Statistics and Data Analysis
+{**BSDA**}: Basic Statistics and Data Analysis
 :::
 
 ***
@@ -1755,6 +3362,81 @@ Functions and datasets to support Summary and Analysis of Extension Program Eval
 ::::
 :::::
 
+### datawizard
+
+:::::{.my-resource}
+:::{.my-resource-header}
+datawizard: Easy Data Wrangling and Statistical Transformations 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-datawizard}
+
+***
+
+{**datawizard**}: [Easy Data Wrangling and Statistical Transformations](https://easystats.github.io/datawizard/) [@datawizard]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap06/logoi/logo-datawizard-min.png){width="176"}
+
+
+
+{**datawizard**} is a lightweight package to easily manipulate, clean, transform, and prepare your data for analysis. It is part of the {**easystats**} ecosystem, a suite of R packages to deal with your entire statistical analysis, from cleaning the data to reporting the results.
+
+:::
+
+{**datawizard**} covers two aspects of data preparation:
+
+- **Data manipulation**: datawizard offers a very similar set of functions to that of the tidyverse packages, such as a {**dplyr**} and {**tidyr**}, to select, filter and reshape data, with a few key differences. 
+    1) All data manipulation functions start with the prefix `data_*` (which makes them easy to identify). 
+    2) Although most functions can be used exactly as their tidyverse equivalents, they are also string-friendly (which makes them easy to program with and use inside functions). 
+    3) Finally, datawizard is super lightweight (no dependencies, similar to {**poorman**}), which makes it awesome for developers to use in their packages.
+- Statistical transformations: {**datawizard**} also has powerful functions to easily apply common data transformations, including standardization, normalization, rescaling, rank-transformation, scale reversing, recoding, binning, etc.
+
+{**datawizard**}: Easy Data Wrangling and Statistical Transformations
+:::
+
+
+***
+::::
+:::::
+
+### e1071
+
+:::::{.my-resource}
+:::{.my-resource-header}
+e1071: Misc. functions 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-e1071}
+
+***
+
+{**e1071**}: [Misc. functions](https://cran.r-project.org/web/packages/e1071/index.html) [@e1071]
+
+
+(*There is no hexagon logo for {**e1071**} available*)
+
+Functions for latent class analysis, short time Fourier transform, fuzzy clustering, support vector machines, shortest path computation, bagged clustering, naive Bayes classifier, generalized k-nearest neighbour ...
+
+
+{**e1071**}: Misc. functions
+:::
+
+
+***
+::::
+:::::
+
+
+
+
+
 ### effectsize
 
 :::::{.my-resource}
@@ -1790,6 +3472,68 @@ Provide utilities to work with indices of effect size for a wide  variety of mod
 :::::
 
 
+### moments
+
+:::::{.my-resource}
+:::{.my-resource-header}
+moments: Moments, Cumulants, Skewness, Kurtosis and Related Tests 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-moments}
+
+***
+
+{**moments**}: [Moments, Cumulants, Skewness, Kurtosis and Related Tests](https://cran.r-project.org/package=moments) [@moments]
+
+
+
+(*There is no hexagon logo for {**moments**} available*)
+
+Functions to calculate: moments, Pearson's kurtosis, Geary's kurtosis and skewness; tests related to them.
+
+
+{**moments**}: Moments, Cumulants, Skewness, Kurtosis and Related Tests
+:::
+
+***
+::::
+:::::
+
+### misty
+
+:::::{.my-resource}
+:::{.my-resource-header}
+misty: Miscellaneous Functions 'T. Yanagida'  
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-misty}
+
+***
+
+{**misty**}: [Miscellaneous Functions 'T. Yanagida' ](https://cran.r-project.org/package=misty) [@misty]
+
+Miscellaneous functions for 
+
+- (1) data management (e.g., grand-mean and group-mean centering, coding variables and reverse coding items, scale and cluster scores, reading and writing Excel and SPSS files), 
+- (2) descriptive statistics (e.g., frequency table, cross tabulation, effect size measures), 
+- (3) missing data (e.g., descriptive statistics for missing data, missing data pattern, Little's test of Missing Completely at Random, and auxiliary variable analysis), 
+- (4) multilevel data (e.g., multilevel descriptive statistics, within-group and between-group correlation matrix, multilevel confirmatory factor analysis, level-specific fit indices, cross-level measurement equivalence evaluation,  multilevel composite reliability, and multilevel R-squared measures), 
+- (5) item analysis (e.g., confirmatory factor analysis, coefficient alpha and omega, between-group and longitudinal measurement equivalence evaluation), and 
+- (6) statistical analysis (e.g., confidence intervals, collinearity and residual diagnostics, dominance analysis, between- and within-subject analysis of variance, latent class analysis, t-test, z-test, sample size determination).
+
+{**misty**}: Miscellaneous Functions 'T. Yanagida' 
+:::
+
+
+***
+::::
+:::::
 
 
 
@@ -1831,6 +3575,237 @@ There are other similar packages also available, but the are more restricted as 
 :::
 
 See for my other reflection of packages for downloading NHANES data in @not-chap01-nhanesA-pkg and @sec-chap03-rnhanes.
+
+***
+::::
+:::::
+
+### nortest
+
+:::::{.my-resource}
+:::{.my-resource-header}
+nortest: Tests for Normality 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-nortest}
+
+***
+
+{**nortest**}: [Tests for Normality](https://cran.r-project.org/package=nortest) [@nortest]
+
+
+(*There is no hexagon logo for {**nortest**} available*)
+
+Five omnibus tests for testing the composite hypothesis of normality.
+
+{**nortest**}: Tests for Normality
+:::
+
+***
+::::
+:::::
+
+### psych
+
+:::::{.my-resource}
+:::{.my-resource-header}
+psych: Procedures for Psychological, Psychometric, and Personality Research 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-psych}
+
+***
+
+{**psych**}: [Procedures for Psychological, Psychometric, and Personality Research](https://personality-project.org/r/psych/) [@psych]
+
+
+(*There is no hexagon logo for {**psych**} available*)
+
+A general purpose toolbox developed originally for personality, psychometric theory and experimental psychology.  
+
+- Functions are primarily for multivariate analysis and scale construction using factor analysis, principal component analysis, cluster analysis and reliability analysis, although others provide basic descriptive statistics. 
+- Item Response Theory is done using factor analysis of tetrachoric and polychoric correlations. 
+- Functions for analyzing data at multiple levels include within and between group statistics, including correlations and factor analysis.  
+- Validation and cross validation of scales developed using basic machine learning algorithms are provided, as are functions for simulating and testing particular item and test structures. 
+- Several functions serve as a useful front end for structural equation modeling. 
+- Graphical displays of path diagrams, including mediation models, factor analysis and structural equation models are created using basic graphics. 
+- Some of the functions are written to support a book on psychometric theory as well as publications in personality research.
+
+{**psych**}: Procedures for Psychological, Psychometric, and Personality Research
+:::
+
+
+
+***
+::::
+:::::
+
+### rcompanion
+
+:::::{.my-resource}
+:::{.my-resource-header}
+rcompanion: Functions to Support Extension Education Program Evaluation 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-rcompanion}
+
+***
+
+{**rcompanion**}: [Functions to Support Extension Education Program Evaluation](https://rcompanion.org/handbook/) [@rcompanion-2]
+
+Functions and datasets to support Summary and Analysis of Extension Program Evaluation in Companion for the Handbook of Biological Statistics. Vignettes are available at <https://rcompanion.org>. (See also the [PDF book](https://rcompanion.org/documents/RHandbookProgramEvaluation.pdf) [@mangiafico2023].)
+
+{**rcompanion**}: Functions to Support Extension Education Program Evaluation
+:::
+
+This book explains many different tests as you can see from the table of content:
+
+**TABLE OF CONTENT**
+
+ 
+
+**Introduction**
+
+- Purpose of this Book
+- Author of this Book
+- Using R
+- [Statistics Textbooks and Other Resources](https://rcompanion.org/handbook/A_04.html)
+ 
+
+**Statistics for Educational Program Evaluation**
+
+- Why Statistics?
+- Evaluation Tools and Surveys
+ 
+
+**Variables, Descriptive Statistics, and Plots**
+
+- Types of Variables
+- Descriptive Statistics
+- Confidence Intervals
+- Basic Plots
+ 
+
+**Understanding Statistics and Hypothesis Testing**
+
+- Hypothesis Testing and p-values
+- Reporting Results of Data and Analyses
+- [Choosing a Statistical Test](https://rcompanion.org/handbook/D_03.html)
+- Independent and Paired Values
+ 
+
+**Likert Data**
+
+- Introduction to Likert Data
+- Descriptive Statistics for Likert Item Data
+- Descriptive Statistics with the likert Package
+- Confidence Intervals for Medians
+- Converting Numeric Data to Categories
+ 
+
+**Traditional Nonparametric Tests**
+
+- Introduction to Traditional Nonparametric Tests
+- One-sample Wilcoxon Signed-rank Test
+- Sign Test for One-sample Data
+- Two-sample Mann–Whitney U Test
+- Mood’s Median Test for Two-sample Data
+- Two-sample Paired Signed-rank Test
+- Sign Test for Two-sample Paired Data
+- Kruskal–Wallis Test
+- Mood’s Median Test
+- Friedman Test
+- Quade Test
+- Scheirer–Ray–Hare Test
+- Aligned Ranks Transformation ANOVA
+- Nonparametric Regression and Local Regression
+- Nonparametric Regression for Time Series
+ 
+
+**Permutation Tests**
+
+- Introduction to Permutation Tests
+- One-way Permutation Test for Ordinal Data
+- One-way Permutation Test for Paired Ordinal Data
+- Permutation Tests for Medians and Percentiles
+ 
+
+**Tests for Ordinal Data in Tables**
+
+- Association Tests for Ordinal Tables
+- Measures of Association for Ordinal Tables
+ 
+
+**Concepts for Linear Models**
+
+- Introduction to Linear Models
+- Using Random Effects in Models
+- What are Estimated Marginal Means?
+- Estimated Marginal Means for Multiple Comparisons
+- Factorial ANOVA: Main Effects, Interaction Effects, and Interaction Plots
+- p-values and R-square Values for Models
+- Accuracy and Errors for Models
+ 
+
+**Ordinal Tests with Cumulative Link Models**
+
+- Introduction to Cumulative Link Models (CLM) for Ordinal Data
+- Two-sample Ordinal Test with CLM
+- Two-sample Paired Ordinal Test with CLMM
+- One-way Ordinal Regression with CLM
+- One-way Repeated Ordinal Regression with CLMM
+- Two-way Ordinal Regression with CLM
+- Two-way Repeated Ordinal Regression with CLMM
+ 
+
+**Tests for Nominal Data**
+
+- Introduction to Tests for Nominal Variables
+- Confidence Intervals for Proportions
+- Goodness-of-Fit Tests for Nominal Variables
+- Association Tests for Nominal Variables
+- Measures of Association for Nominal Variables
+- Tests for Paired Nominal Data
+- Cochran–Mantel–Haenszel Test for 3-Dimensional Tables
+- Cochran’s Q Test for Paired Nominal Data
+- Models for Nominal Data
+ 
+
+**Parametric Tests**
+
+- Introduction to Parametric Tests
+- One-sample t-test
+- Two-sample t-test
+- Paired t-test
+- One-way ANOVA
+- One-way ANOVA with Blocks
+- One-way ANOVA with Random Blocks
+- Two-way ANOVA
+- Repeated Measures ANOVA
+- Correlation and Linear Regression
+- Advanced Parametric Methods
+- Transforming Data
+- Normal Scores Transformation
+ 
+
+**Analysis of Count Data and Percentage Data**
+
+- Regression for Count Data
+- Beta Regression for Percent and Proportion Data
+ 
+
+**Other Books**
+
+An [R Companion](https://rcompanion.org/rcompanion/) for the [Handbook of Biological Statistics](https://www.biostathandbook.com/)
 
 ***
 ::::

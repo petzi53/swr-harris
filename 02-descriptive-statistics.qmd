@@ -1678,7 +1678,7 @@ The mean of $x$, $m_x$, is subtracted from each observation $x_i$. These differe
 |----------------|:-------------------------:|---------------------------------|
 | n < 50         |    under -2 or over +2    | Problem!                        |
 | n > 50 & < 300 | under -3.29 or over +3.29 | Problem!                        |
-| n > 300        |     under -7 or over 7    | Visual inspection recommended!  |
+| n > 300        |     under -7 or over 7    | Problem, but visual inspection recommended!  |
 
 : Skewness assessment {#tbl-chap02-skewness} {.striped .hover}
 

@@ -50,18 +50,21 @@ first_and_last_row <-  function(df) {
 ##########################################################
 
 # df        = data.frame or tibble
-# v         = numerical column of data.frame: syntax for call df$v
-# x_label   = title for x-axis
-# nbins     = number of bins
-# col_fill  = fill color
-# col_color = border color of bins
-# col       = color of dnorm curve
+# v         = character: numerical column of data.frame:
+#             syntax for call = df$v NO NA's !!!!
+# x_label   = character: title for x-axis
+# nbins     = numeric: number of bins
+# col_fill  = character: fill color
+# col_color = character: border color of bins
+# col       = character: color of dnorm curve
 
 hist_dnorm <- function(df, v, n_bins = 20,
                        col_fill = "gray90",
                        col_color = "black",
-                       col_dnorm = "tomato") {
+                       col_dnorm = "tomato",
+                       x_label = "x") {
     p <- df |>
+        # tidyr::drop_na(tidyselect::all_of(v)) |>
         ggplot2::ggplot(ggplot2::aes(v)) +
         ggplot2::geom_histogram(
             ggplot2::aes(y = ggplot2::after_stat(density)),
@@ -72,7 +75,9 @@ hist_dnorm <- function(df, v, n_bins = 20,
                                args = c(mean = mean(v),
                                         sd = sd(v)),
                                col = col_dnorm) +
-        ggplot2::theme_bw()
+        ggplot2::theme_bw() +
+        ggplot2::xlab(x_label)
+
     p
 
 }
