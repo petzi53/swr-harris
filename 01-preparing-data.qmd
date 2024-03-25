@@ -1979,6 +1979,7 @@ After downloaded the file we can --- as in the other tabs already done
 #| label: get-gss2016-gssr
 #| eval: false
 #| cache: true
+#| results: hold
 
 ## run only once (manually) ####################
 gss_2016_gssr <- gssr::gss_get_yr(year = 2016)

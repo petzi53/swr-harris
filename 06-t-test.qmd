@@ -1,4 +1,4 @@
-# t-test {#sec-chap06}
+# T-test {#sec-chap06}
 
 ```{r}
 #| label: setup
@@ -7,6 +7,36 @@
 base::source(file = "R/helper.R")
 ggplot2::theme_set(ggplot2::theme_bw()) 
 ```
+
+
+```{r}
+#| label: cranlogs
+#| include: false
+#| eval: false
+
+## run only once manually #########
+cranlogs_cohensd <- pkgs_dl(c("lsr", "effectsize", "rstatix", "effsize"))
+save_data_file("chap06", cranlogs_cohensd, "cranlogs_cohensd.rds")
+
+cranlogs_skewness <-  
+    pkgs_dl(c("datawizard", "e1071", "moments", "psych", "semTools", "statpsych"))
+save_data_file("chap06", cranlogs_skewness, "cranlogs_skewness.rds")
+
+cranlogs_ad_test <- pkgs_dl(c("cmstatr", "DescTools", "kSamples", "nortest"))
+save_data_file("chap06", cranlogs_ad_test, "cranlogs_ad_test.rds")
+
+cranlogs_levene_test <- pkgs_dl(c("car", "DescTools", "misty", "rstatix"))
+save_data_file("chap06", cranlogs_levene_test, "cranlogs_levene_test.rds")
+
+cranlogs_sign_test <- pkgs_dl(c("BSDA", "DescTools", "rstatix"))
+save_data_file("chap06", cranlogs_sign_test, "cranlogs_sign_test.rds")
+
+cranlogs_misc <- 
+    pkgs_dl(c("ggstats", "ggstatsplot", "rcompanion", "statsExpressions"))
+save_data_file("chap06", cranlogs_misc, "cranlogs_misc.rds")
+```
+
+
 
 ## Achievements to unlock
 
@@ -1174,8 +1204,9 @@ Derived from the importance of effect size parameter I need to know more how to 
 
 - [Effect Size](https://en.wikipedia.org/wiki/Effect_size) (Wikipedia)
 - [Effect size](https://www.psy.gla.ac.uk/~steve/best/effect.html) [@draper2023]
-- [Effect size calculator](https://www.ai-therapy.com/psychology-statistics/effect-size-calculator) (AI-Thearpie Statistics)
+- [Effect size calculator](https://www.ai-therapy.com/psychology-statistics/effect-size-calculator) (AI-Therapie Statistics)
 - [Rules of thumb on magnitudes of effect sizes](https://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/effectSize) (MRC Cognition and Brain Sciences Unit, University of Cambridge)
+- [Computation of Effect Sizes](https://www.psychometrica.de/effect_size.html) [@lenhard2022]
 
 ::::
 :::::
@@ -1229,15 +1260,19 @@ Packages with Cohen’s d functions
 
 Thee is another package {**effsize**} that I have not used. I had problems to use it, because it has no argument for $\mu$ but it also has not many downloads.
 
-The packages {**effectsize**} and {**rstatix**} are important as they have many other computation for effect soze parameters.
+The packages {**effectsize**} and {**rstatix**} are important as they have many other computation for effect size parameters.
 
 
 ```{r}
-#| label: donwload-numbers-cohens-d-packages
-#| include: false
-#| eval: false
+#| label: tbl-donwload-numbers-cohens-d-packages
+#| tbl-cap: "Download numbers of packages with Cohen’s d functions" 
+#| echo: false
+#| cache: true
 
-pkgs_dl(c("lsr", "effectsize", "rstatix", "effsize"))
+
+glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
+(cranlogs_cohensd <- base::readRDS("data/chap06/cranlogs_cohensd.rds"))
+
 ```
 
 ::::
@@ -1285,7 +1320,7 @@ The mean systolic blood pressure in a sample of 7,145 people was 120.54 (sd = 18
 :::::
 
 
-###### {**lsr**}
+###### lsr
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1310,7 +1345,7 @@ lsr::cohensD(bp_clean$systolic, mu = 120)
 :::::
 
 
-###### {**effectsize**}
+###### effectsize
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1337,7 +1372,7 @@ The {**effectsize**} packages discusses two alternatives for Cohen’s d:
 ::::
 :::::
 
-###### {**rstatix**}
+###### rstatix
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1378,6 +1413,7 @@ rstatix::cohens_d(
 $$
 d = \frac{m_{1}-{m_{2}}}{\sqrt{\frac{s_{1}^2 + s_{2}^2}{2}}}
 $$ {#eq-chap06-cohens-d-independent-samples}
+
 ***
 
 - $m_{1}, m_{2}$: sample means 
@@ -1440,7 +1476,7 @@ The effect size is very small.
 
 
 
-###### {**lsr**}
+###### lsr
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1470,7 +1506,7 @@ lsr::cohensD(
 :::::
 
 
-###### {**effectsize**}
+###### effectsize
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1499,7 +1535,7 @@ The {**effectsize**} packages discusses two alternatives for Cohen’s d:
 ::::
 :::::
 
-###### {**rstatix**}
+###### rstatix
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1599,7 +1635,7 @@ The effect size is very small.
 
 
 
-###### {**lsr**}
+###### lsr
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1627,7 +1663,7 @@ Instead of the default method ("pooled") we need "paired" as method for the depe
 :::::
 
 
-###### {**effectsize**}
+###### effectsize
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1655,7 +1691,7 @@ The {**effectsize**} packages discusses two alternatives for Cohen’s d:
 ::::
 :::::
 
-###### {**rstatix**}
+###### rstatix
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -1802,7 +1838,7 @@ Another graph --- this time with 60 bins --- shows that we have a unimodal distr
 ::::
 :::::
 
-###### q-q-plot
+###### Q-Q plot
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2105,11 +2141,13 @@ After another research I will --- in addition to @sec-chap02-skewness --- propos
 - {**psych**}: Procedures for Psychological, Psychometric, and Personality Research 
 
 ```{r}
-#| label: donwload-pkgs-skewness
-#| include: false
-#| eval: false
+#| label: tbl-download-pkgs-skewness
+#| tbl-cap: "Download numbers of packages with skewness functions"
+#| cache: true
+#| echo: false
 
-pkgs_dl(c("datawizard", "e1071", "moments", "psych", "semTools", "statpsych"))
+glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
+(cranlogs_skewness <- base::readRDS("data/chap06/cranlogs_skewness.rds"))
 ```
 
 ::::
@@ -2125,7 +2163,7 @@ pkgs_dl(c("datawizard", "e1071", "moments", "psych", "semTools", "statpsych"))
 
 ::: {.panel-tabset}
 
-###### {**semTools**}
+###### semTools
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2148,7 +2186,7 @@ Comparing the z-value in @tbl-chap02-skewness we see that our value is 5 times h
 :::::
 
 
-###### {**e1071**}
+###### e1071
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2197,7 +2235,7 @@ A value above 1.0 suggests a strong right skewness.
 ::::
 :::::
 
-###### {**moments**}
+###### moments
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2220,7 +2258,7 @@ This slightly different value would be the result in {**e1071**} with `type = 1`
 ::::
 :::::
 
-###### {**datawizard**}
+###### datawizard
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2254,7 +2292,7 @@ There are two versions with {**datawizard**}. One with just the skewness and sta
 ::::
 :::::
 
-###### {**psych**}
+###### psych
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2372,11 +2410,14 @@ Packages for the Anderson-Darling test
 - {**nortest**}: Tests for Normality (@pak-nortest)
 
 ```{r}
-#| label: pkgs-anderson-darling-test
-#| include: false
-#| eval: false
+#| label: tbl-pkgs-anderson-darling-test
+#| tbl-cap: "Download numbers of packages with Anderson-Darling test functions"
+#| cache: true
+#| echo: false
 
-pkgs_dl(c("cmstatr", "DescTools", "kSamples", "nortest"))
+glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
+
+(cranlogs_ad_test <- base::readRDS("data/chap06/cranlogs_ad_test.rds"))
 ```
 
 I will use only the two most downloaded packages: {**DescTools**} because I have already installed it (see @pak-DescTools) and {**nortest**} because it is a specialized package for test for normality and most articles refer to its usage.
@@ -2394,7 +2435,7 @@ I will use only the two most downloaded packages: {**DescTools**} because I have
 
 ::: {.panel-tabset}
 
-###### {**nortest**}
+###### nortest
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2508,11 +2549,14 @@ Packages for Levene's test
 
 
 ```{r}
-#| label: pkgs-downloads-levene-test
-#| include: false
-#| eval: false
+#| label: tbl-pkgs-downloads-levene-test
+#| tbl-cap: "Download numbers of packages with Levene’s test functions"
+#| cache: true
+#| echo: false
 
-pkgs_dl(c("car", "DescTools", "misty", "rstatix"))
+glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
+
+(cranlogs_levene_test <-  base::readRDS("data/chap06/cranlogs_levene_test.rds"))
 ```
 
 The {**car**} packages is most of time used for Levene’s test. There is also a specific `tidy()` function in {**broom**} for the results of `car::leveneTest()`.
@@ -2529,7 +2573,7 @@ The {**car**} packages is most of time used for Levene’s test. There is also a
 
 ::: {.panel-tabset}
 
-###### {**car**}
+###### car
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2555,7 +2599,7 @@ The variances of systolic blood pressure for men and women are not statistically
 :::::
 
 
-###### {**DescTools**}
+###### DescTools
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2579,7 +2623,7 @@ Exactyl the same result as with `car::leveneTest()`.
 ::::
 :::::
 
-###### {**rstatix**}
+###### rstatix
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2602,7 +2646,7 @@ Again exact the same result but this time it returns a tibble which is easier to
 ::::
 :::::
 
-###### {**misty**}
+###### misty
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2660,11 +2704,14 @@ Packages with function for the sign test
 - {**rstatix**}: Pipe-Friendly Framework for Basic Statistical Tests
 
 ```{r}
-#| label: pkgs-downloads-sign-test
-#| include: false
-#| eval: false
+#| label: tbl-pkgs-downloads-sign-test
+#| tbl-cap: "Download numbers of packages with sign-test functions"
+#| cache: true
+#| echo: false
 
-pkgs_dl(c("BSDA", "DescTools", "rstatix"))
+glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
+
+(cranlogs_sign_test <- base::readRDS("data/chap06/cranlogs_sign_test.rds"))
 ```
 Generally I prefer packages where I am using several functions *and* with a high number of downloads. This is the case for {rstatix} and {**DescTools**}. Additionally I will also test the {**BSDA**} recommendation of the book.
 
@@ -2681,7 +2728,7 @@ Generally I prefer packages where I am using several functions *and* with a high
 
 ::: {.panel-tabset}
 
-###### {**BSDA**}
+###### BSDA
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2709,7 +2756,7 @@ The median systolic blood pressure for NHANES participants was 118 mmHG. A sign 
 :::::
 
 
-###### {**DescTools}
+###### DescTool
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2816,7 +2863,7 @@ Compute the test statistic.
 
 ::: {.panel-tabset}
 
-###### {**stats**}
+###### stats
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2840,7 +2887,7 @@ stats::wilcox.test(
 :::::
 
 
-###### {**rstatix**}
+###### rstatix
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2962,7 +3009,7 @@ Compute the test statistic.
 
 ::: {.panel-tabset}
 
-###### {**stats**}
+###### stats
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2996,7 +3043,7 @@ For more information on the different Wilcoxon tests read [Wilcoxon Test in R](h
 :::::
 
 
-###### {**rstatix**}
+###### rstatix
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -3082,7 +3129,7 @@ We will interpret only the absolute value of the effect size because the directi
 :::::
 
 
-###### {**rcompanion**}
+###### rcompanion
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -3258,11 +3305,14 @@ During my research for packages with functions for alternative test if the t-tes
 - {**statsExpressions**}: Tidy Data Frames and Expressions with Statistical Details. Utilities for producing data frames with rich details for the most common types of statistical approaches and tests.
 
 ```{r}
-#| label: pkgs-dl-alternative-tests
-#| include: false
-#| eval: false
+#| label: tbl-pkgs-dl-misc-tests
+#| tbl-cap: "Download numbers of miscellanous packages with test functions"
+#| cache: true
+#| echo: false
 
-pkgs_dl(c("ggstats", "ggstatsplot", "rcompanion", "statsExpressions"))
+glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
+
+(cranlogs_misc <- base::readRDS("data/chap06/cranlogs_misc.rds"))
 ```
 
 ::::

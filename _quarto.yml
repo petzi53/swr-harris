@@ -20,6 +20,7 @@ book:
     - 04-probability-distributions.qmd
     - 05-chi-squared.qmd
     - 06-t-test.qmd
+    - 07-analysis-of-variance.qmd
     - 95-references.qmd
 
 bibliography:

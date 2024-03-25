@@ -1,0 +1,486 @@
+# Analysis of variance {#sec-chap07}
+
+```{r}
+#| label: setup
+#| include: false
+
+base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw()) 
+```
+
+## Achievements to unlock
+
+::: my-objectives
+::: my-objectives-header
+Objectives
+:::
+
+::: my-objectives-container
+**SwR Achievements**
+
+- **Achievement 1**: Exploring the data using graphics and descriptive statistics {@sec-chap07-achievement1}
+- **Achievement 2**: Understanding and conducting one-way ANOVA {#sec-chap07-achievement2}
+- **Achievement 3**: Choosing and using post hoc tests and contrasts {@sec-chap07-achievement3}
+- **Achievement 4**: Computing and interpreting effect sizes for ANOVA {@sec-chap07-achievement4}
+- **Achievement 5**: Testing ANOVA assumptions {@sec-chap07-achievement5}
+- **Achievement 6**: Choosing and using alternative tests when ANOVA assumptions are not met {@sec-chap07-achievement6}
+- **Achievement 7**: Understanding and conducting two-way ANOVA {@sec-chap07-achievement7}
+
+:::
+:::
+
+`r glossary("ANOVA")` is the statistical method used for comparing means across three or more groups. 
+
+- Like the `r glossary("student", "t-test")`, ANOVA has underlying assumptions.
+- Similar to `r glossary("chi-squared")`, ANOVA is an `r glossary("omnibus")` test.
+- Instead of using `r glossary("standardized residuals")`, ANOVA uses planned contrasts and post hoc tests.
+- Instead of `r glossary("Cramér’s V")` or `r glossary("odds ratio", "odds ratios")` for chi-squared and `r glossary("Cohen’s d")` for t-tests, $η^2$ and $ω^2$ are often reported as `r glossary("effect size", "effect sizes")` for ANOVA.
+
+
+## The technical difficulties problem (empty)
+
+## Resources & Chapter Outline
+
+### Data, codebook, and R packages {#sec-chap04-data-codebook-packages}
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for learning about descriptive statistics
+:::
+
+::: my-resource-container
+
+**Data**
+
+
+Two options:
+
+1. Download the `gss2018.rda` data set from <https://edge.sagepub.com/harris1e>.
+2. Use {**gssr**} to download the year 2018.
+
+(As a direct download with the {**gssr**} package results in labelled data with different column names and the necessary transformation will not gain any additional knowledge for me, I will take the `gss2018.rda` data set from the book.)
+
+**Codebook**
+
+Two options:
+
+1. Access variable documentation (not a full codebook) on the GSS Data Explorer website at <https://gssdataexplorer.norc.org/> 
+2. Use the help pages from {**gssr**} package.
+
+
+**Packages**
+
+1. Packages used with this chapter (sorted alphabetically)
+
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+-   {**car**): @pak-car (John Fox)
+-   {**dunn.test**} @pak-dunn.test (Alexis Dinno) (https://www.rdocumentation.org/packages/dunn.test/)
+
+    
+2. My additional packages (sorted alphabetically)
+
+
+
+:::
+:::
+
+
+
+### Get data {#sec-chap07-get-data}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-get-gss2018-book}
+: Get book GSS data set `gss2018.rda` and save it as `gss_2018.rds`
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-gss2018-book
+#| eval: false
+#| cache: true
+#| results: hold
+
+## run only once (manually) ####################
+## load "GSS" data.frame into memory
+base::load("data/chap07/gss2018.rda")
+
+gss_2018 <- GSS
+save_data_file("chap07", gss_2018, "gss_2018.rds")
+```
+
+(*For this R code chunk is no output available*)
+::::
+:::::
+
+
+### Show raw data {#sec-chap07-show-data}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-show-gss-2018-data}
+: Show summary for some `gss_2018` data
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: show-gss-2018-data
+
+
+gss_2018 <- base::readRDS("data/chap07/gss_2018.rds")
+gss_2018 |> 
+    dplyr::select(c("USETECH", "HAPPY", "SEX", "AGE", "DEGREE")) |> 
+    base::summary()
+```
+***
+
+- **USETECH**: During a typical week, about what percentage of your total time at work would you normally spend using different types of electronic technologies (such as computers, tablets, smart phones, cash registers, scanners, GPS devices, robotic devices, and so on)?
+- **HAPPY**: Taken all together, how would you say things are these days -- would you say that you are very happy, pretty happy, or not too happy?
+- **SEX**: Respondent’s sex
+- **AGE**: Respondent’s age
+- **DEGREE**: Respondent’s highest degree
+- 
+::::
+:::::
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap07-gss-procedure}
+: To get the full information for a variable in GSS
+::::::
+:::
+::::{.my-procedure-container}
+1. Go to <https://gssdataexplorer.norc.org/>
+2. In the box "Access and Analyze GSS Data" click on the "SEARCH VARIABLES" button.
+3. Click at "Select specific years", choose "2018" and confirm by pressing the "Apply"-button.
+4. Input the name of the variable "USETECH" into the field and confirm with <enter>.
+5. Open "Associated questions" by clicking the `>` symbol or by pressing the "Show Expanded View"-button.
+6. Click on the green variable name in the result list to get more detailed information about the variable.
+7. In contrast to the result in the book we get a slightly different coding scheme: We got four (not three) values outside the logical range of 0 to 100: -97, -98, -99, -100.
+
+![Screenshot of GSS Data Explorer 2018 USETECH variable values outside logical range](img/chap07/gss-usetech-codes-min.png){#fig-gss-usetech-codebook
+fig-alt="Table of the first 10 lines of GSS Data Explorer 2018 USETECH variable values"
+fig-align="center"}
+
+::::
+:::::
+
+:::::{.my-important}
+:::{.my-important-header}
+Recoding data exactly as in the book
+:::
+::::{.my-important-container}
+As we are going to use the data set from the book and not the current data set as it is today (2024-03-25) saved at the GSS website, we will for instance USETECH recode -1, 998 and 999 as missing data in our data frame (and not the current values).  
+
+Generally: There is nothing new for me in recoding the data. So I will apply all the necessary recoding in the next subsection in only one R code chunk.
+::::
+:::::
+
+
+
+### Recode data {#sec-chap07-recode-data}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-recode-gss2018}
+: Clean `gss_2018` data
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: recode-gss2018
+#| results: hold
+#| cache: true
+
+gss_2018 <- base::readRDS("data/chap07/gss_2018.rds")
+
+gss_2018_clean <- gss_2018 |> 
+    dplyr::select(c("USETECH", "HAPPY", "SEX", "AGE", "DEGREE")) |> 
+    dplyr::mutate(USETECH = dplyr::na_if(x = USETECH, y = -1)) |> 
+    dplyr::mutate(USETECH = dplyr::na_if(x = USETECH, y = 998)) |>
+    dplyr::mutate(USETECH = dplyr::na_if(x = USETECH, y = 999)) |>
+    dplyr::mutate(AGE = dplyr::na_if(x = AGE, y = 98)) |>
+    dplyr::mutate(AGE = dplyr::na_if(x = AGE, y = 99)) |>
+    dplyr::mutate(DEGREE = dplyr::na_if(x = DEGREE, y = 8)) |>
+    dplyr::mutate(DEGREE = dplyr::na_if(x = DEGREE, y = 9)) |>
+    dplyr::mutate(HAPPY = dplyr::na_if(x = HAPPY, y = 8)) |>
+    dplyr::mutate(HAPPY = dplyr::na_if(x = HAPPY, y = 9)) |>
+    dplyr::mutate(HAPPY = dplyr::na_if(x = HAPPY, y = 0)) |> 
+    
+    dplyr::mutate(SEX = forcats::as_factor(SEX)) |> 
+    dplyr::mutate(DEGREE = forcats::as_factor(DEGREE)) |> 
+    dplyr::mutate(HAPPY = forcats::as_factor(HAPPY)) |> 
+    
+    dplyr::mutate(SEX = forcats::fct_recode(SEX, 
+                                            male = "1", 
+                                            female = "2")) |> 
+    dplyr::mutate(DEGREE = forcats::fct_recode(DEGREE, 
+                                            "< high school" = "0", 
+                                            "high school" = "1",
+                                            "junior college" = "2",
+                                            "bachelor" = "3",
+                                            "graduate" = "4")) |> 
+    dplyr::mutate(HAPPY = forcats::fct_recode(HAPPY, 
+                                        "very happy" = "1",
+                                        "pretty happy" = "2",
+                                        "not too happy" = "3"))
+
+save_data_file("chap07", gss_2018_clean, "gss_2018_clean.rds")
+
+base::summary(gss_2018_clean)
+```
+
+::::
+:::::
+
+
+
+## Achievement 1: Descriptive statistics {#sec-chap07-achievement1}
+
+The work in this section is done in @sec-chap07-get-data, @sec-chap07-show-data and @sec-chap07-recode-data.
+
+### Explorative Data Analysis (EDA)
+
+**Question to explore**: Do people with higher educational degrees use technology at work more than people with lower degree?
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-eda}
+: Explorative Data Analysis (EDA)
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### mean / sd
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-usetech-mean-sd}
+: Mean and standard deviation of technology use by respondent’s highest degree
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-chap07-usetech-mean-sd
+#| fig-cap: "Mean and standard deviation of technology use by respondent’s highest degree"
+
+gss_2018_clean <- base::readRDS("data/chap07/gss_2018_clean.rds")
+
+usetech_degree <- gss_2018_clean |> 
+    tidyr::drop_na(USETECH, DEGREE) |>
+    dplyr::group_by(DEGREE) |> 
+    dplyr::summarize(mean_usetech = mean(USETECH),
+                     sd_usetech = sd(USETECH))
+usetech_degree
+
+```
+***
+It seems that we could affirm our question. With higher degree the value of the mean (representing the percentage of technology usage) is rising. But we have a big standard deviation, especially in the lowest degree group ($sd \approx 1.5 mean$). This could indicate that we have not a normal distribution because of high `r glossary("kurtosis")`, e.g. we could have more observations in the tails than a normal distribution would have (`r glossary("platykurtic")`).
+
+::::
+:::::
+
+
+###### replicate Figure 7.4
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-replicate-7-4}
+: Distribution of work time spent using technology by educational attainment
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-replicate-7-4
+#| fig-cap: "Distribution of work time spent using technology by educational attainment, using palette 'Spectral' of brewer scales"
+
+gg_gss_2018 <- gss_2018_clean |> 
+  tidyr::drop_na(USETECH) |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = DEGREE,
+          y = USETECH
+          )
+      ) +
+  ggplot2::geom_jitter(
+      ggplot2::aes(color = DEGREE), alpha = .6
+      ) +
+  ggplot2::geom_boxplot(
+      ggplot2::aes(fill = DEGREE), alpha = .4
+      ) +
+  ggplot2::scale_fill_brewer(
+      palette = "Spectral", 
+      guide = "none"
+      ) +
+  ggplot2::scale_color_brewer(
+      palette = "Spectral", 
+      guide = "none") +
+  ggplot2::theme_bw() +
+  ggplot2::labs(
+      x = "Highest educational attainment", 
+      y = "Percent of time spent using technology"
+      )
+
+gg_gss_2018
+```
+***
+
+Harris uses with this graph (Figure 7.4 in her book) the color schemes from [ColorBrewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3). See for more details the [color palettes of RColorBrewer](https://renenyffenegger.ch/notes/development/languages/R/packages/RColorBrewer/index) and the [screenshot](https://renenyffenegger.ch/notes/development/languages/R/packages/tmaptools/index#r-tmaptools-palette_explorer) of the `tmaptools::palette_explorer()` function. 
+
+But the chosen color palette is not appropriate for people with color vision deficiency (`r glossary("CVD")`). Mainly the yellow color is problematic as can be demonstrated with the following plot:
+
+
+```{r}
+#| label: fig-check-colorblind-save-gss_2018-plot
+colorblindr::cvd_grid(gg_gss_2018)
+```
+
+
+::::
+:::::
+
+###### better colors
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-techuse-dist}
+: Distribution of work time spent using technology by educational attainment (colorblind save)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: chap07-techuse-dist
+#| fig-cap: "Distribution of work time spent using technology by educational attainment, using the color save palette 'Okabe-Ito'"
+#| results: hold
+
+gg2_gss_2018 <- gss_2018_clean |> 
+  tidyr::drop_na(USETECH) |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = DEGREE,
+          y = USETECH
+          )
+      ) +
+  ggplot2::geom_jitter(
+      ggplot2::aes(color = DEGREE), alpha = .6
+      ) +
+  ggplot2::geom_boxplot(
+      ggplot2::aes(fill = DEGREE), alpha = .4
+      ) + 
+  ggokabeito::scale_color_okabe_ito(guide = "none") +
+  ggokabeito::scale_fill_okabe_ito(guide = "none") +
+  # ggplot2::scale_fill_brewer(
+  #     palette = "Spectral", 
+  #     guide = "none"
+  #     ) +
+  # ggplot2::scale_color_brewer(
+  #     palette = "Spectral", 
+  #     guide = "none") +
+  ggplot2::theme_bw() +
+  ggplot2::labs(
+      x = "Highest educational attainment", 
+      y = "Percent of time spent using technology"
+      )
+
+gg2_gss_2018
+colorblindr::cvd_grid(gg2_gss_2018)
+```
+
+***
+
+Although the color palette "Okabe-Ito" is also using a kind of yellow the result is much better in all CVD variants. Compare it with @fig-check-colorblind-save-gss_2018-plot.
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+What we can see with the graph is that there are many observation at the bottom and at the top of the range of the variable `USETECH`.  
+
+- Many people in the first two categories had selected 0% of their time at work is spent using technology (`r glossary("Floor", "Floor effect")`).
+- For all but the first category, there were a lot of people who selected 100% of their time at work is spent using technology (`r glossary("Ceiling", "Ceiling effect")`).
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! ANOVA with floor and ceiling effect
+:::
+::::{.my-watch-out-container}
+
+When there are floor or ceiling effects, this often means that the variation in a measure is limited by its range. Since ANOVA is an analysis of variance, which examines central tendency and variation together, the limitations of floor and ceiling effects can result in not finding differences when there are differences.
+
+Sometimes floor or ceiling effects are hints that the range of the variable is not chosen correctly. But this does not apply in our case, because the range of using technology from 0 to 100% is as wide as it can be. Besides I believe these extreme values do not relate to the true value of technology use in work. I think that today there is almost no work without some sort of technology support. On the other hand it is no very likely that 100% (every second of work) of technology use is realistic.
+::::
+:::::
+
+## Achievement 2: Conducting one-way ANOVA {#sec-chap07-achievement2}
+
+
+
+## Exercises (empty)
+
+## Packages introduced in this chapter (empty)
+
+### dunn.test
+
+:::::{.my-resource}
+:::{.my-resource-header}
+dunn.test: Dunn's Test of Multiple Comparisons Using Rank Sums 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-dunn.test}
+
+***
+
+{**dunn.test**}: [Dunn's Test of Multiple Comparisons Using Rank Sums](https://cran.r-project.org/package=dunn.test) [@dunn.test]
+
+Computes Dunn's test [@dunn1964] for stochastic dominance and reports the results among multiple pairwise comparisons after a Kruskal-Wallis test for stochastic dominance among k groups [@kruskal1952. The interpretation of stochastic dominance requires an assumption that the CDF of one group does not cross the CDF of the other. 
+
+{**dunn.test**} makes k(k-1)/2 multiple pairwise comparisons based on Dunn's z-test-statistic approximations to the actual rank statistics. The null hypothesis for each pairwise comparison is that the probability of observing a randomly selected value from the first group that is larger than a randomly selected value from the second group equals one half; this null hypothesis corresponds to that of the `r glossary("Mann-Whitney", "Wilcoxon-Mann-Whitney rank-sum test")`. Like the rank-sum test, if the data can be assumed to be continuous, and the distributions are assumed identical except for a difference in location, Dunn's test may be understood as a test for median difference. {**dunn.test**} accounts for tied ranks.
+
+{**dunn.test**}: Dunn's Test of Multiple Comparisons Using Rank Sums
+:::
+
+***
+::::
+:::::
+
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+
+## Session Info {.unnumbered}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+Session Info
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+
+
+::::
+:::::
