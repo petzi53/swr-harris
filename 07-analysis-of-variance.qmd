@@ -19,7 +19,7 @@ Objectives
 **SwR Achievements**
 
 - **Achievement 1**: Exploring the data using graphics and descriptive statistics {@sec-chap07-achievement1}
-- **Achievement 2**: Understanding and conducting one-way ANOVA {#sec-chap07-achievement2}
+- **Achievement 2**: Understanding and conducting one-way ANOVA {@sec-chap07-achievement2}
 - **Achievement 3**: Choosing and using post hoc tests and contrasts {@sec-chap07-achievement3}
 - **Achievement 4**: Computing and interpreting effect sizes for ANOVA {@sec-chap07-achievement4}
 - **Achievement 5**: Testing ANOVA assumptions {@sec-chap07-achievement5}
@@ -74,7 +74,7 @@ Two options:
 
 -   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
 -   {**car**): @pak-car (John Fox)
--   {**dunn.test**} @pak-dunn.test (Alexis Dinno) (https://www.rdocumentation.org/packages/dunn.test/)
+-   {**dunn.test**} @pak-dunn.test (Alexis Dinno)
 
     
 2. My additional packages (sorted alphabetically)
@@ -101,7 +101,7 @@ Two options:
 #| cache: true
 #| results: hold
 
-## run only once (manually) ####################
+## run only once (manually)
 ## load "GSS" data.frame into memory
 base::load("data/chap07/gss2018.rda")
 
@@ -192,6 +192,8 @@ Generally: There is nothing new for me in recoding the data. So I will apply all
 #| results: hold
 #| cache: true
 
+
+## run only once (manually) ############
 gss_2018 <- base::readRDS("data/chap07/gss_2018.rds")
 
 gss_2018_clean <- gss_2018 |> 
@@ -353,7 +355,7 @@ colorblindr::cvd_grid(gg_gss_2018)
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: chap07-techuse-dist
+#| label: techuse-dist
 #| fig-cap: "Distribution of work time spent using technology by educational attainment, using the color save palette 'Okabe-Ito'"
 #| results: hold
 
@@ -373,18 +375,11 @@ gg2_gss_2018 <- gss_2018_clean |>
       ) + 
   ggokabeito::scale_color_okabe_ito(guide = "none") +
   ggokabeito::scale_fill_okabe_ito(guide = "none") +
-  # ggplot2::scale_fill_brewer(
-  #     palette = "Spectral", 
-  #     guide = "none"
-  #     ) +
-  # ggplot2::scale_color_brewer(
-  #     palette = "Spectral", 
-  #     guide = "none") +
   ggplot2::theme_bw() +
   ggplot2::labs(
       x = "Highest educational attainment", 
       y = "Percent of time spent using technology"
-      )
+  )
 
 gg2_gss_2018
 colorblindr::cvd_grid(gg2_gss_2018)
@@ -421,7 +416,1114 @@ Sometimes floor or ceiling effects are hints that the range of the variable is n
 
 ## Achievement 2: Conducting one-way ANOVA {#sec-chap07-achievement2}
 
+### Introduction
 
+You can't apply the `r glossary("t-test")` as a number of different pairwise tests to compare categorical variables that have several levels (groups). The problem is that the `r glossary("Type-1", "Type I error")` piles ab with several tests. For example: With five groups in the `DEGREE` variable, pairwise comparisons with a t-test (i.e., conducting `r glossary("pairwise comparisons")`) would result in 10 t-tests. If each t-test had a p-value threshold of .05 for statistical significance, the probability of at least one Type I error is fairly high.
+
+***
+
+::: {#exp-chap07-type-1-2-errors}
+
+- **Type I error**: A glossary("Type-1", "Type I error")`, also called $\alpha$, is when there is no relationship but the study detects one. The $\alpha$ for Type I error is also the threshold set for statistical significance. The threshold for statistical significance is the amount of uncertainty tolerated in concluding whether or not a result is statistically significant.
+- **Type II error**: A `r glossary("Type-2", "Type II error")`, also called $\beta$, occurs when there is a relationship but the study did not detect it.
+- **Statistical power**: The power of a statistical test is the probability that the results of the test are not a Type II error.
+
+Definition of Type I and Type II errors
+:::
+***
+
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap07-familywise-type-1}
+: Probability of a Type I error when there are multiple comparisons
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\begin{align*}
+\alpha_{f} = 1 - (1 - \alpha_{i})^c \\
+c = \frac{k(k-1)}{2}
+\end{align*}
+$$ {#eq-chap07-familywise-type-1}
+
+***
+
+- $\alpha_{f}$: `r glossary("familywise")` Type I error rate
+- $\alpha_{i}$: the individual alpha set as the statistical significance threshold
+- $c$: number of comparisons
+- $k$: total number of groups
+
+***
+
+For a five-group `DEGREE` variable with $\alpha = .05$ for each pairwise comparison the familywise $\alpha_{f}$ would be:
+
+$$
+\begin{align*}
+\alpha_{f} = 1-(1-0.05_{i})^\frac{5(5-1)}{2} = \\
+\alpha_{f} = 1-(1-0.05_{i})^{10} = 0.4012631
+\end{align*}
+$$
+
+::::
+:::::
+
+> With 10 pairwise comparisons, the familywise $\alpha_{f}$ indicated there would be a 40% probability of making a Type I error. To control this error rate, and for efficiency, use a single ANOVA test instead of 10 t-tests. ANOVA is useful for testing whether three or more means are equal. It can be used with two means, but the t-test is preferable because it is more straightforward.
+
+:::::{.my-note}
+:::{.my-note-header}
+Running many tests
+:::
+::::{.my-note-container}
+I believe that the problem of a rising Type I error with a growing number of pairwise comparisons is also valid for other type of tests. Each test has the .05 threshold and a collection of many different tests with the same data rises the probability of making a Type I error. Using this strategy consciously is one form of `r glossary("p-hacking")`.
+::::
+:::::
+
+
+### F-Test statistic for ANOVA
+
+The F-statistic is a ratio where the variation between the groups is compared to the variation within the groups. The between-group variation is in the numerator to calculate F, while the within-group variation is in the denominator.
+
+> Subtracting the grand mean from the group mean results in the difference between the group and the overall sample. The difference between the grand mean and the group mean can be positive or negative and so is squared for the sum to more accurately represent the total of the differences. This squared value is then multiplied by nj or the number of people in the group and divided by k – 1, where k is the number of groups. This results in a numerator that quantifies the difference between the group means and grand mean for all the participants in the sample.
+
+> The denominator sums the squared difference between each individual observation yij and the mean of the individual’s group, quantifying how far the individuals in the group are from the mean of the group. This is divided by the number of individuals in the whole sample minus the number of groups.
+
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap07-f-statistic}
+: F-Statistic
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+\begin{align*}
+F &= \frac{\text{between-group variability}}{\text{within-group variability}} \\
+&= \frac{\text{explained variance}}{\text{unexplained variance}} \\
+&= \frac{s_{between}^2}{s_{within}^2}
+\end{align*}
+$$ {#eq-chap07-f-statistic}
+
+***
+
+> The F-statistic, then, could be referred to as a ratio of explained to unexplained variance. That is, how much of the variability in the outcome does the model explain compared to how much it leaves unexplained? The larger the F-statistic, the more the model has explained compared to what it has left unexplained.
+
+> The F-statistic can also be represented as the ratio of the variance between the groups to the variance within the groups.
+
+::::
+:::::
+
+### Computing F-test for using technology at the work place
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-f-test}
+: F-test for using technology at the work place
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### F-test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-f-test-usetech-degree}
+: Applying F-test `stats::oneway.test()`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: f-test-usetech-degree
+
+gss_2018_clean <- base::readRDS("data/chap07/gss_2018_clean.rds")
+
+stats::oneway.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean,
+    var.equal = TRUE
+)
+```
+
+::::
+:::::
+
+
+###### grand & group means
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-replicate-figure7-5}
+: Distribution of work time spent using technology by educational attainment, with grand mean and group means (Replication of book Figure 7.5)
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: techuse-dist-grand-mean
+#| fig-cap: "Distribution of work time spent using technology by educational attainment, with grand mean and group means"
+#| results: hold
+
+grand_mean <- 
+    base::mean(gss_2018_clean$USETECH, na.rm = TRUE)
+
+group_means <- gss_2018_clean |> 
+    tidyr::drop_na(USETECH, DEGREE) |> 
+    dplyr::group_by(DEGREE) |> 
+    dplyr::summarize(mean = mean(USETECH))
+
+gg3_gss_2018 <- gss_2018_clean |> 
+  tidyr::drop_na(USETECH) |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = DEGREE,
+          y = USETECH
+          )
+      ) +
+  ggplot2::geom_jitter(
+      ggplot2::aes(
+          alpha = .6
+      ),
+      color = "darkgrey"
+  ) +
+  ggplot2::geom_hline(
+      ggplot2::aes(
+          yintercept = grand_mean,
+          linetype = "solid"
+      ),
+      color = "steelblue",
+      linewidth = 1
+  ) +
+  ggplot2::geom_point(
+      data = group_means,
+      ggplot2::aes(
+          x = DEGREE,
+          y = mean,
+          size = 3
+      ),
+      color = "purple4",
+      inherit.aes = FALSE
+  ) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(
+      x = "Highest educational attainment", 
+      y = "Percent of time spent using technology"
+  ) +
+  ggplot2::scale_size_continuous(
+      name = "",
+      labels = "Group mean"
+  ) +
+  ggplot2::scale_linetype_discrete(
+      name = "",
+      labels = "Grand mean"
+  ) +
+  ggplot2::scale_alpha_continuous(
+      name = "",
+      labels = "Observation"
+  )
+
+gg3_gss_2018
+```
+
+***
+This R-Code junk replicates book’s Figure 7.5, which has no accompanying R code.
+
+> For each group, the group mean does a better job than the `r glossary("grand", "overall mean")` of explaining tech use *for that group*. The difference between the group mean and the overall mean is *how much better* the group mean is at representing the data in the group. This difference is used to compute the numerator of the `r glossary("F-statistic")`.
+::::
+:::::
+
+###### F-distributions
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-f-dist-examples}
+: F-distribution examples
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-f-dist-examples
+#| fig-cap: "F-distribution examples"
+
+ggplot2::ggplot(
+    tibble::tibble(x = c(0, 5)), 
+    ggplot2::aes(x = x,
+                 color = "text")
+    ) +
+    ggplot2::stat_function(fun = df, 
+                           args = list(df1 = 4, df2 = 2000), 
+                           ggplot2::aes(color = "4, 2000"),
+                           linewidth = .7) +
+    ggplot2::stat_function(fun = df, 
+                           args = list(df1 = 4, df2 = 25), 
+                           ggplot2::aes(color = "4, 25"),
+                           linewidth = .7) +
+    ggplot2::stat_function(fun = df, 
+                           args = list(df1 = 2, df2 = 2000), 
+                           ggplot2::aes(color = "2, 2000"),
+                           linewidth = .7) +
+    ggplot2::stat_function(fun = df, 
+                           args = list(df1 = 2, df2 = 25), 
+                           ggplot2::aes(color = "2, 25"),
+                           linewidth = .7) +
+    ggplot2::scale_color_manual(
+        name = "Degress of freedom\n(num, denom)",
+        values = c("purple4", "purple", "green", "seagreen"),
+        breaks = c("4, 2000","4, 25","2, 2000", "2, 25")
+    )
+
+```
+
+::::
+:::::
+
+###### Technology use (ANOVA)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-f-statistic-tech-use}
+: F-distribution for the technology use by degree ANOVA (df = 4 and 1404)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-f-statistic-tech-use
+#| fig-cap: "F-distribution for the technology use by degree ANOVA (df = 4 and 1404)"
+
+ggplot2::ggplot(
+    tibble::tibble(x = c(0, 5)), 
+    ggplot2::aes(x = x)
+    ) +
+    ggplot2::stat_function(fun = df, 
+                           args = list(df1 = 4, df2 = 1404), 
+                           linewidth = .7)
+```
+***
+
+> The F-distribution in @fig-f-statistic-tech-use suggested the F-statistic of 43.30 was far to the right in the tail of the distribution. The probability of an F-statistic this large or larger if the null were true was reported in the output as < 2.2e-16, which is < .001. With a p-value this tiny, the F-statistic would be considered statistically significant.
+
+
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+::: {.callout-tip}
+> The mean time spent on technology use was significantly different across degree groups [F(4, 1404) = 43.3; p < .05], indicating that these groups likely came from a population with different mean time spent on technology use by educational attainment. The highest mean was the percent of time used for technology by those with graduate degrees. The lowest mean was the percent of time used for technology by those with less than a high school diploma.
+:::
+
+
+## Achievement 3: Post hoc tests & contrasts {#sec-chap07-achievement3}
+
+`r glossary("ANOVA")` is --- similar as the `r glossary("chi-squared", "chi-squared test")` --- an `r glossary("omnibus")` test: iIt identifies whether there are any differences, but doesn’t give any information about what is driving the significant results.
+
+There are two main ways to determine where significant differences among groups are following a significant omnibus test:
+
+- **Post hoc tests**: Examining each pair of means to determine which means are the most different from each other.
+- **Planned contrasts**: Comparing specified subsets of means or groups of means.
+
+### Post hoc tests
+
+#### Bonferroni
+
+There are several different types of post hoc tests, and one of the more commonly used is the `r glossary("Bonferroni", "Bonferroni post hoc test")`.
+
+The Bonferroni adjustment multiplies each `r glossary("p-value")` from each `r glossary("t-test")` by the overall number of t-tests conducted. There were 10 pairwise comparisons (5 groups each pairwise = 5 * 2), so these p-values have been multiplied by 10. Higher p-values will not reach the threshold for statistical significance as often. Sometimes there are resulting p-values of 1.0000. As the p-value cannot be over 1, so for p-values that are over 1 when adjusted by the multiplication, they are rounded to exactly 1.0000.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-bonferroni-test}
+: Bonferroni post hoc test
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: bonferroni-test
+
+stats::pairwise.t.test(
+    x = gss_2018_clean$USETECH,
+    g = gss_2018_clean$DEGREE,
+    p.adjust.method = "bonferroni"
+)
+
+```
+***
+
+The output is different from previous statistical testing. Instead of a test statistic like t or F, the output is a matrix of p-values.
+
+The adjusted p-values for seven of the t-tests fall below .05 and so indicate that the difference in mean time using technology between two groups is statistically significant.
+
+- There are significant differences in mean time between less than high school and all of the other groups (p < .05); 
+- Likewise, there are significant differences in mean time using technology between high school and all other groups. 
+- There are no significant differences among the means of the three college groups (junior college, bachelor, graduate).
+
+
+::::
+:::::
+
+For the report it would be more informative if one could add the group means for the interpretation:
+
+```{r}
+#| label: group-means-usetech-degree
+
+gss_2018_clean |> 
+    tidyr::drop_na(USETECH, DEGREE) |> 
+    dplyr::group_by(DEGREE) |> 
+    dplyr::summarize(
+        group_means = base::round(base::mean(USETECH), 1)
+    )
+```
+
+::: {.callout-tip}
+> Mean percentage of time using technology at work was statistically significantly (p < .05) lower for people with less educational attainment than a high school diploma (m = 24.8) compared to each of the other groups, where the mean percentage of time using technology ranged from 49.6 to 68.7.
+:::
+
+#### Tukey’s Honestly Significance Difference (HSD)
+
+Tukey’s HSD post hoc test is a modified `r glossary("t-test")` with the test statistic, `q`. The `q` test statistic formula is the same as some versions of `t`, but the q-distribution is different from the t-distribution, raising the critical value necessary to reach statistical significance. Even with the same test statistic, it is more difficult to reach statistical significance with a Tukey’s `r glossary("HSD")` q-statistic compared to a t-test.
+
+$$
+q = \frac{m_{1} - m_{2}}{se}
+$$ {#eq-chap07-hsd}
+
+The `stats::TukeyHSD()` function does not work well with the `stats::oneway.test()` output from earlier, so the entire ANOVA model has to be re-estimated. The `stats:aov()` function works and takes similar arguments to the `stats::oneway.test()` function, so nesting the `stats::aov()` inside the `stats::TukeyHSD()` is one way to go.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-hsd}
+: Compute Tukey’s Honestly Significance Difference (HSD)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: chap07-hsd
+
+stats::TukeyHSD(
+    stats::aov(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+    )
+)
+
+```
+
+The number of significant results of the 10 test are the same, although the Bonferroni test is more conservative. For example the p-value of the pairwise test between junior college and bachelor are 0.58 in HSD but 1.0 in Bonferroni.
+
+::::
+:::::
+
+::: {.callout-tip}
+The mean time spent on technology use was significantly different across education groups [F(4, 1404) = 43.3; p < .05], indicating that these groups likely came from a population with different mean time spent on technology use depending on educational attainment. The highest mean was 68.7% of time used for technology for those with graduate degrees. The lowest mean was 24.8% of the time for those with less than a high school diploma. Mean percentage of time using technology was statistically significantly (p < .05) *lower* for people with less than a high school diploma (m = 24.8) compared to each of the other groups where the mean percentage of time using technology ranged from 49.6 to 68.7.
+:::
+
+
+### Planned comparisons
+
+#### Introduction
+
+`r glossary("Planned comparisons")` are computed by developing `r glossary("contrasts")` that specify which means to compare to which other means.
+
+::: {#bul-planned-contrasts}
+
+- The order of the factor variable is the exact order that should be used in the contrast.
+- A contrast is a group of numbers used to group categories. 
+- The categories grouped together should all be represented by the same number in the contrast. 
+- The numbers in the contrast should all add to zero. 
+- Any category not included in the contrast should be represented by a zero.
+
+Rules for planned contrasts 
+:::
+
+For example, to compare all the college groups to the high school group, the contrast would omit the less than high school group and compare the mean for everyone in the high school group to the mean of the combined three college groups: junior college, bachelor, and graduate.
+
+- 0 (< high school: do not include) 
+- 3 (high school) 
+- –1 (junior college) 
+- –1 (bachelor) 
+- –1 (graduate)
+
+The three categories represented by –1 will be grouped together because they are all represented by the same number.
+
+#### Compute planned contrasts
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-planned-constrasts}
+: Planned contrasts of using technology by degree
+::::::
+:::
+::::{.my-example-container}
+
+
+::: {.panel-tabset}
+
+###### high school & colleges
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-contrast-high-school-colleges}
+: Planned contrasts of using technology for the college groups to high school group
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: contrast-high-school-colleges
+#| results: hold
+
+## 1. put the contrast into a vector
+contrast1 <- c(0, 3, -1, -1, -1)
+
+## 2. link the contrast to the categorical variable using contrasts()
+stats::contrasts(x = gss_2018_clean$DEGREE) <- contrast1
+
+## 2a. view the structure of the DEGREE variable with contrast
+glue::glue("************** View the structure of DEGREE variable *****************")
+utils::str(object = gss_2018_clean$DEGREE)
+
+## 3. re-run the model using aov()
+usetech_degree_aov <- stats::aov(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+)
+
+## 4. apply the contrasts to the aov object
+glue::glue(" ")
+glue::glue("******************* Summarize the aov object ****************************")
+stats::summary.aov(
+    object = usetech_degree_aov,
+    split = list(DEGREE = 
+            list("high school vs. all college" = 1)))
+
+```
+
+***
+
+The output showed that mean technology use for those who finished high school was statistically significantly different from mean technology use for the three college groups combined [F(1, 1404) = 50.41; p < .001].
+
+To understand more of what was happening we need to lookat the means being compared with this contrast.
+
+::::
+:::::
+
+
+###### recode high school & colleges
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-contrast-no-high-school-colleges}
+: Using technology for the recoded planned contrast between college groups to high school group
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: contrast-no-high-school-colleges
+
+gss_2018_clean |> 
+    dplyr::mutate(DEGREE =
+          forcats::fct_collapse(DEGREE,
+                `all college` = c(
+                    "junior college",
+                    "bachelor",
+                    "graduate"
+                    ) 
+                )
+          ) |> 
+    dplyr::group_by(DEGREE) |> 
+    dplyr::summarize(mean_usetech = mean(USETECH, na.rm = TRUE),
+                     sd_usetech = sd(USETECH, na.rm = TRUE))
+```
+***
+
+I have used here the first time the `forcats::fct_collaps()` function. This is more understandable as the option in the book, where (a) all factors are recoded and the thre highest factors with the same name "all college".
+
+The difference between the mean technology use time for high school (m = 49.61) compared to all college groups combined (m = 66.97) is pretty large.
+
+::::
+:::::
+
+###### Plot hs & colleges
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-graph-contrast-no-high-school-colleges}
+: Plot of using technology for the recoded planned contrast between college groups to high school group
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-graph-contrast-no-high-school-colleges
+#| fig-cap: "Contrast between time using technology for the high school group to the three college groups (junior college, beachelor, graduate)"
+
+gss_2018_clean |> 
+    dplyr::mutate(DEGREE =
+          forcats::fct_collapse(DEGREE,
+                `all college` = c(
+                    "junior college",
+                    "bachelor",
+                    "graduate"
+                    ) 
+                )
+          ) |> 
+    dplyr::filter(DEGREE == "high school" | DEGREE == "all college") |> 
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            y = USETECH, 
+            x = DEGREE, 
+            fill = DEGREE, 
+            color = DEGREE
+        )
+    ) +
+    ggplot2::geom_boxplot(
+        alpha = .4,
+        na.rm = TRUE
+        ) + 
+    ggplot2::geom_jitter(
+        alpha = .6,
+        na.rm = TRUE
+        ) + 
+    ggplot2::scale_fill_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::scale_color_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::labs(
+        x = "Educational attainment", 
+        y = "Percent of time spent using technology"
+        )
+```
+***
+It is clear that the means of these two groups are different. The same probably would also be true for the less than high school group with the three college groups.
+::::
+:::::
+
+###### < hs to colleges
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-contrast-less-hs-colleges}
+: Planned contrasts of time using technology on the job between college groups to less than high school group
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: contrast-less-hs-colleges
+#| results: hold
+
+## 1. less than high school v. all college contrast
+contrast2 <- base::c(3, 0, -1, -1, -1)
+
+## 2. bind the two contrasts together (matrix required!)
+my_contrasts <- 
+    as.matrix(dplyr::bind_cols(
+        contrast1 = contrast1, 
+        contrast2 = contrast2))
+
+## 3. connect the tibble with factor variable
+stats::contrasts(gss_2018_clean$DEGREE) <-  my_contrasts
+
+## 4. compute ANOVA with planned contrasts
+stats::summary.aov(
+    object = usetech_degree_aov,
+    split = list(DEGREE = 
+            list("high school vs. all college" = 1,
+                 "< high school vs. all college" = 2)
+            )
+    )
+```
+
+::::
+:::::
+
+###### plot < hs & colleges
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-graph-less-than-hs-all-colleges}
+: Plot of using technology for the recoded planned contrast between college groups to less than high school group
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-graph-less-than-hs-all-colleges
+#| fig-cap: "Distribution of tech use at work by degree for contrast comparing all college groups combined to each of the other groups"
+
+gss_2018_clean |> 
+    dplyr::mutate(DEGREE =
+          forcats::fct_collapse(DEGREE,
+                `all college` = c(
+                    "junior college",
+                    "bachelor",
+                    "graduate"
+                    ) 
+                )
+          ) |> 
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = DEGREE, 
+            y = USETECH, 
+            fill = DEGREE, 
+            color = DEGREE
+        )
+    ) +
+    ggplot2::geom_boxplot(
+        alpha = .4,
+        na.rm = TRUE
+        ) + 
+    ggplot2::geom_jitter(
+        alpha = .6,
+        na.rm = TRUE
+        ) + 
+    ggplot2::scale_fill_manual(
+        values = c("gray70", "#7463AC", "dodgerblue"), 
+        guide = "none"
+        ) + 
+    ggplot2::scale_color_manual(
+        values = c("gray70", "#7463AC", "dodgerblue"), 
+        guide = "none"
+        ) + 
+    ggplot2::labs(
+        x = "Educational attainment", 
+        y = "Percent of time spent using technology"
+        )
+
+```
+
+::::
+:::::
+
+###### 4 contrasts
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-4-contrasts}
+: Four planned comparisons
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: chap07-4-contrasts
+
+## contrasts for ANOVA of tech time by degree 
+c1 <- c(2, -1, -1, 0, 0) 
+c2 <- c(0, 3, -1, -1, -1) 
+c3 <- c(0, 0, 2, -1, -1) 
+c4 <- c(0, 0, 0, -1, 1) 
+
+## bind the contrasts into a matrix 
+conts <- cbind(c1, c2, c3, c4) 
+conts
+
+```
+
+***
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap07-check-contrasts}
+: Check the values of the contrasts
+::::::
+:::
+::::{.my-procedure-container}
+1. Add up each contrast to make sure it adds to zero. 
+2. Multiply each value in each contrast with the corresponding values in the other contrasts and add up the products; this should also add to zero.
+::::
+:::::
+
+**ad 1**: The vectors are now columns. An example of a check is to sum the column c1: $2 + (-1) + (-1) + 0 + 0 = 0$. Columns c2, c3 and c4 also result to $0$. So the first check conditions was passed.
+
+**ad 2**: Now we have to multiply the values row-wise: $2 \times 0 \times 0 \times 0 = 0$ It is easy to check: Whenever there is $0$ in one of the columns then the result is also $0$. Adding all these products together results in $0 + 0 + 0 + 0 + 0 = 0$, so the second requirement is also met.
+
+::::
+:::::
+
+###### `aov()` 4 contrasts
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-aov-4-contrasts}
+: Conncet the matrix with all levels of the factor variable
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: chap07-aov-4-contrasts
+
+## connect the matrix with the factor variable 
+stats::contrasts(x = gss_2018_clean$DEGREE) <- conts 
+
+## estimate the ANOVA with 4 independent contrasts 
+usetech_degree_4_contrasts <- 
+    summary.aov(object = usetech_degree_aov, 
+        split = list(DEGREE = 
+             list("< high school vs. high school & jr college" = 1, 
+                  "high school vs. all college" = 2, 
+                  "jr college vs. bach or grad degree" = 3, 
+                  "bachelor’s vs. graduate degree" = 4)
+             )
+        ) 
+usetech_degree_4_contrasts
+```
+
+
+::::
+:::::
+
+###### Adjust p-values
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-adjust-p-values}
+: Adjust p-values for multiple comparisons
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: adjust-p-values
+
+adj_p_values <- stats::p.adjust(
+    p = usetech_degree_4_contrasts[[1]][["Pr(>F)"]], 
+    method = "bonferroni"
+    )
+adj_p_values
+```
+***
+
+The adjusted p-values were still very small, so the conclusions about statistical significance did not change, even when using a conservative adjustment like `r glossary("Bonferroni")`.
+
+::::
+:::::
+
+###### Violin plot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-4-planned-comp-violin-plot}
+: Visualizing the distribution of technology use at work by educational attainment for four planned comparisons
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-4-planned-comp-violin-plot
+#| fig-cap: "Visualizing the distribution of technology use at work by educational attainment for four planned comparisons (violin plot)"
+#| fig-height: 10
+#| results: hold
+#| cache: true
+
+## < high school / hs & jr college ########
+gg_violin1 <- gss_2018_clean |>
+  dplyr::mutate(DEGREE = 
+        dplyr::if_else(DEGREE == "< high school", "< high school",
+        dplyr::if_else(DEGREE %in% c("high school", 
+                                     "junior college"),
+                                     "high school & jr college",
+                                     NA))) |>
+  dplyr::mutate(DEGREE = 
+         base::factor(DEGREE, levels = c("< high school",
+                                         "high school & jr college"),
+                                         ordered = T)) |>
+  dplyr::filter(DEGREE == "< high school" | 
+                DEGREE == "high school & jr college") |> 
+
+      ggplot2::ggplot(
+        ggplot2::aes(
+            y = USETECH, 
+            x = DEGREE, 
+            fill = DEGREE, 
+            color = DEGREE
+        )
+    ) +
+    ggplot2::geom_violin(
+        alpha = .4,
+        na.rm = TRUE
+        ) + 
+    ggplot2::geom_jitter(
+        alpha = .6,
+        na.rm = TRUE
+        ) + 
+    ggplot2::scale_fill_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::scale_color_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::labs(
+        x = "Educational attainment", 
+        y = "Percent of time spent using technology"
+        )
+    
+    
+## high school & three college groups##########
+gg_violin2 <- gss_2018_clean |> 
+    dplyr::mutate(DEGREE =
+          forcats::fct_collapse(DEGREE,
+                `all college` = c(
+                    "junior college",
+                    "bachelor",
+                    "graduate"
+                    ) 
+                )
+          ) |> 
+    dplyr::filter(DEGREE == "high school" | DEGREE == "all college") |>
+    ggplot2::ggplot(
+        ggplot2::aes(
+            y = USETECH, 
+            x = DEGREE, 
+            fill = DEGREE, 
+            color = DEGREE
+        )
+    ) +
+    ggplot2::geom_violin(
+        alpha = .4,
+        na.rm = TRUE
+        ) + 
+    ggplot2::geom_jitter(
+        alpha = .6,
+        na.rm = TRUE
+        ) + 
+    ggplot2::scale_fill_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::scale_color_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::labs(
+        x = "Educational attainment", 
+        y = "Percent of time spent using technology"
+        )
+
+## jr college & bachelor & graduate ##########
+gg_violin3 <- gss_2018_clean |> 
+    dplyr::mutate(DEGREE = 
+    dplyr::if_else(DEGREE %in% c("< high school", "high school"), NA,
+    dplyr::if_else(DEGREE == "junior college", "jr college",
+    dplyr::if_else(DEGREE %in% c("bachelor", "graduate"),
+                                 "bachelor or graduate", NA)))) |>
+    dplyr::mutate(DEGREE = 
+      base::factor(DEGREE, 
+                   levels = c("jr college", 
+                              "bachelor or graduate", 
+                              ordered = T))) |>
+    dplyr::filter(DEGREE == "jr college" | DEGREE == "bachelor or graduate") |>
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            y = USETECH, 
+            x = DEGREE, 
+            fill = DEGREE, 
+            color = DEGREE
+        )
+    ) +
+    ggplot2::geom_violin(
+        alpha = .4,
+        na.rm = TRUE
+        ) + 
+    ggplot2::geom_jitter(
+        alpha = .6,
+        na.rm = TRUE
+        ) + 
+    ggplot2::scale_fill_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::scale_color_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::labs(
+        x = "Educational attainment", 
+        y = "Percent of time spent using technology"
+        )
+
+## bachelor & graduate ############
+gg_violin4 <- gss_2018_clean |> 
+    dplyr::mutate(DEGREE = 
+        dplyr::if_else(DEGREE == "bachelor", "bachelor",
+        dplyr::if_else(DEGREE == "graduate", "graduate", NA))) |>
+      dplyr::mutate(DEGREE = 
+        base::factor(DEGREE, 
+                     levels = c("bachelor", 
+                                "graduate", 
+                                ordered = T))) |>
+    dplyr::filter(DEGREE == "bachelor" | DEGREE == "graduate") |> 
+
+    ggplot2::ggplot(
+        ggplot2::aes(
+            y = USETECH, 
+            x = DEGREE, 
+            fill = DEGREE, 
+            color = DEGREE
+        )
+    ) +
+    ggplot2::geom_violin(
+        alpha = .4,
+        na.rm = TRUE
+        ) + 
+    ggplot2::geom_jitter(
+        alpha = .6,
+        na.rm = TRUE
+        ) + 
+    ggplot2::scale_fill_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::scale_color_manual(
+        values = c("gray70", "#7463AC"), 
+        guide = "none"
+        ) + 
+    ggplot2::labs(
+        x = "Educational attainment", 
+        y = "Percent of time spent using technology"
+        )
+
+gridExtra::grid.arrange(
+    gg_violin1, gg_violin2,
+    gg_violin3, gg_violin4,
+    ncol = 2)
+```
+
+***
+This is the replication of book’s Figure 7.10.
+::::
+:::::
+
+###### final
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-planned-comp-final}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: planned-comp-final
+#| cache: true
+#| results: hold
+
+
+
+## contrast 1 statistics ###########
+glue::glue(" ")
+glue::glue("#################### contrast 1 statistics ###################")
+gss_2018_clean  |> 
+  dplyr::mutate(DEGREE = 
+        dplyr::if_else(DEGREE == "< high school", "< high school",
+        dplyr::if_else(DEGREE %in% c("high school", 
+                                     "junior college"),
+                                     "high school & jr college",
+                                     NA))) |>
+  dplyr::mutate(DEGREE = 
+         base::factor(DEGREE, levels = c("< high school",
+                                         "high school & jr college"),
+                                         ordered = T)) |>
+  dplyr::group_by(DEGREE) |>
+  dplyr::summarise(
+      mean_usetech = base::mean(x = USETECH, na.rm = T),
+      sd_usetech = stats::sd(x = USETECH, na.rm = T))
+
+
+
+## contrast 2 statistics ##############
+glue::glue(" ")
+glue::glue("#################### contrast 2 statistics ###################")
+gss_2018_clean |>
+  dplyr::mutate(DEGREE = 
+         base::factor(DEGREE, labels = c(NA,
+               "high school", "all college",
+               "all college", "all college"),
+               ordered = T)) |>
+  dplyr::group_by(DEGREE) |>
+  dplyr::summarise(
+      mean_usetech = mean(x = USETECH, na.rm = T),
+      sd.usetech = sd(x = USETECH, na.rm = T)) 
+
+## contrast 3 statistics ##############
+glue::glue(" ")
+glue::glue("#################### contrast 3 statistics ###################")
+gss_2018_clean |>
+  dplyr::mutate(DEGREE = 
+    dplyr::if_else(DEGREE %in% c("< high school", "high school"), NA,
+    dplyr::if_else(DEGREE == "junior college", "jr college",
+    dplyr::if_else(DEGREE %in% c("bachelor", "graduate"),
+                                 "bach or grad degree", NA)))) |>
+    dplyr::mutate(DEGREE = 
+      base::factor(DEGREE, 
+                   levels = c("jr college", 
+                              "bach or grad degree", 
+                              ordered = T))) |>
+  dplyr::group_by(DEGREE) |>
+  dplyr::summarise(
+      mean_usetech = mean(x = USETECH, na.rm = T),
+      sd.usetech = sd(x = USETECH, na.rm = T))
+
+# contrast 4 statistics ####################
+glue::glue(" ")
+glue::glue("#################### contrast 4 statistics ###################")
+gss_2018_clean |>
+  dplyr::mutate(DEGREE = 
+    dplyr::if_else(DEGREE == "bachelor", "bachelor",
+    dplyr::if_else(DEGREE == "graduate", "graduate", NA))) |>
+  dplyr::mutate(DEGREE = 
+    base::factor(DEGREE, 
+                 levels = c("bachelor", 
+                            "graduate", 
+                            ordered = T))) |>
+  dplyr::group_by(DEGREE) |>
+  dplyr::summarise(
+     mean_usetech = mean(x = USETECH, na.rm = T),
+     sd_usetech = sd(x = USETECH, na.rm = T))
+
+```
+
+::::
+:::::
+
+
+
+
+:::
+
+::::
+:::::
+
+::: {.callout-tip}
+The mean time spent on technology use at work was significantly different across educational attainment groups [F(4, 1404) = 43.3; p < .05], indicating these groups likely came from populations with different mean time spent on technology use. The highest mean was percent of time used for technology for those with graduate degrees. The lowest mean was percent of time for those with less than a high school diploma. A set of planned comparisons found that the mean time spent using technology was statistically significantly (p < .05) lower for (a) those with < high school education (m = 24.8) compared to those with high school or junior college (m = 51.7), (b) those with a high school education (m = 49.61) compared to those with all college groups combined (m = 67.0), (c) those with a junior college degree (m = 62.4) compared to those with a bachelor’s or graduate degree (m = 68.2), and (d) those with a bachelor’s degree (m = 67.9) compared to those with a graduate degree (m = 68.7). Overall, the patterns show statistically significant increases in time spent using technology at work for those with more education.
+:::
+
+How many contrasts could be done and how all these statistical comparisons might be inflating the Type I error? --- In addition to each comparison comparing two things and each comparison adding to zero, the planned comparisons as a group should isolate each group (e.g., the high school group) *only one time*. This ensures that the contrasts are independent of each other since the variance for each group is only used by itself in a statistical comparison one time. Because each group is isolated one time, the total maximum number of contrasts allowable is one less than the number of groups.
+
+> When you have hypotheses ahead of time about which groups are different from one another, use `r glossary("planned comparisons")`. When you do not have hypotheses ahead of time about which means are different from each other, use post hoc tests if the ANOVA has a statistically significant `r glossary("F-statistic")`. Good research practices suggest that having hypotheses ahead of time is a stronger strategy unless the research is truly exploratory.
+
+::: {#bul-characeristic-contrast}
+
+- Contrast values add to zero. 
+- Each contrast compares two groups. 
+- Each category is only isolated one time. 
+- The maximum number of contrasts is one less than the number of categories.
+
+Characteristics of contrasts
+
+:::
+
+## Achievement 4: Effect sizes for ANOVA {#sec-chap07-achievement4}
 
 ## Exercises (empty)
 

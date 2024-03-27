@@ -92,6 +92,9 @@ crossref:
     - kind: float
       reference-prefix: Note
       key: not
+    - kind: float
+      reference-prefix: Explanation
+      key: exp
 
 pak-cap-location: top
 bul-cap-location: top

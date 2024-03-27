@@ -49,7 +49,7 @@ Objectives
 **SwR Achievements**
 
 - **Achievement 1**: Understanding the relationship between one categorical variable and one continuous variable using histograms, means, and standard deviations (@sec-chap06-achievement1)
-- **Achievement 2**: Comparing a sample mean to a population mean with a `r glossary("one-sample t-test")` (@sec-chap06-achievement2)
+- **Achievement 2**: Comparing a sample mean to a population mean with a `r glossary("one-sample", "one-sample t-test")` (@sec-chap06-achievement2)
 - **Achievement 3**: Comparing two unrelated sample means with an `r glossary("independent",  "independent-samples t-test")` (@sec-chap06-achievement3)
 - **Achievement 4**: Comparing two related sample means with a `r glossary("paired", "dependent-samples t-test")` (@sec-chap06-achievement4)
 - **Achievement 5**: Computing and interpreting an `r glossary("effect size")` for significant t-tests (@sec-chap06-achievement5)
@@ -566,7 +566,7 @@ bpx_stats
 
 ### Introduction
 
-We have a mean of the systolic blood pressure a little bit above 120.54 mmHG. This is almost exactly the upper cutoff value of 120 mmHG for the "normal range" of blood pressure. Is this only valid for the sample of also for the whole population? Have about half of the US people high systolic blood pressure, e.g. more than 120mmHG? The question can be answered with a `r glossary("one-sample t-test")`. The one sample t-test compares a sample mean to a *hypothesized or population* mean.
+We have a mean of the systolic blood pressure a little bit above 120.54 mmHG. This is almost exactly the upper cutoff value of 120 mmHG for the "normal range" of blood pressure. Is this only valid for the sample of also for the whole population? Have about half of the US people high systolic blood pressure, e.g. more than 120mmHG? The question can be answered with a `r glossary("one-sample", "one-sample t-test")`. The one sample t-test compares a sample mean to a *hypothesized or population* mean.
 
 :::::{.my-important}
 :::{.my-important-header}
