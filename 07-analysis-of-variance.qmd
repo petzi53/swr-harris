@@ -1525,6 +1525,338 @@ Characteristics of contrasts
 
 ## Achievement 4: Effect sizes for ANOVA {#sec-chap07-achievement4}
 
+Similar as the effect size `r glossary("Cramér’s V")` for `r glossary("chi-squared")` tests and `r glossary("Cohen’s d")` for t-test, there are also effect size indices for ANOVA:
+
+- **`r glossary("eta-squared")`**: It has a positive bias
+- **`r glossary("omega-squared")`**: An unbiased modern alternative
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap07-omega-squared}
+: Formula for omega-squared
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\omega^2 = \frac{F - 1}{f + \frac{n-k+1}{k-1}}
+$$ {#eq-chap07-omega-squared}
+
+- **F**: Statistics from the ANOVA result
+- **n**: Number of observations
+- **k**: Number of groups
+
+::::
+:::::
+
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-omega-squared-manual}
+: Manual computation of effect size omega-squared
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: omega-squared-manual
+#| results: hold
+
+gss_2018_clean <- base::readRDS("data/chap07/gss_2018_clean.rds")
+
+usetech_degree_aov <- stats::aov(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+)
+
+glue::glue("############# ANOVA model USETECH ~ DEGREE ##################")
+(
+    usetech_degree_aov_summary <- base::summary(usetech_degree_aov)
+)
+
+F_value = usetech_degree_aov_summary[[1]][["F value"]][[1]]
+n = base::nrow(usetech_degree_aov[["model"]])
+k = usetech_degree_aov[["rank"]]
+
+
+glue::glue(" ")
+glue::glue("############# Omega-squared ##################")
+omega_squared <- (F_value - 1) / (F_value + ((n - k + 1) / (k - 1)))
+omega_squared
+```
+***
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Error in the book’s calculation
+:::
+::::{.my-watch-out-container}
+In the first term in the book `-1` is missing! The formula is `F-1` that should be therefore `(summ.tech.anova[[1]][1, 4] -1)`. 
+
+With this correction we get the same value as in the manual calculation: `r omega_squared`.
+::::
+:::::
+
+::::
+:::::
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap07-omega-squared}
+: Interpretation of omega-squared effect size
+::::::
+:::
+::::{.my-assessment-container}
+
+- **Small**: $ω^2 = .01 \text{ to } ω^2 < .06$
+- **Medium**: $ω^2 = .06 \text{ to } ω^2 < .14$
+- **Large**: $ω^2 ≥ .14$
+
+***
+This is quite similar to the eta_squared ($\eta^2$) assessment as listed in [Computation of Effect Sizes](https://www.psychometrica.de/effect_size.html). 
+
+::::
+:::::
+
+::: {.callout-tip}
+The mean time spent on technology use at work was significantly different across educational attainment groups [F(4, 1404) = 43.3; p < .05], indicating these groups likely came from populations with different mean time spent on technology use. The highest mean was percent of time used for technology for those with graduate degrees. The lowest mean was percent of time for those with less than a high school diploma. A set of planned comparisons found that the mean time spent using technology was statistically significantly (p < .05) lower for (a) those with < high school education (m = 24.8) compared to those with high school or junior college (m = 51.7), (b) those with a high school education (m = 49.61) compared to those with all college groups combined (m = 67.0), (c) those with a junior college degree (m = 62.4) compared to those with a bachelor’s or graduate degree (m = 68.2), and (d) those with a bachelor’s degree (m = 67.9) compared to those with a graduate degree (m = 68.7). Overall, the patterns show statistically significant increases in time spent using technology at work for those with more education. The strength of the relationship between degree and time using technology at work was medium ($ω^2$ = .11).
+:::
+
+## Achievement 5: Testing ANOVA assumptions {#sec-chap07-achievement5}
+
+0. **Continuous variable and independent groups**: This is the prerequisite for ANOVA.
+1. **Normality**: Each sample was drawn from a normally distributed population.
+2. **Equal Variances**: The variances of the populations that the samples come from are equal.
+3. **Independence**: The observations in each group are independent of each other and the observations within groups were obtained by a random sample.
+
+### Testing normality
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-testing-normality}
+: Testing normality
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Density plot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-normality-density-plot}
+: Testing normality with density plots
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-testing-normality-density-plot
+#| fig-cap: "Density Plot: Testing normality of time spent with technology at the job diferentiated by highest educational attainment"
+
+gss_2018_clean |> 
+    tidyr::drop_na(USETECH) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = USETECH)
+    ) +
+    ggplot2::geom_density(
+        ggplot2::aes(
+            fill = DEGREE
+        )
+    ) +
+    ggplot2::facet_wrap(
+        facets = ggplot2::vars(DEGREE),
+        nrow = 2
+    ) +
+    ggokabeito::scale_fill_okabe_ito(guide = "none") +
+    ggplot2::labs(
+        x = "Percent of time using tech", 
+        y = "Probability density")
+```
+***
+
+None of these graphs looks normally distributed!
+::::
+:::::
+
+###### Q-Q plot small
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-normality-qq-plot1}
+: Testing normality with Q-Q plots
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-testing-normality-qq-plot1
+#| fig-cap: "Q-Q Plot: Testing normality of time spent with technology at the job diferentiated by highest educational attainment"
+#| cache: true
+
+gss_2018_clean  |> 
+  tidyr::drop_na(USETECH) |>
+  
+  ggplot2::ggplot(
+      ggplot2::aes(sample = USETECH)
+      ) +
+  ggplot2::geom_abline(
+      ggplot2::aes(
+          intercept = mean(USETECH), 
+          slope = sd(USETECH), 
+          linetype = "Normally distributed"),
+          color = "gray60", 
+          linewidth = 1
+      ) +
+  ggplot2::stat_qq(
+      ggplot2::aes(color = DEGREE)
+      ) +
+  ggokabeito::scale_color_okabe_ito(guide = "none") +
+  ggplot2::scale_linetype_manual(
+      name = "",
+      values = 1) +
+  ggplot2::labs(
+      x = "Theoretical normal distribution",
+      y = "Observed values of percent time using tech"
+      ) +
+  ggplot2::facet_wrap(
+      facets = ggplot2::vars(DEGREE), 
+      nrow = 2
+      )
+```
+
+***
+
+The text in the books says that "none of the groups appeared to be normally distributed based on either type of plot." This is ok for me with the density plot. But for me with not so much experience it is difficult to decide with the small Q-Q plots.
+
+The next tab display the Q-Q plots for each group much bigger.
+
+::::
+:::::
+
+###### Q-Q plot big
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-normality-qq-plot2}
+: Testing normality with Q-Q plots
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-testing-normality-qq-plot2
+#| fig-cap: "Q-Q Plot: Testing normality of time spent with technology at the job diferentiated by highest educational attainment"
+#| fig-height: 12
+#| cache: true
+
+gss_2018_clean  |> 
+  tidyr::drop_na(USETECH) |>
+  
+  ggplot2::ggplot(
+      ggplot2::aes(sample = USETECH)
+      ) +
+  ggplot2::geom_abline(
+      ggplot2::aes(
+          intercept = mean(USETECH), 
+          slope = sd(USETECH), 
+          linetype = "Normally distributed"),
+          color = "gray60", 
+          linewidth = 1
+      ) +
+  ggplot2::stat_qq(
+      ggplot2::aes(color = DEGREE)
+      ) +
+  ggokabeito::scale_color_okabe_ito(guide = "none") +
+  ggplot2::scale_linetype_manual(
+      name = "",
+      values = 1) +
+  ggplot2::theme(legend.position = "top") +
+  ggplot2::labs(
+      x = "Theoretical normal distribution",
+      y = "Observed values of percent time using tech"
+      ) +
+  ggplot2::facet_wrap(
+      facets = ggplot2::vars(DEGREE), 
+      nrow = 5
+      )
+```
+***
+
+Now I can see it very clearly: All groups are not normally distributed. One can also observe that the floor and ceiling values are driving some of the non-normality.
+::::
+:::::
+
+###### Shapiro-Wilk test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-normality-shapiro-wilk}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: testing-normality-shapiro-wilk
+#| fig-cap: "Shapiro-Wilk: Testing normality of time spent with technology at the job diferentiated by highest educational attainment"
+#| cache: true
+#| results: hold
+
+glue::glue("###### Test for the whole numeric USETECH vector #######")
+stats::shapiro.test(gss_2018_clean$USETECH)
+
+glue::glue(" ")
+glue::glue("###### Test for DEGREE groups of USETECH vector #######")
+gss_2018_clean |> 
+    dplyr::select(USETECH, DEGREE) |> 
+    tidyr::drop_na() |> 
+    dplyr::group_by(DEGREE) |> 
+    dplyr::summarize(
+        shapiro_p_value = stats::shapiro.test(USETECH)$p.value
+    )
+```
+
+***
+
+In contrast with the systolic blood pressure data we have this time less than 5,000 observations and can therefore apply the `r glossary("Shapiro-Wilk", "Shapiro-Wilk test")`  (see @sec-chap06-omnibus-tests).
+
+All five of the Shapiro-Wilk tests were statistically significant, indicating that the null hypothesis for this test (i.e., the data are normally distributed) has to be rejected for each group.
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Testing homogeneity of variances
+
+The data need to be not only normally distributed, but also spread out equally in each group, e.g. we need equal variances across groups.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-homogeneity-levine-test}
+: Levine’s test: Testing homogeneity of variances
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: testing-homogeneity-levine-test
+
+car::leveneTest(
+    y = USETECH ~ DEGREE, 
+    data = gss_2018_clean, 
+    center = mean)
+```
+***
+The p-value for the Levene’s test suggests that we need to reject the null hypothesis. The variances of the `USETECH` variable are statistically significantly different across groups (p < .05). The ANOVA fails the assumption of homogeneity of variances.
+::::
+:::::
+
+## Achievement 6: Alternative tests for ANOVA (#sec-chap07-achivement6)
+
 ## Exercises (empty)
 
 ## Packages introduced in this chapter (empty)
