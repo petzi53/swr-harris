@@ -176,8 +176,17 @@ save_data_file <- function(chapter_folder, object, file_name){
 # # See: https://bookdown.org/pbaumgartner/swr-harris/
 ################################################################
 pkgs_dl <-  function(pkgs, period = "last-week", days = 7) {
-    cranlogs::cran_downloads(when = period, packages = pkgs) |>
+    dl_pkgs <- cranlogs::cran_downloads(when = period, packages = pkgs)
+
+    start_date = base::min(dl_pkgs$date)
+    end_date = base::max(dl_pkgs$date)
+
+    dl_pkgs |>
         dplyr::group_by(package) |>
-        dplyr::summarize(n = trunc(sum(count) / days)) |>
-        dplyr::arrange(desc(n))
+        dplyr::summarize(average = trunc(sum(count) / days)) |>
+        dplyr::arrange(desc(average)) |>
+        dplyr::mutate(
+            from = start_date,
+            to = end_date
+            )
 }

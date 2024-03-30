@@ -128,7 +128,7 @@ Instead of downloading the file with {**httr**} I will use
 ::::{.my-note-container}
 Harris lists the older {**httr**} package, but now there is {**httr2**},
 "a modern re-imagining of {**httr**} that uses a pipe-based interface
-and solves more of the problems that `r glossary("API")` wrapping
+and solves more of the problems that `r glossary("APIx", "API")` wrapping
 packages face." (See @pak-httr2)
 
 The {**httr**} package is in the book just used for downloading the
@@ -6762,7 +6762,7 @@ Online resources of {**ggplot2**} code examples
     1](https://www.youtube.com/watch?v=h29g21z0a68) & [Video
     2](https://www.youtube.com/watch?v=0m4yywqNPVY)**: Two 2 hour (!)
     videos: Part I focuses on teaching the underlying theory of
-    {**ggplot2**} and how it is reflected in the `r glossary("API")`.
+    {**ggplot2**} and how it is reflected in the `r glossary("APIx", "API")`.
     Part II focuses on the extended {**ggplot2**} universe with
     practical examples from many extension packages. Further, at the end
     is a short section on how to approach new graphics [@pedersen2020a;

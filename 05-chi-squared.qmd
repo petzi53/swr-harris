@@ -8,6 +8,27 @@ base::source(file = "R/helper.R")
 ggplot2::theme_set(ggplot2::theme_bw()) 
 ```
 
+
+```{r}
+#| label: cranlogs
+#| include: false
+#| eval: false
+
+## run only once manually #########
+cranlogs_chi_squared_residuals <-  
+    pkgs_dl(c("janitor", "questionr", "rstatix", "descr"))
+save_data_file("chap05", cranlogs_chi_squared_residuals, "cranlogs_chi_squared_residuals.rds")
+
+cranlogs_cramers_v <- pkgs_dl(c("lsr", "rcompanion", "rstatix", "DescTools",
+         "confintr", "sjstats", "collinear"))
+save_data_file("chap05", cranlogs_cramers_v, "cranlogs_cramers_v.rds")
+```
+
+
+
+
+
+
 ## Achievements to unlock
 
 ::: my-objectives
@@ -1774,12 +1795,13 @@ There is also the possibility to use `graphics::mosaicplot()` with the option `s
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: pkgs-chisq-residuals
-#| tbl-cap: "Daily donwloads of packages with functions to display chi-squared residuals"
-#| cache: TRUE
+#| label: tbl-donwload-numbers-chi-squared-residuals-packages
+#| tbl-cap: "Download average numbers of packages with chi-squared residuals functions" 
+#| echo: false
+#| cache: true
 
-pkgs = c("janitor", "questionr", "rstatix", "descr")
-pkgs_dl(pkgs)
+(cranlogs_chi_squared_residuals <- 
+        base::readRDS("data/chap05/cranlogs_chi_squared_residuals.rds"))
 
 ```
 
@@ -2057,13 +2079,12 @@ Number of daily downloads for packages with functions to compute Cramér’s V
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: pkgs-cramers-v
-#| tbl-cap: "Daily donwloads of packages with functions to to compute Cramèr’s V"
-#| cache: TRUE
+#| label: tbl-donwload-numbers-cramers-v-packages
+#| tbl-cap: "Download average numbers of packages with Cramèr’s V tests" 
+#| echo: false
+#| cache: true
 
-pkgs = c("lsr", "rcompanion", "rstatix", "DescTools",
-         "confintr", "sjstats", "collinear")
-pkgs_dl(pkgs)
+(cranlogs_cramers_v <- base::readRDS("data/chap05/cranlogs_cramers_v.rds"))
 
 ```
 I have checked only {**lsr**} and {**rstatix**} as I was happy with the result of the {**rstatix**} package.

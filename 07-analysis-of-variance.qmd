@@ -8,6 +8,22 @@ base::source(file = "R/helper.R")
 ggplot2::theme_set(ggplot2::theme_bw()) 
 ```
 
+
+```{r}
+#| label: cranlogs
+#| include: false
+#| eval: false
+
+## run only once manually #########
+cranlogs_brown_forsythe <-  
+    pkgs_dl(c("onewaytests", "car", "doex", "homnormal", "CGPfunctions", "ALSM"))
+save_data_file("chap07", cranlogs_brown_forsythe, "cranlogs_brown_forsythe.rds")
+```
+
+
+
+
+
 ## Achievements to unlock
 
 ::: my-objectives
@@ -537,7 +553,8 @@ $$ {#eq-chap07-f-statistic}
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: f-test-usetech-degree
+#| label: tbl-f-test-usetech-degree
+#| tbl-cap: "Applying F-test statistic (ANOVA)"
 
 gss_2018_clean <- base::readRDS("data/chap07/gss_2018_clean.rds")
 
@@ -1404,17 +1421,17 @@ This is the replication of book’s Figure 7.10.
 ::::
 :::::
 
-###### final
+###### Contrasts statistic
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap07-planned-comp-final}
-: Numbered R Code Title
+:::::: {#cnj-chap07-planned-comp-contrasts-statistic}
+: Summary of the constrasts statistic
 ::::::
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: planned-comp-final
+#| label: planned-comp-contrast-statistic
 #| cache: true
 #| results: hold
 
@@ -1608,9 +1625,9 @@ With this correction we get the same value as in the manual calculation: `r omeg
 :::
 ::::{.my-assessment-container}
 
-- **Small**: $ω^2 = .01 \text{ to } ω^2 < .06$
-- **Medium**: $ω^2 = .06 \text{ to } ω^2 < .14$
-- **Large**: $ω^2 ≥ .14$
+- **Small**: $\omega^2 = .01 \text{ to } \omega^2 < .06$
+- **Medium**: $\omega^2 = .06 \text{ to } \omega^2 < .14$
+- **Large**: $\omega^2 ≥ .14$
 
 ***
 This is quite similar to the eta_squared ($\eta^2$) assessment as listed in [Computation of Effect Sizes](https://www.psychometrica.de/effect_size.html). 
@@ -1837,13 +1854,13 @@ The data need to be not only normally distributed, but also spread out equally i
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap07-testing-homogeneity-levine-test}
-: Levine’s test: Testing homogeneity of variances
+:::::: {#cnj-chap07-testing-homogeneity-levene-test}
+: Levene’s test: Testing homogeneity of variances
 ::::::
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: testing-homogeneity-levine-test
+#| label: testing-homogeneity-levene-test
 
 car::leveneTest(
     y = USETECH ~ DEGREE, 
@@ -1855,7 +1872,1019 @@ The p-value for the Levene’s test suggests that we need to reject the null hyp
 ::::
 :::::
 
-## Achievement 6: Alternative tests for ANOVA (#sec-chap07-achivement6)
+## Achievement 6: Alternative tests for ANOVA {#sec-chap07-achievement6}
+
+### Homogeneity of variances failed
+
+There are several tests available when the assumption of homogeneity fails. The book mentions two but there are others as well:
+
+- **Brown-Forsythe F-statistic**: Manually with `stats::oneway.test()` and `onewaytests::bf.test()`
+- **Welch Test**: `stats::oneway.test()` with `var.equal = FALSE`, and `onwaytests::welch.test()`, 
+- **Levene's Homogeneity Test**: `car::leveneTest()` with `center = median` (default), `onewaytests::homog.test()` with `method = "Levene"`.
+- **Bartlett Homogeneity Test**: `onewaytests::homog.test()` with `method = "Bartlett"`
+- **Fligner-Killeen Homogeneity Test**: `onewaytests::homog.test()` with `method = "Fligner"`
+
+
+#### Brown-Forsythe F-statistic
+
+The `r glossary("Brown-Forsythe", "Brown-Forsythe F-statistic")` uses the distance each observation has from the median of the variable. The alternate `r glossary("F-statistic")` is then computed using the same F formula but with the means computed from the distance to the median instead using the raw values of the continuous variable.
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Packages for Brown-Forsythe F-statistic
+:::
+::::{.my-resource-container}
+There are several packages with Brown-Forsythe F-statistic. Most of the explanations and examples in the internet propose {**onewaytests**}. Although this package has a low download figure under 100, I have added it to my package description in @sec-annex-a, because it includes many tests specialized for ANOVA with failed assumptions.
+
+Instead of the Brown-Forsythe F-statistic one could also use `r glossary("Levene", "Levene’s test")` from the {**car**} packages with the argument `center = median`.
+
+> Both Levene’s test and Brown-Forsythe test can be used for testing for homogeneity of variances on nonnormal data. But, the Brown-Forsythe test is more robust than Levene’s test when data distributions are skewed or heavy-tailed (Cauchy distribution). Brown-Forsythe test is a modified version of Levene’s test. ([Brown-Forsythe test for equality of variances in R](https://www.reneshbedre.com/blog/brown-forsythe-test-variance.html)) [@bedre2016].
+
+The {**CGPfunctions**} can’t be downloaded from CRAN beginning with R version 4.0, but you could use the [GitHub version](https://github.com/ibecav/CGPfunctions) after you installed the {**pwr**} package. (See [issue #44](https://github.com/ibecav/CGPfunctions/issues/44)).
+
+```{r}
+#| label: tbl-donwload-numbers-brown-forsythe-packages
+#| tbl-cap: "Download average numbers of packages with Brown-Forsythe tests" 
+#| echo: false
+#| cache: true
+
+(cranlogs_brown_forsythe <- base::readRDS("data/chap07/cranlogs_brown_forsythe.rds"))
+
+```
+
+::::
+:::::
+
+#### Welch’s F-statistic
+
+Welchs’s F-statistic is an alternate F-statistic used in analysis of variance when the assumption of homogeneity of variance is not met. The calculations for the Welch’s F-statistic use weights to calculate the group means and the grand mean.
+
+Instead of using the complex formula it is better to use R functions.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-testing-homogeneity-variances}
+: Testing homogeneity of variances with different tests
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Manual BF
+
+**NHST Step 1**
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The mean value of the transformed technology use variable is the same across educational attainment groups.
+- **HA**: The mean value of the transformed technology use variable is not the same across educational attainment groups.
+:::
+
+**NHST Step 2**
+
+Compute the test statistic.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-homogeneity-of-variances-bf-manually}
+: Transform the outcome variable and use the `oneway.test()`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: testing-homogeneity-of-variances-bf-manually
+#| results: hold
+
+gss_2018_clean <- base::readRDS("data/chap07/gss_2018_clean.rds")
+
+gss_2018_clean2 <- gss_2018_clean |> 
+    dplyr::group_by(DEGREE) |> 
+    dplyr::mutate(
+        usetech_tran = base::abs(USETECH - median(USETECH, na.rm = TRUE))
+        ) |> 
+    dplyr::ungroup()
+
+save_data_file("chap07", gss_2018_clean2, "gss_2018_clean2.rds")
+
+base::summary(gss_2018_clean2$usetech_tran)
+
+bf_test_manual <- stats::oneway.test(
+    formula = usetech_tran ~ DEGREE, 
+    data = gss_2018_clean2)
+bf_test_manual
+```
+
+
+::::
+:::::
+
+**NHST Step 3**
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value in this case is much less than .05. The value of an $F_{BF}$-statistic being this large or larger happens a tiny percentage of the time when the null hypothesis is true.
+
+**NHST Step 4**
+
+Conclude and write report.
+
+::: {.callout-tip}
+> The results show a statistically significant difference of the means of the transformed technology use variable by educational attainment group [$F_{BF}(4, 364.77) = 19.747; p < .05$].
+:::
+
+
+###### BF onewaytests
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-homogeneity-of-variances-bf-onewaytests}
+: Testing homogeneity of variances with Brown-Forsythe test from {**onewaytests**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: testing-homogeneity-of-variances-bf-onewaytests
+
+onewaytests::bf.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+)
+```
+
+::::
+:::::
+
+###### Welch (book)
+
+
+**NHST Step 1**
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: Time spent using technology is the same across educational attainment groups.
+- **HA**: Time spent using technology is not the same across educational attainment groups.
+:::
+
+### NHST Step 2
+
+Compute the test statistic. 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-homogeneity-of-variances-welch-book}
+: Testing homogeneity of variances with Welch’s test (book version)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: homogeneity-of-variances-welch-book
+
+stats::oneway.test(
+    formula = USETECH ~ DEGREE, 
+    data = gss_2018_clean, 
+    var.equal = FALSE
+    )
+
+```
+
+::::
+:::::
+
+### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value in this case is < 2.2e-16, which is much less than .05. The value of an $F_{W}$-statistic being this large or larger happens a tiny amount of the time when the null hypothesis is true.
+
+### NHST Step 4
+
+Conclude and write report.
+
+::: {.callout-tip}
+The results show a statistically significant difference in the mean of the USETECH variable by degree group [$F_{W}(4, 400.31) = 46.06; p < .05$].
+:::
+
+In contrast to the original ANOVA with 1404 `r glossary("degrees of freedom")` in the denominator(see: @tbl-f-test-usetech-degree), we have now with 400.31 fewer degrees of freedom. With fewer degrees of freedom, the `r glossary("F-statistic")` has to be a larger number to reach statistical significance.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-different-f-distributions}
+: Comparison of different F-distributions with 2000, 25 and 10 degrees of freedom
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-different-f-distributions
+#| fig-cap: "F-distributions with 4 degrees of freedom in the numerator and 10, 25, 2000 in the denominator and one with 2 df and 2000"
+
+ggplot2::ggplot() +
+  ggplot2::xlim(0, 5) +
+  ggplot2::geom_function(fun = df, 
+                           args = list(df1 = 4, df2 = 2000), 
+                           ggplot2::aes(color = "4, 2000"),
+                           linewidth = .7) +
+    ggplot2::geom_function(fun = df, 
+                           args = list(df1 = 4, df2 = 25), 
+                           ggplot2::aes(color = "4, 25"),
+                           linewidth = .7) +
+    ggplot2::geom_function(fun = df, 
+                           args = list(df1 = 4, df2 = 10), 
+                           ggplot2::aes(color = "4, 10"),
+                           linewidth = .7) +
+    ggplot2::geom_function(fun = df, 
+                           args = list(df1 = 2, df2 = 2000), 
+                           ggplot2::aes(color = "2, 2000"),
+                           linewidth = .7) +
+    ggokabeito::scale_color_okabe_ito(
+        name = "Degress of freedom\n(num, denominator)",
+        breaks = c("4, 2000","4, 25","4, 10", "2, 2000")
+    )
+
+```
+***
+
+Although there isn’t much difference between three of the distributions, the area under the curves is what matters for the `r glossary("p-value")` cutoff. When the line is just slightly closer to the x-axis, this changes things quickly for the area under the curve.
+
+The thresholds for statistical significance (p < .05) for these three lines are 
+
+- 2.38 for the 2000 degrees of freedom, 
+- 2.76 for the 25 degrees of freedom, and 
+- 3.48 for the 10 degrees of freedom. 
+
+The numerator degrees of freedom had a much bigger impact on the significance threshold. For example, an ANOVA with 2 degrees of freedom and the same 2000 degrees of freedom in the denominator would have a threshold for (p < .05) significance of 3.00 instead of 2.38 for the 4 and 2000 threshold. You can see the very different function curve in the graph.
+
+
+::::
+:::::
+
+
+###### Welch onewaytests
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-homogeneity-of-variances-welch-onewaytests}
+: Testing homogeneity of variances with Welch’s test with {**onewaytests**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: homogeneity-of-variances-welch-onewaytests
+
+onewaytests::welch.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+)
+```
+***
+
+With the exception of a smaller p-value the results are the same as with `stats::oneway.test()`.
+::::
+:::::
+
+
+###### Misc tests with onewaytests
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-homogeneity-of-variances-misc-onewaytests}
+: Testing homogeneity of variances with different tests from the {**onewaytests**} package
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: testing-homogeneity-of-variances-misc-onewaytests
+
+onewaytests::homog.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean,
+    method = "Levene"
+)
+
+onewaytests::homog.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean,
+    method = "Bartlett"
+)
+
+onewaytests::homog.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean,
+    method = "Fligner"
+)
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+### Normality failed
+
+#### Kruskal-Wallis test
+
+The `r glossary("Kruskal-Wallis", "Kruskal-Wallis test")` is used to compare three or more groups when the normal distribution assumption fails for ANOVA. Like several of the tests used when the outcome is not normally distributed for a t-test, the Kruskal-Wallis (K-W) test compares ranks among groups. Specifically, the observations are put in order by size, and each is assigned a rank. The mean rank for each group is then computed and used to calculate the K-W test statistic, `H`.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap07-kruskal-wallis-test}
+: Kruskal-Wallis test
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+H = \frac{12}{n(n+1)}\sum_{j=1}^{k}n_{j}(\bar{r_{j}}-\frac{n+1}{2})^2
+$$ {#eq-chap07-kruskal-wallis}
+
+***
+
+- **$n$**: overall sample size
+- **$n_{j}$**: sample size for group $j$
+- **$\bar{r_{j}}$**: mean rank for group $j$
+
+
+::::
+:::::
+
+
+##### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The mean rank of technology use is the same across educational attainment groups
+- **HA**: The mean rank of technology use is not the same across educational attainment groups
+:::
+
+##### NHST Step 2
+
+Compute the test statistic. 
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-kruskal-wallis-tests}
+: Testing normality with the Kruskal-Wallis test
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### stats
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-kruskal-wallis-stats}
+: Compare using technology by highest educational attainment with `stats::kruskal.test()`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: kruskal-wallis-stats
+
+kw_test <- stats::kruskal.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+)
+kw_test
+```
+***
+
+The distribution of the H statistic is approximately a `r glossary("chi-squared")` distribution, so the R output lists “chi-squared” instead of `H`.
+
+
+::::
+:::::
+
+
+###### onewaytests
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-kruskal-wallist-onewaytests}
+: Compare using technology by highest educational attainment with `onewaytests::kw.test()`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: kruskal-wallist-onewaytests
+
+onewaytests::kw.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+)
+```
+
+The value of the statistic is the same as with `stats::kruskal.test()` but the p-value is lower, e.g. it is more stringent.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+
+
+
+##### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value in both tests, as usual, is very tiny. The value of an `H`-statistic being this large or larger happens a tiny percentage of the time when the null hypothesis is true.
+
+##### NHST Step 4
+
+Conclude and write report.
+
+::: {.callout-tip}
+There is a difference in the mean rank for technology use by degree group $[H(4) = 142.21; p < .05]$.
+:::
+
+##### Dunn’s post hoc test for Kruskal-Wallis
+
+Like the ANOVA results, the `r glossary("Kruskal-Wallis")` test identifies whether there is a difference somewhere among the means, but it does not identify which groups are different from one another. A post hoc test like `r glossary("Bonferroni")` or `r glossary("Tukey", "Tukey’s HSD")` could help. For K-W, the `r glossary("Dunn", "Dunn’s post hoc test of multiple comparisons")` is useful for identifying which groups are statistically significantly different from which other groups.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-ID-text}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### dunn test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-dunn-test}
+: Dunn’s post hoc test for Kruskal-Wallis
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: dunn-test
+
+dunn.test::dunn.test(
+    x = gss_2018_clean$USETECH,
+    g = gss_2018_clean$DEGREE,
+    method = "bonferroni"
+)
+
+```
+
+***
+
+The Dunn’s test is a rank-sum test just like the Mann-Whitney U and can be interpreted in the same way. 
+
+**No difference in technology use**
+
+- for graduate versus bachelor, 
+- junior college versus bachelor, 
+- junior college versus graduate.
+
+**Differences in technology use**
+
+- less than high school versus bachelor
+- less than high school versus graduate
+- less than high school versus high school
+- less than high school versus junior college
+- high school versus bachelor
+- high school versus graduate
+- high school versus junior college
+
+::: {.callout-tip}
+There are differences in technology use between all lower educational attainments (less than high school and high school) versus the higher educational attainments (junior college, bachelor, and graduate). There are also differences between less than high school versus high high school.
+
+There are no differences between the higher educational attainments junior college, bachelor, and graduate.
+:::
+
+::::
+:::::
+
+
+###### preparing graph
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-preparing-graph-dunn-test}
+: Preparing a graphic for visualizing the differences in the Dunn test
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: preparing-graph-dunn-test
+
+gss_2018_clean3 <- gss_2018_clean2  |> 
+    dplyr::mutate(
+        usetech_rank = rank(
+            x = USETECH, 
+            na.last = "keep"
+            )
+        )
+
+save_data_file("chap07", gss_2018_clean3, "gss_2018_clean3.rds")
+
+# check new variable
+summary(object = gss_2018_clean3$usetech_rank)
+```
+
+::::
+:::::
+
+###### graph
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-graph-dunn-test}
+: Visualizing the differences in the Dunn test
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: graph-dunn-test
+
+gss_2018_clean3 <-  base::readRDS("data/chap07/gss_2018_clean3.rds")
+
+gss_2018_clean3 |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          y = usetech_rank, 
+          x = DEGREE)
+      ) +
+  ggplot2::geom_jitter(
+      ggplot2::aes(color = DEGREE), 
+      alpha = .6,
+      na.rm = TRUE
+      ) +
+  ggplot2::geom_boxplot(
+      ggplot2::aes(fill = DEGREE), 
+      alpha = .4,
+      na.rm = TRUE
+      ) +
+  ggokabeito::scale_color_okabe_ito(guide = "none") +
+  ggokabeito::scale_fill_okabe_ito(guide = "none") +
+  ggplot2::labs(
+      x = "Educational attainment", 
+      y = "Ranks of technology use time"
+      )
+```
+
+***
+
+The graph confirms the result: The three college groups were very similar to one another, and there were differences among the other groups.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+##### Effect size for Kurskal-Wallis test
+
+`r glossary("Eta-squared")` works for Kruskal-Wallis. (But didn't we say in @sec-chap07-achievement4 that eta-squared has a positive bias and that we therefore should use `r glossary("omega-squared")` as outlined in @eq-chap07-omega-squared?) 
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap07-eta-squared}
+: Computing eta-squared effect size
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\eta_{H}^2 = \frac{H-k+1}{n-k}
+$$ {#eq-chap07-eta-squared}
+
+***
+
+- **H**: Test statistic
+- **k**: Groups
+- **n**: Number of observations
+
+
+::::
+:::::
+
+Besides a manual calculation I am going also to use {**effectsize**} and {**lsr**}.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-eta-squared}
+: Computation of eta-squared
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### manual
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-eta-squared-manual}
+: Computing eta-squared manually
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: eta-squared-manual
+
+k = 5 # group size
+n = nrow(tidyr::drop_na(gss_2018_clean, USETECH)) # number of observations
+H = kw_test[["statistic"]][["Kruskal-Wallis chi-squared"]] # statistic
+
+(H - k + 1) / (n - k)
+```
+***
+
+The value .098 is smaller than the omega-squared result of .11.
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap07-eta-squared}
+: Interpretation of eta-squared effect size
+::::::
+:::
+::::{.my-assessment-container}
+
+The cutoff values are the same as for `r glossary("omega-squared")`:
+
+- **Small**: $\eta^2 = .01 \text{ to } \eta^2 < .06$
+- **Medium**: $\eta^2 = .06 \text{ to } \eta^2 < .14$
+- **Large**: $\eta^2 ≥ .14$
+::::
+:::::
+
+::: {.callout-tip}
+A Kruskal-Wallis test found a statistically significant difference in technology use time at work across educational attainment groups (H = 142.21; p < .05). Based on a Dunn’s post hoc test, those with less than a high school education had statistically significantly lower mean ranked technology use time than all of the other groups (p < .05), and people with a bachelor’s degree, a graduate degree, or a junior college degree had significantly higher mean ranks than those with a high school diploma. There were no statistically significant differences among the three college groups. There was a medium effect size for the relationship between educational attainment and ranked values of technology use time (η2 = .098).
+:::
+::::
+:::::
+
+
+###### effectsize
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-eta-squared-effectsize}
+: Computing eta-squared with {**effectsize**}
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: eta-squared-effectsize
+
+effectsize::eta_squared(
+    model = usetech_degree_aov
+)
+```
+
+***
+This is the same result as with omega-squared!
+::::
+:::::
+
+###### lsr
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-eta-squared-lsr}
+: Computing eta-squared with {**effectsize**}
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: eta-squared-lsr
+
+lsr::etaSquared(
+    x = usetech_degree_aov
+)
+
+```
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+
+
+
+## Achievement 7: Two-way ANOVA {#sec-chap07-achievement7}
+
+### Introduction
+
+- **One-way ANOVA**: A single categorical variable (with 3+ categories) and the means of a continuous variable being compared across the categories.
+- **Two-way ANOVA**: Two categorical variables and the means of a continuous variable being compared across both categories.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-usetech-sex-degree}
+: Time spent with technology at job by sex and educational attainment (degree)
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Boxplot: USETECH by SEX
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-boxplot-usetech-sex}
+: Boxplot: Percentage of time using technology at Work by sex 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-boxplot-usetech-sex
+#| fig-cap: "Percentage of time using technology at Work by sex "
+
+gss_2018_clean <- base::readRDS("data/chap07/gss_2018_clean.rds")
+
+gss_2018_clean |> 
+    tidyr::drop_na(USETECH, SEX) |> 
+    dplyr::group_by(SEX) |> 
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = SEX,
+            y = USETECH
+        )
+    ) +
+    ggplot2::geom_boxplot(
+        ggplot2::aes(
+            fill = SEX
+        ),
+        alpha = .2
+    ) +
+    ggplot2::geom_jitter(
+        ggplot2::aes(
+            color = SEX
+        ),
+        alpha = 0.6
+    ) +
+    ggokabeito::scale_color_okabe_ito(guide = "none") +
+    ggokabeito::scale_fill_okabe_ito(guide = "none") +
+    ggplot2::labs(
+        x = "Sex",
+        y = "Percent of work time using technology"
+    )
+```
+***
+
+It seems that sex has some relationship to time spent on technology use.
+::::
+:::::
+
+
+###### Boxplot: USETECH by SEX & DEGREE
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-boxplot-usetech-sex-degree}
+: Boxplot: Percentage of time using technology at Work by sex & degree
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-boxplot-usetech-sex-degree
+#| fig-cap: "Percentage of time using technology at Work by sex & degree "
+
+gss_2018_clean |> 
+    tidyr::drop_na(USETECH, SEX, DEGREE) |> 
+    dplyr::group_by(SEX, DEGREE) |> 
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = DEGREE,
+            y = USETECH
+        )
+    ) +
+    ggplot2::geom_boxplot(
+        ggplot2::aes(
+            fill = SEX
+        ),
+        alpha = .2
+    ) +
+    
+    ggokabeito::scale_color_okabe_ito(guide = "none") +
+    ggokabeito::scale_fill_okabe_ito() +
+    ggplot2::labs(
+        x = "Educational attainment",
+        y = "Percent of work time using technology"
+    )
+```
+***
+
+Males have higher use on technology only in the lowest educational achievement group (< high school.). In both highest groups (bachelor and graduate) males and females use technology at the job approximately at the same rate, whereas females with high school or junior college degree spend using technology at the job more time then males.
+::::
+:::::
+
+###### means plot1
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-means-plot1}
+: Means plot of technology use at work by educational attainment and sex
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-means-plot1
+#| fig-cap: "Means plot of technology use at work by educational attainment and sex"
+
+gss_2018_clean |> 
+    tidyr::drop_na(USETECH) |> 
+    dplyr::group_by(DEGREE, SEX) |>
+    dplyr::summarize(
+        means = base::mean(USETECH),
+        .groups = 'drop'
+    ) |> 
+    
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = DEGREE,
+            y = means,
+            group = SEX
+        )
+    ) +
+    ggplot2::geom_point(
+        ggplot2::aes(
+            color = SEX
+        ),
+        size = 3
+    ) +
+    ggplot2::geom_line(
+        ggplot2::aes(
+            color = SEX
+        ),
+        linewidth = 1,
+        linetype = "solid"
+    ) +
+    ggplot2::ylim(0, 100) +
+    ggplot2::labs(
+        x = "Educational attainment",
+        y = "Percent of time spent using technology"
+        ) +
+    ggokabeito::scale_color_okabe_ito()
+```
+
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Using `group` in the aesthetic of the first layer
+:::
+::::{.my-watch-out-container}
+In this code chunk I have prepared the data.frame, e.g. calculated the means that I used for the graph. But then I needed inside the graph the equivalent of `dplyr::group_by()` as well. Normally the grouping is done implicitly but there are some common cases where the default does not work correctly: 
+
+- At first I tried to connect the categorical data with a line. This requires the argument `group = 1`.
+- I needed a `SEX` grouping additionally to the display of `USETECH` by group means.
+
+(See for more detail the help file [Aesthetics: grouping](https://ggplot2.tidyverse.org/reference/aes_group_order.html))
+
+::::
+:::::
+
+###### means plot2
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-means-plot2}
+: Means plot of technology use at work by educational attainment and sex
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-means-plot2
+#| fig-cap: "Means plot of technology use at work by educational attainment and sex"
+
+
+gss_2018_clean |>
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = DEGREE,
+            y = USETECH,
+            fill = SEX
+            )
+    ) +
+    ggplot2::stat_summary(
+        fun =  mean,
+        geom = "point",
+        size = 3,
+        na.rm = TRUE,
+        ggplot2::aes(
+            color = SEX
+        )
+    ) +
+    ggplot2::stat_summary(
+        fun = mean,
+        geom = "line",
+        linewidth = 1,
+        linetype = "solid",
+        na.rm = TRUE,
+        ggplot2::aes(
+            group = SEX,
+            color = SEX
+        )
+    ) +
+    ggplot2::ylim(0, 100) +
+    ggplot2::labs(
+        x = "Educational attainment",
+        y = "Percent of time spent using technology"
+        ) +
+    ggokabeito::scale_color_okabe_ito()
+   
+    
+
+```
+
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Using `ggplot2::stat_summary()`
+:::
+::::{.my-watch-out-container}
+I have still not much experience with `ggplot2::stat_summary()`. I used it the first time in @cnj-chap03-book-revised, but in that occasion I tried to prevent a warning message and applied in other respects the code provided by the book.
+
+This time I used it for a group summary, e.g. a calculation I would have done with `dplyr::group_by()` and `dplyr::summarize()`.
+::::
+:::::
+
+###### means data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-means-data}
+: Comparing means of technology use at work by educational attainment and sex
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: chap07-means-data
+
+gss_2018_clean |> 
+  dplyr::group_by(DEGREE, SEX)  |> 
+  tidyr::drop_na(USETECH)  |> 
+  dplyr::summarize(
+      mean_usetech = base::mean(USETECH),
+      sd_usetech = stats::sd(USETECH),
+      .groups = 'drop'
+      )
+
+```
+***
+
+The biggest difference in time using technology at the job between male and female is in the group with a junior college degree.
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+@fig-means-plot1 and @fig-means-plot2 show that there interaction between the two variable `SEX` and `DEGREE.` because the lines are not parallel. Parallel lines would show that the mean of the continuous variable is consistently higher or lower for certain groups compared to others. Parallel lines indicate that there is no interaction between the two categorical variables. 
+
+When the means plot asn in our example shows lines that diverge or cross then there is an interaction between the categorical variables. The mean of the continuous variable is different at different levels of one categorical variable depending on the value of the other categorical variable. For example, mean technology use is lower for females compared to males for the lowest and highest educational attainment categories, but female technology use is higher than male technology use for the three other categories of educational attainment. The two variables are working together to influence the value of technology use.
+
 
 ## Exercises (empty)
 

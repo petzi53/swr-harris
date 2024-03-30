@@ -1265,12 +1265,11 @@ The packages {**effectsize**} and {**rstatix**} are important as they have many 
 
 ```{r}
 #| label: tbl-donwload-numbers-cohens-d-packages
-#| tbl-cap: "Download numbers of packages with Cohen’s d functions" 
+#| tbl-cap: "Download average numbers of packages with Cohen’s d functions" 
 #| echo: false
 #| cache: true
 
 
-glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
 (cranlogs_cohensd <- base::readRDS("data/chap06/cranlogs_cohensd.rds"))
 
 ```
@@ -2142,11 +2141,10 @@ After another research I will --- in addition to @sec-chap02-skewness --- propos
 
 ```{r}
 #| label: tbl-download-pkgs-skewness
-#| tbl-cap: "Download numbers of packages with skewness functions"
+#| tbl-cap: "Download average numbers of packages with skewness functions"
 #| cache: true
 #| echo: false
 
-glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
 (cranlogs_skewness <- base::readRDS("data/chap06/cranlogs_skewness.rds"))
 ```
 
@@ -2411,11 +2409,9 @@ Packages for the Anderson-Darling test
 
 ```{r}
 #| label: tbl-pkgs-anderson-darling-test
-#| tbl-cap: "Download numbers of packages with Anderson-Darling test functions"
+#| tbl-cap: "Download average numbers of packages with Anderson-Darling test functions"
 #| cache: true
 #| echo: false
-
-glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
 
 (cranlogs_ad_test <- base::readRDS("data/chap06/cranlogs_ad_test.rds"))
 ```
@@ -2550,11 +2546,9 @@ Packages for Levene's test
 
 ```{r}
 #| label: tbl-pkgs-downloads-levene-test
-#| tbl-cap: "Download numbers of packages with Levene’s test functions"
+#| tbl-cap: "Download average numbers of packages with Levene’s test functions"
 #| cache: true
 #| echo: false
-
-glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
 
 (cranlogs_levene_test <-  base::readRDS("data/chap06/cranlogs_levene_test.rds"))
 ```
@@ -2705,11 +2699,9 @@ Packages with function for the sign test
 
 ```{r}
 #| label: tbl-pkgs-downloads-sign-test
-#| tbl-cap: "Download numbers of packages with sign-test functions"
+#| tbl-cap: "Download average numbers of packages with sign-test functions"
 #| cache: true
 #| echo: false
-
-glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
 
 (cranlogs_sign_test <- base::readRDS("data/chap06/cranlogs_sign_test.rds"))
 ```
@@ -3306,11 +3298,9 @@ During my research for packages with functions for alternative test if the t-tes
 
 ```{r}
 #| label: tbl-pkgs-dl-misc-tests
-#| tbl-cap: "Download numbers of miscellanous packages with test functions"
+#| tbl-cap: "Download average numbers of miscellanous packages with test functions"
 #| cache: true
 #| echo: false
-
-glue::glue("Average of daily download for week {lubridate::week(lubridate::today())} of {lubridate::year(lubridate::today())}")
 
 (cranlogs_misc <- base::readRDS("data/chap06/cranlogs_misc.rds"))
 ```
