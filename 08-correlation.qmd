@@ -1,0 +1,1616 @@
+# Correlation coefficient {#sec-chap08}
+
+```{r}
+#| label: setup
+#| include: false
+
+base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw()) 
+```
+
+## Achievements to unlock
+
+::: my-objectives
+::: my-objectives-header
+Objectives
+:::
+
+::: my-objectives-container
+**SwR Achievements**
+
+-   **Achievement 1**: Exploring the data using graphics and descriptive
+    statistics (@sec-chap08-achievement1).
+-   **Achievement 2**: Computing and interpreting Pearson’s *r*
+    correlation coefficient (@sec-chap08-achievement2).
+-   **Achievement 3**: Conducting an inferential statistical test for
+    Pearson’s *r* correlation coefficient (@sec-chap08-achievement3).
+-   **Achievement 4**: Examining effect size for Pearson’s *r* with the
+    coefficient of determination (@sec-chap08-achievement4).
+-   **Achievement 5**: Checking assumptions for Pearson’s *r*
+    correlation analyses (@sec-chap08-achievement5).
+-   **Achievement 6**: Transforming the variables as an alternative when
+    Pearson’s *r* correlation assumptions are not met
+    (@sec-chap08-achievement6).
+-   **Achievement 7**: Using Spearman’s rho as an alternative when
+    Pearson’s *r* correlation assumptions are not met
+    (@sec-chap08-achievement7).
+-   **Achievement 8**: Introducing partial correlations
+    (@sec-chap08-achievement8).
+:::
+:::
+
+## The clean water conundrum
+
+-   Women and girls tend to be responsible for collecting water for
+    their families, often walking long distances in unsafe areas and
+    carrying heavy loads.
+-   In some cultures, lack of access to sanitation facilities also means
+    that women can only defecate after dark, which can be physically
+    uncomfortable and/or put them at greater risk for harassment and
+    assault.
+-   The lack of sanitation facilities can keep girls out of school when
+    they are menstruating.
+
+**Goals**
+
+1.  With data from a few different sources examining the relationship
+    between the percentage of people in a country with water access and
+    the percentage of school-aged girls who are in school.
+2.  With data exploring the relationship between the percentage of
+    females in school and the percentage of people living on less than
+    \$1 per day.
+
+## Resources & Chapter Outline
+
+### Data, codebook, and R packages {#sec-chap08-data-codebook-packages}
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for learning about descriptive statistics
+:::
+
+::: my-resource-container
+**Data**
+
+Two options:
+
+1.  Download the `water_educ_2015_who_unesco_ch8.csv` and
+    `2015-outOfSchoolRate-primarySecondary-ch8.xlsx` data sets from
+    <https://edge.sagepub.com/harris1e>.
+2.  Follow the instructions in Box 8.1 to import and clean the data
+    directly from the original Internet sources. Please note that the
+    WHO makes small corrections to past data occasionally, so use of
+    data imported based on Box 8.1 instructions may result in minor
+    differences in results throughout the chapter. To match chapter
+    results exactly, use the data provided.
+
+::: my-note
+::: my-note-header
+Using data provided from the book
+:::
+
+::: my-note-container
+I have learned a lot about data cleaning procedures in the last
+chapters. I feel secure and decided from now on that I will take data
+provided by the book. This help me to focus my attention on the
+statistical subjects of the book.
+:::
+:::
+
+**Codebook**
+
+Two options:
+
+1.  Download the codebook file `opioid_county_codebook.xlsx` from
+    <https://edge.sagepub.com/harris1e>.
+2.  Use the online version of the codebook from the amfAR Opioid &
+    Health Indicators Database website (https://opioid.amfar.org)
+
+**Packages**
+
+1.  Packages used with the book (sorted alphabetically) (Install the
+    following R packages if not already installed.)
+
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+-   {**readxl**}: @pak-readxl (Jennifer Bryan)
+-   {**lmtest**}: @pak-lmtest (Achim Zeileis)
+-   {**rcompanion**}: @pak-rcompanion (Salvatore Mangiafico)
+-   {**ppcor**}: @pak-ppcor (Seongho Kim)
+
+2.  My additional packages (sorted alphabetically)
+:::
+:::
+
+### Get data
+
+::: my-example
+::: my-example-header
+::: {#exm-chap08-get-data}
+: Get data for chapter 8
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### water-educ
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-get-water-educ-data}
+: Get Water-Education data
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: get-water-educ-data
+#| eval: false
+
+## run only once (manually)
+water_educ <- readr::read_csv(
+    file = "data/chap08/water_educ_2015_who_unesco_ch8.csv",
+    show_col_types = FALSE
+    )
+
+save_data_file("chap08", water_educ, "water_educ.rds")
+```
+:::
+:::
+
+###### header2
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-code-name-b}
+: Numbered R Code Title (Tidyverse)
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: text-bx
+
+1 + 1
+```
+:::
+:::
+:::
+:::
+:::
+
+------------------------------------------------------------------------
+
+### Show raw data
+
+::: my-example
+::: my-example-header
+::: {#exm-chap08-show-data}
+: Show data for chapter 8
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### water-educ
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-show-water-educ}
+: Show Water & Education data
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: tbl-show-water-educ
+#| tbl-cap: "Show descriptive data from the Water-Edcuation UNESCO file"
+
+water_educ <- base::readRDS("data/chap08/water_educ.rds")
+
+water_educ |> 
+    skimr::skim()
+```
+
+------------------------------------------------------------------------
+
+Instead of `base::summary()` I used `skimr::skim()` which fives more
+descriptive information.
+
+**Codebook**
+
+-   **country**: the name of the country
+-   **med.age**: the median age of the citizens in the country
+-   **perc.1dollar**: percentage of citizens living on \$1 per day or
+    less
+-   **perc.basic2015sani**: percentage of citizens with basic sanitation
+    access
+-   **perc.safe2015san**i: percentage of citizens with safe sanitation
+    access
+-   **perc.basic2015water**: percentage of citizens with basic water
+    access
+-   **perc.safe2015water**: percentage of citizens with safe water
+    access
+-   **perc.in.school**: percentage of school-age people in primary and
+    secondary school
+-   **female.in.school**: percentage of female school-age people in
+    primary and secondary school
+-   **male.in.school**: percentage of male school-age people in primary
+    and secondary school
+:::
+:::
+
+###### header2
+
+::: my-r-code
+::: my-r-code-header
+<div>
+
+: Numbered R Code Title (Tidyverse)
+
+</div>
+:::
+
+::: my-r-code-container
+```{r}
+#| label: text-by
+
+1 + 1
+```
+:::
+:::
+:::
+:::
+:::
+
+------------------------------------------------------------------------
+
+### Recode data
+
+## Exploring data {#sec-chap08-achievement1}
+
+The two variables of interests are:
+
+-   female.in.school and
+-   perc.basic2015water
+
+::: my-example
+::: my-example-header
+::: {#exm-chap08-exploring-data}
+: Exploring data for chapter 8
+:::
+:::
+
+::: my-example-container
+::: panel-tabset
+###### mean & sd
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-mean-sd-water-educ}
+: Mean and standard deviation for `female.in.school` and
+`perc.basic2015water`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: mean-sd-water-educ
+
+water_educ |> 
+    skimr::skim(c(female.in.school, perc.basic2015water)
+    )
+```
+
+------------------------------------------------------------------------
+
+The mean percent of school-aged females in school was 87.06 (sd = 15.1),
+and the mean percent of citizens who had basic access to water was 90.16
+(sd = 15.82).
+
+This is a pretty high percentage. The very high median shows that there
+is a heavy left-skewed distribution. 93 & 97% are in the first half of
+the distribution located!
+
+::: my-note
+::: my-note-header
+Advantages of the `skimr::skim()` function
+:::
+
+::: my-note-container
+This above summary show the advantage of the `skimr::skim()` function
+versus the `base::summary()` resp. the extra calculation of mean and sd.
+`skimr::skim()` is (a) easier to use (just one line!) and (b) displays
+much more information, e.g., different percentiles with a small
+histogram. Important here is, for instance, that we can compare mean and
+median in one step.
+:::
+:::
+:::
+:::
+
+###### scatterplot1
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-scatterplot-female-water}
+: Scatterplot of `female.in.school` and `perc.basic2015water`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-scatterplot-female-water
+#| fig-cap: "Relationship of percentage of females in school and percentage of citizens with basic water access in countries worldwide"
+
+water_educ |> 
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = female.in.school / 100,
+            y = perc.basic2015water / 100
+        )
+    ) +
+    ggplot2::geom_point(
+        na.rm = TRUE,
+        ggplot2::aes(
+            color = "Country"                
+        ), 
+        size = 2.5,
+        alpha = 0.3
+    ) +
+    ggplot2::labs(
+        x = "Percent with basic water access",
+        y = "Percent of school-aged females in school" 
+    ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = "purple3"
+    ) +
+    ggplot2::scale_x_continuous(
+        labels = scales::label_percent()
+    ) +
+    ggplot2::scale_y_continuous(
+        labels = scales::percent
+    )
+    
+```
+
+------------------------------------------------------------------------
+
+I have used two different argument styles for the percent scale from the
+{**scales**} package (see: @pak-scales):
+
+-   `labels = scales::percent` as in the book
+-   `labels = scales::label_percent()` from the help file of the
+    {**scales**} package.
+:::
+:::
+
+###### scatterplot2
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-scatterplot-female-dollar}
+: Scatterplot of `female.in.school` and `perc.1dollar`
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: fig-scatterplot-female-dollar
+#| fig-cap: "Relationship of percentage of females in school and percentage of people living on less than $1 per day in countries worldwide"
+
+water_educ |> 
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = perc.1dollar / 100,
+            y = female.in.school / 100
+        )
+    ) +
+    ggplot2::geom_jitter(
+        na.rm = TRUE,
+        ggplot2::aes(
+            color = "Country"                
+        ),
+        size = 2.5,
+        alpha = 0.3
+    ) +
+    ggplot2::labs(
+        x = "Percent of people living on less than $1 per day", 
+        y = "Percent with basic water access"
+    ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = "purple3"
+    ) +
+    ggplot2::scale_x_continuous(
+        labels = scales::label_percent()
+    ) +
+    ggplot2::scale_y_continuous(
+        labels = scales::percent
+    )
+    
+```
+
+------------------------------------------------------------------------
+:::
+:::
+:::
+:::
+:::
+
+## Pearson’s *r* correlation coefficient {#sec-chap08-achievement2}
+
+### Introduction
+
+One method of measuring the relationship between two continuous variable
+is `r glossary("covariance cov", "covariance")`, which quantifies
+whether two variables vary together (co-vary).
+
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-covariance}
+: Formula for covariance
+:::
+:::
+
+::: my-theorem-container
+$$
+cov_{xy} = \sum_{i=1}^{n}\frac{(x_{i}-m_{x})(y_{i}-m_{y})}{n-1}
+$$ {#eq-chap08-covariance}
+:::
+:::
+
+The numerator essentially adds up how far each observation is away from
+the mean values of the two variables being examined, so this ends up
+being a very large number quantifying how far away all the observations
+are from the mean values. The denominator divides this by
+`r glossary("Bessel’s correction")` (@sec-chap04-clt) of $n – 1$, which
+is close to the sample size and essentially finds the average deviation
+from the means for each observation.
+
+I skipped Figure 8.4 and 8.5 because they do not bring any news for me.
+(Note that there is a wrong label for x-axis in Figure 8.5: Instead of
+"Percent living on less than \$1 per day" it says wrongly "Percent with
+basic water access".)
+
+### Missing values
+
+The covariance function `stats::cov()` is like the `base::mean()`
+function in that it cannot handle NA values. As we are going to
+calculate `female.in.school` with `perc.basic2015water` and
+`female.in.school` with `perc.1dollar` we would have three different
+variables with NA's.
+
+It is important not to to remove all rows with missing data of all three
+variables at the same time because that would delete more rows as for
+each pair of variable would be necessary. We know from
+@tbl-show-water-educ that
+
+-   `female.in.school` has no missing values
+-   `perc.basic2015water` has 1 missing value
+-   `perc.1dollar` has 33 missing values
+
+There are two options:
+
+a)  To use two different covariance calculations, each time with the
+    appropriate `tidyr::drop_na()` function as used finally in the book.
+b)  To apply the appropriate `use` argument of the `stats::cov()`
+    function for each calculations, which I will use and which was the
+    first try in the book.
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-cov-female-water-pov}
+: Covariance of females in school and percentage with basic access to
+drinking water
+:::
+:::
+
+::: my-r-code-container
+```{r}
+#| label: cov-female-water-pov
+
+water_educ |> 
+  dplyr::summarize(
+      cov_females_water = stats::cov(
+          x = perc.basic2015water,
+          y = female.in.school,
+          use = "pairwise.complete.obs",
+          method = "pearson"
+          ),
+      cov_females_pov = stats::cov(
+          x = perc.1dollar,
+          y = female.in.school,
+          use = "pairwise.complete.obs",
+          method = "pearson")
+      )
+```
+
+------------------------------------------------------------------------
+
+The book argument for NA's is `use = "complete"` which is an allowed
+abbreviation for `use = "complete.obs"`. I have employed
+`use = "pairwise.complete.obs"` which is a more precise argument but
+works only for the (default) "pearson" method.
+:::
+:::
+
+### Interpretation
+
+The covariance does not have an intuitive inherent meaning; it is not a
+percentage or a sum or a difference. In fact, the size of the covariance
+depends largely on the size of what is measured. For example, something
+measured in millions might have a covariance in the millions or hundreds
+of thousands. The value of the covariance indicates whether there is a
+relationship at all and the direction of the relationship --- that is,
+whether the relationship is positive or negative.
+
+In this case, a nonzero value indicates that there is some relationship.
+In the first case (`cov_females_water`) it is a positive relationship;
+in the second case (`cov_females_pov`) it is a negative relationship.
+The size of the numbers are irrelevant!
+
+Therefore `r glossary("standardization")` by dividing by the
+`r glossary("standard deviation")` of the two involved variables is
+necessary. The result is called the
+`r glossary("correlation", "correlation coefficient")` and is referred
+to as *r*.
+
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-pearson-r}
+: Computing the Pearson *r* correlation between two variables
+:::
+:::
+
+::: my-theorem-container
+$$
+\begin{align*}
+r_{xy} = \frac{cov_{xy}}{s_{x}s_{y}} \\
+r_{xy} = \sum_{i = 1}^{n}\frac{z_{x}z_{y}}{n-1}
+\end{align*}
+$$ {#eq-chap08-pearson-r}
+
+------------------------------------------------------------------------
+
+The second line is also know as the product-moment correlation
+coefficient. The formula for *r* can be organized in many different
+ways, one of which is as the mean of the summed products of
+`r glossary("z-score", "z-scores")`.
+
+::: my-assessment
+::: my-assessment-header
+::: {#cor-chap08-pearson-r}
+: Range of Pearson’s *r* and interpretation of strength
+:::
+:::
+
+::: my-assessment-container
+-   **-1: Negative correlations** occur when one variable goes up and
+    the other goes down.
+-   **0: No correlation** happens when there is no discernable pattern
+    in how two variables vary.
+-   **+1: Positive correlations** occur when one variable goes up, and
+    the other one also goes up (or when one goes down, the other one
+    does too).
+
+------------------------------------------------------------------------
+
+-   **r = –1.0** is perfectly negative
+-   **r = –.8** is strongly negative
+-   **r = –.5** is moderately negative
+-   **r = –.2** is weakly negative
+-   **r = 0** is no relationship
+-   **r = .2** is weakly positive
+-   **r = .5** is moderately positive
+-   **r = .8** is strongly positive
+-   **r = 1.0** is perfectly positive
+:::
+:::
+:::
+:::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap08-correlation}
+: Compute and show correlation
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### compute cor()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-cor-water-pov-female}
+: Compute correlations for water access, poverty and female education
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cor-water-pov-female
+
+water_educ <-  base::readRDS("data/chap08/water_educ.rds")
+
+water_educ |> 
+  dplyr::summarize(
+     cor_females_water = cor(
+         x = perc.basic2015water,
+         y = female.in.school,
+         use = "complete.obs"
+         ),
+     cor.females.pov = cor(
+         x = perc.1dollar,
+         y = female.in.school,
+         use = "complete.obs"
+         )
+     )
+```
+
+::::
+:::::
+
+
+###### graph1 cor
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-graph1-cor}
+: Display correlation water access and female education with `lm` and `loess` smoother with a special constructed legend
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-graph1-cor
+#| fig-cap: "Display correlation water access and female education with `lm` and `loess` smoother with a special constructed legend"
+
+water_educ |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          y = female.in.school/100, 
+          x = perc.basic2015water/100
+          )
+      ) +
+  ggplot2::geom_smooth(
+      ggplot2::aes(color = "Linear fit line"),
+      formula = y ~ x,
+      method = "lm",
+      se = FALSE, 
+      na.rm = TRUE
+      ) +
+    ggplot2::geom_smooth(
+      ggplot2::aes(color = "Loess line"),
+      formula = y ~ x,
+      method = "loess",
+      se = FALSE, 
+      na.rm = TRUE
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(size = "Country"), 
+      color = "#7463AC", 
+      alpha = .6,
+      na.rm = TRUE
+      ) +
+  ggplot2::labs(
+      y = "Percent of school-aged females in school",
+      x = "Percent with basic water access"
+      ) +
+  ggplot2::scale_x_continuous(labels = scales::percent) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::scale_color_manual(
+      values = c("gray60", "darkred"), 
+      name = ""
+      ) +      
+  ggplot2::scale_size_manual(values = 2, name = "")
+```
+***
+
+**`ggplot2::geom_smooth()` layer**
+
+- The formula argument would not be necessary, because the program assumes y ~ x for fewer than 1000 observations.
+- If I haven't specified the method with `lm` than the default value would have been chosen, e.g. (depending on fewer than 1000) which is a local polynomial regression fitting.
+- To show the difference I had used both `method = lm` and in another layer `method = loess`. The `r glossary("Loess", "Loess curve")` results in the slightly curved line (the red curve). Instead of fitting the whole data at once (= "lm"), method "loess" creates a local regression because the fitting at say point x is weighted toward the data nearest to x and not to the general mean.
+
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Legends are generated from attributes inside the `ggplot2::aes()` statement 
+:::
+::::{.my-watch-out-container}
+It is important to know: 
+
+- If all aesthetics are determined outside the `ggplot2::aes()` functions then there is not legend generated. 
+- The name of the aesthetics are arbitrary and result as labels inside the legend. 
+
+In this case I have used twice the "color" aesthetic, but as value I gave as argument was the type of line and not an actual color. The actual color for the lines you will fin in the `ggplot2::scale_color_manual()` layer at the very bottom of the code. 
+
+See also the next two graphs (@fig-graph2-cor and @fig-graph3-cor) about water access and female education where I have explored different types of points and lines inside the aesthetic function.
+::::
+:::::
+
+
+
+
+
+::::
+:::::
+
+###### graph2 cor
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-graph3-cor}
+: Display correlation water access and female education with two legends explaining what the different symbols represent
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-graph2-cor
+#| fig-cap: "Display correlation water access and female education with two legends explaining what the different symbols represent"
+
+water_educ |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          y = female.in.school/100, 
+          x = perc.basic2015water/100
+          )
+      ) +
+  ggplot2::geom_smooth(
+      ggplot2::aes(color = "Linear fit line"),
+      formula = y ~ x,
+      method = "lm",
+      se = FALSE, 
+      na.rm = TRUE
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(size = "Country"), 
+      color = "#7463AC", 
+      alpha = .6,
+      na.rm = TRUE
+      ) +
+  ggplot2::labs(
+      y = "Percent of school-aged females in school",
+      x = "Percent with basic water access"
+      ) +
+  ggplot2::scale_x_continuous(labels = scales::percent) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::scale_color_manual(values = "gray60", name = "Legend 2") +
+  ggplot2::scale_size_manual(values = 2, name = "Legend 1")
+```
+***
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Legends are generated from attributes inside the `ggplot2::aes()` statement 
+:::
+::::{.my-watch-out-container}
+The two `ggplot2::aes()` functions used for this graph are `ggplot2::aes(size = "Country")` and `ggplot2::aes(linetype = "Linear fit line")`. To get two different legends (point and lines), two different attributes were used within the `aes()`. 
+::::
+:::::
+
+
+
+
+
+::::
+:::::
+
+###### graph3 cor
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-graph3-cor}
+: Display correlation water access and female education with a legend explaining what the different symbols represent
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-graph3-cor
+#| fig-cap: "Display correlation water access and female education with a legend explaining what the different symbols represent"
+
+water_educ |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          y = female.in.school/100, 
+          x = perc.basic2015water/100
+          )
+      ) +
+  ggplot2::geom_smooth(
+      ggplot2::aes(color = "Linear fit line"),
+      formula = y ~ x,
+      method = "lm",
+      se = FALSE, 
+      na.rm = TRUE
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(color = "Country"), 
+      size = 2, 
+      alpha = .6,
+      na.rm = TRUE
+      ) +
+  ggplot2::labs(
+      y = "Percent of school-aged females in school",
+      x = "Percent with basic water access"
+      ) +
+  ggplot2::scale_x_continuous(labels = scales::percent) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::scale_color_manual(
+      name = "Legend",
+      values = c("#7463AC", "gray60") 
+      )
+```
+***
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! The name of the attribute inside the `aes()` is arbitrary
+:::
+::::{.my-watch-out-container}
+@fig-graph3-cor has the color attribute for both the points and the line within `aes()` and so both colors are included in the only legend.
+
+The name of the attribute inside the `aes()` is arbitrary and will result in the **label of the legend**. The type of this attribute has to be addressed and specified with the correct manual scale (`ggplot2::scale_xxx_manual()`) and will display the appropriate symbol for the attribute.
+
+**ATTENTION**: With new versions of {**ggplot2**} the symbols are not merged as in the book’s version. This would have been not correct, because the line does not go through all points. Points and lines are different aesthetics but they are merged under on legend with one common attribute, their color.
+::::
+:::::
+
+::: {.callout-tip}
+The Pearson’s product-moment correlation coefficient demonstrated that the percentage of females in school is positively correlated with the percentage of citizens with basic access to drinking water (r = 0.81). Essentially, as access to water goes up, the percentage of females in school also increases in countries.
+:::
+
+::::
+:::::
+
+###### graph4 cor
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-graph4-cor}
+: Display relationship of percentage of citizens living on less than $1 per day and the percent of school-aged females in school in countries worldwide
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-graph4-cor
+#| fig-cap: "Display correlation of percentage of citizens living on less than $1 per day and the percent of school-aged females in school in countries worldwide"
+
+water_educ |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          y = female.in.school/100, 
+          x = perc.1dollar/100
+          )
+      ) +
+  ggplot2::geom_smooth(
+      ggplot2::aes(color = "Linear fit line"),
+      formula = y ~ x,
+      method = "lm",
+      se = FALSE, 
+      na.rm = TRUE
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(color = "Country"), 
+      size = 2, 
+      alpha = .6,
+      na.rm = TRUE
+      ) +
+  ggplot2::labs(
+      y = "Percent of school-aged females in school",
+      x = "Percent of citizens living on less than $1 per day"
+      ) +
+  ggplot2::scale_x_continuous(labels = scales::percent) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::scale_color_manual(
+      name = "",
+      values = c("#7463AC", "gray60") 
+      )
+```
+***
+
+
+
+::::
+:::::
+
+::: {.callout-tip}
+The Pearson’s product-moment correlation coefficient demonstrated that the percentage of females in school is negatively correlated with the percentage of citizens living on less than $1 per day (r = -0.71). Essentially, as the percentage of citizens living on less than $1 per day goes up, the percentage of females in school decreases in countries.
+:::
+
+:::
+
+::::
+:::::
+
+## Achievement 3: Inferential statistical test for Pearson’s r {#sec-chap08-achievement3}
+
+
+### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: There is no relationship between the two variables (r = 0).
+- **HA**: There is a relationship between the two variables (r ≠ 0).
+:::
+
+### NHST Step 2
+
+Compute the test statistic. 
+
+The null hypothesis is tested using a `r glossary("t-statistic")` comparing the `r glossary("correlation", "correlation coefficient of r")` to a hypothesized value of zero.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-cor-test}
+: t-statistic for the significance test of r
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+\begin{align*}
+t = \frac{r_{xy}}{se_{r_{xy}}} \\
+se = \sqrt\frac{1-r_{xy}^2}{n-2} \\
+t = \frac{r_{xy}}{\sqrt\frac{1-r_{xy}^2}{n-2}} =\\
+t = \frac{r_{xy}\sqrt{n-2}}{\sqrt{1-r_{xy}^2}}
+\end{align*}
+$$ {#eq-chap08-cor-test}
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-ID-text}
+: Compute t-statistic for the significance test of r
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### manual
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-cor-test-manual}
+: Compute t-statistic for the significance test of *r* manually
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cor-test-manual
+
+test_data <- water_educ |> 
+  tidyr::drop_na(perc.basic2015water)  |> 
+  tidyr::drop_na(female.in.school) |> 
+  dplyr::summarize(
+      cor_females_water = cor(
+          x = perc.basic2015water,
+          y = female.in.school
+          ),
+      sample_n = dplyr::n()
+      )
+
+(test_data$cor_females_water * (sqrt(test_data$sample_n - 2))) /
+    (sqrt(1 - (test_data$cor_females_water^2)))
+```
+
+::::
+:::::
+
+
+###### cor.test()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-cor-test}
+: Compute t-statistic for the significance test of *r* with `stats::cor.test()`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: cor-test
+
+# cor.test(x = water_educ$perc.basic2015water,
+#          y = water_educ$female.in.school)
+
+# using instead the formula interface
+cor.test(
+    formula = ~ female.in.school + perc.basic2015water,
+    data = water_educ
+    )
+```
+***
+I have used the formula interface because it has a different syntax as I thought. My first trials were with `female.in.school ~ perc.basic2015water` but this didn't work. The (last) example in the help page demonstrated to me the other syntax.
+
+Note that it is not necessary to remove NA’s before applying `cor.test()` in both cases.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The very tiny p-value is statistically significant. 
+
+### NHST Step 4
+
+Conclude and write report.
+
+::: {.callout-tip}
+The percentage of people who have basic access to water is statistically significantly, positively, and very strongly correlated with the percentage of primary- and secondary-age females in school in a country [r = .81; t(94) = 13.33; p < .05]. As the percentage of people living with basic access to water goes up, the percentage of females in school also goes up. While the correlation is .81 in the sample, it is likely between .73 and .87 in the population (95% CI: .73–.87).
+:::
+
+## Achievement 4: Coefficient of determiniation as effect size {#sec-chap08-achievement4}
+
+Pearson’r is already a kind of effect size because it measures the strength of a relationship. But with the `r glossary("determination", "coefficient of determination")` $R^2$ (also $r^2$) there is another effect size measure with a more direct interpretation. The coefficient of determination is the percentage of the variance in one variable that is shared, or explained, by the other variable.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-formula-r-squared}
+: Computing the coefficient of determination $R^2$
+::::::
+:::
+::::{.my-theorem-container}
+$$
+r_{xy}^2 = (\frac{cov_{xy}}{s_{x}s_{y}})^2
+$$ {#eq-chap08-r-squared}
+::::
+:::::
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-compute-r-squared}
+: Compute r-squared ($R^2$)
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: compute-r-squared
+
+
+(stats::cor.test(
+    x = water_educ$perc.basic2015water, 
+    y = water_educ$female.in.school)$estimate
+)^2
+
+```
+***
+
+The `stats::cor.test()` function creates an object of type `htest` which is a list of 9 different object. One of these object is the numeric vector `estimate` that holds the correlation value. There are two option to calculate r-squared:
+
+1. Assign the result of `stats::cor.test()` function to a named object. Append `$estimate^2` to this object to get r-squared. I have this done in one step, and appended `$estimate^2` at the end of the function without providing an interim object.
+2. You could calculate the correlation with `stats:cor()` or `stats::cor.test()` and then take the result and square it to get r-squared. But this method is more error-prone.
+
+
+::::
+:::::
+
+## Achievement 5: Checking assumptions for Pearson’s r {#sec-chap08-achievement5}
+
+### Introduction
+
+***
+
+::: {#bul-assumptions-pearson-r}
+
+- Observations are independent (@sec-check-independence). 
+- Both variables are continuous (@sec-chap08-check-continuous). 
+- Both variables are normally distributed (@sec-chap08-check-normality).
+- The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-check-linearity). 
+- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity).
+
+Assumptions for Pearson’s r
+
+:::
+
+### Observations are independent {#sec-check-independence}
+
+So far the book had mentioned siblings and other family members or testing the same individuals several time as examples for not independent observations. Now we got two more examples:
+
+- Countries that are geographically close to each other, or that are in the same geographic region, may be more likely to share characteristics and therefore fail this assumption.
+- Countries in the analysis were those reporting data on the variables of interest, rather than a random sample of countries. Countries reporting data may be different from countries missing data. For example, they may have better computing infrastructure and more human and financial resources to afford to collect, store, and report data.
+
+### Continuous variables {#sec-chap08-check-continuous}
+
+Both variables need to be of type `numeric`. In our case we have the number of countries as integer variable: Counting something is integer, measuring something is continuous. But in our case it can be treated statistically like a continuous variable.
+
+The same is true with percent values, but there are some worries how to model percentages statistically. 
+
+> A couple of … papers suggested that percentage variables are problematic for statistical models that have the purpose of predicting values of the outcome because predictions can fall outside the range of 0 to 100.
+
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Dealing with percentage data
+:::
+::::{.my-resource-container}
+- Logistic regression [@zhao2001] 
+- Beta regression [@schmid2013; @cribari-neto2010; @ferrari2004]
+- Transforming the percentage 
+- Recoding the variable to categorical and using a nonparametric method like `r glossary("chi-squared")`.
+::::
+:::::
+
+
+### Normality {#sec-chap08-check-normality}
+
+Comparing `r glossary("histograms")` and `r glossary("Q-Q-plot", "Q-Q plots")` is one of the most applied techniques to test the normality assumption. I am also using histograms with an overlaid normal distribution and have an extra function developed for this recurring task.
+
+I will provide all three different graphs here one again, although I have already understood and memorized these practices.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap08-normality-assumption}
+: Checking the normality assumption
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### hist female
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-normality-female-hist}
+: Check normality of `female.in.school` variable
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-normality-female-hist
+#| fig-cap: "Distribution of percentage of school-aged females in school"
+
+water_educ  |> 
+  ggplot2::ggplot(
+      ggplot2::aes(x = female.in.school / 100)) +
+  ggplot2::geom_histogram(
+      fill = "#7463AC", 
+      col = "white",
+      bins = 30,
+      na.rm = TRUE
+  ) +
+  ggplot2::labs(
+      x = "Percent of school-aged females in school",
+      y = "Number of countries"
+  ) +
+  ggplot2::scale_x_continuous(
+      labels = scales::percent
+  )
+
+```
+
+::::
+:::::
+
+
+###### dnorm female
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-normality-female-hist-dnorm}
+: Percentage of school-aged females in school with an overlaid normal distribution
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-normality-female-hist-dnorm
+#| fig-cap: "Distribution of percentage of school-aged females in school"
+
+hist_dnorm(
+    df = water_educ,
+    v = water_educ$female.in.school / 100,
+    n_bins = 30,
+    x_label = "Percent of school-aged females in school"
+    ) +
+  ggplot2::scale_x_continuous(labels = scales::percent)
+
+```
+
+::::
+:::::
+
+###### abline()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-normality-female-qqplot-abline}
+: Comparison of the distribution of school-aged females in school with the theoretical normal distribution
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-normality-female-qqplot-abline
+#| fig-cap: "Q-Q-Plot: Distribution of school-aged females in school compared with the theoretical normal distribution"
+
+water_educ  |> 
+  ggplot2::ggplot(
+      ggplot2::aes(sample = female.in.school)
+  ) +
+  ggplot2::stat_qq(
+      ggplot2::aes(color = "Country"),
+      alpha = .6
+  ) +
+  ggplot2::geom_abline(
+      ggplot2::aes(
+          intercept = base::mean(female.in.school),
+          slope = stats::sd(female.in.school),
+          linetype = "Normally distributed"
+      ),
+          color = "gray60",
+          linewidth = 1
+  ) +
+  ggplot2::labs(
+      x = "Theoretical normal distribution",
+      y = "Observed values of percent of\nschool-aged females in school",
+      title = "Q-Q plot of female.in.school with `geom_abline()` and `ylim()`") +
+  ggplot2::ylim(0,100) +
+  ggplot2::scale_linetype_manual(values = "solid", name = "") +
+  ggplot2::scale_color_manual(values = "purple4", name = "")
+
+
+```
+***
+
+This graph is the replication of Figure 8.15. It uses `ggplot2::geom_abline()` by calculating the mean as intercept and the slop as standard deviation. This is more complex as the `ggplot2::geom_qq_line()` resp. `ggplot2::stat_qq_line()` but has the advantage that the legend displays the line symbol with the same slope.
+
+A more simple alternative is `ggplot2::geom_qq_line()` resp. `ggplot2::stat_qq_line()` because these commands compute automatically the slope and intercept of the line connecting the points at specified quartiles of the theoretical and sample distributions. I have this more simple approach already used when I checked the `r glossary("t-test")` assumptions in @sec-chap06-achievement6. 
+
+But here we are using percentages, e.g. we need to limit the y-axis to values between 0 and 100%. And this restrictions prevents to show the line of the theoretical normal distribution. 
+
+
+
+
+
+
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Do not forget, that the required aesthetic for the q-q-plot is "sample" and not "x"!
+:::
+:::::
+
+###### stat_qq_line()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-normality-female-qqplot-stat_qq-line}
+: Comparison of the distribution of school-aged females in school with the theoretical normal distribution
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-normality-female-qqplot-stat_qq-line
+#| fig-cap: "Q-Q-Plot: Distribution of school-aged females in school compared with the theoretical normal distribution"
+
+p1 <- water_educ  |> 
+  ggplot2::ggplot(
+      ggplot2::aes(sample = female.in.school)
+  ) +
+  ggplot2::stat_qq(
+      ggplot2::aes(color = "Country"),
+      alpha = .6
+  ) +
+  ggplot2::stat_qq_line(
+      ggplot2::aes(linetype = "Normally distributed"),
+     linewidth = 1,
+     color = "grey60",
+     fullrange = TRUE
+  ) +
+  ggplot2::labs(
+      x = "Theoretical normal distribution",
+      y = "Observed values of percent of\nschool-aged females in school",
+      title = "Q-Q plot of female.in.school\nwith `stat__qq_line()` witht `ylim()`") +
+  ggplot2::ylim(0,100) +
+  ggplot2::scale_linetype_manual(values = "solid", name = "") +
+  ggplot2::scale_color_manual(values = "purple4", name = "") +
+  ggplot2::theme(legend.position = "top")
+
+
+p2 <- water_educ  |> 
+  ggplot2::ggplot(
+      ggplot2::aes(sample = female.in.school)
+  ) +
+  ggplot2::stat_qq(
+      ggplot2::aes(color = "Country"),
+      alpha = .6
+  ) +
+  ggplot2::stat_qq_line(
+      ggplot2::aes(linetype = "Normally distributed"),
+     linewidth = 1,
+     color = "grey60",
+     fullrange = TRUE
+  ) +
+  ggplot2::labs(
+      x = "Theoretical normal distribution",
+      y = "Observed values of percent of\nschool-aged females in school",
+      title = "Q-Q plot of female.in.school\nwith `stat__qq_line()` without `ylim()`") +
+  ggplot2::scale_linetype_manual(values = "solid", name = "") +
+  ggplot2::scale_color_manual(values = "purple4", name = "") +
+  ggplot2::theme(legend.position = "top")
+
+gridExtra::grid.arrange(
+    p2, p1, ncol = 2
+)
+```
+***
+
+::: {.callout-warning}
+- Each group consists of only one observation. Do you need to adjust the aesthetic?
+- Removed 1 row containing missing values or values outside the scale range (`geom_path()`).
+:::
+
+- The left panel didn't use the `ggplot2::ylim(0, 100)` restriction. It display the line for the theoretical normal distribution far outside the upper limit.
+- The right panel used the ylim restriction but failed to show the line for the theoretical normal distribution and displays two warnings.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+There is nothing new when checking the normality assumption for basic water access. So I will skip these two graphs.
+
+### Linearity {#sec-chap08-check-linearity}
+
+The linearity assumption requires that the relationship between the two variables falls along a line. For instance this assumption is met in @fig-graph2-cor. If it is difficult to tell, a `r glossary("Loess", "Loess curve")` can be added to confirm linearity as I have done it in @fig-graph1-cor.
+
+It is instructive to see relationships that are non-linear. The next graph shows some relationships but they fall along curves instead of along straight lines.
+
+![Examples for nonlinear relationships](img/chap08/Nonlinear-relationships-min.png){#fig-nonlinear-relations
+fig-alt="The two variables seen in these two graphs are labeled x and y and are on the x and y axes respectively. Both graphs have a linear fit line as well as a less curve. The graph on the left titled 1, has x axis values that range from -10 to 5, in intervals of 5. The values on the y axis range from -100, to 100, in intervals of 50. The linear fit line in this graph is a horizontal line at the y axis value of about 30. The loess curve joins the data points in this graph in a U-shape with the midpoint at about (0, 0). The graph on the right titled 2, has x axis values that range from -10 to 5, in intervals of 5. The values on the y axis range from -100, to 100, in intervals of 50. The linear fit line in this graph is an upward-sloping line that starts at about (-65, -10) and ends at about (65, 10). The loess curve joins the data points in this graph in a curve that starts at about (-100, -10), rises sharply until about (-2.5, 0), and is parallel to the x axis until about (0.5, 0) and rises sharply again until about (10, 100). The loess curve intersects the linear fit line at three points, including at (0,0)."
+fig-align="center"}
+
+### Homoscedasticity {#sec-chap08-homoscedasticity}
+
+Another assumption is the equal distribution of points around the line, which is often called the assumption of `r glossary("homoscedasticity")`.
+
+Besides a visual graphical inspection the `r glossary("Breusch-Pagan", "Breusch-Pagan test")` could be used to test the null hypothesis that the variance is constant around the line. The Breusch-Pagan test relies on the `r glossary("chi-squared")` distribution, and the `lmtest::bptest()` function can be found in the {**lmtest**} package (see @pak-lmtest).
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap08-test-homoscedasticity}
+: Check if the homoscedasticity assumption is met
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### graph
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-test-homoscedasticity-graph}
+: Examine graphically if the equal distribution of points around the line (homoscedasticity assumption) is met
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-homoscedasticity-graph
+#| fig-cap: "Check if the homoscedasticity assumption is met"
+
+plt <- water_educ |> 
+  ggplot2::remove_missing(
+        na.rm = TRUE,
+        vars = c("perc.basic2015water", "female.in.school")
+  ) |> 
+  ggplot2::ggplot(
+        ggplot2::aes(
+            y = female.in.school/100, 
+            x = perc.basic2015water/100
+          )
+  ) +
+  ggplot2::geom_point(
+      ggplot2::aes(
+          size = "Country"
+          ), 
+      color = "purple4", 
+      alpha = .6
+  ) +
+  ggplot2::geom_smooth(
+      formula = y ~ x,
+      ggplot2::aes(
+          linetype = "Linear fit line"
+          ),
+      color = "grey60",
+      method = "lm",
+      se = FALSE
+      ) +
+  ggplot2::geom_segment(
+      ggplot2::aes(
+          linetype = "homoscedasticity check"
+      ),
+      y = 57 / 100, x = 17 / 100,
+      xend = 97 / 100, yend = 100 / 100,
+      linewidth = 0.5,
+      color = "grey60"
+  ) +
+    ggplot2::geom_segment(
+      ggplot2::aes(
+          linetype = "homoscedasticity check"
+      ),
+      x = 72 / 100, y = 25 / 100,
+      xend = 100 / 100, yend = 80 / 100,
+      linewidth = 0.5,
+      color = "grey60"
+  ) +
+  ggplot2::labs(
+      y = "Percent of school-aged females in school",
+      x = "Percent with basic access to water") +
+  ggplot2::scale_x_continuous(labels = scales::percent) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::scale_color_manual(
+      values = c("gray60", "darkred"), name = "") +
+  ggplot2::scale_size_manual(values = 2, name = "") +
+  ggplot2::scale_linetype_manual(values = c(2, 1), name = "")
+
+base::suppressWarnings(base::print(plt))
+```
+***
+
+This is the replication of Figure 8.20 of the book, that had no accompanying R code. I have applied trial and error for the `geom_segment()` layer. Later I noticed that I could have used the figures of the last paragraph of the fig-alt description.
+
+The funnel shape of the data indicated that the points were not evenly spread around the line from right to left. On the left of the graph they were more spread out than on the right, where they were very close to the line. This indicates the data do not meet the homoscedasticity assumption.
+
+
+
+
+::::
+:::::
+
+::: {.callout-warning}
+I suppressed two warning from {**ggplot2**}, one for each `ggplot2::geom_segment()` layer:
+
+> All aesthetics have length 1, but the data has 96 rows. Did you mean to use `annotate()`?
+:::
+
+###### Breusch-Pagan
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-test-homoscedasticity-breusch-pagan}
+: Check homoscedasticity with the Breusch-Pagan test
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: test-homoscedasticity-breusch-pagan
+
+lmtest::bptest(
+    formula = water_educ$female.in.school ~ water_educ$perc.basic2015water)
+```
+
+***
+
+The Breusch-Pagan test statistic has a low p-value (BP = 12.37; p = 0.0004), indicating that the null hypothesis that the variance is constant would be rejected, e.g., the homoscedasticity assumption is not met.
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+### Conclusion
+
+***
+
+::: {#bul-assumptions-pearson-r}
+
+- Observations are independent (@sec-check-independence): **No**. 
+- Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
+- Both variables are normally distributed (@sec-chap08-check-normality): **No**.
+- The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-check-linearity): **Yes**. 
+- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity): **No**.
+
+Summary of testing the assumptions for Pearson’s r in the example data
+:::
+
+***
+
+The big question is: What can be done that several of the assumptions are not met? The books gives some words of advice:
+
+- Report the results and explain that the analysis does not meet assumptions, so that it is unclear if what is happening in the sample is a good reflection of what is happening in the population. 
+- Transform the two variables to try and meet the assumptions for Pearson’s r and conduct the analysis again.
+- Choose a different type of analysis with assumptions that can be met by these data. 
+
+:::::{.my-note}
+:::{.my-note-header}
+My opinion to the three tips
+:::
+::::{.my-note-container}
+- The first advice is no solution. This strategy declares that the inferential process has failed.
+- Yes, this is a promising strategy. More on this in the next section.
+- I do not know what the third advice means. What kind of analysis is meant?
+::::
+:::::
+
+## Achievement 6: Transforming data {#sec-chap08-achievement6}
+
+
+## Exercises (empty)
+
+## Packages introduced in this chapter
+
+### lmtest
+
+:::::{.my-resource}
+:::{.my-resource-header}
+lmtest: Testing Linear Regression Models 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-lmtest}
+
+***
+
+{**lmtest**}: [Testing Linear Regression Models](https://cran.r-project.org/package=lmtest) [@lmtest]
+
+A collection of tests, data sets, and examples for diagnostic checking in linear regression models. Furthermore, some generic tools for inference in parametric models are provided.
+
+Vignette [Diagnostic Checking in Regression Relationships](https://cran.r-project.org/web/packages/lmtest/vignettes/lmtest-intro.pdf)
+
+{**lmtest**}: Testing Linear Regression Models
+:::
+
+***
+::::
+:::::
+
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+## Session Info {.unnumbered}
+
+::: my-r-code
+::: my-r-code-header
+Session Info
+:::
+
+::: my-r-code-container
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+:::
+:::

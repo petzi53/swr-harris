@@ -51,7 +51,7 @@ first_and_last_row <-  function(df) {
 
 # df        = data.frame or tibble
 # v         = character: numerical column of data.frame:
-#             syntax for call = df$v NO NA's !!!!
+#             syntax for call = df$v (NA's are allowed)
 # x_label   = character: title for x-axis
 # nbins     = numeric: number of bins
 # col_fill  = character: fill color
@@ -70,11 +70,13 @@ hist_dnorm <- function(df, v, n_bins = 20,
             ggplot2::aes(y = ggplot2::after_stat(density)),
             bins = n_bins,
             fill = col_fill,
-            color = col_color) +
+            color = col_color,
+            na.rm = TRUE) +
         ggplot2::stat_function(fun = dnorm,
                                args = c(mean = mean(v),
                                         sd = sd(v)),
-                               col = col_dnorm) +
+                               col = col_dnorm,
+                               na.rm = TRUE) +
         ggplot2::theme_bw() +
         ggplot2::xlab(x_label)
 

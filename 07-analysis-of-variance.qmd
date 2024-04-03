@@ -563,6 +563,8 @@ stats::oneway.test(
     data = gss_2018_clean,
     var.equal = TRUE
 )
+
+
 ```
 
 ::::
@@ -812,6 +814,55 @@ q = \frac{m_{1} - m_{2}}{se}
 $$ {#eq-chap07-hsd}
 
 The `stats::TukeyHSD()` function does not work well with the `stats::oneway.test()` output from earlier, so the entire ANOVA model has to be re-estimated. The `stats:aov()` function works and takes similar arguments to the `stats::oneway.test()` function, so nesting the `stats::aov()` inside the `stats::TukeyHSD()` is one way to go.
+
+:::::{.my-important}
+:::{.my-important-header}
+Difference between test and fitting a model
+:::
+::::{.my-important-container}
+After my first reading it wasn’t quite clear for me what the difference is between `stats::oneway.test()` and `stats::aov()`. 
+
+Later --- when I worked on the two-way ANOVA in @sec-chap07-achievement7 --- I learned that the first approach is a test whereas the second functions fits a model by a call to `lm()`. To get the full data for testing if the data are statistically significant one has to wrap `stats::aov()` into to the `base::summary()` function. 
+
+***
+
+
+```{r}
+#| label: anova-test-vs-fitting-model
+#| results: hold
+
+gss_2018_clean <- base::readRDS("data/chap07/gss_2018_clean.rds")
+
+glue::glue("##################  oneway.test()    ####################")
+stats::oneway.test(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean,
+    var.equal = TRUE
+)
+
+glue::glue(" ")
+glue::glue("######################  aov()    ##########################")
+glue::glue(" ")
+stats::aov(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+)
+
+glue::glue(" ")
+glue::glue("##################  summary(aov())    ####################")
+glue::glue(" ")
+base::summary(
+    stats::aov(
+    formula = USETECH ~ DEGREE,
+    data = gss_2018_clean
+    )
+)
+
+```
+
+::::
+:::::
+
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -2323,8 +2374,8 @@ Like the ANOVA results, the `r glossary("Kruskal-Wallis")` test identifies wheth
 
 :::::{.my-example}
 :::{.my-example-header}
-:::::: {#exm-ID-text}
-: Numbered Example Title
+:::::: {#exm-chap07-dunn-post-hoc-test}
+: Dunn’s post hoc test for Kruskal-Wallis
 ::::::
 :::
 ::::{.my-example-container}
@@ -2847,19 +2898,19 @@ This time I used it for a group summary, e.g. a calculation I would have done wi
 ::::
 :::::
 
-###### means data
+###### means data1
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap07-means-data}
+:::::: {#cnj-chap07-means-data1}
 : Comparing means of technology use at work by educational attainment and sex
 ::::::
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: chap07-means-data
+#| label: chap07-means-data1
 
-gss_2018_clean |> 
+mean_sd_usetech <- gss_2018_clean |> 
   dplyr::group_by(DEGREE, SEX)  |> 
   tidyr::drop_na(USETECH)  |> 
   dplyr::summarize(
@@ -2867,14 +2918,56 @@ gss_2018_clean |>
       sd_usetech = stats::sd(USETECH),
       .groups = 'drop'
       )
-
+mean_sd_usetech
 ```
 ***
 
 The biggest difference in time using technology at the job between male and female is in the group with a junior college degree.
+
+But instead of using a visual calculation by head it is better to compute it in detail.
 ::::
 :::::
 
+###### means data2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-means-data2}
+: Comparing means of technology use at work by educational attainment and sex
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: chap07-means-data2
+
+diff_sex_degree <- gss_2018_clean |> 
+  dplyr::group_by(DEGREE, SEX)  |> 
+  tidyr::drop_na(USETECH)  |> 
+  dplyr::summarize(
+      mean_usetech = base::mean(USETECH),
+      sd_usetech = stats::sd(USETECH),
+      .groups = 'drop'
+      ) |> 
+    dplyr::group_by(DEGREE) |> 
+    dplyr::summarize(diffs = diff(mean_usetech))
+
+diff_means <- dplyr::full_join(
+    x = mean_sd_usetech,
+    y = diff_sex_degree,
+    by = dplyr::join_by(DEGREE)
+)
+
+diff_means
+```
+***
+
+The biggest difference in time using technology at the job between male and female is in the group with a junior college degree. The second biggest difference is only half of the first and happens in the high school group. Again about only half is the third difference in graduate, this time the sign is reversed.
+
+These differences confirms quite well with @fig-means-plot1 and @fig-means-plot2.
+
+
+::::
+:::::
 
 :::
 
@@ -2883,7 +2976,318 @@ The biggest difference in time using technology at the job between male and fema
 
 @fig-means-plot1 and @fig-means-plot2 show that there interaction between the two variable `SEX` and `DEGREE.` because the lines are not parallel. Parallel lines would show that the mean of the continuous variable is consistently higher or lower for certain groups compared to others. Parallel lines indicate that there is no interaction between the two categorical variables. 
 
-When the means plot asn in our example shows lines that diverge or cross then there is an interaction between the categorical variables. The mean of the continuous variable is different at different levels of one categorical variable depending on the value of the other categorical variable. For example, mean technology use is lower for females compared to males for the lowest and highest educational attainment categories, but female technology use is higher than male technology use for the three other categories of educational attainment. The two variables are working together to influence the value of technology use.
+But when the means plot --- as in our example --- shows lines that diverge or cross then there is an interaction between the categorical variables. The mean of the continuous variable is different at different levels of one categorical variable depending on the value of the other categorical variable. For example, mean technology use is lower for females compared to males for the lowest and highest educational attainment categories, but female technology use is higher than male technology use for the three other categories of educational attainment. The two variables are working together to influence the value of technology use.
+
+### The two-way ANOVA NHST
+
+
+#### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The mean time using technology at work is the same across groups of degree and sex. There is no interaction between the variables `DEGREES` and `SEX.`
+- **HA**: The mean time using technology at work is not the same across groups of degree and sex. There is an interaction between the variables `DEGREES` and `SEX.`
+:::
+
+#### NHST Step 2
+
+Compute the test statistic. 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-two-way-anova}
+: Two-way ANOVA: Using technology by educational attainment and sex
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: two-way-anova
+
+base::summary(
+    stats::aov(
+    formula = USETECH ~ DEGREE * SEX,
+    data = gss_2018_clean
+    )
+)
+
+```
+***
+
+There are three F-statistics for this ANOVA: one for each of the two individual variables (the `r glossary("main effect", "main effects")`), and one for the interaction term.
+
+When the interaction term is statistically significant, it is interpreted first and the main effects are only interpreted if a main effect variable influences the outcome alone.
+
+**Does a main effect variable influence the outcome alone?**
+
+- If you cannot say anything about the influence of `SEX` on `USETECH` without mentioning `DEGREE` than there was no main effect of `SEX`.
+- If tech use had started lower for females than males but increased consistently and statistically significantly for both males and females as educational attainment increased, this would be a main effect of DEGREE. But this is in our example not the case.
+
+**Conclusion**
+
+There is no main effect variable that influences the outcome alone, therefore a repor contains only the interaction term.
+::::
+:::::
+
+
+#### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value for the interaction term is with 0.000311 very tiny, and so the value of an F-statistic being as large or larger than the F-statistic for the interaction term happens a tiny percentage of the time when the null hypothesis is true.
+
+#### NHST Step 4
+
+Conclude and write report.
+
+::: {.callout-tip}
+There was a statistically significant interaction between degree and sex on mean percent of work time spent using technology [F(4, 1399) = 5.3; p < .001]. The highest mean was 72.1% of time used for technology for males with graduate degrees. The lowest mean was 23.7% of the time for females with less than a high school diploma. The interaction between degree and sex shows that time spent on technology use increases more quickly for females, with both males and females eventually having high tech use in the top two educational attainment groups.
+:::
+
+### Post hoc test for two-way ANOVA
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-two-way-anova-tukey-test}
+: Tukey’s HSD post hoc test for two-way ANOVA of USETECH by DEGREE and SEX
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: two-way-anova-tukey-test
+
+stats::TukeyHSD(
+    stats::aov(
+    formula = USETECH ~ DEGREE * SEX,
+    data = gss_2018_clean
+    )
+)
+
+```
+***
+
+1. The first section under `$DEGREE` was comparing groups of `DEGREE` to each other. 
+2. The second section under `$SEX` was comparing males and females to each other. 
+3. The third section was the interaction, comparing groups of `DEGREE*SEX` with each other.
+    a) The first row in this last section is high school:male-< high school:male, which compares high school male to less than high school male.
+    b) The difference between the means: diff = 17.81.
+    c) The confidence interval is found around the difference (95% CI: 2.73 to 32.90).
+    d) The p-value for the difference between the means (p = 0.007) is statistically significant
+
+This indicates that there is a statistically significant (p < .05) difference of 17.81 between the mean percentage time of technology use for males with less than high school compared to males with high school *in the sample*, and that the difference between the mean of these two groups is likely somewhere between 2.73 and 32.90 in the population this sample came from.
+
+
+There are so many groups with significant differences that it would be more useful to just include the boxplot from the exploratory analysis or the means plot of @fig-means-plot1 and a paragraph about any interesting overall patterns in the comparisons. For instance:
+
+::: {.callout-tip}
+There is a trend that with higher educational attainment the time spent with technology at work grows. Starting from the same relatively low level of 25% the use of technology with higher degrees rises faster for female than for males until the junior college degree. In the following higher educational attainment groups (bachelor and graduate) the time used with technology decreases for females whereas it continues to increase for males. Both trends cross at the bachelor level with about 68% and reach 66% for female and 72% for males at the graduate level. 
+
+The biggest difference in time using technology at the job between male and female is in the group with a junior college degree (`junior college:female-junior college:male`). 
+
+The second biggest difference is only half of the first and happens in the high school group (`high school:female-< high school:male`). 
+
+All the other differences between female and males at the same degree level are not statistically significant with p <= .05.
+:::
+ 
+ 
+::::
+:::::
+
+### Two-way ANOVA assumptions
+
+#### Normality
+
+Testing the normality assumption is more difficult as with the one-way ANOVA, we would need to look at each group. Since there are five degree groups, two sex groups, and 10 degree-by-sex groups (e.g., male and less than high school). Instead of checking normality one group at a time when there are a large number of groups in an ANOVA model, this assumption can be checked by examining the `r glossary("residually", "residuals")`. The residuals are the distances between the value of the outcome for each person and the value of the group mean for that person. When the residuals are normally distributed, this indicates that the values in each group are normally distributed around the group mean.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap07-testing-normality-two-way-anova}
+: Testing normality for two-way ANOVA
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Shapiro-Wilk test
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-test-normality-residuals-shapiro-wilk}
+: Shapiro-Wilk test for normal distribution by groups
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: test-normality-residuals-shapiro-wilk
+
+stats::shapiro.test(
+    aov_test <- stats::aov(
+    formula = USETECH ~ DEGREE * SEX,
+    data = gss_2018_clean
+    )$residuals
+)
+
+```
+***
+Instead of providing the result of the model fitting with the `stats::aov()` function I have nested the function into the `r glossary("Shapiro-Wilk")` test. The statistically significant p-value means that we have to reject the null hypotheses ("The distribution is normal"). So, this test shows that the residuals fail the normality assumption.
+
+To confirm the result it is helpful to graph the residuals.
+
+::::
+:::::
+
+
+###### Graphing the residuals
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-testing-normality-residuals-graph}
+: Inspecting normality with a graph of the residuals
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: testing-normality-residuals-graph
+#| fig-cap: "Distribution of residuals from ANOVA explaining tech use at work based on educational attainment and sex"
+#| fig-height: 10
+
+
+aov_residuals_df <- tibble::tibble(residuals =
+        stats::aov(
+        formula = USETECH ~ DEGREE * SEX,
+        data = gss_2018_clean
+        )$residuals
+    )
+
+p1 <- hist_dnorm(
+    df = aov_residuals_df,
+    v = aov_residuals_df$residuals,
+    n_bins = 30,
+    x_label = "Residuals with 30 bins as in the book")
+
+p2 <- hist_dnorm(
+    df = aov_residuals_df,
+    v = aov_residuals_df$residuals,
+    n_bins = 20,
+    x_label = "Residuals with 20 bins")
+
+gridExtra::grid.arrange(
+    p1, p2,
+    nrow = 2
+)
+```
+***
+The graph is clearly not normal. The insinuated bi-modality in the text of the book is in my opinion an artifact of the chosen number of bins. To compare I have graphed two histograms with 30 and 20 bins.
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+#### Homogeneity of variances
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-two-way-levene-test}
+: Levene’s test for two-way ANOVA
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: two-way-levene-test
+#| results: hold
+
+glue::glue("############### default: `center = mean` ####################")
+car::leveneTest(
+    y = USETECH ~ DEGREE * SEX,
+    center = mean,
+    data = gss_2018_clean
+)
+
+glue::glue(" ")
+glue::glue("############### default: `center = median` #################")
+car::leveneTest(
+    y = USETECH ~ DEGREE * SEX,
+    center = median,
+    data = gss_2018_clean
+)
+
+```
+***
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! What is the center of each group?
+:::
+::::{.my-watch-out-container}
+Using the means at the center is the original test. The default `center = median` provides a more robust test. But even this more robust test is also statistically significant. So the homogeneity of variance has to be rejected in both cases.
+::::
+:::::
+
+
+
+The results were statistically significant so the null hypothesis was rejected in this test as well. The equal variances assumption was not met. 
+
+The two-way ANOVA had failed its assumptions.
+::::
+:::::
+
+### Alternatives
+
+#### Friedman test
+
+The books mentions `stats::friedman.test()`. But it turns out that the test result is not statistically significant. This seems unlikely given all the other information we have about the data distribution.
+
+#### Compute ANOVA with ranks of the otucome variable
+
+We had already computed the ranks of USETECH for the Dunn’s test earlier in @exm-chap07-dunn-post-hoc-test. We can load the appropriate `gss_2018_clean3.rds` data and use the variable `usetech_rank`.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap07-two-way-ranked-anova}
+: Two-way ANOVA ranked technology use by degree and sex
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: two-way-ranked-anova
+
+gss_2018_clean3 <- base::readRDS("data/chap07/gss_2018_clean3.rds")
+
+base::summary(
+    stats::aov(
+        formula = usetech_rank ~ DEGREE * SEX, 
+        data = gss_2018_clean3
+        )
+)
+```
+***
+
+::: {.callout-tip}
+A two-way ANOVA with ranked technology time use as the outcome found a statistically significant interaction between degree and sex (p < .05). The overall pattern of results indicates that males and females with less than a high school education use technology the least, while those with higher educational attainment use technology the most. Males and females differ a lot in use of technology for those with a junior college degree, with females having a junior college degree having the highest use of technology of all females.
+:::
+
+::::
+:::::
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! What's the difference between ranked and not ranked?
+:::
+::::{.my-watch-out-container}
+I have to confess that I do not understand the difference between our (wrong?) tests with assuming that the normality and homogeneity of variance assumptions hold and here now the ranked version of the two-way ANOVA. It seems to me that the results are the same. Even the both graphs are almost identical.
+::::
+:::::
+
+
+#### Box-Cox transformation
+
+Another suggestion for alternative test is the Box-Cox transformation on the outcome variable. The Box-Cox power transformations were developed to reduce the non-normality of residuals, so they might be useful here. The original paper by Box and Cox explains the transformations [@box1964], and there are numerous tutorials on the use of them [@wikipedia2021a; @zach2020; @glenn.db; @lane2017].
+
 
 
 ## Exercises (empty)

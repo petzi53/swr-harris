@@ -21,6 +21,7 @@ book:
     - 05-chi-squared.qmd
     - 06-t-test.qmd
     - 07-analysis-of-variance.qmd
+    - 08-correlation.qmd
     - 95-references.qmd
   appendices:
     - 96-packages-used.qmd
@@ -113,7 +114,7 @@ language:
    crossref-lst-title: "Listing"
    crossref-prp-title: "Procedure"   # replaces "Proposition"
    crossref-tbl-title: "Table"
-   crossref-thm-title: "Theorem"
+   crossref-thm-title: "Formula"     # replaces "Theorem"
 #   crossref-int-title: "Interpretation"
 
 # https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/language/_language.yml

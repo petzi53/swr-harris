@@ -1111,7 +1111,7 @@ In R formulae a single variable on the left-hand side is followed by the tilde s
 
 In our case, systolic blood pressure is the *outcome* being explained by the *predictor* of sex.
 
-In R the default t-test for independent samples is the `r glossary("Welch", "Welch’s t-test")` and not the student t-test. 
+In R the default t-test for independent samples is the `r glossary("Welch_T", "Welch’s t-test")` and not the student t-test. 
 
 > Welch’s t-test is slightly different from the original formula for t, which used pooled variance in the denominator. `r glossary("Pooled variance")` assumes that the variances in the two groups are equal and combines them. (SwR)
 
@@ -1958,7 +1958,7 @@ Both histograms look right-skewed.
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: normality-independent-q-q-plot
+#| label: fig-normality-independent-q-q-plot
 #| fig-cap: "Checking normality of systolic blood pressure in mmHg for 20152016 NHANES participants by sex with Q-Q plots"
 #| cache: true
 
@@ -2531,7 +2531,7 @@ Both tests agree, even their p-values differ: We have to reject the Null.
 
 #### Levene’s test
 
-`r glossary("Homogeneity of variances")` is another assumption valid for the independent t-test. The data should be equally spread out in each group. Although we had used the `r glossary("Welch", "Welch’s")` version of the t-test, which does not require homogeneity of variances, we will apply Levene’s test anyway. (An additional visual inspection via group-specific `r glossary("boxplots")` would helpful to gain a visual understanding of Levene’s test results.)
+`r glossary("Homogeneity of variances")` is another assumption valid for the independent t-test. The data should be equally spread out in each group. Although we had used the `r glossary("Welch-T", "Welch’s")` version of the t-test, which does not require homogeneity of variances, we will apply Levene’s test anyway. (An additional visual inspection via group-specific `r glossary("boxplots")` would helpful to gain a visual understanding of Levene’s test results.)
 
 :::::{.my-resource}
 :::{.my-resource-header}
@@ -3172,7 +3172,7 @@ All the tests under the heading "Alternate tests" (@sec-chap06-achievement7) dis
 
 When the variances are unequal, the homogeneity of variances assumption is not met, whether or not the normality assumption is met. The larger variance has a bigger influence on the size of the t-statistic, so one group is dominating the t-statistic calculations.
 
-Although we have used the `r glossary("Welch", "Welch’s t-test")` the `r glossary("Kolmogorov-Smirnov", "Kolmogorov-Smirnov test")` is an alternative test when both (the normality *and* the variance assumption) have failed.
+Although we have used the `r glossary("Welch-T", "Welch’s t-test")` the `r glossary("Kolmogorov-Smirnov", "Kolmogorov-Smirnov test")` is an alternative test when both (the normality *and* the variance assumption) have failed.
 
 
 #### NHST Step 1

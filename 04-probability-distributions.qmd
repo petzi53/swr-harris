@@ -1447,7 +1447,7 @@ Taking a lot of large samples and graphing their means results in a `r glossary(
 ::::
 :::::
 
-### Central Limit Theorem
+### Central Limit Theorem {#sec-chap04-clt}
 
 The fact that the mean of the sample distribution of many samples approximates the population mean is called `r glossary("Central Limit Theorem")`. It holds true for continuous variables that both are and are not normally distributed.
 
