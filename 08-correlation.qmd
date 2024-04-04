@@ -1523,7 +1523,7 @@ The Breusch-Pagan test statistic has a low p-value (BP = 12.37; p = 0.0004), ind
 
 ***
 
-::: {#bul-assumptions-pearson-r}
+::: {#bul-assumptions-pearson-r-summary}
 
 - Observations are independent (@sec-check-independence): **No**. 
 - Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
@@ -1554,6 +1554,513 @@ My opinion to the three tips
 :::::
 
 ## Achievement 6: Transforming data {#sec-chap08-achievement6}
+
+### Introduction
+
+One of the ways to deal with data that do not meet assumptions for Pearson’s *r* is to use a data transformation and examine the relationship between the transformed variables.
+
+***
+
+::: {#bul-data-transformations}
+
+- `r glossary("Linear transformations")` keep existing linear relationships between variables, often by multiplying or dividing one or both of the variables by some amount. 
+- `r glossary("Nonlinear transformations")` increase (or decrease) the linear relationship between two variables by applying an exponent (i.e., `r glossary("power transformations")`) or other function to one or both of the variables.
+- `r glossary("Logit transformations")` and `r glossary("arcsine transformations")` are often used for variables that are percentages or proportions because they account for `r glossary("floor")` and `r glossary("ceiling")` effects.
+
+
+Types of data transformations
+
+:::
+
+***
+
+### Logit transformation
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-logit-transformation}
+: Formula for the logit transformation
+::::::
+:::
+::::{.my-theorem-container}
+$$
+y_{logit} = log(\frac{y}{1-y})
+$$ {#eq-chap08-logit}
+
+***
+
+y is a percent ranging from 0 to 1.
+
+The logit transformation uses @eq-chap08-logit to make percentage data more normally distributed.
+::::
+:::::
+
+
+### Arcsine transformation
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-arcsine}
+: Formula for the arcsine transformation
+::::::
+:::
+::::{.my-theorem-container}
+$$
+y_{arcsine} = arcsine(\sqrt{y})
+$$ {#eq-chap08-arcsine}
+
+The arcsine transformation e.g., the inverse of the sine function, is also used to normalize percentage or proportion data by using @eq-chap08-arcsine to transform the variable $y$.
+
+***
+::::
+:::::
+
+### Folded power transformation
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-folded-power}
+: Formula for the folded power transformation
+::::::
+:::
+::::{.my-theorem-container}
+$$
+y_{folded.power} = y^\frac{1}{p} - (1-y)^\frac{1}{p}
+$$ {#eq-chap08-folded-power}
+
+***
+
+$p$ is the power to raise that could be calculated with `rcompanion::transformTukey()` (see @pak-rcompanion).
+::::
+:::::
+
+### Data transforming and checking normality assumption {#sec-chap08-transformed-normality}
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap08-transform-data}
+: Transforming data and checking normality assumptions
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### logit & arcsine
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-transform-logit-arcsine}
+: Logit and arcsine transformation of variables `female.in.school` & `perc.basic2015water`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: transform-logit-arcsine
+
+water_educ2 <- water_educ  |> 
+  dplyr::mutate(
+      logit.female.school = base::log(
+          x = (female.in.school / 100) / (1 - female.in.school / 100)
+          )
+    ) |> 
+  dplyr::mutate(
+      logit.perc.basic.water = base::log(
+          x = (perc.basic2015water / 100) / (1 - perc.basic2015water / 100)
+          )
+      )  |> 
+  
+  dplyr::mutate(
+      arcsin.female.school = asin(
+          x = base::sqrt(female.in.school / 100)
+          )
+      )  |> 
+  dplyr::mutate(
+      arcsin.perc.basic.water = asin(
+          x = base::sqrt(perc.basic2015water/100)
+          )
+      )
+
+save_data_file("chap08", water_educ2, "water_educ2.rds")
+
+# check the data
+skimr::skim(water_educ2)
+```
+
+***
+
+We got several warnings. We can easily see that our new variable `logit.perc.basic.water` has problems because it contains infinite values. The reason is the formula for the logit function, that has as denominator $1-y$. When $y = 1$ for 100%, the denominator is zero and it is impossible to divide by zero. 
+
+The intuitive idea to change the original data slightly, e.g., to subtract a very tiny amount so that the results is not zero anymore, is a bad idea. It destroys the reproducibility and adds error into the dataset. A better solution is to try instead another transformation.
+
+The suggestion is to use the folded power transformation (@thm-chap08-folded-power). But before we can apply the formula we need to compute the power for the transforming of the variables.
+
+
+::::
+:::::
+
+
+###### transformTukey1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-transform-tukey}
+: Tukey transformation to get power for transforming the variables `female.in.school` & `perc.basic2015water`
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: transform-folded-power
+
+## use Tukey transformation to get power for transforming
+## female in school variable to more normal distribution
+p_female <- rcompanion::transformTukey(
+    x = water_educ$female.in.school,
+    plotit = FALSE,
+    quiet = TRUE,
+    returnLambda = TRUE
+    )
+
+
+# use Tukey transformation to get power for transforming
+# basic 2015 water variable to more normal distribution
+p_water <- rcompanion::transformTukey(
+    x = water_educ$perc.basic2015water,
+    plotit = FALSE,
+    quiet = TRUE,
+    returnLambda = TRUE
+    )
+
+
+```
+***
+
+Using the Tukey transformation we get as power for transforming for the 
+
+- female.in.school variable: `r p_female` and for the
+- perc.basic2015water variabe: `r p_water`.
+::::
+:::::
+
+###### transformTukey2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-transform-tukey}
+: Tukey transformation to get power for transforming the variables `female.in.school` & `perc.basic2015water` with accompanying plots
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-transform-folded-power
+#| fig-cap: "Tukey transformation to get plots of Shapiro-Wilks W or Anderson-Darling A vs. lambda, a histogram of transformed values, and a quantile-quantile plot of transformed values."
+
+p_female <- rcompanion::transformTukey(
+    x = water_educ$female.in.school,
+    plotit = TRUE,
+    quiet = TRUE,
+    returnLambda = TRUE
+    )
+
+p_water <- rcompanion::transformTukey(
+    x = water_educ$perc.basic2015water,
+    plotit = TRUE,
+    quiet = TRUE,
+    returnLambda = TRUE,
+    statistic = 2
+    )
+
+
+```
+***
+
+After changing the argument from `plotit = FALSE` to the default value of `plotit = TRUE` we get different plots for the normality assumption. 
+
+- The first three graphs are plots for `r glossary("Shapiro-Wilk", "Shapiro-Wilks W")` vs. lambda with `r glossary("histogram")` and `r glossary("Q-Q-plot", "quantile-quantile plot")` for the `female.in.school` variable (argument: `statistic = 1`, the default value).
+- The last three graphs are plots for `r glossary("Anderson-Darling", "Anderson-Darling A")` vs. lambda with histogram and Q-Q-plot for the `perc.basic2015water` variable (argument: `statistic = 2`).
+
+For more information about Shapiro-Wilk and Anderson-Darling tests see @sec-chap06-omnibus-tests.
+
+::::
+:::::
+
+###### power
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-folded-power-transformation}
+: Compute variable with folded power transformation
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: folded-power-transformation
+
+## create new transformation variables
+water_educ3 <- water_educ  |> 
+  dplyr::mutate(
+      arcsin.female.school = 
+          base::asin(x = base::sqrt(female.in.school/100))
+      )  |> 
+  dplyr::mutate(
+      arcsin.perc.basic.water = 
+          base::asin(x = base::sqrt(perc.basic2015water/100))
+      ) |> 
+  dplyr::mutate(
+      folded.p.female.school = 
+          (female.in.school/100)^(1/p_female) - 
+          (1-female.in.school/100)^(1/p_female)
+      )  |> 
+  dplyr::mutate(
+      folded.p.basic.water = 
+          (perc.basic2015water/100)^(1/p_water) - 
+          (1-perc.basic2015water/100)^(1/p_water)
+      )
+
+save_data_file("chap08", water_educ3, "water_educ3.rds")
+
+# check the data
+skimr::skim(water_educ3)
+```
+
+::::
+:::::
+
+
+
+###### graphs
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-check-normality-transformed-data-graphs}
+: Check the normality assumptions of the transformed data with histograms
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-check-normality-transformed-data-graphs
+#| fig-cap: "Histograms for checking normality assumptions of the transformed data"
+
+
+water_educ3 <- base::readRDS("data/chap08/water_educ3.rds")
+
+# histogram of arcsin females in school (Figure 8.21)
+plt1 <- hist_dnorm(
+    df = water_educ3,
+    v = water_educ3$arcsin.female.school,
+    n_bins = 30,
+    x_label = "Arcsine transformation of females in school"
+    )
+
+# histogram of folded power transf females in school (Figure 8.22)
+plt2 <- hist_dnorm(
+    df = water_educ3,
+    v = water_educ3$folded.p.female.school,
+    n_bins = 30,
+    x_label = "Folded power transformation of females in school"
+    )
+
+# histogram of arcsine of water variable (Figure 8.23)
+plt3 <- hist_dnorm(
+    df = water_educ3,
+    v = water_educ3$arcsin.perc.basic.water,
+    n_bins = 30,
+    x_label = "Arcsine transformed basic water access"
+    )
+
+# histogram of folded power transformed water variable (Figure 8.24)
+plt4 <- hist_dnorm(
+    df = water_educ3,
+    v = water_educ3$folded.p.basic.water,
+    n_bins = 30,
+    x_label = "Folded power transformed basic water access"
+    )
+
+gridExtra::grid.arrange(
+    plt1, plt2, plt3, plt4, nrow = 2
+)
+```
+***
+
+- **Top-Left**: The arcsine transformation of females in school looks better than the not transformed data in @fig-normality-female-hist-dnorm. But still it is not a normal but a left-skewed distribution.
+- **Top-Right**: The folded power transformation looks much better. It is still somewhat left-skewed but approaches quite well a normal distribution.
+- **Bottom-Left**: The arcsine transformation of basic water access looks terrible. 
+- **Bottom-Right**: The folded power transformation of basic water access looks not better, maybe even worse. 
+
+The book suggests that the `perc.basic2015water` variable should better be recoded into categories. Since so many countries have 100% access, the variable could be binary, with 100% access in one category and less than 100% access in another category.
+
+Although `perc.basic2015water` did not meet the normality assumption the book applies the `r glossary("NHST")` procedure. I think the reason was just to practice the procedure because in my opinion it would not make sense to apply a significance test for correlation if several of the assumptions are not met.
+
+
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+
+### Testing assumptions for Pearson’s *r* with transformed data
+
+#### Normality
+
+This assumption is not met, see the different graphs in @sec-chap08-transformed-normality.
+
+#### Linearity {#sec-chap08-linearity-transformed}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-check-linearity-transformed}
+: Check linearity assumption with transformed data with linear fit line and Loess curve
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-check-linearity-transformed
+#| fig-cap: "Check linearity assumption with transformed data"
+
+# explore plot of transformed females in school and basic water
+# with linear fit line and Loess curve (Figure 8.25)
+water_educ3 |> 
+  tidyr::drop_na(c(
+      folded.p.female.school,
+      folded.p.basic.water
+  )) |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          y = folded.p.female.school, 
+          x = folded.p.basic.water)
+      ) +
+  ggplot2::geom_smooth(
+      formula = y ~x,
+      ggplot2::aes(
+          color = "linear fit line"
+          ), 
+      method = "lm", 
+      se = FALSE
+      ) +
+  ggplot2::geom_smooth(
+      formula = y ~x,
+      ggplot2::aes(
+          color = "Loess curve"
+          ), 
+      method = "loess",
+      se = FALSE
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(
+          size = "Country"
+          ), 
+      color = "#7463AC", 
+      alpha = .6
+      ) +
+  ggplot2::labs(
+      y = "Power transformed percent of females in school",
+      x = "Power transformed percent with basic water access"
+      ) +
+  ggplot2::scale_color_manual(
+      name = "Type of fit line", 
+      values = c("gray60","darkred")) +
+  ggplot2::scale_size_manual(values = 2)
+```
+***
+The plot shows a pretty terrible deviation from linearity, which looks like it is mostly due to all the countries with 100% basic water access. A indicator for this guess is that both lines are bent by the right vertical line of countries with 100% basic water access. Without the lines would end around 0.45x / 0.5y.
+
+
+::::
+:::::
+
+
+#### Homoscedasticity {#sec-chap08-homoscedasticity-transformed}
+
+### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The data is spread equal around the regression line.
+- **HA**: The data is not spread equal around the regression line.
+:::
+
+
+### NHST Step 2
+
+Compute the test statistic. 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-check-homoscedasticity-transformed}
+: Check homoscedasticity assumption with transformed data
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: check-homoscedasticity-transformed
+
+# testing for homoscedasticity
+lmtest::bptest(
+    formula = 
+        water_educ3$folded.p.female.school ~ 
+        water_educ3$folded.p.basic.water
+    )
+```
+
+
+
+::::
+:::::
+
+### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value of .01 is below .05 therefore statistically significant. 
+
+### NHST Step 4
+
+Conclude and write report.
+
+With a p-value of .01, the null hypothesis is rejected and the assumption fails. The data transformation worked to mostly address the problem of normality for the females in school variable, but the transformed data were not better for linearity or homoscedasticity.
+
+::: {.callout-tip}
+There was a statistically significant, positive, and strong (r = .67; t = 8.82; p < .05; 95% CI: .55–.77) relationship between the transformed variables for percentage of females in school and percentage of citizens with basic water access in a sample of countries. As the percentage of citizens with basic water access increases, so does the percentage of school-age females in school. The data failed several of the assumptions for **r* and so these results should not be generalized outside the sample.
+:::
+
+:::::{.my-note}
+:::{.my-note-header}
+Inferential statistics without generalizing conclusion outside the sample?
+:::
+::::{.my-note-container}
+I find it very disappointing that most of the time the assumptions for the different tests are not met. As far as I understand all the many tests and hypotheses failed, so that one can't say anything outside the data of the sample. 
+
+In the above summary are included a `r glossary("p-value")` and a `r glossary("confidence interval")`. As both values are for generalizing from a sample to a population and some of the assumptions are not met, it is --- in my opinion --- not allowed to mention these values. They "could" not omitted as the book claims but I think the should mandatory not included in the summary. These results are not reliable when the assumptions are failed and should not be mentioned at all because that creates more informative results as effectively is the case.
+
+Another thing that annoys me after eight chapter is the high redundancy with all the tests and NHST procedures. I got the impression that the honest account of the book shows that there is something wrong with the frequentist approach of statistics. Most of the frequentist textbooks I already have read do not so thoroughly check their assumptions. I am eager to learn more about the Bayesian alternative!
+::::
+:::::
+
+
+### Summary
+
+::: {#bul-assumptions-pearson-r-transformed-summary}
+
+- Observations are independent (@sec-check-independence): **No**. 
+- Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
+- Both variables are normally distributed (@sec-chap08-transformed-normality): **No**.
+- The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-linearity-transformed): **No**. 
+- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity-transformed): **No**.
+
+Summary of testing the assumptions for Pearson’s r with transformed data
+:::
+
+## Achievement 7: Spearman’s rho {#sec-chap08-achievement7}
 
 
 ## Exercises (empty)
