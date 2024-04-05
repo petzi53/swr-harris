@@ -930,6 +930,83 @@ The Pearson’s product-moment correlation coefficient demonstrated that the per
 
 ## Achievement 3: Inferential statistical test for Pearson’s r {#sec-chap08-achievement3}
 
+### Introduction
+
+The null hypothesis is tested using a `r glossary("t-statistic")` comparing the `r glossary("correlation", "correlation coefficient of r")` to a hypothesized value of zero.
+
+
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-cor-test}
+: One.sample t-test
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+t = \frac{m_{x}-0}{se_{m_{x}}}
+$$ {#eq-chap08-one-sample-t-test}
+
+***
+
+- **$m_{x}$**: mean of $x$
+- **$se_{m_{x}}$**: standard error of the mean of $x$
+
+::::
+:::::
+
+But we are not actually working with means, but instead comparing the correlation of $r_{xy}$ to zero.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-cor-test}
+: Rewriting @eq-chap08-one-sample-t-test to get the t-statistic for the significance test of *r*
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+t = \frac{r_{xy}}{se_{r_{xy}}} 
+$$ {#eq-chap08-t-test-for-r}
+::::
+:::::
+
+There are multiple ways to compute the standard error for a correlation coefficient:
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-se-for-r}
+: Standard error for a correlation coefficient
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+se_{r_{xy}} = \sqrt\frac{1-r_{xy}^2}{n-2}
+$$ {#eq-chap08-se-for-r}
+::::
+:::::
+
+Now we can substitute $se_{r_{xy}}$ into the t-statistic of @eq-chap08-t-test-for-r and simplify the formula.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-cor-test}
+: t-statistic for the significance test of r
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+\begin{align*}
+t = \frac{r_{xy}}{\sqrt\frac{1-r_{xy}^2}{n-2}} =\\
+t = \frac{r_{xy}\sqrt{n-2}}{\sqrt{1-r_{xy}^2}}
+\end{align*}
+$$ {#eq-chap08-t-test-for-significance-test-r}
+::::
+:::::
+
 
 ### NHST Step 1
 
@@ -944,26 +1021,6 @@ Write the null and alternate hypotheses:
 
 Compute the test statistic. 
 
-The null hypothesis is tested using a `r glossary("t-statistic")` comparing the `r glossary("correlation", "correlation coefficient of r")` to a hypothesized value of zero.
-
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-cor-test}
-: t-statistic for the significance test of r
-::::::
-:::
-::::{.my-theorem-container}
-
-$$
-\begin{align*}
-t = \frac{r_{xy}}{se_{r_{xy}}} \\
-se = \sqrt\frac{1-r_{xy}^2}{n-2} \\
-t = \frac{r_{xy}}{\sqrt\frac{1-r_{xy}^2}{n-2}} =\\
-t = \frac{r_{xy}\sqrt{n-2}}{\sqrt{1-r_{xy}^2}}
-\end{align*}
-$$ {#eq-chap08-cor-test}
-::::
-:::::
 
 :::::{.my-example}
 :::{.my-example-header}
@@ -1011,14 +1068,16 @@ test_data <- water_educ |>
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap08-cor-test}
+:::::: {#cnj-chap08-cor-test-pearson}
 : Compute t-statistic for the significance test of *r* with `stats::cor.test()`
 ::::::
 :::
 ::::{.my-r-code-container}
 
+
 ```{r}
-#| label: cor-test
+#| label: tbl-cor-test-pearson
+#| tbl-cap: ""
 
 # cor.test(x = water_educ$perc.basic2015water,
 #          y = water_educ$female.in.school)
@@ -1112,7 +1171,7 @@ The `stats::cor.test()` function creates an object of type `htest` which is a li
 
 ::: {#bul-assumptions-pearson-r}
 
-- Observations are independent (@sec-check-independence). 
+- Observations are independent (@sec-chap08-check-independence). 
 - Both variables are continuous (@sec-chap08-check-continuous). 
 - Both variables are normally distributed (@sec-chap08-check-normality).
 - The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-check-linearity). 
@@ -1122,7 +1181,7 @@ Assumptions for Pearson’s r
 
 :::
 
-### Observations are independent {#sec-check-independence}
+### Observations are independent {#sec-chap08-check-independence}
 
 So far the book had mentioned siblings and other family members or testing the same individuals several time as examples for not independent observations. Now we got two more examples:
 
@@ -1378,13 +1437,15 @@ There is nothing new when checking the normality assumption for basic water acce
 
 ### Linearity {#sec-chap08-check-linearity}
 
-The linearity assumption requires that the relationship between the two variables falls along a line. For instance this assumption is met in @fig-graph2-cor. If it is difficult to tell, a `r glossary("Loess", "Loess curve")` can be added to confirm linearity as I have done it in @fig-graph1-cor.
+The linearity assumption requires that the relationship between the two variables falls along a line. I have already graphed the appropriate data in a previous section. For instance this assumption is met in @fig-graph2-cor. If it is difficult to tell, a `r glossary("Loess", "Loess curve")` can be added to confirm linearity as I have done it in @fig-graph1-cor.
 
 It is instructive to see relationships that are non-linear. The next graph shows some relationships but they fall along curves instead of along straight lines.
 
-![Examples for nonlinear relationships](img/chap08/Nonlinear-relationships-min.png){#fig-nonlinear-relations
+![Examples for nonlinear relationships (Screenshot of book’s Figure 8.19)](img/chap08/Nonlinear-relationships-min.png){#fig-nonlinear-relations
 fig-alt="The two variables seen in these two graphs are labeled x and y and are on the x and y axes respectively. Both graphs have a linear fit line as well as a less curve. The graph on the left titled 1, has x axis values that range from -10 to 5, in intervals of 5. The values on the y axis range from -100, to 100, in intervals of 50. The linear fit line in this graph is a horizontal line at the y axis value of about 30. The loess curve joins the data points in this graph in a U-shape with the midpoint at about (0, 0). The graph on the right titled 2, has x axis values that range from -10 to 5, in intervals of 5. The values on the y axis range from -100, to 100, in intervals of 50. The linear fit line in this graph is an upward-sloping line that starts at about (-65, -10) and ends at about (65, 10). The loess curve joins the data points in this graph in a curve that starts at about (-100, -10), rises sharply until about (-2.5, 0), and is parallel to the x axis until about (0.5, 0) and rises sharply again until about (10, 100). The loess curve intersects the linear fit line at three points, including at (0,0)."
 fig-align="center"}
+
+Another example of failing the linearity assumption can be seen after data transforming in @fig-check-linearity-transformed. 
 
 ### Homoscedasticity {#sec-chap08-homoscedasticity}
 
@@ -1523,9 +1584,9 @@ The Breusch-Pagan test statistic has a low p-value (BP = 12.37; p = 0.0004), ind
 
 ***
 
-::: {#bul-assumptions-pearson-r-summary}
+::: {#bul-chap08-assumptions-pearson-r-summary}
 
-- Observations are independent (@sec-check-independence): **No**. 
+- Observations are independent (@sec-chap08-check-independence): **No**. 
 - Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
 - Both variables are normally distributed (@sec-chap08-check-normality): **No**.
 - The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-check-linearity): **Yes**. 
@@ -1548,8 +1609,10 @@ My opinion to the three tips
 :::
 ::::{.my-note-container}
 - The first advice is no solution. This strategy declares that the inferential process has failed.
-- Yes, this is a promising strategy. More on this in the next section.
-- I do not know what the third advice means. What kind of analysis is meant?
+- Yes, this is a promising strategy. But as it turns out that works (more or less) for the `female.in.school` but not for the `perc.basic2015water` variable. More on this analysis in @sec-chap08-achievement6.
+- Instead of using `r glossary("Pearson", "Pearson’s r")` one could use `r glossary("Spearman", "Spearman’s rho")` which does not have the same strict assumptions. See @sec-chap08-achievement7.
+
+Compare testing the assumptions for Pearson’s r in the example data in @bul-chap08-assumptions-pearson-r-summary with testing the assumptions for Pearson’s r with the transformed data in @bul-chap08-assumptions-pearson-r-transformed-summary.
 ::::
 :::::
 
@@ -1970,7 +2033,9 @@ water_educ3 |>
   ggplot2::scale_size_manual(values = 2)
 ```
 ***
-The plot shows a pretty terrible deviation from linearity, which looks like it is mostly due to all the countries with 100% basic water access. A indicator for this guess is that both lines are bent by the right vertical line of countries with 100% basic water access. Without the lines would end around 0.45x / 0.5y.
+The plot shows a pretty terrible deviation from linearity, which looks like it is mostly due to all the countries with 100% basic water access. An indicator for this guess is that both lines are bent by the right vertical line of countries with 100% basic water access. Without the lines would end around 0.45x / 0.5y.
+
+Transforming the data worsened the linearity assumption, as you can see with a comparison of @fig-graph1-cor.
 
 
 ::::
@@ -1979,7 +2044,7 @@ The plot shows a pretty terrible deviation from linearity, which looks like it i
 
 #### Homoscedasticity {#sec-chap08-homoscedasticity-transformed}
 
-### NHST Step 1
+##### NHST Step 1
 
 Write the null and alternate hypotheses:
 
@@ -1989,7 +2054,7 @@ Write the null and alternate hypotheses:
 :::
 
 
-### NHST Step 2
+##### NHST Step 2
 
 Compute the test statistic. 
 
@@ -2016,14 +2081,14 @@ lmtest::bptest(
 ::::
 :::::
 
-### NHST Step 3
+##### NHST Step 3
 
 Review and interpret the test statistics: 
 Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
 
 The p-value of .01 is below .05 therefore statistically significant. 
 
-### NHST Step 4
+##### NHST Step 4
 
 Conclude and write report.
 
@@ -2047,11 +2112,14 @@ Another thing that annoys me after eight chapter is the high redundancy with all
 :::::
 
 
-### Summary
+### Conclusion
 
-::: {#bul-assumptions-pearson-r-transformed-summary}
 
-- Observations are independent (@sec-check-independence): **No**. 
+***
+
+::: {#bul-chap08-assumptions-pearson-r-transformed-summary}
+
+- Observations are independent (@sec-chap08-check-independence): **No**. 
 - Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
 - Both variables are normally distributed (@sec-chap08-transformed-normality): **No**.
 - The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-linearity-transformed): **No**. 
@@ -2060,8 +2128,269 @@ Another thing that annoys me after eight chapter is the high redundancy with all
 Summary of testing the assumptions for Pearson’s r with transformed data
 :::
 
+All in all the situation has deteriorated: In contrast to the example data the linearity assumption is not met after the transformation. Compare @fig-graph1-cor with @sec-chap08-linearity-transformed.
+
+***
+
 ## Achievement 7: Spearman’s rho {#sec-chap08-achievement7}
 
+### Introduction
+
+`r glossary("Spearman", "Spearman’s rho")`  rank correlation coefficient is the most common alternative for `r glossary("Pearson", "Pearson’s r")`. Spearman’s rho or $r_{s}$ is just using another transformation, but instead of computing the arcsine or raising the variables to a power, the values of the variables are transformed into ranks, like with some of the alternatives to the `r glossary("t-test", "t-tests")`. The values of the variables are ranked from lowest to highest, and the calculations for correlation are conducted using the ranks instead of the raw values for the variables.
+
+### Computing Spearman’s rho
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-formula-spearman-rho}
+: Compute Spearman’s rho
+::::::
+:::
+::::{.my-theorem-container}
+$$
+p = \frac{6 \sum{d^2}}{n(n^2-1)}
+$$ {#eq-chap08-spearman-rho}
+
+***
+
+ - **d** is the difference between the ranks of the two variables 
+ - **n** is the number of observations
+
+::::
+:::::
+
+For females in school and basic water access Spearman’s rho would be computed by first ranking the values of percentage of females in school from lowest to highest and then ranking the values of basic water access from lowest to highest.
+
+
+#### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: There is no correlation between the percentage of females in school and the percentage of citizens with basic water access (ρ = 0).
+- **HA**: There is a correlation between the percentage of females in school and the percentage of citizens with basic water access (ρ ≠ 0).
+:::
+
+#### NHST Step 2
+
+Compute the test statistic. 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-compute-spearman-rho}
+: Computing Spearman’s rho
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: compute-spearman-rho
+
+(
+    spearman_female_water <- stats::cor.test(
+        x = water_educ$perc.basic2015water,
+        y = water_educ$female.in.school,
+        method = "spearman")
+)
+```
+
+***
+
+While Pearson’s r between females in school and basic water access in @cnj-chap08-cor-test-pearson was 0.81, $r_{s}$ is slightly lower at 0.77.
+
+
+
+::::
+:::::
+
+Instead of a t-statistic, the output for $r_{s}$ reports the S test statistic.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-spearman-rho-s-test-statistic}
+: Formula for Spearman’s rho S test statistic
+::::::
+:::
+::::{.my-theorem-container}
+$$
+S = (n^3 - n) \frac{1-r_{s}}{6}
+$$ {#eq-chap08-spearman-rho-s-test-statistic}
+
+
+- **$r_{s}$**: Spearman’s correlation coefficient
+- **n**: Sample size
+
+::::
+:::::
+
+The `r glossary("p-value")` in the output of the `stats::cor.test()` function is not from the S test statistic. Instead, it is determined by computing an approximation of the `r glossary("t-statistic")` and `r glossary("degrees of freedom")`.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap08-approx-t-statistic}
+: Approximation of t-statistic
+::::::
+:::
+::::{.my-theorem-container}
+$$
+t_{s} = r_{s}\sqrt\frac{n-2}{1-r_{s}^2}
+$$ {#eq-chap08-approx-t-statistic}
+
+
+::::
+:::::
+
+
+
+While it is not included in the output from R, the t-statistic can be computed easily by using R as a calculator.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-approx-t-statistics-spearman}
+: Approximating t-statistics for Spearman’s rho manually
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: chap08-t-statistics-spearman-manually
+
+water_educ |> 
+  tidyr::drop_na(c(
+      perc.basic2015water,
+      female.in.school
+      )
+  ) |> 
+  dplyr::summarize(
+      n = dplyr::n(),
+      t_spearman = 
+          spearman_female_water$estimate * 
+          base::sqrt((n - 2) / (1 - spearman_female_water$estimate^2))
+  )
+```
+
+::::
+:::::
+
+
+
+#### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-t-dist-value}
+: Display a student-t distribution
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-t-dist-94-df-with-t-value
+#| fig-cap: "Student-t distribution with 94 degress of freedom and a vertical line at t = 11.67"
+#| fig-height: 2
+#| fig-width: 2
+
+ggplot2::ggplot() +
+    ggplot2::xlim(-5, 15) +
+    ggplot2::geom_function(
+        fun = dt,
+        args = list(df = 94)
+        ) +
+    ggplot2::geom_vline(
+        xintercept = 11.67,
+        color = "darkred") +
+    ggplot2::labs(
+        x = "t-value",
+        y = "Density"
+    )
+```
+***
+
+In this case, t is 11.67 with 94 degrees of freedom (n = 96). A quick plot of the t-distribution with 94 degrees of freedom revealed that the probability of a t-statistic this big or bigger would be very tiny if the null hypothesis were true.
+
+::::
+:::::
+
+
+#### NHST Step 4
+
+Conclude and write report.
+With this tiny p-value we have to reject the Null.
+
+::: {.callout-tip}
+There was a statistically significant positive correlation between basic access to water and females in school $(r_{s} = 0.77; p < .001)$. As the percentage of the population with basic access to water increases, so does the percentage of females in school.
+:::
+
+### Checking assumptions for Spearman’s rho
+
+#### Introduction
+
+***
+
+::: {#bul-assumptions-spearman-rho}
+
+- Observations are independent (@sec-chap08-check-independence). 
+- Both variables must be at least ordinal or even closer to continuous. (@sec-chap08-check-continuous). 
+- The relationship between the two variables must be monotonic.
+
+Assumptions for Spearman’s rho
+
+:::
+
+#### Independence of observations
+
+Nothing has changed with the data source. This assumption is still not met. (See @sec-chap08-check-independence for the argumentation.)
+
+#### At least ordinal data {#sec-chap08-ordinal}
+
+This assumption is met, because both variables are continuous.
+
+#### Monotonic {#sec-chap08-monotonic}
+
+A `r glossary("monotonic")` relationship is a relationship that goes in only one direction, e.g. the relationship can have curves as long as it goes always in the same direction. For instance in a positive correlation the rate of the ascending y-value can change but must not be under 0, e.g. reversing the direction.
+
+The following screenshot from the books demonstrates this with different examples:
+
+![Monotonic relationship examples (Screenshot of book’s Figure 8.27)](img/chap08/monotonic-demonstration-min.png){#fig-monotonic-examples
+fig-alt="The variables on the x and y axes are labeled x and y respectively, on all three graphs. The values of x on the x axis range from 0 to 10, in intervals of 5 and the y values on the y axis range from -20 to 500, in intervals of 250. The first graph is titled, monotonic (negative corr), and the data points on this graph are clustered along the y axis value of 0 and -125, and between the x axis values of -2.5 and 5. The loess curve seen in this graph starts at about (0, 0) and curves downward, steeply until about (8, -245). The second graph is titled, monotonic (positive corr), and the data points on this graph are clustered along the y axis value of 0 and 125, and between the x axis values of -2.5 and 5. The loess curve seen in this graph starts at about (0, 0) and curves upward, steeply until about (8, 450). The last graph is titled, not monotonic, and the data points on this graph are clustered closer along the y axis value of 0 and 375, and between the x axis values of -2.5 and 5. The loess curve seen in this graph starts at about (0, 187) and curves upward to form two small peaks before falling below the start point and then rising against steeply to form the third peak at about (7, 310) an then falling again."
+fig-align="center"}
+
+The Loess curve in @fig-check-linearity-transformed only goes up, which demonstrates that the relationship between females in school and basic water access meets the monotonic assumption.
+
+#### Conclusion
+
+::: {#bul-assumptions-spearman-rho}
+
+- Observations are independent (@sec-chap08-check-independence). **No**
+- Both variables must be at least ordinal or even closer to continuous. (@sec-chap08-ordinal). **Yes**
+- The relationship between the two variables must be monotonic. (@sec-chap08-monotonic) **Yes**
+
+Summary of testing the assumptions for Spearman’s rho
+
+:::
+
+Spearman’s rho met more assumptions than Pearson’s r with the original data or with the transformed variables. Even so, the independent observation assumption failed, so any reporting should stick to descriptive statistics about the sample and not generalize to the population.
+
+::: {.callout-tip}
+There was a positive correlation between basic access to water and females in school ($r_{s} = 0.77$). As the percentage of the population with basic access to water increases, so does the percentage of females in school.
+:::
+
+
+
+:::::{.my-note}
+:::{.my-note-header}
+Many assumptions not met
+:::
+::::{.my-note-container}
+With the exception of the `r glossary("qui-squared")` test of systolic blood pressure in @sec-chap05 all of the test assumptions have failed. 
+
+This is not only disappointing but I believe also a disaster for frequentist inferential statistics. As far as I understood it means that --- with the one mentioned exception --- we cannot say anything about the population parameters and have to stick with the description of the sample. Instead of inferential statistics just descriptive statistics.
+
+I am not sure if the situation would be better with Bayesian statistics. I still have alsmost no experience with Bayesian statistics. But after a quick research I got the impression that all the assumptions that hold for the frequentist approach must also to be met with the Bayesian framework. (See: [What are the assumptions in bayesian statistics?](https://stats.stackexchange.com/questions/435298/what-are-the-assumptions-in-bayesian-statistics) in CrossValidated)
+::::
+:::::
+
+## Achievement 8: Partial correlation {#sec-chap08-achievement8}
 
 ## Exercises (empty)
 
@@ -2089,6 +2418,35 @@ Vignette [Diagnostic Checking in Regression Relationships](https://cran.r-projec
 
 {**lmtest**}: Testing Linear Regression Models
 :::
+
+***
+::::
+:::::
+
+
+### ppcor
+
+:::::{.my-resource}
+:::{.my-resource-header}
+ppcor: Partial and Semi-Partial (Part) Correlation 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-ppcor}
+
+***
+
+{**ppcor**}: [Partial and Semi-Partial (Part) Correlation](https://cran.r-project.org/package=ppcor) [@ppcor]
+
+Calculates partial and semi-partial (part) correlations along with p value. [@kim2015]
+
+
+{**ppcor**}: Partial and Semi-Partial (Part) Correlation
+:::
+
+
 
 ***
 ::::
