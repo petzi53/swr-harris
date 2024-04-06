@@ -22,6 +22,7 @@ book:
     - 06-t-test.qmd
     - 07-analysis-of-variance.qmd
     - 08-correlation.qmd
+    - 09-linear-regression.qmd
     - 95-references.qmd
   appendices:
     - 96-packages-used.qmd

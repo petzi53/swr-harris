@@ -28,6 +28,51 @@ Functions and data sets for the text Basic Statistics and Data Analysis (BSDA) [
 ::::
 :::::
 
+## broom
+
+:::::{.my-resource}
+:::{.my-resource-header}
+broom: Convert Statistical Objects into Tidy Tibbles 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-broom}
+
+***
+
+{**broom**}: [Convert Statistical Objects into Tidy Tibbles](https://broom.tidymodels.org/) [@broom]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap09/logoi/logo-broom-min.png){width="176"}
+
+
+Summarizes key information about statistical objects in tidy tibbles. This makes it easy to report results, create plots and consistently work with large numbers of models at once.
+
+:::
+
+{**broom**} provides three verbs to make it convenient to interact with model objects:
+
+- `tidy()` summarizes information about model components
+- `glance()` reports information about the entire model
+- `augment()` adds informations about observations to a dataset
+
+For a detailed introduction, please see [Introduction to broom](https://broom.tidymodels.org/articles/broom.html).
+
+broom tidies 100+ models from popular modelling packages and almost all of the model objects in the stats package that comes with base R. 
+
+The vignette [Available methods](https://broom.tidymodels.org/articles/available-methods.html) lists method availability.
+
+{**broom**}: Convert Statistical Objects into Tidy Tibbles
+:::
+
+
+***
+::::
+:::::
+
+
 
 ## car
 
@@ -1539,6 +1584,33 @@ labelled: A Package for Manipulating Labelled Data
 ::::
 :::::
 
+## lmtest
+
+:::::{.my-resource}
+:::{.my-resource-header}
+lmtest: Testing Linear Regression Models 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-lmtest}
+
+***
+
+{**lmtest**}: [Testing Linear Regression Models](https://cran.r-project.org/package=lmtest) [@lmtest]
+
+A collection of tests, data sets, and examples for diagnostic checking in linear regression models. Furthermore, some generic tools for inference in parametric models are provided.
+
+Vignette [Diagnostic Checking in Regression Relationships](https://cran.r-project.org/web/packages/lmtest/vignettes/lmtest-intro.pdf)
+
+{**lmtest**}: Testing Linear Regression Models
+:::
+
+***
+::::
+:::::
+
 
 ## lsr
 
@@ -2033,6 +2105,35 @@ Five omnibus tests for testing the composite hypothesis of normality.
 ***
 ::::
 :::::
+
+## ppcor
+
+:::::{.my-resource}
+:::{.my-resource-header}
+ppcor: Partial and Semi-Partial (Part) Correlation 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-ppcor}
+
+***
+
+{**ppcor**}: [Partial and Semi-Partial (Part) Correlation](https://cran.r-project.org/package=ppcor) [@ppcor]
+
+Calculates partial and semi-partial (part) correlations along with p value. [@kim2015]
+
+
+{**ppcor**}: Partial and Semi-Partial (Part) Correlation
+:::
+
+
+
+***
+::::
+:::::
+
 
 ## psych
 
@@ -2865,6 +2966,34 @@ The sample size functions can be used to approximate the sample size needed to e
 ***
 ::::
 :::::
+
+## tableone
+
+:::::{.my-resource}
+:::{.my-resource-header}
+tableone: Create 'Table 1' to Describe Baseline Characteristics with or without Propensity Score Weights 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-tableone}
+
+***
+
+{**tableone**}: [Create 'Table 1' to Describe Baseline Characteristics with or without Propensity Score Weights](https://github.com/kaz-yos/tableone) [@tableone]
+
+Creates 'Table 1', i.e., description of baseline patient characteristics, which is essential in every medical research. Supports both continuous and categorical variables, as well as p-values and standardized mean differences. Weighted data are supported via the {**survey**} package.
+
+{**tableone**}: Create 'Table 1' to Describe Baseline Characteristics with or without Propensity Score Weights
+:::
+
+Instead of using {**tableone**} I will use {**gtsummry**} in conjunction with {**gt**}.
+
+***
+::::
+:::::
+
 
 ## tabulizer
 

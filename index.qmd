@@ -3,8 +3,8 @@
 ::: {.callout-note style="color: blue;"}
 #### This is work in progress
 
-- I have finished chapter 1-7 (about 59% of the book). These chapters also contain experiments and additionally self-created exercises. 
-- Currently I am working on chapter 8.
+- I have finished chapter 1-8 (about 68% of the book). These chapters also contain experiments and additionally self-created exercises. 
+- Currently I am working on chapter 9.
 :::
 
 ::: my-watch-out

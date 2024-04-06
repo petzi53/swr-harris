@@ -1,0 +1,136 @@
+# Linear regression {#sec-chap09}
+
+```{r}
+#| label: setup
+#| include: false
+
+base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw()) 
+```
+
+## Achievements to unlock
+
+::: my-objectives
+::: my-objectives-header
+Objectives
+:::
+
+::: my-objectives-container
+**SwR Achievements**
+
+- **Achievement 1**: Using exploratory data analysis to learn about the data before developing a linear regression model (@sec-chap09-achievement1)
+- **Achievement 2**: Exploring the statistical model for a line (@sec-chap09-achievement2)
+- **Achievement 3**: Computing the slope and intercept in a simple linear regression (@sec-chap09-achievement3)
+- **Achievement 4**: Slope interpretation and significance ($b_{1}$, p-value, CI) (@sec-chap09-achievement4)
+- **Achievement 5**: Model significance and model fit (@sec-chap09-achievement5)
+- **Achievement 6**: Checking assumptions and conducting diagnostics (@sec-chap09-achievement6)
+- **Achievement 7**: Adding variables to the model and using transformation (@sec-chap09-achievement7)
+
+:::
+:::
+
+
+## The needle exchange examination
+
+Some infectious diseases like HIV and Hepatitis C are on the rise again with young people in non-urban areas having the highest increases and needle-sharing being a major factor. Clean needles are distributed by syringe services programs (SSPs), which can also provide a number of other related services including overdose prevention, referrals for substance use treatment, and infectious disease testing. But even there are programs in place --- which is not allowed legally in some US states! --- some people have to travel long distances for health services, especially for services that are specialized, such as needle exchanges.
+
+In discussing the possible quenstion one could analyse it turned out that for some questions critical data are missing: 
+
+- There is a distance-to-syringe-services-program variable among the health services data sources of `r glossary("amfAR")` (https://opioid.amfar.org/). 
+- Many of the interesting variables were not available for much of the nation, and many of them were only at the state level.
+
+Given these limitations, the book focuses whether the distance to a syringe program could be explained by 
+
+- whether a county is urban or rural, 
+- what percentage of the county residents have insurance (as a measure of both access to health care and socioeconomic status [SES]), 
+- HIV prevalence, 
+- and the number of people with opioid prescriptions.
+
+As there is no variable for rural or urban status in the amfAR database, the book will tale a variable from the U.S. Department of Agriculture Economic Research Services website (https://www.ers.usda.gov/data-products/county-typology-codes/) that classifies all counties as metro or non-metro.
+
+## Resources & Chapter Outline
+
+### Data, codebook, and R packages {#sec-chap04-data-codebook-packages}
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for learning about descriptive statistics
+:::
+
+::: my-resource-container
+
+**Data**
+
+Two options for accessing the data:
+
+1. Download the clean data set `dist_ssp_amfar_ch9.csv` from https://edge.sagepub.com/harris1e.
+2. Follow the instructions in Box 9.1 to import, merge, and clean the data from multiple files or from the original online source 
+
+**Codebook**
+
+Two options for accessing the codebook: 
+
+1. Download the codebook file `opioid_county_codebook.xlsx` from https://edge.sagepub.com/harris1e.
+2. Use the online codebook from the amfAR Opioid & Health Indicators Database website (https://opioid.amfar.org/)
+
+
+**Packages**
+
+1. Packages used with the book (sorted alphabetically)
+
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+-   {**tableone**}: @pak-tableone (Kazuki Yoshida) 
+-   {**lmtest**}: @pak-lmtest (Achim Zeileis) 
+-   {**broom**}, @pak-broom (David Robinson and Alex Hayes)
+-   {**car**}, @pak-car (John Fox)
+
+    
+2. My additional packages (sorted alphabetically)
+
+- {**gt**}: @pak-gt (Richard Iannone)
+- {**gtsummary**}: @pak-gtsummary (Daniel D. Sjoberg)
+
+:::
+:::
+
+### Get data
+
+### Show raw data
+
+### Recode data
+
+## Achievement 1: Explorative Data Analysis {#sec-chap09-achievement1}
+
+***
+
+## Exercises (empty)
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+
+## Session Info {.unnumbered}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+Session Info
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+
+
+::::
+:::::

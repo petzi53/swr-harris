@@ -121,18 +121,18 @@ Two options:
 :::
 :::
 
-### Get data
+### Get data & show raw data
 
 ::: my-example
 ::: my-example-header
 ::: {#exm-chap08-get-data}
-: Get data for chapter 8
+: Get data and show raw for chapter 8
 :::
 :::
 
 ::: my-example-container
 ::: panel-tabset
-###### water-educ
+###### Get water-educ
 
 ::: my-r-code
 ::: my-r-code-header
@@ -154,44 +154,13 @@ water_educ <- readr::read_csv(
 
 save_data_file("chap08", water_educ, "water_educ.rds")
 ```
+
+(*For this R code chunk is no output available*)
+
 :::
 :::
 
-###### header2
-
-::: my-r-code
-::: my-r-code-header
-::: {#cnj-code-name-b}
-: Numbered R Code Title (Tidyverse)
-:::
-:::
-
-::: my-r-code-container
-```{r}
-#| label: text-bx
-
-1 + 1
-```
-:::
-:::
-:::
-:::
-:::
-
-------------------------------------------------------------------------
-
-### Show raw data
-
-::: my-example
-::: my-example-header
-::: {#exm-chap08-show-data}
-: Show data for chapter 8
-:::
-:::
-
-::: my-example-container
-::: panel-tabset
-###### water-educ
+###### Show water_educ
 
 ::: my-r-code
 ::: my-r-code-header
@@ -239,32 +208,13 @@ descriptive information.
 :::
 :::
 
-###### header2
 
-::: my-r-code
-::: my-r-code-header
-<div>
-
-: Numbered R Code Title (Tidyverse)
-
-</div>
 :::
 
-::: my-r-code-container
-```{r}
-#| label: text-by
 
-1 + 1
-```
-:::
-:::
-:::
 :::
 :::
 
-------------------------------------------------------------------------
-
-### Recode data
 
 ## Exploring data {#sec-chap08-achievement1}
 
@@ -1077,7 +1027,7 @@ test_data <- water_educ |>
 
 ```{r}
 #| label: tbl-cor-test-pearson
-#| tbl-cap: ""
+#| tbl-cap: "T-statistic for the significance test of *r* with `stats::cor.test()`"
 
 # cor.test(x = water_educ$perc.basic2015water,
 #          y = water_educ$female.in.school)
@@ -2183,7 +2133,8 @@ Compute the test statistic.
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: compute-spearman-rho
+#| label: tbl-compute-spearman-rho
+#| tbl-cap: "Computing Spearman’s rho"
 
 (
     spearman_female_water <- stats::cor.test(
@@ -2382,7 +2333,7 @@ There was a positive correlation between basic access to water and females in sc
 Many assumptions not met
 :::
 ::::{.my-note-container}
-With the exception of the `r glossary("qui-squared")` test of systolic blood pressure in @sec-chap05 all of the test assumptions have failed. 
+With the exception of the `r glossary("chi-squared")` test of systolic blood pressure in @sec-chap05 all of the test assumptions have failed. 
 
 This is not only disappointing but I believe also a disaster for frequentist inferential statistics. As far as I understood it means that --- with the one mentioned exception --- we cannot say anything about the population parameters and have to stick with the description of the sample. Instead of inferential statistics just descriptive statistics.
 
@@ -2392,66 +2343,389 @@ I am not sure if the situation would be better with Bayesian statistics. I still
 
 ## Achievement 8: Partial correlation {#sec-chap08-achievement8}
 
+### Introduction
+
+`r glossary("PartialCorr", "Partial corrections")` is a method for examining how multiple variables share variance with each other. 
+
+For instance it could be the case that females in school and basic water access might both be related to poverty, and that poverty might be the reason both of these variables increase at the same time. The argumentation is: Countries with higher poverty have fewer females in school and lower percentages of people with basic water access. So in the end poverty was the reason for the shared variance between females in school and basic water access.
+
+### Computing Pearson’ r partial correlation
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap08-partial-correlation}
+: Computing Pearson’ r partial correlation
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### stats::cor()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-pearson-cor}
+: Examine bivariate Pearson’s r correlation
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: pearson-cor
+
+water_educ4 <- water_educ |> 
+    dplyr::select(
+        female.in.school,
+        perc.basic2015water,
+        perc.1dollar
+    ) |> 
+    tidyr::drop_na() 
+
+save_data_file("chap08", water_educ4, "water_educ4.rds")
+
+water_educ4 |> 
+    dplyr::summarize(
+        female_water = stats::cor(
+            x = female.in.school,
+            y = perc.basic2015water
+        ),
+        female_dollar = stats::cor(
+            x = female.in.school,
+            y = perc.1dollar
+        ),
+        water_dolloar = stats::cor(
+            x = perc.basic2015water,
+            y = perc.1dollar
+        )
+    )
+```
+
+All three correlations are strong related. Using `ppcor::pcor()` determines how they were interrelated.
+
+
+::::
+:::::
+
+
+###### ppcor::pcor()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-partial-corr-poverty-pearson}
+: Partial correlation of Pearson’s r of poverty
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: partial-corr-poverty-pearson
+
+water_educ4 |> 
+    ppcor::pcor(method = "pearson")
+```
+
+***
+
+While Pearson’s r between females in school and basic water access in @tbl-cor-test-pearson was 0.81, Speaman’s $r_{s}$ is in @tbl-compute-spearman-rho slightly lower at 0.77.
+
+Looking at the first section of the output from `ppcor::pcor()` under the `$estimate` subheading, it shows the partial correlations between all three of the variables. The partial correlation between females in school and basic water access is $r_{partial} = .44$. So, after accounting for poverty, the relationship between females in school and basic water access is a moderate .44.
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+### Interpretation
+
+To understand partial correlation better some screenshots from the book may help:
+
+**Shared variance and Venn diagrams for two variables**
+
+![Visualizing percentage of shared variance (Screenshot of Figure 8.13)](img/chap08/shared-variance-examples-min.png){#fig-shared-variance-examples
+fig-alt="This figure has six scatter plots in two rows of three scatter plots each, and three Venn diagrams on the third row. In the scatterplots along the first column, the x axis is labeled x and the values on this axis range from -2 to 2, in intervals of 1. The y axis on both these scatterplots is labeled y, and the values on this axis range from -3 to 3, in intervals of 1. The data points on both these graphs are widely dispersed at the center of the plot area. The first graph in the first row also has a fit line that slopes slightly upward from left to right just below and above the 0 value on the y axis. The text above this graph reads, r=.1, r-squared = .01 The first graph in the second row also has a fit line that slopes slightly downward from left to right just above and below the 0 value on the y axis. The text above this graph read, r=. -1, r-squared = .01. In the second column of scatterplots, the data points are seen closer to the fit line. In the second graph on the first row, the fit line is steeper than that seen on the first graph, and slopes from the bottom left to the top right. The text above this graph reads, r=.5, rsquared = .25. In the second graph on the second row, the fit line is steeper than that seen on the first graph, and slopes from the top left to the bottom right. The text above this graph reads, r=-.5, r-squared = .25. In the third column of scatterplots, the data points are seen clustered along the fit line. In the third graph on the first row, the fit line is steepest and slopes from almost the bottom left corner, to a point close to the top right corner of the plot area. The text above this graph reads, r=.9, r-squared = .81. In the third graph on the second row, the fit line is steepest and slopes from almost the top left corner, to a point close to the bottom right corner of the plot area. The text above this graph reads, r=-.9, r-squared = .81. The third row has three Venn diagrams with two circles in each labeled y and x, on the left and right respectively. In the first Venn diagram, the two circles barely intersect and the text above reads, 1% shared variance. In the second Venn diagram, the circles intersect and overlap and the text above reads, 25% shared variance. In the third Venn diagram, the two circles intersect up to almost the middle of both circles and the text above reads, 81% shared variance. Each of these Venn diagrams align to the first, second, and third columns of scatterplots described above." fig-align="center"}
+
+**Shared variance with Venn diagrams with three variables**
+
+![Visualizing shared variance with Venn diagrams with three variables (Screenshot Figure 8.29)](img/chap08/shared-variance-three-variables-min.png){#fig-shared-variance-three-variables 
+fig-alt="Three overlapping circles in different colors named 'female-school', 'basic.water' and 'less.than.dollar'. There are places where two of the circles overlap and a central place where all three circles overlap each other." fig-align="center" width="60%"}
+
+There are two ways the variables overlap in Figure 8.28. There are places where just two of the variables overlap in fig-shared-variance-three-variables (`female.in.school` and `perc.basic2015water` overlap, `female.in.school` and `perc.1dollar` overlap, `perc.basic2015water` and `perc.1dollar` overlap), and there is the space where `female.in.school` and `perc.basic2015water` and `perc.1dollar` all overlap in the center of the diagram. 
+
+**The overlap between just two colors is the `r glossary("partialcorr", "partial correlation")` between the two variables. It is the extent to which they vary in the same way after accounting for how they are both related to the third variable involved.**
+
+To get the percentage of shared variance, this `r glossary("determination", "coefficient of determination")` $r^2$ could be computed and reported as a percentage. The squared value of .44 is .194, so 19.4% of the variance in percentage of females in school is shared with the percentage who have basic access to water.
+
+::: {.callout-note}
+The assumptions that applied to the two variables for a Pearson’s r correlation would apply to all three variables for a partial Pearson’s r correlation. Each variable would be continuous and normally distributed, each pair of variables would demonstrate linearity, and each pair would have to have constant variances (homoscedasticity).
+:::
+
+
+### Computing Spearman’s rho partial correlation
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-partial-corr-poverty-spearman}
+: Partial correlation of Spearman’s rho of poverty
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-partial-corr-poverty-spearman
+#| tbl-cap: "Partial correlation of Spearman’s rho of poverty"
+
+water_educ4 |> 
+    ppcor::pcor(method = "spearman")
+```
+
+***
+
+Speaman’s $r_{s}$ was originally in @tbl-compute-spearman-rho 0.77, but the partial Spearman’s rs correlation between females in school and basic water access after accounting for poverty was .43. Including poverty reduced the magnitude of the correlation by nearly half.
+
+
+::::
+:::::
+
+### Testing significance of partial correlation
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-partial-corr-p-value}
+: Compute p-value of partial correlation
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-partial-corr-p-value
+#| tbl-cap: "Compute p-value of partial correlation with `ppcor::pcor.test()`"
+
+ppcor::pcor.test(
+    x = water_educ4$female.in.school,
+    y = water_educ4$perc.basic2015water,
+    z = water_educ4$perc.1dollar,
+    method = "spearman"
+    )
+```
+
+With `ppcor::pcor.test()` there is a special function for testing significance of a partial correlation. But you can also take the p-values from the result of the `ppcor::pcor()` function. Compare the second section titled `$p.value` in @tbl-partial-corr-poverty-spearman with the result in @tbl-partial-corr-p-value.
+
+
+***
+
+::: {#not-partial-corr-wrong}
+::: {.callout-tip}
+The partial correlation between percentage of females in school and the percentage of citizens who have basic water access was moderate, positive, and statistically significant ($r_{s}.partial = 0.43; t = 3.73; p < .05$). Even after poverty is accounted for, increased basic water access was moderately, positively, and significantly associated with an increased percentage of females in school.
+
+Compare this report with @not-partial-corr-changed-report.
+:::
+
+Significance test wrongly reported as the assumptions for partial correlation are not met
+:::
+
+***
+
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Assumptions not met therefore no statistically significance test possible
+:::
+::::{.my-watch-out-container}
+As several assumption for the partial correlation are not met it is not correct to report about the result of a statistically significance test. The text of
+::::
+:::::
+
+
+
+::::
+:::::
+
+***
+
+::: {#not-partial-corr-changed-report}
+
+::: {.callout-tip}
+The partial correlation between the percentage of females in school and the percentage of citizens who have basic water access was moderate and positive ($r_{s.partial} = 0.43$). Even after poverty is accounted for, increased basic water access was moderately and positively associated with an increased percentage of females in school. The assumptions were not met, so it is not clear that the partial correlation from the sample of countries can be generalized to the population of all countries.
+
+Compare this report with @not-partial-corr-wrong.
+:::
+
+Report about partial correlation when the assumptions are not met
+:::
+
+***
+
+### Checking assumptions
+
+Before reporting we have to check the assumptions. We know already that
+
+- the independent observation assumption is not met
+- the at least ordinal variables assumptions is met for all three variables
+- that the monotonic assumption for `female.in.school` and `perc.basic2015.water` is met.
+
+We still have to check
+
+- the monotonic assumption for `female.in.school` and `perc.1dollar` 
+- the monotonic assumption for `perc.basic2015.water` and `perc.1dollar` 
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap08-check-monotonic-assumptionwith-poverty}
+: Check the monotonic assumptions with female in schools and basic water access
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### female -poverty
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-monotonic-female-poverty}
+: Check the monotonic assumption for females and poverty
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-monotonic-female-poverty
+#| fig-cap: "Checking the monotonic assumption for females and poverty"
+
+water_educ4 |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          y = female.in.school/100, 
+          x = perc.1dollar/100
+          )
+      ) +
+  ggplot2::geom_smooth(
+      formula = 'y ~ x',
+      ggplot2::aes(
+            color = "Linear fit line"
+          ), 
+      method = "lm", 
+      se = FALSE
+      ) +
+  ggplot2::geom_smooth(
+      formula = 'y ~ x',
+      ggplot2::aes(
+            color = "Loess curve"
+          ), 
+      method = "loess",
+      se = FALSE
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(
+            size = "Country"
+          ), 
+      color = "#7463AC", 
+      alpha = .6
+      ) +
+  ggplot2::labs(
+      y = "Percent of school-aged females in school",
+      x = "Percent living on < $1 per day"
+      ) +
+  ggplot2::scale_x_continuous(labels = scales::percent) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::scale_color_manual(name = "", values = c("gray60", "darkred")) +
+  ggplot2::scale_size_manual(name = "", values = 2)
+```
+
+::::
+:::::
+
+
+###### water - poverty
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap08-monotonic-water-poverty}
+: Check the monotonic assumption for water access and poverty
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-monotonic-water-poverty
+#| fig-cap: "Checking the monotonic assumption for water access and poverty"
+
+water_educ4 |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          y = perc.basic2015water/100, 
+          x = perc.1dollar/100
+          )
+      ) +
+  ggplot2::geom_smooth(
+      formula = 'y ~ x',
+      ggplot2::aes(
+            color = "Linear fit line"
+          ), 
+      method = "lm", 
+      se = FALSE
+      ) +
+  ggplot2::geom_smooth(
+      formula = 'y ~ x',
+      ggplot2::aes(
+            color = "Loess curve"
+          ), 
+      method = "loess",
+      se = FALSE
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(
+            size = "Country"
+          ), 
+      color = "#7463AC", 
+      alpha = .6
+      ) +
+  ggplot2::labs(
+      y = "Percent of basic water access",
+      x = "Percent living on < $1 per day"
+      ) +
+  ggplot2::scale_x_continuous(labels = scales::percent) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::scale_color_manual(name = "", values = c("gray60", "darkred")) +
+  ggplot2::scale_size_manual(name = "", values = 2)
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+It turned out that the monotonic assumption was met for `female.in.school` and `perc.1dollar` but not for `perc.basic2015water` and `perc.1dollar`.
+
+
+:::::{.my-note}
+:::{.my-note-header}
+Assumption of independent observations not met
+:::
+::::{.my-note-container}
+The book mentions twice the idea to recode variables that do not met their normality, linearity or monotonic assumptions. For instance one could recode the basic access to water into a binomial variable (has basic access, does not have basic access). The second idea was to recode the poverty variable into an ordinal variable. The ordinal variable could then be used in place of the original version of the variable and the $r_{s}$ analysis could be conducted again. 
+
+But then there is still the problem that the assumption of the independent observation are not met. This failure has two aspects:
+
+1. It is not a sample but a collection of data some countries have provided. Therefore it could be the case that those countries without data had a reason not to provide their data. They could therefore different to those countries that provided data.
+2. Neighboring countries could influence each other or have other similar characteristics, e.g. similar soil or climate conditions.
+
+Ad 1) The only way to overcome failed assumption is to get data of all countries. We would then work with the population and not a sample. Or we could draw a sample from this population. --- I wonder what different framework of analysis is necessary if working with population data instead with data from a sample. One obvious change is that we would not need significance tests and confidence intervals. Also we would not need `r glossary("Bessel’s correction")` for the variance calculation. What else? 
+
+Ad 2) I see no way to overcome the influence of neighboring countries. But maybe with a real sample or population data, this assumption would not be a problem. One could argue that similar natural conditions like climate or regional cultural customs are a fact that we should take into account and should not classify as a failed assumption.
+::::
+:::::
+
+
+
 ## Exercises (empty)
-
-## Packages introduced in this chapter
-
-### lmtest
-
-:::::{.my-resource}
-:::{.my-resource-header}
-lmtest: Testing Linear Regression Models 
-:::
-::::{.my-resource-container}
-
-***
-
-::: {#pak-lmtest}
-
-***
-
-{**lmtest**}: [Testing Linear Regression Models](https://cran.r-project.org/package=lmtest) [@lmtest]
-
-A collection of tests, data sets, and examples for diagnostic checking in linear regression models. Furthermore, some generic tools for inference in parametric models are provided.
-
-Vignette [Diagnostic Checking in Regression Relationships](https://cran.r-project.org/web/packages/lmtest/vignettes/lmtest-intro.pdf)
-
-{**lmtest**}: Testing Linear Regression Models
-:::
-
-***
-::::
-:::::
-
-
-### ppcor
-
-:::::{.my-resource}
-:::{.my-resource-header}
-ppcor: Partial and Semi-Partial (Part) Correlation 
-:::
-::::{.my-resource-container}
-
-***
-
-::: {#pak-ppcor}
-
-***
-
-{**ppcor**}: [Partial and Semi-Partial (Part) Correlation](https://cran.r-project.org/package=ppcor) [@ppcor]
-
-Calculates partial and semi-partial (part) correlations along with p value. [@kim2015]
-
-
-{**ppcor**}: Partial and Semi-Partial (Part) Correlation
-:::
-
-
-
-***
-::::
-:::::
-
 
 ## Glossary
 
