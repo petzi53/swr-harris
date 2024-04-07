@@ -1227,7 +1227,7 @@ water_educ  |>
 #| label: fig-normality-female-hist-dnorm
 #| fig-cap: "Distribution of percentage of school-aged females in school"
 
-hist_dnorm(
+my_hist_dnorm(
     df = water_educ,
     v = water_educ$female.in.school / 100,
     n_bins = 30,
@@ -1861,7 +1861,7 @@ skimr::skim(water_educ3)
 water_educ3 <- base::readRDS("data/chap08/water_educ3.rds")
 
 # histogram of arcsin females in school (Figure 8.21)
-plt1 <- hist_dnorm(
+plt1 <- my_hist_dnorm(
     df = water_educ3,
     v = water_educ3$arcsin.female.school,
     n_bins = 30,
@@ -1869,7 +1869,7 @@ plt1 <- hist_dnorm(
     )
 
 # histogram of folded power transf females in school (Figure 8.22)
-plt2 <- hist_dnorm(
+plt2 <- my_hist_dnorm(
     df = water_educ3,
     v = water_educ3$folded.p.female.school,
     n_bins = 30,
@@ -1877,7 +1877,7 @@ plt2 <- hist_dnorm(
     )
 
 # histogram of arcsine of water variable (Figure 8.23)
-plt3 <- hist_dnorm(
+plt3 <- my_hist_dnorm(
     df = water_educ3,
     v = water_educ3$arcsin.perc.basic.water,
     n_bins = 30,
@@ -1885,7 +1885,7 @@ plt3 <- hist_dnorm(
     )
 
 # histogram of folded power transformed water variable (Figure 8.24)
-plt4 <- hist_dnorm(
+plt4 <- my_hist_dnorm(
     df = water_educ3,
     v = water_educ3$folded.p.basic.water,
     n_bins = 30,

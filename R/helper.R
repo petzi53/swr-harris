@@ -40,10 +40,9 @@ first_and_last_row <-  function(df) {
 }
 
 ##########################################################
-# hist_dnorm: Create histogram with overlaid dnorm curve
+# : Create histogram with overlaid dnorm curve
 # Purpose:
-# Generate histogram from a data frame
-# and overlay the density normal distribution
+# Compare histogram with normal distribution and density
 # Author: Peter Baumgartner
 # Used in my personal notes on "Statistics with R"
 # See: https://bookdown.org/pbaumgartner/swr-harris/
@@ -59,7 +58,7 @@ first_and_last_row <-  function(df) {
 # col_dens  = character: color of density curve
 # col_dnorm = character: color of dnorm curve
 
-hist_dnorm <- function(df, v, n_bins = 20,
+my_hist_dnorm <- function(df, v, n_bins = 20,
                        col_fill = "gray90",
                        col_color = "black",
                        col_dnorm = "Normal",
@@ -102,7 +101,7 @@ hist_dnorm <- function(df, v, n_bins = 20,
 ##########################################################
 # my_qq_plot: Create q-q-plot
 # Purpose:
-# Generate q-q plot from a data frame
+# Generate check normality assumption
 # Author: Peter Baumgartner
 # Used in my personal notes on "Statistics with R"
 # See: https://bookdown.org/pbaumgartner/swr-harris/
@@ -112,7 +111,7 @@ hist_dnorm <- function(df, v, n_bins = 20,
 # v         = character: numerical column of data.frame:
 #             syntax for call = df$v (NA's are allowed)
 # x_label   = character: title for x-axis
-# y_label   = character: title for x-axis
+# y_label   = character: title for y-axis
 # col_qq    = character: color of data
 # line_qq.  = character: color of theoretical normal distribution
 
@@ -130,11 +129,13 @@ my_qq_plot <- function(
         ggplot2::aes(sample = v)
     ) +
     ggplot2::stat_qq(
-        ggplot2::aes(color = col_qq)
+        ggplot2::aes(color = col_qq),
+        na.rm = TRUE
     ) +
     ggplot2::stat_qq_line(
         ggplot2::aes(linetype = line_qq),
-        linewidth = 1
+        linewidth = 1,
+        na.rm = TRUE
     ) +
     ggplot2::labs(
         x = x_label,
@@ -147,11 +148,88 @@ my_qq_plot <- function(
     ggplot2::scale_linetype_manual(
         name = "",
         values = ("solid")
-    )
+    ) +
+    ggplot2::guides(
+        color = ggplot2::guide_legend(order = 1),
+        linetype = ggplot2::guide_legend(order = 2)
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "top")
+
     p
 }
 
+##########################################################
+# my_scatter: Create scatterplot with lm and loess curve
+# Purpose:
+# Generate check
+# Author: Peter Baumgartner
+# Used in my personal notes on "Statistics with R"
+# See: https://bookdown.org/pbaumgartner/swr-harris/
+##########################################################
 
+# df        = data.frame or tibble
+# v         = character: numerical column of data.frame:
+#             syntax for call = df$v (NA's are allowed)
+# w         = character: numerical column of data.frame
+#             syntax for call = df$w (NA's are allowed)
+# x_label   = character: title for x-axis
+# y_label   = character: title for y-axis
+# col_point = character: color of points
+# col_lm    = character: color of linear model
+# col_loess = character: color of loess curve
+
+
+my_scatter <- function(
+        df,
+        v,
+        w,
+        col_point = "Point",
+        col_lm = "Linear",
+        col_loess = "Loess",
+        x_label = "x",
+        y_label = "y"
+) {
+    p <- df |>
+        ggplot2::ggplot(
+            ggplot2::aes(
+                x = v,
+                y = w
+            )
+        ) +
+        ggplot2::geom_point(
+            alpha = 0.6,
+            ggplot2::aes(color = col_point),
+            na.rm = TRUE
+        ) +
+        ggplot2::geom_smooth(
+            formula = y ~ x,
+            method = "lm",
+            se = FALSE,
+            ggplot2::aes(color = col_lm),
+            na.rm = TRUE
+        ) +
+        ggplot2::geom_smooth(
+            formula = y ~ x,
+            method = "loess",
+            se = FALSE,
+            ggplot2::aes(color = col_loess),
+            na.rm = TRUE
+        ) +
+        ggplot2::labs(
+            x = x_label,
+            y = y_label
+        ) +
+        ggplot2::theme_bw() +
+        ggplot2::theme(legend.position = "top") +
+        ggplot2::scale_color_manual(
+            name = "",
+            values = c("purple3", "black", "tomato"),
+            breaks = c(col_point, col_lm, col_loess)
+        )
+
+    p
+}
 ################################################################
 # list_plotter: Plot color list as a palette
 # Purpose:

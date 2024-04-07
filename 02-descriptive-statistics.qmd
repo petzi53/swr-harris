@@ -1596,7 +1596,7 @@ To facilitate the following experiment I have written a function to generate a h
 # col       = color of dnorm curve
 # return value is "ggplot" object to customize it further (set labels etc.)
 
-hist_dnorm <- function(df, v, n_bins = 20,
+my_hist_dnorm <- function(df, v, n_bins = 20,
                        col_fill = "gray90",
                        col_color = "black",
                        col_dnorm = "tomato") {
@@ -1737,8 +1737,8 @@ There are many packages to compute the skewness of a distribution. (Type `??skew
 bdims_male <- bdims |> 
     dplyr::filter(sex == 1)
 
-## construct graph using my private function hist_dnorm()
-p <- hist_dnorm(bdims_male, bdims_male$bia_di)
+## construct graph using my private function my_hist_dnorm()
+p <- my_hist_dnorm(bdims_male, bdims_male$bia_di)
 
 p +
     ggplot2::labs(x = "biacromial diameter in centimeters")
@@ -1832,8 +1832,8 @@ Harris referenced [@kim2013] for the assessment table above. I noticed that ther
 #| cache: true
 #| results: hold
 
-## construct graph using my private function hist_dnorm()
-p <- hist_dnorm(bdims, bdims$bii_di)
+## construct graph using my private function my_hist_dnorm()
+p <- my_hist_dnorm(bdims, bdims$bii_di)
 
 p +
     ggplot2::labs(x = "respondent's biiliac diameter (pelvic breadth) in centimeters.")
@@ -1879,8 +1879,8 @@ Both tests have a very low p-value and attest us excessive skewness. This is eve
 #| cache: true
 #| results: hold
 
-## construct graph using my private function hist_dnorm()
-p <- hist_dnorm(bdims, bdims$wai_gi)
+## construct graph using my private function my_hist_dnorm()
+p <- my_hist_dnorm(bdims, bdims$wai_gi)
 
 p +
     ggplot2::labs(x = "Respondent's waist girth in centimeters, 
@@ -2107,8 +2107,8 @@ $$ {#eq-chap02-kurtosis}
 #| cache: true
 #| results: hold
 
-## construct graph using my private function hist_dnorm()
-p <- hist_dnorm(bdims, bdims$bit_di)
+## construct graph using my private function my_hist_dnorm()
+p <- my_hist_dnorm(bdims, bdims$bit_di)
 
 p +
     ggplot2::labs(x = "respondent's bitrochanteric diameter (hip girth) in centimeters of 507 individuals")
@@ -2156,8 +2156,8 @@ Both functions `semTools::skew()` and `statpsych::test.skew()` claim that there 
 #| cache: true
 #| results: hold
 
-## construct graph using my private function hist_dnorm()
-p <- hist_dnorm(bdims, bdims$bia_di)
+## construct graph using my private function my_hist_dnorm()
+p <- my_hist_dnorm(bdims, bdims$bia_di)
 
 p +
     ggplot2::labs(x = "biachromial diameter distribution of 507 individuals")
@@ -2204,8 +2204,8 @@ As the z-value is below 3 and the excess value is negative we have a platykurtic
 #| cache: true
 
 
-## construct graph using my private function hist_dnorm()
-p <- hist_dnorm(bdims, bdims$bii_di)
+## construct graph using my private function my_hist_dnorm()
+p <- my_hist_dnorm(bdims, bdims$bii_di)
 
 p +
     ggplot2::labs(x = "Respondent's biiliac diameter (pelvic breadth) in centimeters (men and women, N = 507)")
@@ -2556,8 +2556,8 @@ age80 |>
         IQR = stats::IQR(`_AGE80`)
     )
 
-## construct graph using my private function hist_dnorm()
-p <- hist_dnorm(age80, age80$`_AGE80`, n_bins = 62)
+## construct graph using my private function my_hist_dnorm()
+p <- my_hist_dnorm(age80, age80$`_AGE80`, n_bins = 62)
 
 p +
     ggplot2::labs(x = "Age distribution of 464664 individuals (age value collapsed above 80)") +
@@ -2617,8 +2617,8 @@ age79 |>
         IQR = stats::IQR(`_AGE79`)
     )
 
-## construct graph using my private function hist_dnorm()
-p <- hist_dnorm(age79, age79$`_AGE79`, n_bins = 61)
+## construct graph using my private function my_hist_dnorm()
+p <- my_hist_dnorm(age79, age79$`_AGE79`, n_bins = 61)
 
 p +
     ggplot2::labs(x = "Age distribution of 425822 individuals from age 18 to 79") +

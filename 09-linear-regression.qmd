@@ -217,7 +217,7 @@ Instead following linearly the chapter I will try to compute my own `r glossary(
 
 ::: {.panel-tabset}
 
-###### histograms
+###### Histograms
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -233,28 +233,28 @@ Instead following linearly the chapter I will try to compute my own `r glossary(
 #| fig-height: 8
 
 
-hist_distance <- hist_dnorm(
+hist_distance <- my_hist_dnorm(
     df = distance_ssp_clean,
     v = distance_ssp_clean$dist_ssp,
     n_bins = 30,
     x_label = "Nearest syringe services program in miles"
 ) 
 
-hist_hiv <- hist_dnorm(
+hist_hiv <- my_hist_dnorm(
     df = distance_ssp_clean,
     v = distance_ssp_clean$hiv_prevalence,
     n_bins = 30,
     x_label = "People with diagnosed HIV per 100,000"
 ) 
 
-hist_opioid <- hist_dnorm(
+hist_opioid <- my_hist_dnorm(
     df = distance_ssp_clean,
     v = distance_ssp_clean$opioid_rate,
     n_bins = 30,
     x_label = "Opioid prescriptions per 100 people"
 )
 
-hist_insurance <- hist_dnorm(
+hist_insurance <- my_hist_dnorm(
     df = distance_ssp_clean,
     v = distance_ssp_clean$no_insurance,
     n_bins = 30,
@@ -283,53 +283,88 @@ gridExtra::grid.arrange(
 ```{r}
 #| label: fig-eda-qq-plots
 #| fig-cap: "Q-Q plots for numeric variables of chapter 9"
+#| fig-height: 8
 
-my_qq_plot(
+qq_distance <- my_qq_plot(
     df = distance_ssp_clean,
     v  = distance_ssp_clean$dist_ssp,
-    col_qq = "Test",
-    line_qq = "Another test"
+    col_qq = "Distance to SSP"
 )
 
-ggplot2::ggplot(
-    distance_ssp_clean, 
-    ggplot2::aes(
-        sample = dist_ssp
-        ),
-    ) +
-  ggplot2::stat_qq() +
-  ggplot2::stat_qq_line(
-    color = "darkred",
-    linewidth = 1.5
-  ) +
-  ggplot2::labs(
-      x = "Nearest syringe services program in miles (standardized)",
-      
-  )
+qq_hiv <- my_qq_plot(
+    df = distance_ssp_clean,
+    v  = distance_ssp_clean$hiv_prevalence,
+    col_qq = "HIV diagnosed"
+)
+
+qq_opioid <- my_qq_plot(
+    df = distance_ssp_clean,
+    v  = distance_ssp_clean$opioid_rate,
+    col_qq = "Opioid prescriptions"
+)
+
+qq_insurance <- my_qq_plot(
+    df = distance_ssp_clean,
+    v  = distance_ssp_clean$no_insurance,
+    col_qq = "Health insurance"
+)
 
 
-
-
-x1 <- distance_ssp_clean |> 
-    tidyr::drop_na(hiv_prevalence)
-
-x <- x1$hiv_prevalence
-
-# X-axis grid
-x2 <- seq(min(x), max(x), length = 40)
-
-# Normal curve
-fun <- dnorm(x2, mean = mean(x), sd = sd(x))
-
-# Histogram
-hist(x, prob = TRUE, col = "white",
-     ylim = c(0, max(fun)),
-     main = "Histogram with normal curve")
-lines(x2, fun, col = 2, lwd = 2)
+gridExtra::grid.arrange(
+   qq_distance, qq_hiv, qq_opioid, qq_insurance, nrow = 2
+)
 ```
 
 ::::
 :::::
+
+###### Scatterplots
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-eda-scatterplots}
+: Scatterplots of numeric variables
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-eda-scatterplots
+#| fig-cap: "Scatterplots of numeric variables"
+#| fig-height: 10
+
+scatter_dist_hiv <-  my_scatter(
+    df = distance_ssp_clean,
+    v =  distance_ssp_clean$hiv_prevalence,
+    w =  distance_ssp_clean$dist_ssp,
+    x_label = "HIV prevalence",
+    y_label = "Distance to SSP"
+)
+
+scatter_dist_opioid <-  my_scatter(
+    df = distance_ssp_clean,
+    v =  distance_ssp_clean$opioid_rate,
+    w =  distance_ssp_clean$dist_ssp,
+    x_label = "Opioid rate",
+    y_label = "Distance to SSP"
+)
+
+scatter_dist_insurance <-  my_scatter(
+    df = distance_ssp_clean,
+    v =  distance_ssp_clean$no_insurance,
+    w =  distance_ssp_clean$dist_ssp,
+    x_label = "No insurance",
+    y_label = "Distance to SSP"
+)
+
+gridExtra::grid.arrange(
+   scatter_dist_hiv, scatter_dist_opioid, scatter_dist_insurance, nrow = 3
+)
+
+```
+
+::::
+:::::
+
 
 :::
 

@@ -1792,7 +1792,7 @@ bp_clean2 <- bp_clean |>
     dplyr::select(systolic) |> 
     tidyr::drop_na() 
     
-hist_dnorm(
+my_hist_dnorm(
     df = bp_clean2,
     v = bp_clean2$systolic,
     n_bins = 30,
@@ -1825,7 +1825,7 @@ The best way to check if this assumption is correct is to change the number of b
 #| fig-cap: "Distribution of systolic blood pressure in mmHg for 20152016 NHANES participants (60 bins)"
 #| cache: true
 
-hist_dnorm(
+my_hist_dnorm(
     df = bp_clean2,
     v = bp_clean2$systolic,
     n_bins = 60,
@@ -2040,7 +2040,7 @@ bp_clean <- base::readRDS("data/chap06/bp_clean.rds")
 bp_clean3 <- bp_clean |> 
     tidyr::drop_na(diff_syst)
     
-hist_dnorm(
+my_hist_dnorm(
     df = bp_clean3,
     v = bp_clean3$diff_syst,
     n_bins = 30,

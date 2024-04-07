@@ -3162,13 +3162,13 @@ aov_residuals_df <- tibble::tibble(residuals =
         )$residuals
     )
 
-p1 <- hist_dnorm(
+p1 <- my_hist_dnorm(
     df = aov_residuals_df,
     v = aov_residuals_df$residuals,
     n_bins = 30,
     x_label = "Residuals with 30 bins as in the book")
 
-p2 <- hist_dnorm(
+p2 <- my_hist_dnorm(
     df = aov_residuals_df,
     v = aov_residuals_df$residuals,
     n_bins = 20,
