@@ -56,15 +56,16 @@ first_and_last_row <-  function(df) {
 # nbins     = numeric: number of bins
 # col_fill  = character: fill color
 # col_color = character: border color of bins
-# col       = character: color of dnorm curve
+# col_dens  = character: color of density curve
+# col_dnorm = character: color of dnorm curve
 
 hist_dnorm <- function(df, v, n_bins = 20,
                        col_fill = "gray90",
                        col_color = "black",
-                       col_dnorm = "tomato",
+                       col_dnorm = "Normal",
+                       col_dens = "Density",
                        x_label = "x") {
     p <- df |>
-        # tidyr::drop_na(tidyselect::all_of(v)) |>
         ggplot2::ggplot(ggplot2::aes(v)) +
         ggplot2::geom_histogram(
             ggplot2::aes(y = ggplot2::after_stat(density)),
@@ -72,16 +73,82 @@ hist_dnorm <- function(df, v, n_bins = 20,
             fill = col_fill,
             color = col_color,
             na.rm = TRUE) +
-        ggplot2::stat_function(fun = dnorm,
-                               args = c(mean = mean(v),
-                                        sd = sd(v)),
-                               col = col_dnorm,
-                               na.rm = TRUE) +
+        ggplot2::geom_density(
+            na.rm = TRUE,
+            ggplot2::aes(color = col_dens),
+            linewidth = 1,
+            ) +
+        ggplot2::stat_function(
+            fun = dnorm,
+            args = c(mean = mean(v, na.rm = TRUE),
+                    sd = sd(v, na.rm = TRUE)),
+            ggplot2::aes(color = col_dnorm),
+            na.rm = TRUE,
+            linewidth = 1,
+            ) +
         ggplot2::theme_bw() +
-        ggplot2::xlab(x_label)
+        ggplot2::xlab(x_label) +
+        ggplot2::scale_color_manual(
+            name = "Colors",
+            values = c("steelblue", "tomato")
+        ) +
+        ggplot2::theme(legend.position = "top")
+
 
     p
 
+}
+
+##########################################################
+# my_qq_plot: Create q-q-plot
+# Purpose:
+# Generate q-q plot from a data frame
+# Author: Peter Baumgartner
+# Used in my personal notes on "Statistics with R"
+# See: https://bookdown.org/pbaumgartner/swr-harris/
+##########################################################
+
+# df        = data.frame or tibble
+# v         = character: numerical column of data.frame:
+#             syntax for call = df$v (NA's are allowed)
+# x_label   = character: title for x-axis
+# y_label   = character: title for x-axis
+# col_qq    = character: color of data
+# line_qq.  = character: color of theoretical normal distribution
+
+
+my_qq_plot <- function(
+        df,
+        v,
+        col_qq = "Data distributed",
+        line_qq = "Normally distributed",
+        x_label = "x",
+        y_label = "y"
+        ) {
+    p <- df |>
+    ggplot2::ggplot(
+        ggplot2::aes(sample = v)
+    ) +
+    ggplot2::stat_qq(
+        ggplot2::aes(color = col_qq)
+    ) +
+    ggplot2::stat_qq_line(
+        ggplot2::aes(linetype = line_qq),
+        linewidth = 1
+    ) +
+    ggplot2::labs(
+        x = x_label,
+        y = y_label
+    ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = ("purple3")
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = ("solid")
+    )
+    p
 }
 
 

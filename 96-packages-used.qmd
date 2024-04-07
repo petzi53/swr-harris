@@ -285,7 +285,7 @@ cranlogs: Download Logs from the 'RStudio' 'CRAN' Mirror
 ![](img/chap05/logoi/logo-cranlogs-min.png){width="176"}
 
 
-`r glossary("API")` to the database of `r glossary("CRAN")` package downloads from the RStudio CRAN mirror. The database itself is at <http://cranlogs.r-pkg.org>,
+`r glossary("APIx", "API")` to the database of `r glossary("CRAN")` package downloads from the RStudio CRAN mirror. The database itself is at <http://cranlogs.r-pkg.org>,
     see <https://github.com/r-hub/cranlogs.app> for the raw API.
 
 :::
@@ -1391,7 +1391,7 @@ processing the results.
 ![](img/chap03/logoi/logo-httr2-min.png){width="176"}
 
 {**httr2**} (pronounced hitter2) is a ground-up rewrite of {**httr**}
-that provides a pipeable `r glossary("API")` with an explicit request
+that provides a pipeable `r glossary("APIx", "API")` with an explicit request
 object that solves more problems felt by packages that wrap APIs (e.g.
 built-in rate-limiting, retries, OAuth, secure secrets, and more). ---
 {**httr2**} is designed to map closely to the underlying
@@ -2006,7 +2006,7 @@ Plots](https://patchwork.data-imaginist.com/)
 The goal of {**patchwork**} is to make it ridiculously simple to combine
 separate `ggplots` into the same graphic. As such it tries to solve the
 same problem as `gridExtra::grid.arrange()` and `cowplot::plot_grid` but
-using an `r glossary("API")` that incites exploration and iteration, and
+using an `r glossary("APIx", "API")` that incites exploration and iteration, and
 scales to arbitrarily complex layouts.
 :::
 
@@ -2684,7 +2684,7 @@ scico: Colour Palettes Based on the Scientific Colour-Maps
 ![](img/chap03/logoi/logo-scico-min.png){width="176"}
 
 
-Color choice in information visualization is important in order to avoid being mislead by inherent bias in the used color palette. The {**scico**} package provides access to the perceptually uniform and color-blindness friendly palettes developed by [Fabio Crameri](https://www.fabiocrameri.ch/colourmaps/) and released under the "Scientific Color-Maps" moniker. The package contains 39 different palettes and includes both diverging and sequential types. It uses more or less the same `r glossary("api")` as {**viridis**} and provides scales for {**ggplot2**} without requiring {**ggplot2**} to be installed.
+Color choice in information visualization is important in order to avoid being mislead by inherent bias in the used color palette. The {**scico**} package provides access to the perceptually uniform and color-blindness friendly palettes developed by [Fabio Crameri](https://www.fabiocrameri.ch/colourmaps/) and released under the "Scientific Color-Maps" moniker. The package contains 39 different palettes and includes both diverging and sequential types. It uses more or less the same `r glossary("APIx", "API")` as {**viridis**} and provides scales for {**ggplot2**} without requiring {**ggplot2**} to be installed.
 
 :::
 
@@ -2966,6 +2966,79 @@ The sample size functions can be used to approximate the sample size needed to e
 ***
 ::::
 :::::
+
+## stringi
+
+:::::{.my-resource}
+:::{.my-resource-header}
+stringi: Fast and Portable Character String Processing Facilities 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-stringi}
+
+***
+
+{**stringi**}: [Fast and Portable Character String Processing Facilities](https://stringi.gagolewski.com/) [@stringi]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-stringi-min.png){width="176"}
+
+
+A collection of character string/text/natural language processing tools for pattern searching (e.g., with 'Java'-like regular expressions or the 'Unicode' collation  algorithm), random string generation, case mapping, string transliteration, concatenation, sorting, padding, wrapping, Unicode normalization, date-time formatting and parsing, and many more. 
+
+:::
+
+The {**stringi**} tools are fast, consistent, convenient, and - thanks to `r glossary("ICU")` ([International Components for Unicode](https://icu.unicode.org/home)) - portable across all locales and platforms. Documentation about {**stringi**} is provided via its website at <https://stringi.gagolewski.com/> and the paper by Gagolewski [-@gagolewski2022].
+
+{**stringi**}: Fast and Portable Character String Processing Facilities
+:::
+
+***
+::::
+:::::
+
+
+## stringr
+
+:::::{.my-resource}
+:::{.my-resource-header}
+stringr: Simple, Consistent Wrappers for Common String Operations 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-stringr}
+
+***
+
+{**stringr**}: [Simple, Consistent Wrappers for Common String Operations](https://stringr.tidyverse.org) [@stringr]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap01/logoi/logo-stringr-min.png){width="176"}
+
+A consistent, simple and easy to use set of wrappers around the fantastic 'stringi' package. All function and argument names (and positions) are consistent, all functions deal with "NA"'s and zero length vectors in the same way, and the output from one function is easy to feed into the input of another.
+
+:::
+
+Strings are not glamorous, high-profile components of R, but they do play a big role in many data cleaning and preparation tasks. The {**stringr**} package provides a cohesive set of functions designed to make working with strings as easy as possible. If you’re not familiar with strings, the best place to start is the [chapter on strings](https://r4ds.hadley.nz/strings) in R for Data Science.
+
+{**stringr**} is built on top of {**stringi**}, which uses the [ICU](https://icu.unicode.org/) C library to provide fast, correct implementations of common string manipulations. {**stringr**} focusses on the most important and commonly used string manipulation functions whereas stringi provides a comprehensive set covering almost anything you can imagine. If you find that {**stringr**} is missing a function that you need, try looking in {**stringi**}. Both packages share similar conventions, so once you’ve mastered {**stringr**}, you should find {**stringi**} similarly easy to use.
+
+
+
+{**stringr**}: Simple, Consistent Wrappers for Common String Operations
+:::
+
+Even if I had not used {**stringi**} in this book I will add this package profile into the appropriate section @pak-stringi.
+
+***
+::::
+:::::
+
 
 ## tableone
 

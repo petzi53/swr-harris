@@ -8,6 +8,14 @@ base::source(file = "R/helper.R")
 ggplot2::theme_set(ggplot2::theme_bw()) 
 ```
 
+::: {.callout-note}
+As I have already read some books on linear regression I will not follow exactly the text in this chapter. I will leave out those passages that are not new for me and where I feel confident. Other passages I will only summarize to have content to consult whenever I would need it.
+:::
+
+
+
+
+
 ## Achievements to unlock
 
 ::: my-objectives
@@ -66,6 +74,8 @@ Two options for accessing the data:
 1. Download the clean data set `dist_ssp_amfar_ch9.csv` from https://edge.sagepub.com/harris1e.
 2. Follow the instructions in Box 9.1 to import, merge, and clean the data from multiple files or from the original online source 
 
+
+
 **Codebook**
 
 Two options for accessing the codebook: 
@@ -93,13 +103,240 @@ Two options for accessing the codebook:
 :::
 :::
 
-### Get data
 
-### Show raw data
+### Get, recode and show data
 
-### Recode data
+I will use the data file provided by the book because I am feeling quite confident with reading and recoding the original data. But I will change the columns names so that the variable names conform to the [tidyverse style guide](https://style.tidyverse.org/).
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-data}
+: Data for chapter 9
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Get & recode
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-get-recode-data}
+: Get & recode data for chapter 9
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: get-recode-data
+#| eval: FALSE
+
+## run only once (manually)
+distance_ssp <- readr::read_csv(
+    "data/chap09/dist_ssp_amfar_ch9.csv",
+    show_col_types = FALSE)
+
+distance_ssp_clean <- distance_ssp |> 
+    dplyr::rename(
+        state = "STATEABBREVIATION",
+        dist_ssp = "dist_SSP",
+        hiv_prevalence = "HIVprevalence",
+        opioid_rate = "opioid_RxRate",
+        no_insurance = "pctunins"
+    ) |> 
+    dplyr::mutate(
+        state = forcats::as_factor(state),
+        metro = forcats::as_factor(metro)
+    ) |> 
+    dplyr::mutate(
+        hiv_prevalence = dplyr::na_if(
+            x = hiv_prevalence,
+            y = -1
+        )
+    )
+
+save_data_file("chap09", distance_ssp_clean, "distance_ssp_clean.rds")
+    
+
+```
+
+(*For this R code chunk is no output available*)
+
+::::
+:::::
+
+
+###### Show data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-show-data}
+: Show data for chapter 9
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: show-data
+
+distance_ssp_clean <- base::readRDS("data/chap09/distance_ssp_clean.rds")
+
+skimr::skim(distance_ssp_clean)
+```
+
+::::
+:::::
+
+- **county**: the county name 
+- **state**: the two-letter abbreviation for the state the county is in 
+- **dist_ssp**: distance in miles to the nearest syringe services program 
+- **hiv_prevalence**: people age 13 and older living with diagnosed HIV per 100,000
+- **opioid_rate**: number of opioid prescriptions per 100 people 
+- **no_insurance**:percentage of the civilian non-institutionalized population with no health insurance coverage 
+- **metro**: county is either nonmetro, which includes open countryside, rural towns, or smaller cities with up to 49,999 people, or metro
+
+
+
+:::
+
+::::
+:::::
+
 
 ## Achievement 1: Explorative Data Analysis {#sec-chap09-achievement1}
+
+Instead following linearly the chapter I will try to compute my own `r glossary("ExDA", "EDA")`.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-eda}
+: Explorative Data Analysis for chapter 9
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### histograms
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-eda-histograms}
+: Histograms of numeric variables
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-eda-histograms
+#| fig-cap: "Histograms for numeric variables of chapter 9"
+#| fig-height: 8
+
+
+hist_distance <- hist_dnorm(
+    df = distance_ssp_clean,
+    v = distance_ssp_clean$dist_ssp,
+    n_bins = 30,
+    x_label = "Nearest syringe services program in miles"
+) 
+
+hist_hiv <- hist_dnorm(
+    df = distance_ssp_clean,
+    v = distance_ssp_clean$hiv_prevalence,
+    n_bins = 30,
+    x_label = "People with diagnosed HIV per 100,000"
+) 
+
+hist_opioid <- hist_dnorm(
+    df = distance_ssp_clean,
+    v = distance_ssp_clean$opioid_rate,
+    n_bins = 30,
+    x_label = "Opioid prescriptions per 100 people"
+)
+
+hist_insurance <- hist_dnorm(
+    df = distance_ssp_clean,
+    v = distance_ssp_clean$no_insurance,
+    n_bins = 30,
+    x_label = "Percentage with no health insurance coverage"
+)
+
+gridExtra::grid.arrange(
+   hist_distance, hist_hiv, hist_opioid, hist_insurance, nrow = 2
+)
+```
+
+::::
+:::::
+
+
+###### Q-Q plots
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-eda-qq-plots}
+: Q-Q plots of numeric variables
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-eda-qq-plots
+#| fig-cap: "Q-Q plots for numeric variables of chapter 9"
+
+my_qq_plot(
+    df = distance_ssp_clean,
+    v  = distance_ssp_clean$dist_ssp,
+    col_qq = "Test",
+    line_qq = "Another test"
+)
+
+ggplot2::ggplot(
+    distance_ssp_clean, 
+    ggplot2::aes(
+        sample = dist_ssp
+        ),
+    ) +
+  ggplot2::stat_qq() +
+  ggplot2::stat_qq_line(
+    color = "darkred",
+    linewidth = 1.5
+  ) +
+  ggplot2::labs(
+      x = "Nearest syringe services program in miles (standardized)",
+      
+  )
+
+
+
+
+x1 <- distance_ssp_clean |> 
+    tidyr::drop_na(hiv_prevalence)
+
+x <- x1$hiv_prevalence
+
+# X-axis grid
+x2 <- seq(min(x), max(x), length = 40)
+
+# Normal curve
+fun <- dnorm(x2, mean = mean(x), sd = sd(x))
+
+# Histogram
+hist(x, prob = TRUE, col = "white",
+     ylim = c(0, max(fun)),
+     main = "Histogram with normal curve")
+lines(x2, fun, col = 2, lwd = 2)
+```
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
 
 ***
 

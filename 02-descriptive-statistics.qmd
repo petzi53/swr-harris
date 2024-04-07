@@ -78,7 +78,9 @@ There are two options:
         <http://www.cdc.gov/brfss/annual_data/2014/files/LLCP2014XPT.zip>.
 
 The ZIP-file is with 69 MB pretty big. Unzipped it will have almost 1
-GB! --- I will only work with this second option.
+GB! --- I will only work with this second option[^chap02-1].
+
+[^chap02-1]: This was the original plan, but after several chapters get the original data wasn't instructive anymore. I didn't learn new things because it was more a less a repetitive task with redundant code lines. So starting with @sec-chap07 I have used the data files provided by the book and to strengthen my focus on the statistical issues.
 
 **Codebook**
 

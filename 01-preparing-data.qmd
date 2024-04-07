@@ -475,9 +475,7 @@ saw in the help file that
 
 @lst-repl-data-fig-book used some important packages:
 
-I used {**dplyr**} in the above code heavily (see: @pak-dplyr). {**dplyr**} is part of the {**tidyverse**} core collection (see: @pak-tidyverse), together with {**forcats**} (see: @pak-forcats), {**ggplot2**} (see @pak-ggplot2), {**readr**} (see: @pak-ggplot2), {**tibble**} (see: @pak-tibble), {**tidyr**} (see: @pak-tidyr), {**string**} and {**purrr**}. 
-
-The last two packages ({**string**} and {**purrr**}) I will profile when I use them the first time.
+I used {**dplyr**} in the above code heavily. {**dplyr**}  (@pak-dplyr) is part of the {**tidyverse**} core collection (@pak-tidyverse), together with {**forcats**} (@pak-forcats), {**ggplot2**} (@pak-ggplot2), {**readr**} (@pak-ggplot2), {**tibble**} (@pak-tibble), {**tidyr**} (@pak-tidyr), {**stringr**} (@pak-stringr) and {**purrr**} (@pak-purrr). 
 
 :::
 :::
