@@ -177,7 +177,8 @@ save_data_file("chap09", distance_ssp_clean, "distance_ssp_clean.rds")
 ::::{.my-r-code-container}
 
 ```{r}
-#| label: show-data
+#| label: tbl-chap09-show-data
+#| tbl-cap: "Descriptive statistics for data of chapter 9"
 
 distance_ssp_clean <- base::readRDS("data/chap09/distance_ssp_clean.rds")
 
@@ -202,10 +203,59 @@ skimr::skim(distance_ssp_clean)
 ::::
 :::::
 
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+WATCH OUT! Do missing values have a pattern?
+:::
+::::{.my-watch-out-container}
+We know from @tbl-chap09-show-data that the variable `hiv_prevalence` has many missing values. In all the forthcoming analyses we will remove those 70 `NAs` and work with complete cases. 70 NA’s in a sample of 500 is with 14% a big proportion from the available data. The question arises: Is there a reason why there are so many missing values? Could it be that this reason is distorting our analysis?
+
+Most of the time I have provided code that suppresses these warnings. This is a dangerous enterprise as it could bias results and conclusions without knowledge of the researcher. I think that a more prudent approach would need an analysis of the missing values. I do not know how to do this yet, but with {**naniar**} (@pak-naniar) there is a package for exploring missing data structures. Its website and package has [several vignettes](https://naniar.njtierney.com/) to learn its functions and there is also an scientific article about the package [@tierney2023].
+
+Exploring missing data structures is in the book no planned achievement, therefore it is here enough to to get rid of the NA’s and to follow the books outline. But I am planning coming back to this issue and learn how to address missing data structures appropriately.
+
+::::
+:::::
+
 
 ## Achievement 1: Explorative Data Analysis {#sec-chap09-achievement1}
 
-Instead following linearly the chapter I will try to compute my own `r glossary("ExDA", "EDA")`.
+### Introduction
+
+Instead following linearly the chapter I will try to compute my own `r glossary("ExDA", "EDA")`. I will try three different method:
+
+1. Manufacturing the data and graphs myself. Writing own functions and using {**tidyverse**} packages to provide summary plots and statistics.
+2. Trying out the `graphics::pairs()` function.
+3. Experimenting with {**GGally**}, an extension package to {**ggplot2**} where one part (`GGally::ggpairs()`) is the equivalent to the base R `graphics::pairs()` function.
+
+I will apply the following steps:
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap09-eda-steps}
+: Some useful steps to explore data for regression analysis
+::::::
+:::
+::::{.my-procedure-container}
+Order and completeness of the following tasks is not mandatory.
+
+1. **Browse the data**: 
+    - **RStudio Data Explorer**: I am always using the data explorer in RStudio to get my first impression of the data. Although this step is not reproducible it forms my frame of mind what EDA steps I should follow and if there are issues I need especially to care about. 
+    - **Skim data**: Look at the data with `skimr::skim()` to get a holistic view of the data: names, data types, missing values, ordered (categorical) minimum, maximum, mean, sd, distribution (numerical).
+    - **Read the codebook:** It is important to understand what the different variables mean.
+    - **Check structure:** Examine with `utils::str()` if the dataset has special structures, e.g. labelled data, attributes etc.
+    - **Glimpse actual data**: To get a feeling about data types and actual values use `dplyr::glimpse()`.
+    - **Glance at example rows**: As an alternative of `utils::head()` / `utils::tails()` get random row examples including first and last row of the dataset with my own function `glance_data()`.
+2. **Check normality assumption**:
+    - **Draw histograms of numeric variables**: To get a better idea I have these histogram overlaid with the theoretical normal distribution and the density curve of the current data. The difference between these two curves gives a better impression if normality is met or not.
+    - **Draw Q-Q plot of numeric variables** Q-Q plots gives even a more detailed picture if normality is met.
+    - **Compute normality tests**: If your data has less than 5.000 rows then use the Shapiro-Wilk test, otherwise the Anderson-Darling test. 
+3. **Check homogeneity assumption**: If the normality assumption is not met, then test if the homogeneity of variance assumption between groups is met with Levene’s test or with the more robust Fligner-Killeen’s test. In the following steps use always median instead of mean and do not compute the Pearson’s r but the Spearman’s rho coefficient. 
+4. **Compute correlation coefficient**: Apply either Pearson’s r or the Spearman’s rho coefficient. There are function like `graphics::pairs()` or `GGally::ggpairs()` that provide a graphical and statistical representation of all combinations of bivariate relationships.
+5. **Explore categorical data with box plots or violin plots**: Box plots work well between a numerical and categorical variable. You could also overlaid the data and violin plots to maximize the information in one single graph.
+::::
+:::::
+
 
 :::::{.my-example}
 :::{.my-example-header}
@@ -216,6 +266,33 @@ Instead following linearly the chapter I will try to compute my own `r glossary(
 ::::{.my-example-container}
 
 ::: {.panel-tabset}
+
+
+###### tableone
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-tableone}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-tableone
+#| tbl-cap: "Descriptive statics with the 'tableone' package"
+
+tableone::CreateTableOne(data = distance_ssp_clean,
+                         vars = c('dist_ssp', 'hiv_prevalence',
+                                  'opioid_rate', 'no_insurance',
+                                  'metro'))
+
+```
+***
+
+`skimr::skim()` is a much better alternative! The second version with the median instead of the mean is not necessary because it is in `skimr::skim()` integrated.
+::::
+:::::
+
 
 ###### Histograms
 
@@ -266,6 +343,20 @@ gridExtra::grid.arrange(
 )
 ```
 
+***
+I developed a function where I can overlay the theoretical normal distribution and the density of the current data. The difference between the two curves gives an indication if we have a normal distribution.
+
+From our data we see that the biggest difference is between SPP distance and HIV prevalence. This right skewed distribution could also be detected from other indicator already present in the `skimr::skim()`view of @tbl-chap09-show-data:
+- The small histogram on the right is the most right skewed distribution.
+- The standard deviation of `hiv_prevalence` is the only one, that is bigger than the mean of the variable. 
+- There is a huge difference between mean and the median (p50) where the mean is much bigger than the median (= right skewed distribution), e.g. there is a long tail to the right as can also be seen in the tiny histogram.
+
+Aside from `hiv_prevalence` the variable `distance_ssp` is almost equally right skewed. The situation seems better for the rest of the numeric variables. But let's manufacture `r glossary("Q-Q-Plot", "Q-Q plots")` for all of them to see more in detail if they are normally distributed or not.
+
+
+
+
+
 ::::
 :::::
 
@@ -315,8 +406,74 @@ gridExtra::grid.arrange(
 )
 ```
 
+***
+It turned out that all four numeric variables are not normally distributed. Some of them looked in the histograms quite OK, because the differences to the normal distribution on the lower and upper end of the data compensate each other.
+
+Testing normality with `r glossary("Shapiro-Wilk")` or `r glossary("Anderson-Darling")` test will show that they are definitely not normally distributed.
+
 ::::
 :::::
+
+###### Normality
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-normality-test}
+: Normality checking with Shapiro-Wilk & Anderson-Darling tests
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-normality-test
+#| tbl-cap: "Testing normality with Shapiro-Wilk & Anderson-Darling tests"
+
+dist_test <-  stats::shapiro.test(distance_ssp_clean$dist_ssp)
+hiv_test <-  stats::shapiro.test(distance_ssp_clean$hiv_prevalence)
+opioid_test <- stats::shapiro.test(distance_ssp_clean$opioid_rate)
+insurance_test <- stats::shapiro.test(distance_ssp_clean$no_insurance)
+
+dist_test2 <-  nortest::ad.test(distance_ssp_clean$dist_ssp)
+hiv_test2 <-  nortest::ad.test(distance_ssp_clean$hiv_prevalence)
+opioid_test2 <- nortest::ad.test(distance_ssp_clean$opioid_rate)
+insurance_test2 <- nortest::ad.test(distance_ssp_clean$no_insurance)
+
+
+normality_test <- 
+    dplyr::bind_rows(
+        broom:::glance.htest(dist_test),
+        broom:::glance.htest(hiv_test),
+        broom:::glance.htest(opioid_test),
+        broom:::glance.htest(insurance_test),
+        broom:::glance.htest(dist_test2),
+        broom:::glance.htest(hiv_test2),
+        broom:::glance.htest(opioid_test2),
+        broom:::glance.htest(insurance_test2)
+    ) |> 
+    dplyr::bind_cols(
+        variable = c("dist_ssp", "hiv_prevalence",
+                     "opioid_rate", "no_insurance",
+                     "dist_ssp", "hiv_prevalence",
+                     "opioid_rate", "no_insurance")
+    ) |> 
+    dplyr::relocate(variable)
+
+normality_test
+```
+
+***
+
+The `r glossary("p-value", "p-values")` from both tests are for all four variables very small, e.g. statistically significant. Therefore we have to reject the Null that they are normally distributed.
+
+
+::::
+:::::
+
+
+::: {.callout-tip}
+It turned out that all four variable are not normally distributed. We can't therefore not use `r glossary("Pearson", "Pearson’s r coefficient")`. 
+:::
+
+Before we are going to use `r glossary("Spearman", "Spearman’s rho")` let's check the homogeneity of variance assumption (`r glossary("homoscedasticity")`) with a scatterplot with `lm` and `loess` curve  and using `r glossary("Levene", "Levene’s Test")` and the `r glossary("Fligner", "Fligner-Killeen’s test")`.
 
 ###### Scatterplots
 
@@ -366,14 +523,197 @@ gridExtra::grid.arrange(
 :::::
 
 
+
+
+
+###### Homogeneity
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-text-homogeneity}
+: Testing homogeneity of variances with Levene’s and Fligner-Killeen’s test
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-chap09-text-homogeneity
+#| tbl-cap: "Homogeneity of variances tested with Levene’s and Fligner-Killeen’s test"
+
+hiv_test <-  stats::fligner.test(
+    distance_ssp_clean$dist_ssp,
+    distance_ssp_clean$hiv_prevalence
+    )
+opioid_test <- stats::fligner.test(
+    distance_ssp_clean$dist_ssp,
+    distance_ssp_clean$opioid_rate
+    )
+insurance_test <- stats::fligner.test(
+    distance_ssp_clean$dist_ssp,
+    distance_ssp_clean$no_insurance
+    )
+
+hiv_test2 <-  car::leveneTest(
+    distance_ssp_clean$dist_ssp,
+    distance_ssp_clean$hiv_prevalence
+    )
+opioid_test2 <- car::leveneTest(
+    distance_ssp_clean$dist_ssp,
+    distance_ssp_clean$opioid_rate
+    )
+insurance_test2 <- car::leveneTest(
+    distance_ssp_clean$dist_ssp,
+    distance_ssp_clean$no_insurance
+    )
+
+
+homogeneity_test <- 
+    dplyr::bind_rows(
+        broom::tidy(hiv_test2),
+        broom::tidy(opioid_test2),
+        broom::tidy(insurance_test2)
+    ) |> 
+    dplyr::mutate(method = "Levene's Test for Homogeneity of Variance") |> 
+    dplyr::bind_rows(
+        broom:::glance.htest(hiv_test),
+        broom:::glance.htest(opioid_test),
+        broom:::glance.htest(insurance_test),
+    ) |> 
+    dplyr::bind_cols(
+        variable = c("dist_hiv",
+                     "dist_opioid", 
+                     "dist_insurance",
+                     "dist_hiv",
+                     "dist_opioid", 
+                     "dist_insurance"
+                 )
+    ) |> 
+    dplyr::relocate(variable)
+
+homogeneity_test
+```
+***
+
+All p-values are higher than the threshold of .05 and are therefore not statistically significant. The Null must not rejected, the homogeneity of variance assumption for all variables is met.
+::::
+:::::
+
+
+###### pairs
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-plot-pairs}
+: Scatterplots of variable pairs from dataset of chapter 9
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-plot-pairs
+#| fig-cap: "Scatterplots of variable pairs from dataset of chapter 9"
+#| fig-height: 10
+#| fig-width: 10
+
+
+lt_purple <- t_col("purple3", perc = 50, name = "lt.purple")
+
+panel.hist <- function(x, ...)
+{
+    usr <- par("usr")
+    par(usr = c(usr[1:2], 0, 1.5) )
+    h <- hist(x, plot = FALSE)
+    breaks <- h$breaks; nB <- length(breaks)
+    y <- h$counts; y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = "grey80", ...)
+}
+
+
+graphics::pairs(distance_ssp_clean[3:6], 
+                pch = 23, 
+                panel = panel.smooth,
+                cex = 1.5, 
+                bg = lt_purple, 
+                horOdd = TRUE,
+                diag.panel = panel.hist, 
+                cex.labels = 2, 
+                font.labels = 2,
+                gap = 0
+                )
+
+```
+
+::::
+:::::
+
+###### metro
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-plot-pairs-metro}
+: Distance to SSP with different numeric variable and metro/nonmetro location
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-plot-pairs-metro
+#| fig-cap: "Distance to SSP -- Metro (red) & Nonmetro (blue)"
+#| fig-height: 10
+#| fig-width: 10
+
+panel.hist <- function(x, ...) {
+    usr <- par("usr")
+    par(usr = c(usr[1:2], 0, 1.5) )
+    h <- hist(x, plot = FALSE)
+    breaks <- h$breaks; nB <- length(breaks)
+    y <- h$counts; y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = "grey80", ...)
+}
+
+graphics::pairs(distance_ssp_clean[3:6], 
+                main = "Distance to SSP -- Metro (red) & Nonmetro (blue)",
+                panel = panel.smooth,
+                horOdd = TRUE,
+                diag.panel = panel.hist, 
+                pch = 21, 
+                gap = 0,
+                bg = c("red", "blue")[unclass(distance_ssp_clean$metro)])
+
+```
+
+::::
+:::::
+
+###### ggpairs
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-plot-ggpairs}
+: Scatterplots of variable pairs from dataset of chapter 9
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-plot-ggpairs
+#| fig-cap: "Scatterplots of variable pairs from dataset of chapter 9"
+#| fig-height: 10
+#| fig-width: 10
+
+GGally::ggpairs(distance_ssp_clean,
+                columns = 3:7)
+
+```
+
+::::
+:::::
+
+
+
+
 :::
 
 ::::
 :::::
 
-***
 
-***
 
 ## Exercises (empty)
 
