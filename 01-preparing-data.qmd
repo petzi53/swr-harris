@@ -670,6 +670,11 @@ codebooks.
 You can choose from
 
 ::: {#bul-NAHNES-data-sections}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
 -   Demographics Data
 -   Dietary Data
 -   Examination Data
@@ -677,20 +682,35 @@ You can choose from
 -   Questionnaire Data
 -   Limited Access Data
 
+::::
+:::::
 NHANES has six different data sections
 :::
+
+***
 
 Clicking of one of these links opens a page where a table contains the
 following information:
 
 ::: {#bul-NHANES-data-pages}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 -   Data File Name
 -   Doc File
 -   Data File
 -   Data Published
 
+::::
+:::::
+
 NHANES data pages has download links for documentation and data files
 :::
+
+***
 
 [Datasets and
 Documentation](https://wwwn.cdc.gov/nchs/nhanes/tutorials/Datasets.aspx)
@@ -728,10 +748,11 @@ purposes and display the structure of the file
 :::
 
 ::: my-r-code-container
+
+:::{#lst-chap01-downloadfile}
+
 ```{r}
 #| label: save-xpt-file-demo
-#| lst-label: lst-chap01-downloadfile
-#| lst-cap: "Download a file and save it as R object"
 #| cache: true
 #| eval: false
 
@@ -746,6 +767,9 @@ blood_pressure_demo <- haven::read_xpt(tf)
 
 save_data_file("chap01", blood_pressure_demo, "blood_pressure_demo.rds")
 ```
+Download a file and save it as R object
+
+:::
 
 (*This code chunk has no visible output*)
 
@@ -2829,7 +2853,7 @@ This R package provides an enhanced version of data.frames with more options for
 My conclusion to {**DT**}
 :::
 ::::{.my-note-container}
-{**DT**} is my first choice for interactive data exploring and very useful for Explorative Data Analysis (`r glossary("EDA")`). I have already some experiences with this package but haven't use it lastly. 
+{**DT**} is my first choice for interactive data exploring and very useful for Explorative Data Analysis (`r glossary("ExDA", "EDA")`). I have already some experiences with this package but haven't use it lastly. 
 
 Compared with the other table packages {**DT**} is not in the same category: The following packages are developed as `r glossary("Display Tables")` (in contrast to `r glossary("Data Tables")`. Beside of the interactive use {**DT**}s are Data Tables.
 ::::

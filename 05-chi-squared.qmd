@@ -1221,14 +1221,23 @@ Differences between observed values and expected indicates that there may be a r
 ***
 
 ::: {#bul-chap05-assumptions-chi-squared}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 - **The variables must be nominal or ordinal (usually nominal)**. We have categorical data with no order, e.g., nominal data: *The assumption is met.*
 - **The expected values should be 5 or higher in at least 80% of groups**. We have 8 cells with values. None of these cells are 5 or lower: *The assumption is met.*
 - **The observations must be independent**. We have neither the same set of people asked before and after an intervention nor do are the respondents family members or other affiliated with each other: *The assumption is met. *
 
+::::
+:::::
 Assumptions for the chi-squared test
 
 :::
 
+***
 
 ## Calculating the chi-squared statistic {#sec-chap05-achievement3}
 
@@ -1862,13 +1871,23 @@ Here I have displayed the first and only time also the adjusted standardized res
 ***
 
 ::: {#bul-prepare-interpretation-standardized-residuals}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 
 - From the very small p-value (which is almost 0) we see that we have a statistically relevant association between opinions about opinions for ease of voting and race / ethnicity. 
 - The biggest part for rejecting the null hypotheses, that there is not association has the group of black non-Hispanic. A much bigger proportion as we would have expected of black non-Hispanic support ease of voting and are against registration for voting.
 - Another trend that goes in the reverse direction concerns the white non-Hispanic group. This group endorse that people should register for voting with a higher proportion as expected.
 
+::::
+:::::
 What does the standardized residuals tell us?
 :::
+
+***
 
 ::::
 :::::
@@ -2578,6 +2597,13 @@ vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
 
 ::: {#bul-chap05-odds-ratio-example}
 
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
+
 **Exposure and Outcome**
 
 - Exposed: Landlords 
@@ -2592,6 +2618,9 @@ vote_clean <- base::readRDS("data/chap05/vote_clean.rds")
 - Number of unexposed cases [2,1] = (b) = Renter that want people to register for voting = 112.
 - Number of unexposed non-cases [2,2] = (d) = Renter that want easy voting = 208.
 
+
+::::
+:::::
 Calculation of the odds ratio (OR) using the two-by-two frequency table of voting opinion by housing status
 
 :::

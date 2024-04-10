@@ -382,6 +382,12 @@ There are two categories of probability distributions:
 ### Characteristics of binomial random variables
 
 :::{#bul-chap04-binomial-random-variable}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 - A variable is measured in the same way n times. 
 - There are only two possible values of the variable, often called “success” and “failure.” 
 - Each observation is independent of the others. 
@@ -393,8 +399,11 @@ The binomial distribution is defined by two things:
 - **n**, which is the number of observations (e.g., coin flips, people surveyed, states selected) 
 - **p**, which is the probability of success (e.g., 50% chance of heads for a coin flip, 51% chance of a state having a PDMP)
 
+::::
+:::::
 Characteristics of binomial random variables
 :::
+
 ***
 
 ### dbinomial() & pbinomial()
@@ -2429,10 +2438,18 @@ The three most common intervals have the following z-scores:
 
 ***
 :::{#bul-three-cis}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 - 90% confidence interval z-score = 1.645 
 - 95% confidence interval z-score = 1.96 
 - 99% confidence interval z-score = 2.576
 
+::::
+:::::
 The three most common intervals with its z-scores
 :::
 ***

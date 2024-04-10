@@ -1379,6 +1379,12 @@ referring the variable types.
 ###### Variables
 
 ::: {#bul-chap03-graphs-var-types}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 1.  **One variable**
     -   *Categorical* (achievement 1)
         -   Bar chart (@sec-chap03-bar-chart-1)
@@ -1405,6 +1411,9 @@ referring the variable types.
         -   Line graph (@sec-chap03-line-graph)
         -   Scatterplot (@sec-chap03-scatterplot)
 
+::::
+:::::
+
 Book variable types and their corresponding graph types
 :::
 
@@ -1420,6 +1429,12 @@ order in the explication of the graphs as in the book outlined.
 ###### Graphs
 
 ::: {#bul-chap03-graph-types}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 -   Bar chart
 -   Box plot
 -   Density plot
@@ -1432,6 +1447,9 @@ order in the explication of the graphs as in the book outlined.
 -   Violin plot
 -   Waffle chart
 
+
+::::
+:::::
 Book graph types sorted alphabetically
 :::
 
@@ -1445,6 +1463,13 @@ most well know types.
 ###### R Charts
 
 ::: {#bul-chap03-graph-types-r-charts}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
+
 -   **Correlations**
     -   Bubble
     -   Contour plot
@@ -1504,6 +1529,8 @@ most well know types.
     -   Interactive
     -   Proportion symbol
 
+::::
+:::::
 Categorization of graph types used by [R Chart](https://r-charts.com/)
 :::
 
@@ -1520,6 +1547,12 @@ graph types.
 ###### From Data to Viz
 
 ::: {#bul-chap03-graph-types-data-viz}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 -   **NUMERIC**
     -   **One numeric variable**
         -   Histogram
@@ -1719,6 +1752,8 @@ graph types.
         -   Stacked area
         -   Stream graph
 
+::::
+:::::
 Categorization of graph types used by [From Data to
 Viz](https://www.data-to-viz.com/)
 :::
@@ -1734,6 +1769,12 @@ orientation as implemented in the above list.
 ###### Top 50
 
 ::: {#bul-chap03-graph-types-top-50}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 -   **Correlation**
     -   Scatterplot
     -   Scatterplot With Encircling
@@ -1786,6 +1827,8 @@ orientation as implemented in the above list.
     -   Google Road Map
     -   Google Hybrid Map
 
+::::
+:::::
 Categorization of graph types used by [Top 50 ggplot2
 Visualizations](https://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
 :::
@@ -1793,6 +1836,12 @@ Visualizations](https://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-
 ###### ggplot2 gallery
 
 ::: {#bul-chap03-graph-types-ggplot2-gallery}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 -   **Univariate**
     -   Bar graphs
     -   Histograms
@@ -1849,6 +1898,8 @@ Visualizations](https://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-
 -   **Areas**
     -   `geom_ribbon()`
 
+::::
+:::::
 Categorization of graph types used by [ggplot2
 gallery](https://mjfrigaard.github.io/ggp2-gallery/)
 :::
@@ -1867,11 +1918,19 @@ There are several options for visualizing a single categorical variable:
 ------------------------------------------------------------------------
 
 ::: {#bul-chap03-single-cat-var}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 -   `r glossary("Bar charts")`
 -   `r glossary("Point charts")`
 -   `r glossary("Waffle charts")`
 -   `r glossary("Pie charts")`
 
+::::
+:::::
 Graph options for a single categorical variable
 :::
 
@@ -2785,11 +2844,19 @@ Options are:
 ------------------------------------------------------------------------
 
 ::: {#bul-chap03-single-cont-var}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 -   `r glossary("histograms")`,
 -   `r glossary("density plots")`,
 -   `r glossary("boxplots")`,
 -   `r glossary("violin plots")`.
 
+::::
+:::::
 Graph options for a single continuous variable
 :::
 
@@ -3289,6 +3356,12 @@ which graphically display the same information for only one variable.
 ***
 
 ::: {#bul-chap03-mosaic-charts-properties}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 -   The displayed variables are categorical or ordinal scales.
 -   The plot is of at least two variables. There is no upper limit, but
     too many variables may be confusing in graphic form.
@@ -3300,6 +3373,8 @@ which graphically display the same information for only one variable.
 -   Unlike as other graphs, it is not possible for the mosaic plot to
     plot a confidence interval.
 
+::::
+:::::
 Properties of Mosaic Charts
 ([Wikipedia](https://en.wikipedia.org/wiki/Mosaic_plot))
 :::
@@ -5721,11 +5796,19 @@ Usually when people talk about `r glossary("color blindness")`, they are referri
 ***
 
 ::: {#bul-types-of-cvd}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 - **Deutan = Red-Green Color Blind: Color Cone Sensitivity: Green**: Deuteranomaly is the most common type of color blindness, affecting about 6% of men. It is characterized by a reduced sensitivity to green light, making it difficult to differentiate between shades of red and green.
 - **Protan = Red-Green Color Blind: Color Cone Sensitivity: Red**: Protan (“pro-tan”) is the second most common and is characterized by a reduced sensitivity to red light. People with protanomaly have difficulty distinguishing between shades of red and green.
 - **Tritan = Blue-Yellow Color Blind: Color Cone Sensitivity: Blue**: Tritanomaly is a rare type of color blindness that affects both males and females equally. It is characterized by a reduced sensitivity to blue light, making it difficult to differentiate between shades of blue and green, as well as yellow and red.
 - **Monochromacy and Achromatopsia** describes a range of conditions that include rod-Monochromacy, S-cone Monochromacy and Achromatopsia Sometimes these are collectively referred to as types of achromatopsia, as the word “achromat” meaning “no color.” However, not all cases of achromatopsia have “no color” vision.
 
+::::
+:::::
 Types of color vision deficiency (CVD)
 
 :::

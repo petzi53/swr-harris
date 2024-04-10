@@ -1153,6 +1153,7 @@ $$ {#eq-chap06-t-dependent-test}
 
 ### Computing
 
+
 :::::{.my-important}
 :::{.my-important-header}
 General advice before starting a test statistics
@@ -1162,7 +1163,10 @@ Always look at some visuals and descriptive statistics before you are starting t
 ::::
 :::::
 
+
+
 This shows that the *difference of the mean* between two measures is very small (0.55 mmHG). But it turned out that this value is highly statistically significant. But from a clinical point of view it is irrelevant!
+
 
 :::::{.my-important}
 :::{.my-important-header}
@@ -1735,8 +1739,13 @@ In this section I am not following the sequence of the book. I start with an ove
 - checking visually the normality assumption
 - testing with different approaches the normality assumption
 
-***
 ::: {#bul-t-test-assumptions}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 
 - One-sample t-test assumptions 
     - Continuous variable 
@@ -1752,6 +1761,9 @@ In this section I am not following the sequence of the book. I start with an ove
     - Independent observations 
     - Normal distribution of differences
    
+
+::::
+:::::
 Assumptions for the different t-tests
 :::
 ***

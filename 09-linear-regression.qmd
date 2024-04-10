@@ -188,14 +188,57 @@ skimr::skim(distance_ssp_clean)
 ::::
 :::::
 
+***
+
+::: {#bul-chap09-codebook}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
 - **county**: the county name 
 - **state**: the two-letter abbreviation for the state the county is in 
 - **dist_ssp**: distance in miles to the nearest syringe services program 
 - **hiv_prevalence**: people age 13 and older living with diagnosed HIV per 100,000
 - **opioid_rate**: number of opioid prescriptions per 100 people 
 - **no_insurance**:percentage of the civilian non-institutionalized population with no health insurance coverage 
-- **metro**: county is either nonmetro, which includes open countryside, rural towns, or smaller cities with up to 49,999 people, or metro
+- **metro**: county is either non-metro, which includes open countryside, rural towns, or smaller cities with up to 49,999 people, or metro
+::::
+:::::
+Codebook: Explanation of variables used in Chapter 9
+:::
 
+***
+
+###### metro
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-metro}
+: Summary of `metro` variable
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-chap09-metro}
+
+```{r}
+#| label: chap09-metro
+
+distance_ssp_clean |> 
+    dplyr::group_by(metro) |> 
+    skimr::skim()
+```
+Summary of `metro` variable
+:::
+
+***
+
+For the exploratory data analysis I need more details about the association between the distance to the next SSP separated for people living in metro and non-metro areas. See 
+
+
+::::
+:::::
 
 
 :::
@@ -248,10 +291,10 @@ Order and completeness of the following tasks is not mandatory.
     - **Glance at example rows**: As an alternative of `utils::head()` / `utils::tails()` get random row examples including first and last row of the dataset with my own function `glance_data()`.
 2. **Check normality assumption**:
     - **Draw histograms of numeric variables**: To get a better idea I have these histogram overlaid with the theoretical normal distribution and the density curve of the current data. The difference between these two curves gives a better impression if normality is met or not.
-    - **Draw Q-Q plot of numeric variables** Q-Q plots gives even a more detailed picture if normality is met.
-    - **Compute normality tests**: If your data has less than 5.000 rows then use the Shapiro-Wilk test, otherwise the Anderson-Darling test. 
-3. **Check homogeneity assumption**: If the normality assumption is not met, then test if the homogeneity of variance assumption between groups is met with Levene’s test or with the more robust Fligner-Killeen’s test. In the following steps use always median instead of mean and do not compute the Pearson’s r but the Spearman’s rho coefficient. 
-4. **Compute correlation coefficient**: Apply either Pearson’s r or the Spearman’s rho coefficient. There are function like `graphics::pairs()` or `GGally::ggpairs()` that provide a graphical and statistical representation of all combinations of bivariate relationships.
+    - **Draw Q-Q plots of numeric variables**: `r glossary("Q-Q-Plot", "Q-Q plots")` gives even a more detailed picture if normality is met.
+    - **Compute normality tests**: If your data has less than 5.000 rows then use the `r glossary("Shapiro-Wilk", "Shapiro-Wilk test")`, otherwise the `r glossary("Anderson-Darling"," Anderson-Darling test")`. 
+3. **Check homogeneity assumption**: If the normality assumption is not met, then test if the homogeneity of variance assumption between groups is met with `r glossary("Levene", "Levene’s test")` or with the more robust `r glossary("Fligner", "Fligner-Killeen’s test")`. In the following steps use always median instead of mean and do not compute the `r glossary("Pearson", "Pearson’s r")` but the `r glossary("Spearman", "Spearman’s rho")` coefficient. 
+4. **Compute correlation coefficient**: Apply either Pearson’s r or the Spearman’s rho coefficient. There are function like `graphics::pairs()` or `GGally::ggpairs()` (@pak-GGally) that provide a graphical and statistical representation of all combinations of bivariate relationships.
 5. **Explore categorical data with box plots or violin plots**: Box plots work well between a numerical and categorical variable. You could also overlaid the data and violin plots to maximize the information in one single graph.
 ::::
 :::::
@@ -272,13 +315,13 @@ Order and completeness of the following tasks is not mandatory.
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap09-tableone}
-: Numbered R Code Title
+:::::: {#cnj-chap09-eda-tableone}
+: Descriptive statics with the {**tableone**} package
 ::::::
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: tbl-tableone
+#| label: tbl-eda-tableone
 #| tbl-cap: "Descriptive statics with the 'tableone' package"
 
 tableone::CreateTableOne(data = distance_ssp_clean,
@@ -289,7 +332,7 @@ tableone::CreateTableOne(data = distance_ssp_clean,
 ```
 ***
 
-`skimr::skim()` is a much better alternative! The second version with the median instead of the mean is not necessary because it is in `skimr::skim()` integrated.
+`skimr::skim()` with @tbl-chap09-show-data is a much better alternative! The second version of {**tableone**} in the book with the median instead of the mean is not necessary because it is in `skimr::skim()` integrated.
 ::::
 :::::
 
@@ -418,13 +461,13 @@ Testing normality with `r glossary("Shapiro-Wilk")` or `r glossary("Anderson-Dar
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap09-normality-test}
+:::::: {#cnj-chap09-eda-test-normality}
 : Normality checking with Shapiro-Wilk & Anderson-Darling tests
 ::::::
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: tbl-normality-test
+#| label: tbl-eda-test-normality
 #| tbl-cap: "Testing normality with Shapiro-Wilk & Anderson-Darling tests"
 
 dist_test <-  stats::shapiro.test(distance_ssp_clean$dist_ssp)
@@ -530,13 +573,13 @@ gridExtra::grid.arrange(
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap09-text-homogeneity}
+:::::: {#cnj-chap09-eda-test-homogeneity}
 : Testing homogeneity of variances with Levene’s and Fligner-Killeen’s test
 ::::::
 :::
 ::::{.my-r-code-container}
 ```{r}
-#| label: tbl-chap09-text-homogeneity
+#| label: tbl-chap09-eda-test-homogeneity
 #| tbl-cap: "Homogeneity of variances tested with Levene’s and Fligner-Killeen’s test"
 
 hiv_test <-  stats::fligner.test(
@@ -597,6 +640,243 @@ All p-values are higher than the threshold of .05 and are therefore not statisti
 ::::
 :::::
 
+###### Correlations
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-eda-cor}
+: Correlations for numeric variables of chapter 9
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-chap09-cor
+#| tbl-cap: "Correlations for numeric variables of chapter 9"
+
+cor_pearson <- distance_ssp_clean |> 
+    dplyr::summarize(
+        hiv_cor = stats::cor(
+        x = dist_ssp,
+        y = hiv_prevalence,
+        use = "complete.obs",
+        method = "pearson"
+        ),
+        opioid_cor = stats::cor(
+        x = dist_ssp,
+        y = opioid_rate,
+        use = "complete.obs",
+        method = "pearson"
+        ),
+        insurance_cor = stats::cor(
+        x = dist_ssp,
+        y = no_insurance,
+        use = "complete.obs",
+        method = "pearson"
+        ),
+        `n (sample)` = dplyr::n()
+    )
+
+cor_spearman <- distance_ssp_clean |> 
+    dplyr::summarize(
+        hiv_cor = stats::cor(
+        x = dist_ssp,
+        y = hiv_prevalence,
+        use = "complete.obs",
+        method = "spearman"
+        ),
+        opioid_cor = stats::cor(
+        x = dist_ssp,
+        y = opioid_rate,
+        use = "complete.obs",
+        method = "spearman"
+        ),
+        insurance_cor = stats::cor(
+        x = dist_ssp,
+        y = no_insurance,
+        use = "complete.obs",
+        method = "spearman"
+        ),
+        `n (sample)` = dplyr::n()
+    )
+
+cor_kendall <- distance_ssp_clean |> 
+    dplyr::summarize(
+        hiv_cor = stats::cor(
+        x = dist_ssp,
+        y = hiv_prevalence,
+        use = "complete.obs",
+        method = "kendall"
+        ),
+        opioid_cor = stats::cor(
+        x = dist_ssp,
+        y = opioid_rate,
+        use = "complete.obs",
+        method = "kendall"
+        ),
+        insurance_cor = stats::cor(
+        x = dist_ssp,
+        y = no_insurance,
+        use = "complete.obs",
+        method = "kendall"
+        ),
+        `n (sample)` = dplyr::n()
+    )
+
+cor_chap09 <- dplyr::bind_rows(cor_pearson, cor_spearman, cor_kendall)
+cor_chap09 <- dplyr::bind_cols(
+    method = c("Pearson", "Spearman", "Kendall"), cor_chap09)
+cor_chap09
+    
+```
+***
+
+Here I have computed for a comparison all three correlation coefficients of the nearest distance to the next `r glossary("SSP")` with the numeric variabeles of the dataset. 
+
+- Pearson’s $r$ is not allowed for all of the three variables, because our data didn't meet the normality assumption. 
+- Using Spearman’s $\rho$ or Kendall’s $\tau$ instead of Pearson’s $r$ results in big differences. For instance: the correlation of distance to the next SSP and HIV prevalence reverses it direction.
+- Kendall’s tau $\tau$ is more conservative (smaller) than Spearman’s rho and it is also preferred in most scenarios. (Kendall’s tau is not mentioned in the book. Maybe the reason is --- as far as I understand -- that Spearman’s  is the most widely used correlation coefficient?)
+
+***
+
+I want to confirm my internet research with the following quotes:
+
+**First quote**
+
+> In the normal case, Kendall correlation is more robust and efficient than Spearman correlation. It means that Kendall correlation is preferred when there are small samples or some outliers. ([Pearson vs Spearman vs Kendall](https://datascience.stackexchange.com/questions/64260/pearson-vs-spearman-vs-kendall)) [@pluviophile2019].
+
+**Second quote**
+
+> Kendall’s Tau: usually smaller values than Spearman’s rho correlation. Calculations based on concordant and discordant pairs. Insensitive to error. P values are more accurate with smaller sample sizes.
+>
+> Spearman’s rho: usually have larger values than Kendall’s Tau.  Calculations based on deviations.  Much more sensitive to error and discrepancies in data.
+>
+> The main advantages of using Kendall’s tau are as follows:
+>
+> - The distribution of Kendall’s tau has better statistical properties.
+> - The interpretation of Kendall’s tau in terms of the probabilities of observing the agreeable (concordant) and non-agreeable (discordant) pairs is very direct.
+> - In most of the situations, the interpretations of Kendall’s tau and Spearman’s rank correlation coefficient are very similar and thus invariably lead to the same inferences. ([Kendall’s Tau and Spearman’s Rank Correlation Coefficient](https://www.statisticssolutions.com/free-resources/directory-of-statistical-analyses/kendalls-tau-and-spearmans-rank-correlation-coefficient/)) [@statisticssolutionsn.d] 
+
+**Third quote**
+
+> - Kendall Tau-b is more accurate for small sample sizes with strong correlations.
+> - Spearman’s rho is preferred for weak correlations in small datasets.
+> - In large samples, Kendall Tau-b’s reliability surpasses Spearman’s rho.
+> - Kendall’s Tau is a robust estimator against outliers and non-normality.
+> - Overall, Kendall Tau-b outperforms Spearman for most statistical scenarios [Kendall Tau-b vs Spearman: Which Correlation Coefficient Wins?](https://statisticseasily.com/kendall-tau-b-vs-spearman/) [@learnstatisticseasily2024]
+
+:::::{.my-resource}
+:::{.my-resource-header}
+Understanding the different correlation coefficients
+:::
+::::{.my-resource-container}
+- [Kendall Tau-b vs Spearman: Which Correlation Coefficient Wins?](https://statisticseasily.com/kendall-tau-b-vs-spearman/): This important article wxplains the decisive factors in choosing the proper non-parametric correlation coefficient (Kendall Tau-b vs Spearman) for your data analysis. [@learnstatisticseasily2024]
+- [Pearson, Spearman and Kendall correlation coefficients by hand](https://statsandr.com/blog/pearson-spearman-kendall-correlation-by-hand/#introduction): This articles illustrates how to compute the Pearson, Spearman and Kendall correlation coefficients by hand and under two different scenarios (i.e., with and without ties). [@soetewey2023]
+- [Chapter 22: Correlation Types and When to Use Them](https://ademos.people.uic.edu/Chapter22.html): This chapter of [@demos2024] covers the strengths, weaknesses, and when or when not to use three common types of correlations (Pearson, Spearman, and Kendall). It’s part statistics refresher, part R tutorial. [@sarmenton.d]
+
+::::
+:::::
+
+
+
+
+
+
+::::
+:::::
+
+###### metro
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-eda-metro}
+: Distance in miles to nearest syringe programs by metro or non-metro status for a sample of 500 counties
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-chap09-eda-violin-boxplot
+#| tbl-cap: "Distance in miles to nearest syringe programs by metro or non-metro status for a sample of 500 counties"
+
+distance_ssp_clean |>
+    dplyr::group_by(metro) |>
+    dplyr::summarize(mean.dist = base::mean(dist_ssp),
+                     median.dist = stats::median(dist_ssp),
+                     min.dist = base::min(dist_ssp),
+                     max.dist = base::max(dist_ssp)
+                     )
+```
+***
+
+The big difference between mean and median reflects a right skewed distribution. There are some people living extremely far from the next `r glossary("SSP")` both in non-metro *and* metro areas. 
+
+It is no surprise that the distance for people living in a non-metro area is much longer than for people in big city. But what certainly surprised me, is that even in big cities half of people live more than 50 miles form the next SSP.
+
+
+::::
+:::::
+
+###### Violin
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-eda-violin-plot}
+: Distance in miles to nearest syringe programs by metro or non-metro status for a sample of 500 counties
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-chap09-eda-violin-boxplot
+#| fig-cap: "Distance in miles to nearest syringe programs by metro or non-metro status for a sample of 500 counties"
+
+distance_ssp_clean |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = metro, 
+          y = dist_ssp, 
+          fill = metro
+          )
+      ) +
+  ggplot2::geom_violin(
+      ggplot2::aes(
+          color = metro
+          ), 
+      fill = "white", 
+      alpha = .8
+      ) +
+  ggplot2::geom_boxplot(
+      ggplot2::aes(
+          fill = metro, 
+          color = metro
+          ), 
+      width = .2, 
+      alpha = .3
+      ) +
+  ggplot2::geom_jitter(
+      ggplot2::aes(
+          color = metro
+          ), 
+      alpha = .4
+      ) +
+  ggplot2::labs(
+      x = "Type of county",
+      y = "Miles to syringe program"
+      ) +
+  ggplot2::scale_fill_manual(
+      values = c("#78A678", "#7463AC"), 
+      guide = "none") +
+  ggplot2::scale_color_manual(
+      values = c("#78A678", "#7463AC"), 
+      guide = "none") +
+  ggplot2::coord_flip()
+
+```
+***
+
+
+
+
+::::
+:::::
 
 ###### pairs
 
@@ -712,6 +992,8 @@ GGally::ggpairs(distance_ssp_clean,
 
 ::::
 :::::
+
+***
 
 
 

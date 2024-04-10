@@ -1115,11 +1115,15 @@ The `stats::cor.test()` function creates an object of type `htest` which is a li
 
 ## Achievement 5: Checking assumptions for Pearson’s r {#sec-chap08-achievement5}
 
-### Introduction
+### Introduction {#sec-chap08-check-independence}
 
-***
 
 ::: {#bul-assumptions-pearson-r}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
 
 - Observations are independent (@sec-chap08-check-independence). 
 - Both variables are continuous (@sec-chap08-check-continuous). 
@@ -1127,11 +1131,13 @@ The `stats::cor.test()` function creates an object of type `htest` which is a li
 - The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-check-linearity). 
 - The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity).
 
+::::
+:::::
 Assumptions for Pearson’s r
 
 :::
 
-### Observations are independent {#sec-chap08-check-independence}
+***
 
 So far the book had mentioned siblings and other family members or testing the same individuals several time as examples for not independent observations. Now we got two more examples:
 
@@ -1532,9 +1538,14 @@ The Breusch-Pagan test statistic has a low p-value (BP = 12.37; p = 0.0004), ind
 
 ### Conclusion
 
-***
 
 ::: {#bul-chap08-assumptions-pearson-r-summary}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 
 - Observations are independent (@sec-chap08-check-independence): **No**. 
 - Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
@@ -1542,6 +1553,8 @@ The Breusch-Pagan test statistic has a low p-value (BP = 12.37; p = 0.0004), ind
 - The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-check-linearity): **Yes**. 
 - The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity): **No**.
 
+::::
+:::::
 Summary of testing the assumptions for Pearson’s r in the example data
 :::
 
@@ -1572,15 +1585,21 @@ Compare testing the assumptions for Pearson’s r in the example data in @bul-ch
 
 One of the ways to deal with data that do not meet assumptions for Pearson’s *r* is to use a data transformation and examine the relationship between the transformed variables.
 
-***
 
 ::: {#bul-data-transformations}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 
 - `r glossary("Linear transformations")` keep existing linear relationships between variables, often by multiplying or dividing one or both of the variables by some amount. 
 - `r glossary("Nonlinear transformations")` increase (or decrease) the linear relationship between two variables by applying an exponent (i.e., `r glossary("power transformations")`) or other function to one or both of the variables.
 - `r glossary("Logit transformations")` and `r glossary("arcsine transformations")` are often used for variables that are percentages or proportions because they account for `r glossary("floor")` and `r glossary("ceiling")` effects.
 
-
+::::
+:::::
 Types of data transformations
 
 :::
@@ -2065,9 +2084,13 @@ Another thing that annoys me after eight chapter is the high redundancy with all
 ### Conclusion
 
 
-***
 
 ::: {#bul-chap08-assumptions-pearson-r-transformed-summary}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
 
 - Observations are independent (@sec-chap08-check-independence): **No**. 
 - Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
@@ -2075,12 +2098,15 @@ Another thing that annoys me after eight chapter is the high redundancy with all
 - The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-linearity-transformed): **No**. 
 - The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity-transformed): **No**.
 
+::::
+:::::
 Summary of testing the assumptions for Pearson’s r with transformed data
 :::
 
+***
+
 All in all the situation has deteriorated: In contrast to the example data the linearity assumption is not met after the transformation. Compare @fig-graph1-cor with @sec-chap08-linearity-transformed.
 
-***
 
 ## Achievement 7: Spearman’s rho {#sec-chap08-achievement7}
 
@@ -2276,17 +2302,26 @@ There was a statistically significant positive correlation between basic access 
 
 #### Introduction
 
-***
 
 ::: {#bul-assumptions-spearman-rho}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 
 - Observations are independent (@sec-chap08-check-independence). 
 - Both variables must be at least ordinal or even closer to continuous. (@sec-chap08-check-continuous). 
 - The relationship between the two variables must be monotonic.
 
+::::
+:::::
 Assumptions for Spearman’s rho
 
 :::
+
+***
 
 #### Independence of observations
 

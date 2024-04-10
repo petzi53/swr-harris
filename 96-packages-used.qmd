@@ -814,11 +814,43 @@ forcats: A Package with Tools for Working with Categorical Variables
 ::::
 :::::
 
+## GGally
+
+:::::{.my-resource}
+:::{.my-resource-header}
+{**GGally**}: Extension to {**ggplot2**} 
+:::
+::::{.my-resource-container}
+
+***
+
+::: {#pak-GGally}
+
+***
+
+{**GGally**}: [Extension to {**ggplot2**}](https://ggobi.github.io/ggally/) [@GGally]
+
+The R package {**ggplot2**} is a plotting system based on the grammar of graphics. {**GGally**} extends {**ggplot2**} by adding several functions to reduce the complexity of combining geometric objects with transformed data. Some of these functions include 
+
+- a pairwise plot matrix, 
+- a two group pairwise plot matrix, 
+- a parallel coordinates plot, 
+- a survival plot, 
+- and several functions to plot networks.
+
+{**GGally**}: Extension to {**ggplot2**}
+:::
+
+***
+::::
+:::::
+
+
 ## ggmosaic
 
 ::: my-resource
 ::: my-resource-header
-ggmosaic: Mosaic Plots in the 'ggplot2' Framework
+{**ggmosaic**}: Mosaic Plots in the {**ggplot2**} Framework
 :::
 
 ::: my-resource-container
@@ -829,7 +861,7 @@ ggmosaic: Mosaic Plots in the 'ggplot2' Framework
 
 ------------------------------------------------------------------------
 
-{**ggmosaic**}: [Mosaic Plots in the 'ggplot2'
+{**ggmosaic**}: [Mosaic Plots in the {**ggplot2**}
 Framework](https://haleyjeppson.github.io/ggmosaic/) [@ggmosaic]
 
 ::: {layout="[10, 30]" layout-valign="center"}
@@ -849,8 +881,9 @@ Furthermore, {**ggmosaic**} allows various features to be customized:
 -   the type of partition, and
 -   the space between the categories.
 
-{**ggmosaic**}: A Package for Mosaic Plots in the 'ggplot2' Framework
+{**ggmosaic**}: A Package for Mosaic Plots in the {**ggplot2**} Framework
 :::
+
 
 :::
 :::
@@ -859,7 +892,7 @@ Furthermore, {**ggmosaic**} allows various features to be customized:
 
 :::::{.my-resource}
 :::{.my-resource-header}
-ggokabeito: 'Okabe-Ito' Scales for 'ggplot2' and 'ggraph' 
+ggokabeito: 'Okabe-Ito' Scales for {**ggplot2**} and {**ggraph**} 
 :::
 ::::{.my-resource-container}
 
@@ -869,7 +902,7 @@ ggokabeito: 'Okabe-Ito' Scales for 'ggplot2' and 'ggraph'
 
 ***
 
-{**ggokabeito**}: ['Okabe-Ito' Scales for 'ggplot2' and 'ggraph'](https://malcolmbarrett.github.io/ggokabeito/index.html) [@ggokabeito]
+{**ggokabeito**}: ['Okabe-Ito' Scales for {**ggplot2**} and {**ggraph**}](https://malcolmbarrett.github.io/ggokabeito/index.html) [@ggokabeito]
 
 (*There is no hexagon logo for {**ggokabeito**} available*)
 

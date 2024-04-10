@@ -71,7 +71,7 @@ There are two options:
 1.  Download the clean data file `transgender_hc_ch2.csv` from
     <https://edge.sagepub.com/harris1e>.
 2.  Get the data file from the `r glossary("BRFSS")` website. (See
-    @lst-chap02-get-brfss-2014-data).
+    @lst-chap02-get-brfss-2014-data2).
     -   The page with the 2014 data is at
         <https://www.cdc.gov/brfss/annual_data/annual_2014.html>.
     -   The URL for the SAS transport file is at
@@ -80,7 +80,7 @@ There are two options:
 The ZIP-file is with 69 MB pretty big. Unzipped it will have almost 1
 GB! --- I will only work with this second option[^chap02-1].
 
-[^chap02-1]: This was the original plan, but after several chapters get the original data wasn't instructive anymore. I didn't learn new things because it was more a less a repetitive task with redundant code lines. So starting with @sec-chap07 I have used the data files provided by the book and to strengthen my focus on the statistical issues.
+[^chap02-1]: This was the original plan, but after several chapters working with the original data (downloading, recoding etc.) wasn't instructive anymore. I didn't learn new things because it was more a less a repetitive task with redundant code lines. So starting with @sec-chap07 I have used the data files provided by the book and to strengthen my focus on the statistical issues.
 
 **Codebook**
 
@@ -145,9 +145,14 @@ For the decision if one should report mean or median in numerical variables the 
 
 I will explain explicitly only to those subjects where I am not firm. This is 
 
-***
 
 ::: {#bul-subjects-explained}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 - categorical variables:
     - index of qualitative variation (@sec-index-variation)
 - numeric variables:
@@ -155,7 +160,9 @@ I will explain explicitly only to those subjects where I am not firm. This is
     - mode (@sec-chap02-mode)
     - kurtosis (@sec-chap02-kurtosis)
     - scientific notation
- 
+
+::::
+:::::
 Subjects reviewed in this chapter
 
 :::
@@ -176,13 +183,15 @@ some minutes. So be patient!
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-Download the SAS transport file data from the BRFSS website and save
+:::::: {#cnj-chap02-get-brfss-2014-data}
+: Download the SAS transport file data from the BRFSS website and save
 dataframe with selected variables as R object
+::::::
 :::
 ::::{.my-r-code-container}
 
+:::{#lst-chap02-get-brfss-2014-data2}
 
-::: {#lst-chap02-get-brfss-2014-data}
 ```{r}
 #| label: get-brfss-2014-data
 #| eval: false
@@ -226,6 +235,7 @@ base::saveRDS(object = brfss_tg_2014,
 
 Download and save the transgender data 2014 from the BRFSS website
 :::
+***
 
 The original file has 279 variables and 464664 observations. After selecting
 only 9 variable the file is with 31.9 MB (memory usage) and stored
@@ -2514,7 +2524,7 @@ fig-align="center"}
 
 ***
 
-Remember: I have used as column name `_AGE80` (and not `X_AGE80`) when I imported with {**haven**} the data in @lst-chap02-get-brfss-2014-data.
+Remember: I have used as column name `_AGE80` (and not `X_AGE80`) when I imported with {**haven**} the data in @lst-chap02-get-brfss-2014-data2.
 
 The age of the respondents range from 18 to 80. 
 
@@ -2660,11 +2670,13 @@ Filtering the data to get only values between 18-79 doesn't normalize the distri
 We need to manipulate data to provide a table with all its required
 features as they are:
 
-***
 
 ::: {#bul-chap02-table-features}
-
-***
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
 
 1. A main title indicating what is in the table, including
     -   the overall sample size
@@ -2681,6 +2693,8 @@ features as they are:
     - row and column sample sizes when they are different from overall
     sample sizes [@harris2020].
     
+::::
+:::::
 Required features of a table
 :::
 

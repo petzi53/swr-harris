@@ -900,6 +900,12 @@ The mean time spent on technology use was significantly different across educati
 `r glossary("Planned comparisons")` are computed by developing `r glossary("contrasts")` that specify which means to compare to which other means.
 
 ::: {#bul-planned-contrasts}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 
 - The order of the factor variable is the exact order that should be used in the contrast.
 - A contrast is a group of numbers used to group categories. 
@@ -907,8 +913,12 @@ The mean time spent on technology use was significantly different across educati
 - The numbers in the contrast should all add to zero. 
 - Any category not included in the contrast should be represented by a zero.
 
+::::
+:::::
 Rules for planned contrasts 
 :::
+
+***
 
 For example, to compare all the college groups to the high school group, the contrast would omit the less than high school group and compare the mean for everyone in the high school group to the mean of the combined three college groups: junior college, bachelor, and graduate.
 
@@ -1581,15 +1591,25 @@ How many contrasts could be done and how all these statistical comparisons might
 > When you have hypotheses ahead of time about which groups are different from one another, use `r glossary("planned comparisons")`. When you do not have hypotheses ahead of time about which means are different from each other, use post hoc tests if the ANOVA has a statistically significant `r glossary("F-statistic")`. Good research practices suggest that having hypotheses ahead of time is a stronger strategy unless the research is truly exploratory.
 
 ::: {#bul-characeristic-contrast}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Bullet List
+:::
+::::{.my-bullet-list-container}
+
 
 - Contrast values add to zero. 
 - Each contrast compares two groups. 
 - Each category is only isolated one time. 
 - The maximum number of contrasts is one less than the number of categories.
 
+::::
+:::::
 Characteristics of contrasts
 
 :::
+
+***
 
 ## Achievement 4: Effect sizes for ANOVA {#sec-chap07-achievement4}
 

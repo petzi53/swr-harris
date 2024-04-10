@@ -74,9 +74,6 @@ crossref:
   appendix-delim: ":"
   custom:
     - kind: float
-      reference-prefix: Important
-      key: imp
-    - kind: float
       reference-prefix: Commitment
       key: com
     - kind: float
@@ -100,27 +97,33 @@ crossref:
     - kind: float
       reference-prefix: Explanation
       key: exp
+    - kind: float
+      reference-prefix: Output
+      key: out
 
+
+
+tip-cap-location: top
 pak-cap-location: top
-bul-cap-location: top
+bul-cap-location: bottom
 
 language:
    crossref-cnj-title: "R Code"      # replaces "Conjecture"
    crossref-cor-title: "Assessment"  # replaces "Corollary"
    crossref-def-title: "Experiment"  # replaces "Definition"
-   crossref-exm-title: "Example"
-   crossref-exr-title: "Exercise"
+   crossref-exm-title: "Example"     # remains  "Example"
+   crossref-exr-title: "Exercise"    # remains  "Exercise"
    crossref-fig-title: "Graph"       # replaces "Figure"
    crossref-lem-title: "Solution"    # replaces "Lemma"
-   crossref-lst-title: "Listing"
+   crossref-lst-title: "Listing"     # remains  "Listing"
    crossref-prp-title: "Procedure"   # replaces "Proposition"
-   crossref-tbl-title: "Table"
+   crossref-tbl-title: "Table"       # remains  "Table"
    crossref-thm-title: "Formula"     # replaces "Theorem"
 #   crossref-int-title: "Interpretation"
 
 # https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/language/_language.yml
-   callout-tip-title: "Report"           # green
-   callout-note-title: "Note"            # blue
-   callout-warning-title: "Watch out!"   # orange
-   callout-important-title: "Important"  # red
-   callout-caution-title: "Typo"         # yellow
+   callout-tip-title: "Report"           # green  = #tip
+   callout-note-title: "Note"            # blue   = #nte
+   callout-warning-title: "Watch out!"   # orange = #wrn
+   callout-important-title: "Important"  # red    = #imp
+   callout-caution-title: "Typo"         # yellow = #cau
