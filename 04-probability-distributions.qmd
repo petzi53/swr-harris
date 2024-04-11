@@ -1557,7 +1557,7 @@ Both of the standard error (se) values are close to the sampling distribution st
 ::::
 :::::
 
-::: {.callout-note}
+::: {.callout-note #nte-chap04-se}
 **Summary**
 
 - The standard deviation of the sampling distribution is 1.05. 
@@ -2112,7 +2112,7 @@ Form the graph it is difficult to find those CIs that do not contain the populat
 ::::
 :::::
 
-::: {.callout-note}
+::: {.callout-note #nte-chap04-x-axis-removed}
 In the book the scale of the x-axis was removed with `ggplot2::theme(axis.text.x = ggplot2::element_blank())`. I have used `ggplot2::scale_x_discrete(breaks = NULL)` with the same effect. 
 :::
 
@@ -2208,7 +2208,7 @@ Now you can better see that 4 CIs do not include the population mean. The graph 
 ::::
 :::::
 
-::: {.callout-note}
+::: {.callout-note-chap04-x-axis-removed2}
 In the book the scale of the x-axis was removed with `ggplot2::theme(axis.text.x = ggplot2::element_blank())`. I have used `ggplot2::scale_x_discrete(breaks = NULL)` with the same effect. 
 :::
 
@@ -2230,11 +2230,11 @@ But there are two points to observe:
 
 
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 How to calculate the standard error for binomial distributions?
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 Instead of the formula for standard error for continuous variables (see @eq-chap04-se) the standard error for binomial distribution is:
 
 $$

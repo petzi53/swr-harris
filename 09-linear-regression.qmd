@@ -8,7 +8,9 @@ base::source(file = "R/helper.R")
 ggplot2::theme_set(ggplot2::theme_bw()) 
 ```
 
-::: {.callout-note}
+::: {.callout-note #nte-chap09-differenct-chapter-structure style="color: blue;"}
+### Different chapter structure, especially in `r glossary("ExDA", "EDA")` (@sec-chap09-achievement1)
+
 As I have already read some books on linear regression I will not follow exactly the text in this chapter. I will leave out those passages that are not new for me and where I feel confident. Other passages I will only summarize to have content to consult whenever I would need it.
 :::
 

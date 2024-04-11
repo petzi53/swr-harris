@@ -93,16 +93,16 @@ iframe {
 
 
 
-/* ##############   Note   ############# */
+/* ##############   Remark   ############# */
 
-.my-note {
+.my-remark {
   margin: 1em 0;
   border: 2px solid #2780e3;
   border-left: 10px solid #2780e3;
   border-radius: 10px;
 }
 
-.my-note-header {
+.my-remark-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  5px;
@@ -115,11 +115,11 @@ iframe {
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/note-48.png");
+  background-image: url("img/icons8/remark-48.png");
 }
 
 
-.my-note-container {
+.my-remark-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -585,39 +585,6 @@ iframe {
 }
 
 .my-tip-container {
-  padding-top: 5px;
-  padding-left: 10px;
-  color: black;
-  background-color: white;
-  border-bottom-right-radius: 10px;
-}
-
-/* ##############   Remark   ############# */
-
-.my-remark {
-  margin: 1em 0;
-  border: 2px solid#008B00;
-  border-left: 10px solid #008B00;
-  border-radius: 10px;
-}
-
-.my-remark-header {
-  margin-left: 0;
-  padding-left:  60px;
-  padding-top:  5px;
-  padding-bottom: 0.1em;
-  color: black;
-  background-color: #00CD00;
-  border-top-right-radius: 10px;
-  font-size: 1em;
-  font-weight: bold;
-  background-size: 40px;
-  background-repeat: no-repeat;
-  background-position: 15px center;
-  background-image: url("img/icons8/tip-48.png");
-}
-
-.my-remark-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;

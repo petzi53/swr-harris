@@ -915,16 +915,7 @@ blood_pressure_demo |>
 :::
 :::
 
-### Test1
 
-::: {.callout-important #imp-ID}
-### Package {nhanesA} facilitates downloading NHANES data {.unnumbered}
-     
-
-Test
-:::
-
-### Test2
 
 ### Import & clean data {#sec-chap01-import-clean-data}
 
@@ -1079,11 +1070,11 @@ In all R code chunks and text passages I have changed the `gender` category to `
 
 
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My learning from the above procedure of data cleaning
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 
 1. It is wrong to put the column name `...1` into accents.
 2. There exists a shortcut for several `dplyr::rename()` but not for `dplyr::na_if()` and `forcats::as_factor()` because here we need to change the column values with the command.
@@ -1296,11 +1287,11 @@ My solution for creating a bar chart showing the percentage of NHANES participan
 
 :::
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 What I learned from creating the bar chart
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 
 Even with this simple example of a bar chart I learned some new options:
 
@@ -2862,11 +2853,11 @@ This R package provides an enhanced version of data.frames with more options for
     - selecting parts of variables interactively.
     
     
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My conclusion to {**DT**}
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 {**DT**} is my first choice for interactive data exploring and very useful for Explorative Data Analysis (`r glossary("ExDA", "EDA")`). I have already some experiences with this package but haven't use it lastly. 
 
 Compared with the other table packages {**DT**} is not in the same category: The following packages are developed as `r glossary("Display Tables")` (in contrast to `r glossary("Data Tables")`. Beside of the interactive use {**DT**}s are Data Tables.
@@ -2893,11 +2884,11 @@ This package helps you to create reporting table from a data frame easily. You c
 
 It is said that {**flextable**} --- together with the sparsely used [{**huxtable**}](https://hughjonesd.github.io/huxtable/) --- "supports the widest range of output formats ... [both] support HTML, {{< latex >}}, and Office formats, and contain most common table features (e.g., conditional formatting)." (Yihui: [R Markdown Coobook](https://bookdown.org/yihui/rmarkdown-cookbook/table-other.html))
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My conclusion to {**flextable**}
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 {**flextable**} seems pretty well suited to create sophisticated tables for publications. It is often especially mentioned for exporting into Word files. Maybe I will look into this package in the near future, but currently my priority is {**gtsummary**}.
 ::::
 :::::
@@ -2933,11 +2924,11 @@ At the beginning of the development process {**gt**} supported only HTML, but no
 - {**gt**} is still very early in the development process. The issue tracker show this in the relation of open / closed issue: 272 open / 633 closed (2024-01-18).
     
     
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My conclusion to {**gt**}
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 I tried to work with {**gt**} but it is cumbersome. I noticed a [bug even following the official online tutorial](https://github.com/rstudio/gt/issues/1535). Maybe
 {**gt**} (together with {**gtsummary**} is better suited for creating easily complex tables in many formats.
 ::::
@@ -2955,11 +2946,11 @@ them](img/chap01/gtsummary-output-formats-min.png){#fig-chap01-gtsummary-outputs
 fig-alt="Table of summaries for output formats: The table header reads from left to the right: Print Engine, Function, HTML, Word, PDF, RTF.  As print engines feature in this table: gt, flextable, huxtable, kableExtra, kable and tibble. All functions start with 'as_' followed by the name of the package, e.g., as_gt(), as_flex_table(), as_kable_extra() etc. The table states that gt is still working on RTF output, flextable and kableExtra does not support RTF, kableExtra also has no output format for Word. Kable has all four options in a very reduced form (missing indentation, footnotes and spanning headers) and tibble fails on all four formats."
 fig-align="center"}](https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html)
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My conclusion to {**gtsummary**}
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 
 I have tried out {**gtsummary**} and I am enthusiastic about it! I wrote an introduction with some examples (@sec-chap01-experiments-gtsummary) Now that I understand how it works I will definitely use it. (By the way: Besides the extensive documentation I found that the most effective introduction for me was watching the [Youtube video presentation](https://www.youtube.com/watch?v=tANo9E1SYJE) by the developer Daniel D. Sjoberg).
 
@@ -2995,11 +2986,11 @@ Beside the extensive vignette documentation there are also some blog articles:
 - [Tables form R into Word](https://gforge.se/2013/02/tables-from-r-into-word/)
 - [Fast-track publishing using knitr: table mania (part IV)](https://gforge.se/2014/01/fast-track-publishing-using-knitr-part-iv/)
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My conclusion to {**htmlTable**}
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 {**htmlTable**} seems an interesting package not only for creating complex tables but also for exporting them into Word. But to learn this package is at the moment not on my task list.
 ::::
 :::::
@@ -3016,11 +3007,11 @@ My conclusion to {**htmlTable**}
     is that most of its table capabilities work for both HTML and PDF
     formats.
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My conclusion to {**kableExtra**}
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 I have already some experiences with {**kableExtra**}. I used it quasi as an add-on to `knitr::kable()` during personal HTML publications (Blog, bookdown, Quarto). I believe that other "Table 1" packages like {**gtsummary**} or maybe also {**tableOne**) are better suited for display and publication.
 ::::
 :::::
@@ -3034,11 +3025,11 @@ The first time I learned about the existence of {**tableone**} was in @sec-chap0
 
 > Creates "Table 1", i.e., description of baseline patient characteristics, which is essential in every medical research. Supports both continuous and categorical variables, as well as p-values and standardized mean differences. Weighted data are supported via the {**survey**} package. … Most important functions are `CreateTableOne()` and `svyCreateTableOne()`.
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My conclusion to {**tableone**}
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 The package is completely new for me. I have to check it out to see how and when to use. But my priority now is {**gtsummary**} because
 
 - {**gtsummary**} is much more used than {**tableone**}: over 2000 versus under 500 downloads per day
@@ -3053,11 +3044,11 @@ The package is completely new for me. I have to check it out to see how and when
 
 {**xtable**} is the oldest package and still the table package most used! From the documentation it is clear that it is very useful for the creation of publication ready tables. But I am little hesitant to learn it, because it is not mentioned in current literature and the last change was in April 2019.
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My conclusion to {**xtable**}
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 Learning {**xtable**} is not on my agenda: It is not clear for me if {**xtable**} is still in developments and if it is supporting newer approaches. Learning other table packages, especially {**gtsummary**} probabily together with {**gt**} has priority for me.
 ::::
 :::::

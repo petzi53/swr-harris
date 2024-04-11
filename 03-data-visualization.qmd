@@ -80,11 +80,11 @@ There are two options:
 
 I will only work with the second option.
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Manufactured firearms data not mentioned
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 Harris provides the "total_firearms_manufactured_US_1990to2015.csv" file with firearm production in the US from 1990-2015 but did not mention the source. I have looked around on the web and reported the results of my research in @sec-gun-production.
 ::::
 :::::
@@ -120,12 +120,12 @@ I will only work with the second option.
 -   {**waffle**}: @pak-waffle (Bob Rudis)
 -   {**withr**}: @pak-withr (Lionel Henry)
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Instead of downloading the file with {**httr**} I will use
 `utils::download.file()`
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 Harris lists the older {**httr**} package, but now there is {**httr2**},
 "a modern re-imagining of {**httr**} that uses a pipe-based interface
 and solves more of the problems that `r glossary("APIx", "API")` wrapping
@@ -176,12 +176,14 @@ But even if you have data of manufactured, exported and imported guns, this does
 
 > Although a few data points are consistently collected, there is a clear lack of data on firearms in the US. It is impossible, for instance, to know the total number of firearms owned in the United States, or how many guns were bought in the past year, or what the most commonly owned firearms are. Instead, Americans are left to draw limited conclusions from available data, such as the number of firearms processed by the National Firearm Administration (NFA), the number of background checks conducted for firearm purchase, and the number of firearms manufactured. However, none of these metrics provide a complete picture because state laws about background checks and gun registration differ widely. ([USAFact.org](https://usafacts.org/articles/2020-has-been-record-setting-year-background-checks-other-firearm-data-incomplete/))
 
-:::{#not-chap03-circulated-guns-us}
-:::::{.my-note}
-:::{.my-note-header}
-Using USAFacts data includes gun exports
+
+:::::{.my-remark}
+:::{.my-remark-header}
+:::::{#rem-chap03-circulated-guns-us}
+How to calculate the numbers of circulated guns in the US
+:::::
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 If you are interested to research the relationship between gun ownership in the USA and homicides then you would need to reflect how to get a better approximation as the yearly manufactured guns. Besides that not all gun manufacturer have reported their production numbers to the ATF, there is a big difference between gun production and gun sales. Additionally there are some other issues that influence the number of circulated guns in the US. So you have to take into account for instance
 
 - the export and import of guns, 
@@ -190,9 +192,6 @@ If you are interested to research the relationship between gun ownership in the 
 As an exercise I have subtracted from the manufactured gun the exported guns and have added the imported firearms. You will find the result in @lst-chap03-guns-total.
 ::::
 :::::
-
-How to calculate the numbers of circulated guns in the US
-:::
 
 
 
@@ -1334,7 +1333,7 @@ Manufactured guns - exported guns + imported guns
 
 As a first approximation to get guns data circulated in the US I have taken the manufactured numbers, subtracted the exported guns and added the imported guns.
 
-I have already listed some reasons why the above result is still not the real amount of circulated guns per year in the US (see: @not-chap03-circulated-guns-us)
+I have already listed some reasons why the above result is still not the real amount of circulated guns per year in the US (see: @rem-chap03-circulated-guns-us)
 
 ::::
 :::::
@@ -3439,11 +3438,11 @@ nhanes_2012_clean |>
 ***
 
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Better use of mosaic charts when variables have different levels with different proportions
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 @fig-mosaic-gun-use-sex is a bad example for a mosaic chart: One of its features (that the area of the columns reflect the proportion of the level) does not shine in this example because both levels (men and women) have approximately the same proportion (49.8 vs. 50.2%). Although it is better to have variables with several levels.
 ::::
 :::::
@@ -3630,11 +3629,11 @@ Even in all the examples I found on the Internet (see for instance [Creating a M
 
 ##### Adaptions and other resources
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My own adaptions to the mosaic figures
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 
 
 In contrast to the book I have used three additional adaptions for the figures produced with the {**ggmosaic**} package:

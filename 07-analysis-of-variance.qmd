@@ -486,11 +486,11 @@ $$
 
 > With 10 pairwise comparisons, the familywise $\alpha_{f}$ indicated there would be a 40% probability of making a Type I error. To control this error rate, and for efficiency, use a single ANOVA test instead of 10 t-tests. ANOVA is useful for testing whether three or more means are equal. It can be used with two means, but the t-test is preferable because it is more straightforward.
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Running many tests
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 I believe that the problem of a rising Type I error with a growing number of pairwise comparisons is also valid for other type of tests. Each test has the .05 threshold and a collection of many different tests with the same data rises the probability of making a Type I error. Using this strategy consciously is one form of `r glossary("p-hacking")`.
 ::::
 :::::

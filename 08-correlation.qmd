@@ -1566,11 +1566,11 @@ The big question is: What can be done that several of the assumptions are not me
 - Transform the two variables to try and meet the assumptions for Pearson’s r and conduct the analysis again.
 - Choose a different type of analysis with assumptions that can be met by these data. 
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 My opinion to the three tips
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 - The first advice is no solution. This strategy declares that the inferential process has failed.
 - Yes, this is a promising strategy. But as it turns out that works (more or less) for the `female.in.school` but not for the `perc.basic2015water` variable. More on this analysis in @sec-chap08-achievement6.
 - Instead of using `r glossary("Pearson", "Pearson’s r")` one could use `r glossary("Spearman", "Spearman’s rho")` which does not have the same strict assumptions. See @sec-chap08-achievement7.
@@ -2067,11 +2067,11 @@ With a p-value of .01, the null hypothesis is rejected and the assumption fails.
 There was a statistically significant, positive, and strong (r = .67; t = 8.82; p < .05; 95% CI: .55–.77) relationship between the transformed variables for percentage of females in school and percentage of citizens with basic water access in a sample of countries. As the percentage of citizens with basic water access increases, so does the percentage of school-age females in school. The data failed several of the assumptions for **r* and so these results should not be generalized outside the sample.
 :::
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Inferential statistics without generalizing conclusion outside the sample?
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 I find it very disappointing that most of the time the assumptions for the different tests are not met. As far as I understand all the many tests and hypotheses failed, so that one can't say anything outside the data of the sample. 
 
 In the above summary are included a `r glossary("p-value")` and a `r glossary("confidence interval")`. As both values are for generalizing from a sample to a population and some of the assumptions are not met, it is --- in my opinion --- not allowed to mention these values. They "could" not omitted as the book claims but I think the should mandatory not included in the summary. These results are not reliable when the assumptions are failed and should not be mentioned at all because that creates more informative results as effectively is the case.
@@ -2363,11 +2363,11 @@ There was a positive correlation between basic access to water and females in sc
 
 
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Many assumptions not met
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 With the exception of the `r glossary("chi-squared")` test of systolic blood pressure in @sec-chap05 all of the test assumptions have failed. 
 
 This is not only disappointing but I believe also a disaster for frequentist inferential statistics. As far as I understood it means that --- with the one mentioned exception --- we cannot say anything about the population parameters and have to stick with the description of the sample. Instead of inferential statistics just descriptive statistics.
@@ -2553,11 +2553,13 @@ With `ppcor::pcor.test()` there is a special function for testing significance o
 
 ***
 
-::: {#not-partial-corr-wrong}
+::: {#rep-partial-corr-wrong}
 ::: {.callout-tip}
+## Significance test wrongly reported as the assumptions for partial correlation are not met
+
 The partial correlation between percentage of females in school and the percentage of citizens who have basic water access was moderate, positive, and statistically significant ($r_{s}.partial = 0.43; t = 3.73; p < .05$). Even after poverty is accounted for, increased basic water access was moderately, positively, and significantly associated with an increased percentage of females in school.
 
-Compare this report with @not-partial-corr-changed-report.
+Compare this report with @rep-partial-corr-changed-report.
 :::
 
 Significance test wrongly reported as the assumptions for partial correlation are not met
@@ -2570,7 +2572,7 @@ Significance test wrongly reported as the assumptions for partial correlation ar
 WATCH OUT! Assumptions not met therefore no statistically significance test possible
 :::
 ::::{.my-watch-out-container}
-As several assumption for the partial correlation are not met it is not correct to report about the result of a statistically significance test. The text of
+As several assumption for the partial correlation are not met it is not correct to report about the result of a statistically significance test. 
 ::::
 :::::
 
@@ -2581,12 +2583,12 @@ As several assumption for the partial correlation are not met it is not correct 
 
 ***
 
-::: {#not-partial-corr-changed-report}
-
+::: {#rep-partial-corr-changed-report}
 ::: {.callout-tip}
+## Report about partial correlation when the assumptions are not met
 The partial correlation between the percentage of females in school and the percentage of citizens who have basic water access was moderate and positive ($r_{s.partial} = 0.43$). Even after poverty is accounted for, increased basic water access was moderately and positively associated with an increased percentage of females in school. The assumptions were not met, so it is not clear that the partial correlation from the sample of countries can be generalized to the population of all countries.
 
-Compare this report with @not-partial-corr-wrong.
+Compare this report with @rep-partial-corr-wrong.
 :::
 
 Report about partial correlation when the assumptions are not met
@@ -2740,11 +2742,11 @@ water_educ4 |>
 It turned out that the monotonic assumption was met for `female.in.school` and `perc.1dollar` but not for `perc.basic2015water` and `perc.1dollar`.
 
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Assumption of independent observations not met
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 The book mentions twice the idea to recode variables that do not met their normality, linearity or monotonic assumptions. For instance one could recode the basic access to water into a binomial variable (has basic access, does not have basic access). The second idea was to recode the poverty variable into an ordinal variable. The ordinal variable could then be used in place of the original version of the variable and the $r_{s}$ analysis could be conducted again. 
 
 But then there is still the problem that the assumption of the independent observation are not met. This failure has two aspects:

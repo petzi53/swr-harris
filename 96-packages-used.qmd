@@ -1845,7 +1845,7 @@ There are other similar packages also available, but the are more restricted as 
 {**nhanesA**}: NHANES Data Retrieval
 :::
 
-See for my other reflection of packages for downloading NHANES data in @not-chap01-nhanesA-pkg and @sec-chap03-rnhanes.
+See for my other reflection of packages for downloading NHANES data in @imp-chap01-nhanesA-pkg and @sec-chap03-rnhanes.
 
 ***
 ::::
@@ -2105,7 +2105,7 @@ There are other similar packages also available, but the are more restricted as 
 {**nhanesA**}: NHANES Data Retrieval
 :::
 
-See for my other reflection of packages for downloading NHANES data in @not-chap01-nhanesA-pkg and @sec-chap03-rnhanes.
+See for my other reflection of packages for downloading NHANES data in @imp-chap01-nhanesA-pkg and @sec-chap03-rnhanes.
 
 ***
 ::::

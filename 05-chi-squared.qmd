@@ -140,11 +140,11 @@ save_data_file("chap05", vote, "vote.rds")
 
 (*For this R code chunk is no output available*)
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Removing labels
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 `haven::zap_labels()` as used in the book removes value labels and not variable labels. The correct function would be `haven::zap_label()`. I have used the {**labelled**} package where you can use `labelled::remove_labels()` to delete both (variable & value labels).
 ::::
 :::::
@@ -429,11 +429,11 @@ With the simple `base::table()` we will get a very similar result as in the more
 
 But I prefer in any case the tidyverse version for several reasons:
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Some deficiencies of `base::table()` 
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 
 - `table()` does not accept data.frame as input and you can't therefore chain several commands together with the ` |> ` pipe.
 - `table()` does not output data.frames
@@ -708,7 +708,7 @@ I had several difficulties by drawing this graph:
 
 Instead of the last line I could have used with the same result: `ggplot2::geom_bar(position = "dodge", stat = "identity")`. `geom_bar()` uses as standard option `ggplot2::stat_count()`. It is however possible to override the default value as was done in the book code. But it easier here to use `geom_col()` because it uses as default `stat_identity()` e.g., it leaves the data as is.
 
-::: {.callout-note}
+::: {.callout-note #nte-chap05-changes}
 **Two additional remarks**:
 
 1. I have used here the percent scale from the {**scales**} package to get percent signs on the y-axis.
@@ -1755,7 +1755,7 @@ $$ {#eq-chap05-standardized-residuals}
 
 The standardized residual is distributed like a z-score. Values of the standardized residuals that are higher than 1.96 or lower than –1.96 indicate that the observed value in that group is much higher or lower than the expected value. These are the groups that are contributing the most to a large chi-squared statistic and could be examined further and included in the interpretation.
 
-::: {#not-adjusted-standardized-residuals}
+::: {#cau-chap05-adjusted-standardized-residuals}
 :::::{.my-watch-out}
 :::{.my-watch-out-header}
 WATCH OUT! Adjusted Standardized Residuals
@@ -1770,12 +1770,11 @@ $$
 \end{align*}
 $$ {#eq-chap05-adjusted-standardized-residuals}
 
-What are Adjusted Standardized Residuals?
-:::
 ::::
 :::::
 
-
+What are Adjusted Standardized Residuals?
+:::
 
 
 The book recommends to get the standardized residuals with `Descr::CrossTable()`. But I have checked out that there are other possibilities as well. 
@@ -1866,7 +1865,7 @@ descr::CrossTable(
 
 ***
 
-Here I have displayed the first and only time also the adjusted standardized residuals. As you can see they are much higher and do not obey the z-score distribution. I do not want how to interpret them. As far as I a understood they are only used for some software packages as e.g., [SDA](https://sda.berkeley.edu/) to highlight outstanding values. (See @not-adjusted-standardized-residuals)
+Here I have displayed the first and only time also the adjusted standardized residuals. As you can see they are much higher and do not obey the z-score distribution. I do not know how to interpret them. As far as I a understood they are only used for some software packages as e.g., [SDA](https://sda.berkeley.edu/) to highlight outstanding values. (See @cau-adjusted-standardized-residuals)
 
 ***
 
@@ -2010,13 +2009,13 @@ The result with {**rstatix**} is very detailed. Using {**rstatix**} has the addi
 Which package should I use to show standardized residuals?
 :::
 ::::{.my-important-container}
-3. `descr::CrossTable()` is used in the book, but I can't recommend it. The result cannot be transformed into a data.frame or tibble and it is therefore neither {**tidyverse**} compatible nor can you use the pipe.
+1. `descr::CrossTable()` is used in the book, but I can't recommend it. The result cannot be transformed into a data.frame or tibble and it is therefore neither {**tidyverse**} compatible nor can you use the pipe.
 
 2. A good solution is the combination of `stats::chisq.test()` and `graphics::mosaicplot()`. Especially the mosaic plot helps to figure out quickly which cells are important.
 
-1. The best solution in my opinion is {**rstatix**}: Its results can be very detailed. {**rstatix**} is {**tidyverse**} compatible and you can use the pipe. The result with {**rstatix**} is very detailed. Using {**rstatix**} has the additional advantage that it is {**tidyverse**} compatible and you can use the pipe. The package includes [many different tests](https://rpkgs.datanovia.com/rstatix/) and has with `r cranlogs::cran_downloads(package = "rstatix")$count` downloads from the RStudio CRAN mirror in one day (`r cranlogs::cran_downloads(package = "rstatix")$date`) a pretty big user group.) and can therefore used or other tasks as well. With `r cranlogs::cran_downloads(package = "rstatix")$count` downloads from the RStudio CRAN mirror in one day (`r cranlogs::cran_downloads(package = "rstatix")$date`) it has a pretty big user group.
+3. The best solution in my opinion is {**rstatix**}: Its results can be very detailed. {**rstatix**} is {**tidyverse**} compatible and you can use the pipe. The result with {**rstatix**} is very detailed. Using {**rstatix**} has the additional advantage that it is {**tidyverse**} compatible and you can use the pipe. The package includes [many different tests](https://rpkgs.datanovia.com/rstatix/) and has with `r cranlogs::cran_downloads(package = "rstatix")$count` downloads from the RStudio CRAN mirror in one day (`r cranlogs::cran_downloads(package = "rstatix")$date`) a pretty big user group.) and can therefore used or other tasks as well. With `r cranlogs::cran_downloads(package = "rstatix")$count` downloads from the RStudio CRAN mirror in one day (`r cranlogs::cran_downloads(package = "rstatix")$date`) it has a pretty big user group.
 
-**Because of the wide range of tests and the bi user basis I will apply {**rstatix**} as the predominant alternative  whenever the result is the same with other packages.**
+**Because of the wide range of tests and the big user basis I will apply {**rstatix**} as the predominant alternative  whenever the result is the same with other packages.**
 ::::
 :::::
 
@@ -2392,11 +2391,11 @@ The Yates continuity corrections also applies for the Cramér’s V effect size 
 ::::
 :::::
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Summary abbreviated
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 I have not followed the `r glossary("NHST")` procedure and the analysis of the relationship for ease of voting and home ownership. I understand and feel save about most of the content, therefore I focus only on material where I have difficulties or where I need more practice (as with the `r glossary("Yates continuity correction")` and `r glossary("Cramér’s V")`.
 ::::
 :::::

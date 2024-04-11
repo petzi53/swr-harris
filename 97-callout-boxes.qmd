@@ -14,44 +14,65 @@ I am using five different types of cross references. Many numbered links refer t
 
 I have used the following [Quarto callout blocks](https://quarto.org/docs/authoring/callouts.html):
 
-::: {.callout-note #nte-annex-b}
-### Not used in this book {.unnumbered}
+### Callout Note
 
-Instead of the note callout box I have used the theoreom variation "Remark."
+::: {.callout-note #nte-annex-b style="color: blue;"}
+### Differences between book and my notes {.unnumbered}
+
+I am using this box to specify and rationalize my code changes with respect to the book’s code patterns.
+
+For more theoretical or personal thoughts I have used the theorem variation "Remark."
+
+There is a second usage of callout note without numbering: In this case it highlights the wording for the null and alternate hypotheses with the title "Wording for H0 and HA".
 :::
 
-::: {.callout-tip #tip-annex-b}
+### Callout Tip
+
+
+::: {.callout-tip #tip-annex-b style="color: darkgreen;"}
 ### Until now (chapter 9, 2023-04-11) not used in this book {.unnumbered}
 
-So far I haven't used the "Tip" callout box. As I have provided many theorems with different names I haven’t needed the box so far. Most of the tips are collected under the theorem variation "Lemma" with the label "Resource". Sometimes I have written essential reminders for my learning activities into the "Important" box.
+So far I haven't used the "Tip" callout box with numbering. As I have provided many theorems with different names I haven’t needed the tip box so far. Most of the tips are collected under the theorem variation "Lemma" with the label "Resource". Sometimes I have written essential reminders for my learning activities into the "Important" box.
 
-If I will apply this callout box in the future then I have to clarify its usage in contrast to other boxes.
+If I will apply this callout box as a "Tip" in the future then I have to clarify its usage in contrast to other boxes.
+
+But I have used this box without numbering with the label "Report". Under this heading I have summarized the analysis of data, mostly taken the text from the book. Sometimes I had to refer to another "Report" box to compare some wording. In this case I have added the custom box `#rep-` with the label "Report". 
 :::
 
-::: {.callout-warning #wrn-annex-b}
+
+### Callout Warning
+
+::: {.callout-warning #wrn-annex-b style="color: darkorange;"}
 ### When to use the warning box? {.unnumbered}
 
 > Warning is used to indicate a more serious and immediate danger that could result in severe injuries or even death if not heeded. It implies a higher level of urgency and demands immediate attention and action to avoid potential harm. ([Caution versus Warning](https://thisvsthat.io/caution-vs-warning))
 
 In the context of this book I am using the warning box to prevent a mistake, a wrong procedure. If you don't mind it will result in an error or other glitch that will lead to  wrong results. If you don't pay attention to the warning blunder will occur.
+
+So far I have used this callout box only 3 times. I have to check if these applications conforms with the purpose of the box.
 :::
 
 
-::: {.callout-caution #cau-annex-b}
+### Callout Caution
+
+::: {.callout-caution #cau-annex-b style="color: darkgoldenrod;"}
 ### When to use the caution box? {.unnumbered}
 
 > Caution is typically used to indicate a potential hazard that may cause minor injuries or damage if not taken seriously. It serves as a reminder to be careful and exercise caution in order to prevent accidents. ([Caution versus Warning](https://thisvsthat.io/caution-vs-warning))
 
 In the context of this book I am using the caution box to draw attention to something. If you don't mind it will result in more complex work, results or other issues one should prevent. If you don't pay attention to the caution box then the chances for errors will grow.
+
+So far I haven’t applied this callout box. But I have used very heavily the custom unnumbered box "Watch Out" (35x) with the same --- resp. similar --- purpose. I am planning to transfer these paragraphs to a numbered alternative either as custom box or as a caution callout box.
 :::
 
+### Callout Important
 
-
-::: {.callout-important #imp-annex-b}
+::: {.callout-important #imp-annex-b style="color: red;"}
 ### Essential statements and take home messages {.unnumbered}
 
 This box indicates crucial points, very often reminder to me to observe something or to learn something in greater detail or more thoroughly.
 
+So far I haven't used this callout box, but an unnumbered custom box alternative 22x. Again I am planning an transfer to a numbered alternative, possibly to this callout box.
 :::
 
 

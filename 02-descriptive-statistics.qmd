@@ -1179,11 +1179,11 @@ From my (cursory) inspection I would recommend to use mostly `MDA`, `DM` and `AD
 :::::
 
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Using {**purrr**}-like formulas
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 I learned to use {**purrr**}-like formulas (see: @pak-purrr) for creating a function on the spot. Important for my understanding was the [help file for `tidyselect::where()`](https://tidyselect.r-lib.org/reference/where.html#the-formula-shorthand) (see: @pak-tidyselect) and the StackOverflow answer [Rounding selected columns of a data frame](https://stackoverflow.com/a/27613376/7322615) (see: @pak-tidyselect)
 ::::
 :::::
@@ -2397,11 +2397,11 @@ Number of days where physical health is not good
 ::::
 :::::
 
-:::::{.my-note}
-:::{.my-note-header}
+:::::{.my-remark}
+:::{.my-remark-header}
 Two code changes compared to the books code chunk for figure 2.9
 :::
-::::{.my-note-container}
+::::{.my-remark-container}
 
 **1. Preventing warning messages**
 
