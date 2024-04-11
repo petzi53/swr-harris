@@ -1,0 +1,58 @@
+# Callout Boxes {#sec-annex-b}
+
+## Introduction
+
+I am using five different types of cross references. Many numbered links refer to three different types of callout boxes:
+
+1. [Quarto callout blocks](https://quarto.org/docs/authoring/callouts.html): These are five standard small callout boxes: Note, Tip, Important, Caution, and Warning. In contrast to the other two typespf callout boxes there are no menu tabs inside these boxes.
+2. [Theorems](https://quarto.org/docs/authoring/cross-references.html#theorems-and-proofs): These boxes are the commonly used theorems in articles and books in mathematics. There are ten theorem variations supported, each with their own label prefix: Theorem, Lemma, Corollary, Proposition, Conjecture, Definition, Example, Exercise, Solution, and Remark. I have changed most of these labels to highlight certain text types of my personal notes. Some of the theorems variation are used (partly with different name / label) as a collection of related R code chunks.
+3. [Custom boxes](https://quarto.org/docs/authoring/cross-references-custom.html): As I needed more text types I have added several custom boxes. In contrast to the theorems and callout blocks is the numbering and title not in header but in an extra line above or under the box.
+4. [Special cases](https://quarto.org/docs/authoring/cross-references.html#overview): Figures, Tables and Listings have special treatments. They are used inside R code chunks, have special  and have routines in {{< latex >}} to [generate listings](https://quarto.org/docs/authoring/cross-references.html#lists). You can also generate dynamic captions and labels. Unfortunately there is still a glitch in Quarto version 1.4.549 with `#lst-` for code listing: If you are using it inside the code chunk then the code is always visible, e.g., your `code-fold: true` argument does not work. I have therefore used the listings --- similar as custom boxes --- with the header as an extra top line.
+5. [Citations](https://quarto.org/docs/authoring/footnotes-and-citations.html): I am using [Zotero](https://www.zotero.org/) to organize my citations and have all references collected into the `references.bib` file. 
+
+## Quarto callout boxes
+
+I have used the following [Quarto callout blocks](https://quarto.org/docs/authoring/callouts.html):
+
+::: {.callout-note #nte-annex-b}
+### Not used in this book {.unnumbered}
+
+Instead of the note callout box I have used the theoreom variation "Remark."
+:::
+
+::: {.callout-tip #tip-annex-b}
+### Until now (chapter 9, 2023-04-11) not used in this book {.unnumbered}
+
+So far I haven't used the "Tip" callout box. As I have provided many theorems with different names I haven’t needed the box so far. Most of the tips are collected under the theorem variation "Lemma" with the label "Resource". Sometimes I have written essential reminders for my learning activities into the "Important" box.
+
+If I will apply this callout box in the future then I have to clarify its usage in contrast to other boxes.
+:::
+
+::: {.callout-warning #wrn-annex-b}
+### When to use the warning box? {.unnumbered}
+
+> Warning is used to indicate a more serious and immediate danger that could result in severe injuries or even death if not heeded. It implies a higher level of urgency and demands immediate attention and action to avoid potential harm. ([Caution versus Warning](https://thisvsthat.io/caution-vs-warning))
+
+In the context of this book I am using the warning box to prevent a mistake, a wrong procedure. If you don't mind it will result in an error or other glitch that will lead to  wrong results. If you don't pay attention to the warning blunder will occur.
+:::
+
+
+::: {.callout-caution #cau-annex-b}
+### When to use the caution box? {.unnumbered}
+
+> Caution is typically used to indicate a potential hazard that may cause minor injuries or damage if not taken seriously. It serves as a reminder to be careful and exercise caution in order to prevent accidents. ([Caution versus Warning](https://thisvsthat.io/caution-vs-warning))
+
+In the context of this book I am using the caution box to draw attention to something. If you don't mind it will result in more complex work, results or other issues one should prevent. If you don't pay attention to the caution box then the chances for errors will grow.
+:::
+
+
+
+::: {.callout-important #imp-annex-b}
+### Essential statements and take home messages {.unnumbered}
+
+This box indicates crucial points, very often reminder to me to observe something or to learn something in greater detail or more thoroughly.
+
+:::
+
+
+

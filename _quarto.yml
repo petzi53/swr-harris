@@ -26,7 +26,7 @@ book:
     - 95-references.qmd
   appendices:
     - 96-packages-used.qmd
-    - 97-summary.qmd
+    - 97-callout-boxes.qmd
 
 bibliography:
     - references.bib
@@ -73,33 +73,37 @@ crossref:
   appendix-title: "Appendix"
   appendix-delim: ":"
   custom:
-    - kind: float
-      reference-prefix: Commitment
-      key: com
-    - kind: float
+    - key: rep
+      kind: float
       reference-prefix: Report
-      key: rep
-    - kind: float
+
+    - key: res
+      kind: float
       reference-prefix: Resource
-      key: res
-    - kind: float
+
+    - key: pak
+      kind: float
       reference-prefix: Package Profile
-      key: pak
-    - kind: float
+
+    - key: bul
+      kind: float
       reference-prefix: Bullet List
-      key: bul
-    - kind: float
-      reference-prefix: Numerical List
-      key: num
-    - kind: float
+
+    - key: not
+      kind: float
       reference-prefix: Note
-      key: not
-    - kind: float
+
+    - key: exp
+      kind: float
       reference-prefix: Explanation
-      key: exp
-    - kind: float
+
+    - key: imp
+      kind: float
+      reference-prefix: Important
+
+    - key: out
+      kind: float
       reference-prefix: Output
-      key: out
 
 
 
@@ -114,12 +118,52 @@ language:
    crossref-exm-title: "Example"     # remains  "Example"
    crossref-exr-title: "Exercise"    # remains  "Exercise"
    crossref-fig-title: "Graph"       # replaces "Figure"
-   crossref-lem-title: "Solution"    # replaces "Lemma"
+#   crossref-lem-title: "Solution"    # replaces "Lemma"
    crossref-lst-title: "Listing"     # remains  "Listing"
    crossref-prp-title: "Procedure"   # replaces "Proposition"
    crossref-tbl-title: "Table"       # remains  "Table"
    crossref-thm-title: "Formula"     # replaces "Theorem"
 #   crossref-int-title: "Interpretation"
+
+## Label Prefix	  Printed Name	LaTeX Environment
+
+# 1. Figure, Tables and Listings
+################################
+#fig-             Figure       figure
+#tbl-             Table        table
+#lst-             Listing      listing
+
+# 2. Theorems and friends
+#########################
+#cnj-	          Conjecture    conjecture
+#cor-	          Corollary	    corollary
+#def-	          Definition	definition
+#exm-	          Example	    example
+#exr-	          Exercise	    exercise
+#lem-	          Lemma	        lemma
+#prp-	          Proposition	proposition
+#rem-	          Remark	    remark
+#sol-	          Solution	    solution
+#thm-	          Theorem	    theorem
+
+
+# 3. Special cases
+##################
+#sec-             Section       section
+#eq-              Equation      equation
+
+# 4. Callout blocks
+###################
+#nte-             Note          note
+#wrn-             Warning       warning
+#imp              Important     important
+#tip              Tip           tip
+#cau              Caution       caution
+
+# 5. Custom blocks
+##################
+
+
 
 # https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/language/_language.yml
    callout-tip-title: "Report"           # green  = #tip

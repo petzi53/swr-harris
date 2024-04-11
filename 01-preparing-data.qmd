@@ -795,10 +795,10 @@ In @lst-chap01-get-gss2016-automated I have already used the
 :::
 :::
 
-::: {#not-chap01-nhanesA-pkg}
+::: {#imp-chap01-nhanesA-pkg}
 :::::{.my-important}
 :::{.my-important-header}
-{**nhanesA**} package facilitates downloading NHANES data
+Package {**nhanesA**} facilitates downloading NHANES data
 :::
 ::::{.my-important-container}
 I just learned that there is a {**nhanesA**} package that facilitates downloading data to R. (2024-01-20) The latest package release is brand-new (2024-01-09).
@@ -810,11 +810,14 @@ I am planning to use this package when I am working with again with NHANES data 
 - A very informative [introductory vignette](https://cran.r-project.org/web/packages/nhanesA/vignettes/Introducing_nhanesA.html) does not only explain the package but also the structure of the NHANES data and codebook.
 
 
-{**nhanesA**} package facilitates downloading NHANES data
-:::
-
 ::::
 :::::
+
+Package {**nhanesA**} facilitates downloading NHANES data
+:::
+
+***
+
 
 
 
@@ -911,6 +914,17 @@ blood_pressure_demo |>
 :::
 :::
 :::
+
+### Test1
+
+::: {.callout-important #imp-ID}
+### Package {nhanesA} facilitates downloading NHANES data {.unnumbered}
+     
+
+Test
+:::
+
+### Test2
 
 ### Import & clean data {#sec-chap01-import-clean-data}
 
