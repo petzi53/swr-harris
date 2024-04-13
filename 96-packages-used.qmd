@@ -2,11 +2,11 @@
 
 ## BSDA
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 BSDA: Basic Statistics and Data Analysis 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -30,11 +30,11 @@ Functions and data sets for the text Basic Statistics and Data Analysis (BSDA) [
 
 ## broom
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 broom: Convert Statistical Objects into Tidy Tibbles 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -76,11 +76,11 @@ The vignette [Available methods](https://broom.tidymodels.org/articles/available
 
 ## car
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 car: Companion to Applied Regression 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -109,11 +109,11 @@ An R Companion to Applied Regression is a broad introduction to the R statistica
 
 ## colorblindcheck
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 colorblindcheck: Check Color Palettes for Problems with Color Vision Deficiency
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -146,11 +146,11 @@ Deciding if a color palette is a colorblind friendly is a hard task. This cannot
 
 ## colorblindr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 colorblindr: Simulate colorblindness in R figures 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -174,11 +174,11 @@ Provides a variety of functions that are helpful to simulate the effects of colo
 
 ## colorspace
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 colorspace: A Toolbox for Manipulating and Assessing Colors and Palettes 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -212,12 +212,12 @@ This toolbox package is very important: All of the other color palette related p
 
 ## cowplot
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -267,11 +267,11 @@ Annotations for {**ggplot2**}
 
 ## cranlogs
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 cranlogs: Download Logs from the 'RStudio' 'CRAN' Mirror 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -307,11 +307,11 @@ The RStudio CRAN mirror is not the only CRAN mirror, but it’s a popular one: i
 
 ## crosstable
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 crosstable: Crosstables for Descriptive Analyses 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -346,11 +346,11 @@ For instance you could use `crosstable::display_test(chisq.test(x, y))` to get a
 
 ## curl
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 curl: A Modern and Flexible Web Client for R 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -379,11 +379,11 @@ The core of the package implements a framework for performing fully customized r
 
 ## data.table
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 data.table: Extension of `data.frame` 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -432,11 +432,11 @@ As far as I understood:
 
 ## datawizard
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 datawizard: Easy Data Wrangling and Statistical Transformations 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -475,11 +475,11 @@ datawizard: Easy Data Wrangling and Statistical Transformations
 
 ## descr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 descr: Descriptive Statistics
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 ***
 
 ::: {#pak-descr}
@@ -503,11 +503,11 @@ Package for Descriptive Statistics
 
 ## DescTools
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 DescTools: Tools for Descriptive Statistics 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -541,11 +541,11 @@ The package contains furthermore functions to produce documents using MS Word (o
 
 ## dichromat
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 dichromat: Color Schemes for Dichromats 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -572,11 +572,11 @@ Collapse red-green or green-blue distinctions to simulate the effects of differe
 
 ## dplyr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 dplyr:: A Grammar of Data Manipulation
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 
 
@@ -615,11 +615,11 @@ Package for Data Manipulation
 
 ## DT
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 DT: A Wrapper of the JavaScript Library 'DataTables'
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -643,11 +643,11 @@ What I do not understand: What is the relationship of {**DT**} to the {**data.ta
 
 ## dunn.test
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 dunn.test: Dunn's Test of Multiple Comparisons Using Rank Sums 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -671,11 +671,11 @@ Computes Dunn's test [@dunn1964] for stochastic dominance and reports the result
 
 ## e1071
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 e1071: Misc. functions 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -705,11 +705,11 @@ Functions for latent class analysis, short time Fourier transform, fuzzy cluster
 
 ## effectsize
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 effectsize: Indices of Effect Size 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -742,11 +742,11 @@ Provide utilities to work with indices of effect size for a wide  variety of mod
 
 ## fmsb
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 fmsb: Functions for Medical Statistics Book with some Demographic Data 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -771,11 +771,11 @@ Several utility functions for the book entitled "Practices of Medical and Health
 
 ## forcats
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 forcats: Tools for Working with Categorical Variables
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 
 
@@ -816,11 +816,11 @@ forcats: A Package with Tools for Working with Categorical Variables
 
 ## GGally
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 {**GGally**}: Extension to {**ggplot2**} 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -848,12 +848,12 @@ The R package {**ggplot2**} is a plotting system based on the grammar of graphic
 
 ## ggmosaic
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 {**ggmosaic**}: Mosaic Plots in the {**ggplot2**} Framework
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -890,11 +890,11 @@ Furthermore, {**ggmosaic**} allows various features to be customized:
 
 ## ggokabeito
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 ggokabeito: 'Okabe-Ito' Scales for {**ggplot2**} and {**ggraph**} 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -924,11 +924,11 @@ Currently, {**ggokabeito**} provides the following scales:
 
 ## ggplot2
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 
 ***
@@ -958,11 +958,11 @@ Package for Creating Data Visualisations
 
 ## gplots
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 gplots: Various R Programming Tools for Plotting Data 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1009,12 +1009,12 @@ reflects the relative magnitude of the elements ('balloonplot'),
 
 ## gridExtra
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 gridExtra: Miscellaneous Functions for "Grid" Graphics
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -1049,11 +1049,11 @@ Graphics
 
 ## ggrepel
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 ggrepel: Automatically Position Non-Overlapping Text Labels with 'ggplot2' 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1087,12 +1087,12 @@ Provides text and label geoms for 'ggplot2' that help to avoid overlapping text 
 
 ## ggtext
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 ggtext: Improved Text Rendering Support for 'ggplot2'
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -1131,11 +1131,11 @@ word wrapping.
 
 ## glue
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 glue: Interpreted String Literals
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1166,11 +1166,11 @@ Glue offers interpreted string literals that are small, fast, and dependency-fre
 
 ## gssr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 gssr: US General Social Survey (GSS) Data for R
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1220,11 +1220,11 @@ Package for Getting the US General Social Survey (GSS) Data More Easily
 
 ## gt
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 gt: Easily Create Presentation-Ready Display Tables
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1253,13 +1253,13 @@ With the {**gt**} package, anyone can make wonderful-looking tables using the R 
 
 ## gtsummary
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 
 gtsummary: Presentation-Ready Data Summary and Analytic Result Tables
 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1302,11 +1302,11 @@ Package for Presentation-Ready Data Summary and Analytic Result Tables
 
 ## haven
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 haven: Import and Export 'SPSS', 'Stata' and 'SAS' Files
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1349,11 +1349,11 @@ I am here interested especially in the fourth feature.
 
 ## Hmisc
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 Hmisc: Harrell Miscellaneous
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 ***
 
 ::: {#pak-Hmisc}
@@ -1401,12 +1401,12 @@ To learn more about I should visit Frank E. Harrell's Jr [Hmisc start page](http
 
 ## httr2
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 httr2: Perform HTTP Requests and Process the Responses
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -1443,12 +1443,12 @@ Responses
 
 ## janitor
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 janitor: Simple Tools for Examining and Cleaning Dirty Data
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -1518,11 +1518,11 @@ table `dplyr::count()` followed by `tidyr::pivot_wider()`) but the many
 
 ## kableExtra
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 kableExtra: Construct Complex Table with `knitr::kable()` and Pipe Syntax
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1549,11 +1549,11 @@ Build complex HTML or {{< latex >}} tables using `kable()` from {**knitr**} and 
 
 ## knitr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 knitr: A General-Purpose Package for Dynamic Report Generation in R
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1578,11 +1578,11 @@ Provides a general-purpose tool for dynamic report generation in R using Literat
 
 ## labelled
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 labelled: Manipulating Labelled Data
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1619,11 +1619,11 @@ labelled: A Package for Manipulating Labelled Data
 
 ## lmtest
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 lmtest: Testing Linear Regression Models 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1647,11 +1647,11 @@ Vignette [Diagnostic Checking in Regression Relationships](https://cran.r-projec
 
 ## lsr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 lsr: Companion to "Learning Statistics with R" 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1680,11 +1680,11 @@ A collection of tools intended to make introductory statistics easier to teach, 
 
 ## modeest
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 modeest: Mode Estimation
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1711,11 +1711,11 @@ The {**modeest**} package provides estimators of the mode of univariate unimodal
 
 ## moments
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 moments: Moments, Cumulants, Skewness, Kurtosis and Related Tests 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1741,11 +1741,11 @@ Functions to calculate: moments, Pearson's kurtosis, Geary's kurtosis and skewne
 
 ## misty
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 misty: Miscellaneous Functions 'T. Yanagida'  
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1776,11 +1776,11 @@ Miscellaneous functions for
 
 ## naniar
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 naniar: Data Structures, Summaries, and Visualisations for Missing Data 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1810,11 +1810,11 @@ Missing values are ubiquitous in data and need to be explored and handled in the
 
 ## nhanesA
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 nhanesA: NHANES Data Retrieval 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1853,11 +1853,11 @@ See for my other reflection of packages for downloading NHANES data in @imp-chap
 
 ## nortest
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 nortest: Tests for Normality 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1881,11 +1881,11 @@ Five omnibus tests for testing the composite hypothesis of normality.
 
 ## onewaytests
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 onewaytests: One-Way Tests in Independent Groups Designs 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1941,11 +1941,11 @@ Moreover, it assesses variance homogeneity and normality of data in each group v
 
 ## openintro
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 openintro: Data Sets and Supplemental Functions from 'OpenIntro' Textbooks and Labs
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -1973,11 +1973,11 @@ The package contains data sets used in our open-source textbooks along with cust
 
 ## paletteer
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 paletteer: Comprehensive Collection of Color Palettes 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2017,12 +2017,12 @@ This package includes 2759 palettes from 75 different packages and information a
 
 ## patchwork
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 patchwork: The Composer of Plots
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -2070,11 +2070,11 @@ along with a couple of special placeholder objects.
 
 ## nhanesA
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 nhanesA: NHANES Data Retrieval 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2113,11 +2113,11 @@ See for my other reflection of packages for downloading NHANES data in @imp-chap
 
 ## nortest
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 nortest: Tests for Normality 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2141,11 +2141,11 @@ Five omnibus tests for testing the composite hypothesis of normality.
 
 ## ppcor
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 ppcor: Partial and Semi-Partial (Part) Correlation 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2170,11 +2170,11 @@ Calculates partial and semi-partial (part) correlations along with p value. [@ki
 
 ## psych
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 psych: Procedures for Psychological, Psychometric, and Personality Research 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2209,11 +2209,11 @@ A general purpose toolbox developed originally for personality, psychometric the
 
 ## purrr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 purrr: Functional Programming Tools
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2240,11 +2240,11 @@ purrr: Functional Programming Tools
 
 ## rcompanion
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 rcompanion: Functions to Support Extension Education Program Evaluation 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2407,11 +2407,11 @@ An [R Companion](https://rcompanion.org/rcompanion/) for the [Handbook of Biolog
 
 ## readr 
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 readr: Read Rectangular Text Data
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 
 ***
@@ -2457,12 +2457,12 @@ Package for Reading Rectangular Data
 
 ## readxl
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 readxl: Read Excel Files
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -2500,11 +2500,11 @@ binary format. To parse `.xlsx`, we use the
 
 ## report
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 Report: Automated Reporting of Results and Statistical Models
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 ***
 
 ::: {#pak-report}
@@ -2531,12 +2531,12 @@ The primary goal of {**report**} is to bridge the gap between R’s output and t
 
 ## RNHANES {#sec-chap03-rnhanes}
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 RNHANES: Facilitates Analysis of CDC NHANES Data
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -2585,11 +2585,11 @@ I therefore used in @lst-chap03-get-NHANES-2018-data code to download data direc
 
 ## rstatix
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 rstatix: Pipe-Friendly Framework for Basic Statistical Tests 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2625,11 +2625,11 @@ It’s also possible to compute several effect size metrics, including “eta sq
 
 ## rvest
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 rvest: Easily Harvest (Scrape) Web Pages 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2666,11 +2666,11 @@ A very important tool to get the appropriate CSS selector is SelectorGadget. To 
 
 ## scales
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 scales: Scale Functions for Visualization
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2699,11 +2699,11 @@ One of the most difficult parts of any graphics package is scaling, converting f
 
 ## scico
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 scico: Colour Palettes Based on the Scientific Colour-Maps 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2743,11 +2743,11 @@ Color choice in information visualization is important in order to avoid being m
 
 ## semTools
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 semTools:: Useful Tools for Structural Equation Modeling
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 
 ***
@@ -2777,11 +2777,11 @@ This is a very specialized package. I believe I will not use it at the moment be
 
 ## sjlabelled
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 sjlabelled; 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2847,11 +2847,11 @@ His packages are divided in two approaches:
 
 ## sjPlot
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 sjPlot: Data Visualization for Statistics in Social Science 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2888,11 +2888,11 @@ To customize plot appearance you have to learn the many arguments of of `sjPlot:
 
 ## sjstats
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 sjstats: Collection of Convenient Functions for Common Statistical Computations 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2932,11 +2932,11 @@ The comprised tools include:
 
 
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 skimr: Compact and Flexible Summaries of Data
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -2967,11 +2967,11 @@ A Package for Compact and Flexible Summaries of Data
 
 ## statpsych
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 statpsych: Statistical Methods for Psychologists
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3002,11 +3002,11 @@ The sample size functions can be used to approximate the sample size needed to e
 
 ## stringi
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 stringi: Fast and Portable Character String Processing Facilities 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3036,11 +3036,11 @@ The {**stringi**} tools are fast, consistent, convenient, and - thanks to `r glo
 
 ## stringr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 stringr: Simple, Consistent Wrappers for Common String Operations 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3075,11 +3075,11 @@ Even if I had not used {**stringi**} in this book I will add this package profil
 
 ## tableone
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 tableone: Create 'Table 1' to Describe Baseline Characteristics with or without Propensity Score Weights 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3103,11 +3103,11 @@ Instead of using {**tableone**} I will use {**gtsummry**} in conjunction with {*
 
 ## tabulizer
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 tabulizer: Bindings for 'Tabula' PDF Table Extractor Library 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3175,11 +3175,11 @@ My recommendation: As the first choice try to install and use {**tabulizer**}. I
 
 ## tibble 
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 tibble: Simple Data Frames
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 
 ***
@@ -3209,11 +3209,11 @@ Package for Creating Simple Data Frames
 
 ## tidyr 
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 tidyr: Tidy Messy Data
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 
 ***
@@ -3248,11 +3248,11 @@ Packages for Tidying Messy Data
 
 ## tidyselect
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 tidyselect: Select from a Set of Strings
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3288,11 +3288,11 @@ To learn exactly how the {**tidyselect**} syntax is interpreted, read the techni
 
 ## tidyverse
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 tidyverse: Easily Install and Load the 'Tidyverse'
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3325,11 +3325,11 @@ Metapackage: Easily Install and Load the 'Tidyverse'
 
 ## vcd
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 vcd: Visualizing Categorical Data 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3352,11 +3352,11 @@ Visualization techniques, data sets, summary and inference procedures aimed part
 
 ## vcdExtra
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 vcdExtra: 'vcd' Extensions and Additions 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3387,12 +3387,12 @@ This package provides additional data sets, documentation, and many functions de
 
 ## viridis
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 viridis: Colorblind-Friendly Color Maps for R
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -3426,12 +3426,12 @@ particular bindings for {**ggplot2**}.
 
 ## waffle
 
-::: my-resource
-::: my-resource-header
+::: {.my-package}
+::: {.my-package-header}
 waffle: Create Waffle Chart Visualizations
 :::
 
-::: my-resource-container
+::: {.my-package-container}
 
 ------------------------------------------------------------------------
 
@@ -3471,11 +3471,11 @@ It uses {**ggplot2**} and returns a `ggplot2` object.
 
 ## withr
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 withr: Run Code 'With' Temporarily Modified Global State 
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3517,11 +3517,11 @@ The {**withr**} package helps you manage these situations, and more, by providin
 
 ## qualvar
 
-:::::{.my-resource}
-:::{.my-resource-header}
+:::::{.my-package}
+:::{.my-package-header}
 qualvar: Implements Indices of Qualitative Variation Proposed by Wilcox (1973)
 :::
-::::{.my-resource-container}
+::::{.my-package-container}
 
 ***
 
@@ -3531,7 +3531,7 @@ qualvar: Implements Indices of Qualitative Variation Proposed by Wilcox (1973)
 
 {**qualvar**}: [Implements Indices of Qualitative Variation Proposed by Wilcox (1973)](http://joelgombin.github.io/qualvar/)
 
-(*There is no hexagon log for {**qualvar**} available*)
+(*There is no hexagon logo for {**qualvar**} available*)
 
 In 1973, Wilcox published a paper presenting various indices of qualitative variation for social scientists. The problem is to find relevant statistical indices to measure the variation in nominal-scale (i.e. qualitative or categorical) data. Please see the Wilcox paper for more details on the rationale.
 

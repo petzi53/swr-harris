@@ -615,7 +615,7 @@ iframe {
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/bullet-list-min.png");
+  background-image: url("img/icons8/bullet-list.png");
 }
 
 .my-bullet-list-container {
@@ -624,4 +624,63 @@ iframe {
   color: black;
   background-color: white;
   border-bottom-right-radius: 10px;
+}
+
+/* ##############  Package (plum1 & plum4)  ############# */
+
+.my-package {
+  margin: 1em 0;
+  border: 2px solid #8B668B;
+  border-left: 10px solid #8B668B;
+  border-radius: 10px;
+}
+
+.my-package-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  5px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #FFBBFF;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/package-48.png");
+}
+
+.my-package-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+/* ############### Colored text ################# */
+
+/* important */
+.imp {
+    color: red;
+}
+
+/* warning */
+.wrn {
+    color: darkorange;
+}
+
+/* caution */
+.cau {
+    color: darkgoldenrod;
+}
+
+/* tip */
+.tip {
+    color: darkgreen;
+}
+
+.nte {
+    color: blue;
 }

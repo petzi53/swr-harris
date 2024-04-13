@@ -1755,7 +1755,7 @@ $$ {#eq-chap05-standardized-residuals}
 
 The standardized residual is distributed like a z-score. Values of the standardized residuals that are higher than 1.96 or lower than –1.96 indicate that the observed value in that group is much higher or lower than the expected value. These are the groups that are contributing the most to a large chi-squared statistic and could be examined further and included in the interpretation.
 
-::: {#cau-chap05-adjusted-standardized-residuals}
+:::{#wat-chap05-adjusted-standardized-residuals}
 :::::{.my-watch-out}
 :::{.my-watch-out-header}
 WATCH OUT! Adjusted Standardized Residuals
@@ -1865,7 +1865,7 @@ descr::CrossTable(
 
 ***
 
-Here I have displayed the first and only time also the adjusted standardized residuals. As you can see they are much higher and do not obey the z-score distribution. I do not know how to interpret them. As far as I a understood they are only used for some software packages as e.g., [SDA](https://sda.berkeley.edu/) to highlight outstanding values. (See @cau-adjusted-standardized-residuals)
+Here I have displayed the first and only time also the adjusted standardized residuals. As you can see they are much higher and do not obey the z-score distribution. I do not know how to interpret them. As far as I a understood they are only used for some software packages as e.g., [SDA](https://sda.berkeley.edu/) to highlight outstanding values. (See @wat-chap05-adjusted-standardized-residuals)
 
 ***
 

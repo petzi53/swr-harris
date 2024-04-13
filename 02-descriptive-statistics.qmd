@@ -71,7 +71,7 @@ There are two options:
 1.  Download the clean data file `transgender_hc_ch2.csv` from
     <https://edge.sagepub.com/harris1e>.
 2.  Get the data file from the `r glossary("BRFSS")` website. (See
-    @lst-chap02-get-brfss-2014-data2).
+    @lst-chap02-get-brfss-2014-data).
     -   The page with the 2014 data is at
         <https://www.cdc.gov/brfss/annual_data/annual_2014.html>.
     -   The URL for the SAS transport file is at
@@ -190,7 +190,7 @@ dataframe with selected variables as R object
 :::
 ::::{.my-r-code-container}
 
-:::{#lst-chap02-get-brfss-2014-data2}
+:::{#lst-chap02-get-brfss-2014-data}
 
 ```{r}
 #| label: get-brfss-2014-data
@@ -2524,7 +2524,7 @@ fig-align="center"}
 
 ***
 
-Remember: I have used as column name `_AGE80` (and not `X_AGE80`) when I imported with {**haven**} the data in @lst-chap02-get-brfss-2014-data2.
+Remember: I have used as column name `_AGE80` (and not `X_AGE80`) when I imported with {**haven**} the data in @lst-chap02-get-brfss-2014-data.
 
 The age of the respondents range from 18 to 80. 
 

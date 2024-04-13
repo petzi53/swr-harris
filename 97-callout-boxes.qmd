@@ -32,11 +32,23 @@ There is a second usage of callout note without numbering: In this case it highl
 ::: {.callout-tip #tip-annex-b style="color: darkgreen;"}
 ### Until now (chapter 9, 2023-04-11) not used in this book {.unnumbered}
 
-So far I haven't used the "Tip" callout box with numbering. As I have provided many theorems with different names I haven’t needed the tip box so far. Most of the tips are collected under the theorem variation "Lemma" with the label "Resource". Sometimes I have written essential reminders for my learning activities into the "Important" box.
+So far I haven't used the "Tip" callout box with numbering. As I have provided many theorems with different names I haven’t needed the tip box so far. Most of the tips are links collected under the theorem variation "Lemma" with the label "Resource". Sometimes I have written essential reminders for my learning activities into the "Important" box.
 
-If I will apply this callout box as a "Tip" in the future then I have to clarify its usage in contrast to other boxes.
+In the future, I will use it as a reminder for my own learning. It could contain also some links, but this box is not a link collection as the `resource` callout, but an argumentation and description what to learn.
 
 But I have used this box without numbering with the label "Report". Under this heading I have summarized the analysis of data, mostly taken the text from the book. Sometimes I had to refer to another "Report" box to compare some wording. In this case I have added the custom box `#rep-` with the label "Report". 
+:::
+
+### Callout Caution
+
+::: {.callout-caution #cau-annex-b style="color: darkgoldenrod;"}
+### When to use the caution box? {.unnumbered}
+
+> Caution is typically used to indicate a potential hazard that may cause minor injuries or damage if not taken seriously. It serves as a reminder to be careful and exercise caution in order to prevent accidents. ([Caution versus Warning](https://thisvsthat.io/caution-vs-warning))
+
+In the context of this book I am using the caution box to draw attention to something. If you don't mind it will result in more complex work, results or other issues one should prevent. If you don't pay attention to the caution box then the chances for errors will grow.
+
+So far I haven’t applied this callout box. But I have used very heavily the custom unnumbered box "Watch Out" (35x) with the same --- resp. similar --- purpose. I am planning to transfer these paragraphs to a numbered alternative either as custom box or as a caution callout box.
 :::
 
 
@@ -53,17 +65,7 @@ So far I have used this callout box only 3 times. I have to check if these appli
 :::
 
 
-### Callout Caution
 
-::: {.callout-caution #cau-annex-b style="color: darkgoldenrod;"}
-### When to use the caution box? {.unnumbered}
-
-> Caution is typically used to indicate a potential hazard that may cause minor injuries or damage if not taken seriously. It serves as a reminder to be careful and exercise caution in order to prevent accidents. ([Caution versus Warning](https://thisvsthat.io/caution-vs-warning))
-
-In the context of this book I am using the caution box to draw attention to something. If you don't mind it will result in more complex work, results or other issues one should prevent. If you don't pay attention to the caution box then the chances for errors will grow.
-
-So far I haven’t applied this callout box. But I have used very heavily the custom unnumbered box "Watch Out" (35x) with the same --- resp. similar --- purpose. I am planning to transfer these paragraphs to a numbered alternative either as custom box or as a caution callout box.
-:::
 
 ### Callout Important
 
@@ -72,8 +74,203 @@ So far I haven’t applied this callout box. But I have used very heavily the cu
 
 This box indicates crucial points, very often reminder to me to observe something or to learn something in greater detail or more thoroughly.
 
-So far I haven't used this callout box, but an unnumbered custom box alternative 22x. Again I am planning an transfer to a numbered alternative, possibly to this callout box.
+So far I haven't used this callout box, instead,I have applied an unnumbered custom box alternative 22 times. Again I am planning an transfer to a numbered alternative, possibly to this callout box.
 :::
 
 
+### Summary
 
+|  Callout  |   Code  | CSS-style                     | Code Purpose / without Code       |
+|:---------:|:-------:|-------------------------------|-----------------------------------|
+|    Note   | `#nte-` | [style="color: blue;" ]{.nte} | Book differences / H0-HA          |
+|    Tip    | `#tip-` | [style="color: darkgreen;"]{.tip}   | Learning reminder / Report  |
+|  Caution  | `#cau-` | [style="color: darkgoldenrod;"]{.cau} | Pay attention             |
+|  Warning  | `#wrn-` | [style="color: darkorange;"]{.wrn}    | Prevent mistake           |
+| Important | `#imp-` | [style="color: red;"]{.imp}. | Crucial observations, definitions  |
+: Purpose and appearances of callout boxes {#tbl-purpose-callout}
+
+
+## Theorems and variations
+
+All `theorem` boxes are provided in two forms: numbered and unnumbered.  They use the provided cross-reference code for numbering but their names are often changed for my purposes.
+
+In the following collection I have provided the header with the following seqeunce:
+
+- original name of `theorem` variant
+- name in the output in parenthesis
+- cross reference code
+
+"Solution" and "Remark" are somewhat different as the other Theorems variants: They have a cursive header name.
+
+### Conjecture (R Code) `#cnj-`
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: code-chunk-name
+
+1 + 1
+```
+
+::::
+:::::
+
+
+### Corollary (Assessment) `#cor-`
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-assess}
+: Numbered Assessment Title
+::::::
+:::
+::::{.my-assessment-container}
+Here include  assessment text
+::::
+:::::
+
+
+### Definition (Experiment) `#def-`
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-experiment-text}
+: Numbered Experiment Title
+::::::
+:::
+::::{.my-experiment-container}
+Here include text for experiment
+::::
+:::::
+
+### Example 
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-ID-text}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+Here include example text
+::::
+:::::
+
+### Exercise
+
+:::::{.my-exercise}
+:::{.my-exercise-header}
+:::::: {#exr-ID-text}
+: Numbered Exercise Title
+::::::
+:::
+::::{.my-exercise-container}
+Here include exercise text
+::::
+:::::
+
+
+
+### Lemma
+
+
+
+### Proposition 
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-ID-text}
+: Numbered Procedure Title
+::::::
+:::
+::::{.my-procedure-container}
+Here include procedure text
+::::
+:::::
+
+### Remark
+
+:::::{.my-remark}
+:::{.my-remark-header}
+:::::: {#rem-remark}
+: Numbered Remark Title
+::::::
+:::
+::::{.my-remark-container}
+Here include remark text
+::::
+:::::
+
+
+### Solution
+
+:::::{.my-solution}
+:::{.my-solution-header}
+:::::: {#sol-solution-text}
+: Numbered Solution Title
+::::::
+:::
+::::{.my-solution-container}
+Here include text for the solution
+::::
+:::::
+
+
+
+### Theorem
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-theorem-text}
+: Numbered Theorem Title
+::::::
+:::
+::::{.my-theorem-container}
+$$
+Here include text for the theorem
+$$ {#eq-chapXY-formula}
+::::
+:::::
+
+
+
+## Custom boxes
+
+:::::{.my-package}
+:::{.my-package-header}
+Package Name
+:::
+::::{.my-package-container}
+Here include package description
+::::
+:::::
+
+
+:::::{.my-checklist}
+:::{.my-checklist-header}
+TODO
+:::
+::::{.my-checklist-container}
+Here include checklist text
+::::
+:::::
+
+
+
+::: {#sol-line}
+
+## Line
+
+The equation of any straight line, called a linear equation, can be written as:
+
+$$
+y = mx + b
+$$
+:::
+
+See @sol-line.

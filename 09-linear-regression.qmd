@@ -273,6 +273,8 @@ Instead following linearly the chapter I will try to compute my own `r glossary(
 2. Trying out the `graphics::pairs()` function.
 3. Experimenting with {**GGally**}, an extension package to {**ggplot2**} where one part (`GGally::ggpairs()`) is the equivalent to the base R `graphics::pairs()` function.
 
+### Steps for EDA
+
 I will apply the following steps:
 
 :::::{.my-procedure}
@@ -301,6 +303,7 @@ Order and completeness of the following tasks is not mandatory.
 ::::
 :::::
 
+### Executing EDA for chapter 9
 
 :::::{.my-example}
 :::{.my-example-header}
@@ -995,7 +998,344 @@ GGally::ggpairs(distance_ssp_clean,
 ::::
 :::::
 
+## Achivement 2: Exploring line model {#sec-chap09-achievement2}
+
+### Introduction
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap09-line-model}
+: Equation for linear model
+::::::
+:::
+::::{.my-theorem-container}
+
+
+$$
+\begin{align*}
+y = &m_{x}+b \\
+y = &b_{0}+b_{1}x \\
+y = &c+b_{1}x
+\end{align*}
+$$ {#eq-chap09-linear-model}
+
 ***
+
+- $m, b_{1}$: `r glossary("slope")` of the line 
+- $b, b_{0}, c$: y-`r glossary("intercept")` of the line, or the value of y when x = 0
+- $x, y$: the coordinates of each point along the line
+
+Sometimes $b^*$ is used. This means that the variable had been standardized, or transformed into z-scores, before the regression model was estimated.
+
+
+::::
+:::::
+
+An example of a linear equation would be $y = 3 + 2x$.
+
+::: {.callout-important #imp-variable-names-linear-equation}
+
+## Variable names and the difference between deterministic and stochastic
+
+- The y variable on the left-hand side of the equation is called the dependent or outcome variable. 
+- The x variable(s) on the right-hand side of the equation is/are called the independent or predictor variable(s).
+
+***
+
+- A deterministic equation, or model, has one precise value for y for each value of x. Some equation in physics are deterministic, e.g., $e = mc^2$.
+- In a stochastic equation, or model, you cannot predict or explain something exactly. Most of the time, there is some variability that cannot be fully explained or predicted. This unexplained variability is represented by an error term that is added to the equation. Relationships measured in social science are typically stochastic.
+
+:::
+
+@eq-chap09-linear-model can be re-written with these terms:
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap09-linear-model}
+: Equation of a linear model (rewritten)
+::::::
+:::
+::::{.my-theorem-container}
+
+$$
+\begin{align*}
+outcome = &b_{0} + b_{1} \times predictor \\
+outcome = &b_{0} + b_{1} \times predictor + error \\
+\end{align*}
+$$ {#eq-chap09-lm-rewritten}
+
+::::
+:::::
+
+### Plotting an example
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-example-lm}
+: Example of a linear model
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### deterministic
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-example-lm-water-weeks}
+: Example of a deterministic linear model with gallons of water needed as an outcome and weeks as a predictor 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-example-lm-water-weeks
+#| fig-cap: "Example of a linear model with gallons of water needed as an outcome and weeks as a predictor"
+
+# make a vector called weeks that has the values 1 through 12 in it
+weeks <- 1:12
+
+# use the regression model to make a vector called gallons with
+# weeks as the values
+gallons <- 3 + 2 * weeks
+
+# make a data frame of weeks and gallons
+water <- data.frame(weeks, gallons)
+
+# Make a plot (Figure 9.9)
+water |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = weeks, 
+          y = gallons
+          )
+      ) +
+  ggplot2::geom_line(
+      ggplot2::aes(
+          linetype = "Linear model\ngallons=3+2*weeks"
+          ), 
+      color = "gray60", 
+      linewidth = 1
+      ) + 
+  ggplot2::geom_point(
+      ggplot2::aes(
+          color = "Observation"
+          ), 
+      size = 4, 
+      alpha = .6
+      ) +
+  ggplot2::labs(
+      x = "Weeks", 
+      y = "Gallons of water needed"
+      ) +
+  ggplot2::scale_linetype_manual(values = 2, name = "") +
+  ggplot2::scale_color_manual(values = "#7463AC", name = "")
+```
+***
+
+There is nothing new in this code chunk, therefore I have just taken the code from the book only adapted with changes resulting from newer versions of {**ggplot2**} (e.g., `linewidth` instead of `size`). 
+
+It is important to know that the graph does not use the calculation of a linear model with `ggplot2::geom_smooth()` but merely uses `ggplot2::geom_line` to connect the points. We are using #eq-chap09-linear-model, e.g. a `r glossary("deterministic")` formula.
+
+
+::::
+:::::
+
+
+###### stochastic
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-example-lm-water-weeks-with-errors}
+: Example of a stochastic linear model with gallons of water needed as an outcome and weeks as a predictor 
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: fig-example-lm-water-weeks-with-errors
+#| fig-cap: "Example of a linear model with gallons of water needed as an outcome and weeks as a predictor with deviations (errors)"
+
+
+# make a vector called weeks that has the values 1 through 12 in it
+weeks <- 1:12
+
+# use the regression model to make a vector called gallons with
+# weeks as the values 
+# but this time with simulated residuals
+
+set.seed(1001) # for reproducibility
+gallons <- 3 + (2 * weeks) + rnorm(12, 0, 2.5)
+
+# make a data frame of weeks and gallons
+water <- data.frame(weeks, gallons)
+
+# calculate the residuals (deviations, errors) from the linear model
+res <- base::summary(
+    stats::lm(gallons ~ weeks, data = water)
+    )$residuals
+
+
+water |> 
+      ggplot2::ggplot(
+          ggplot2::aes(
+                x = weeks,
+                y = gallons
+          )
+      ) +
+      ggplot2::geom_point(
+            ggplot2::aes(
+                color = "Observation"
+          ), 
+          size = 4, 
+          alpha = .6
+      ) +
+      ggplot2::geom_smooth(
+          formula = y ~ x,
+          method = "lm",
+          se = FALSE,
+          ggplot2::aes(
+                linetype = "Linear model\ngallons=3+2*weeks"
+          ), 
+          color = "gray60", 
+          linewidth = 1
+      ) +
+      ggplot2::geom_segment(
+          ggplot2::aes(
+              x = weeks,
+              y = gallons,
+              xend = weeks,
+              yend = gallons - res
+          )
+      )  +
+      ggplot2::labs(
+          x = "Weeks", 
+          y = "Gallons of water needed"
+          ) +
+      ggplot2::scale_linetype_manual(values = 2, name = "") +
+      ggplot2::scale_color_manual(values = "#7463AC", name = "")
+```
+***
+
+This is my replication of book’s Figure 9.10, where no R example code is available. I am proud to state that I did this graph without looking ahead or to read the tutorial by Jackson [-@jackson2016] that is recommended later in the book. To draw this graph I had to take three new actions:
+
+1. I had to simulate with `stats::rnorm()` residuals to change from @eq-chap09-linear-model to the second line of @eq-chap09-lm-rewritten.
+2. I had to calculate a linear model to get the residuals with `base::summary(stats::lm())`.
+3. I had this time to compute the line for the linear model with `ggplot2::geom_smooth()`.
+
+Without these three code addition, I wouldn’t have been able to draw the vertical lines from the observations to the line of the linear model. 
+
+
+
+
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+
+
+Although I managed to create @fig-example-lm-water-weeks-with-errors myself I mixed up in the explaining text the concepts of errors and residuals.
+
+::: {.callout-important #imp-errors-residuals}
+## Errors vs. Residuals
+
+Errors and residuals are two closely related and easily confused measures:
+
+- The error of an observation is the deviation of the observed value from the true value of a quantity of interest (for example, a population mean). 
+- The residual is the difference between the observed value and the estimated value of the quantity of interest (for example, a sample mean).
+:::
+
+
+## Achievement 3: Slope and Intercept {#sec-chap09-achievement3}
+
+### Introduction
+
+A `r glossary("simple linear regression")` model could be used to examine the relationship between the percentage of people without health insurance and the distance to a syringe program for a county.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap09-formula-distance-insurance}
+: Regression of people without health insurance and the distance to SSP
+::::::
+:::
+::::{.my-theorem-container}
+$$
+distance = b_{0} + b_{1} \times \text{no\_insurance}
+$$ {#eq-chap09-distance-insurance-regression}
+::::
+:::::
+
+### Computing the slope
+
+The slope formula in @eq-chap09-slope is adding up the product of differences between the observed values and mean value of percentage uninsured (`no_insurance`) and the observed values and mean value of distance to syringe program (`dist_ssp`) for each of the 500 counties. This value is divided by the summed squared differences between the observed and mean values of `no_insurance` for each county.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap09-slope}
+: Computing the slop
+::::::
+:::
+::::{.my-theorem-container}
+$$
+b_{1} = \frac{\sum_{i = 1}^n (x_{i}-m_{x})(y_{i}-m_{y})}{\sum_{i = 1}^n (x_{i}-m_{x})^2}
+$$ {#eq-chap09-slope}
+
+***
+
+- $i$: individual observation, in this case a county
+- $n$: sample size, in this case 500
+- $x_{i}$: mean value of `no_insurance` for the sample
+- $y_{i}$: value of `dist_ssp` for $i$
+- $m_{y}$: mean value of `dist_ssp` for the sample
+- $\sum$: symbol for the sum
+- $b_{i}$: slope
+
+::::
+:::::
+
+### Computing the intercept
+
+Once the slope is computed, the intercept can be computed by putting the slope and the values of $m_{x}$ and $m_{y}$ into the equation for the line with x and y replaced by $m_{x}$ and $m_{y}$, $m_{y} = b_{0} + b_{1} times m_{x}$, and solving it for $b_{0}$, which is the y-intercept. Because this method of computing the slope and intercept relies on the squared differences and works to minimize the residuals overall, it is often called ordinary least squares or `r glossary("OLS")` regression.
+
+### Estimating the linear regression model with R
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-est-lm-r}
+: Estimating the linear regression model of people without health insurance and the distance to SSP using R
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: est-lm-r
+
+# linear regression of distance to syringe program by percent uninsured
+
+base::summary(
+    stats::lm(
+        formula = dist_ssp ~ no_insurance,
+        data = distance_ssp_clean, 
+        na.action = na.exclude
+        )
+)
+
+```
+
+***
+
+- `r glossary("Intercept")`: The $y$-intercept of 12.48 is the $y$-value when $x$ is zero. The model predicts that a county with 0% of people being uninsured would have a distance to the nearest syringe program of 12.48 miles.
+- `r glossary("Slope")`: The slope of 7.82 is the change in $y$ for every one-unit change in $x$. If the percent uninsured goes up by 1% in a county, the distance in miles to a syringe program would change by 7.82 miles.
+
+
+::::
+:::::
 
 
 

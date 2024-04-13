@@ -105,6 +105,10 @@ crossref:
       kind: float
       reference-prefix: Output
 
+    - key: wat
+      kind: float
+      reference-prefix: Watch-Out
+
 
 
 tip-cap-location: top
@@ -118,7 +122,7 @@ language:
    crossref-exm-title: "Example"     # remains  "Example"
    crossref-exr-title: "Exercise"    # remains  "Exercise"
    crossref-fig-title: "Graph"       # replaces "Figure"
-#   crossref-lem-title: "Solution"    # replaces "Lemma"
+   crossref-lem-title: "Resource"    # replaces "Lemma"
    crossref-lst-title: "Listing"     # remains  "Listing"
    crossref-prp-title: "Procedure"   # replaces "Proposition"
    crossref-tbl-title: "Table"       # remains  "Table"
