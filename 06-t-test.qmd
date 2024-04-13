@@ -69,12 +69,14 @@ Objectives
 
 ### Data, codebook, and R packages {#sec-chap04-data-codebook-packages}
 
-::: my-resource
-::: my-resource-header
-Data, codebook, and R packages for learning about t-test
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap06-resources}
+: Data, codebook, and R packages for learning about t-test
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 
 **Data**
 
@@ -1200,7 +1202,9 @@ For t-test the appropriate effect size measure is `r glossary("Cohen’s d")`.
 
 :::::{.my-resource}
 :::{.my-resource-header}
-Delving into effects size assessment
+:::::: {#lem-chap06-effect-size-assessment}
+Delving into effect size assessment
+::::::
 :::
 ::::{.my-resource-container}
 
@@ -1254,7 +1258,9 @@ The formula is similar to the already well-known z-score calculation (@eq-chap04
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap06-cohen-d}
 Packages with Cohen’s d functions
+::::::
 :::
 ::::{.my-resource-container}
 
@@ -2141,7 +2147,9 @@ Different statistical checks of normality are useful in different situations.
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap06-packages-skewness}
 Packages with tests for skewness 
+::::::
 :::
 ::::{.my-resource-container}
 After another research I will --- in addition to @sec-chap02-skewness --- propose other packages with tests for skewness. A comparison shows that these tests are much more popular given their download figures as the two packages (@pak-semTools and @pak-statpsych) I have already reviewed. All of the mentioned packages have functions for tests for kurtosis as well.
@@ -2411,7 +2419,9 @@ Besides of testing skewness there are also other statistical tests available. I 
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap06-packages-anderson-darling}
 Packages for the Anderson-Darling test
+::::::
 :::
 ::::{.my-resource-container}
 - {**cmstatr**}: Statistical Methods for Composite Material Data (aerospace applications)
@@ -2547,7 +2557,9 @@ Both tests agree, even their p-values differ: We have to reject the Null.
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap06-packages-levene}
 Packages for Levene's test
+::::::
 :::
 ::::{.my-resource-container}
 {**car**}: Companion to Applied Regression
@@ -2702,7 +2714,9 @@ The median for the systolic distribution is `r stats::median(bp_clean$systolic, 
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap06-packages-sign}
 Packages with function for the sign test
+::::::
 :::
 ::::{.my-resource-container}
 - {**BSDA**}: Basic Statistics and Data Analysis 
@@ -3296,7 +3310,9 @@ A K-S test comparing systolic blood pressure for males and females found a stati
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap06-misc-packages}
 Miscellaneous packages for (possible) alternative tests
+::::::
 :::
 ::::{.my-resource-container}
 During my research for packages with functions for alternative test if the t-test assumption fail I came about several very interesting packages. Some of them work together with {**ggplot2**}, so that these statistics can be plotted easily as well.

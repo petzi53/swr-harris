@@ -292,12 +292,14 @@ In these cases I use tabs as an organizing structure so that one can see
 
 ## Resources
 
-::: my-resource
-::: my-resource-header
-Resources used for this Quarto book
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-index-book-resources}
+: Resources used for this Quarto book
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 -   [Statistics With
     R](https://uk.sagepub.com/en-gb/eur/statistics-with-r/book253567):
     Website
@@ -312,7 +314,9 @@ Resources used for this Quarto book
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap-index-glossary}
 glossary: Glossaries for Markdown and Quarto Documents
+::::::
 :::
 ::::{.my-resource-container}
 

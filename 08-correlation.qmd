@@ -64,12 +64,14 @@ Objectives
 
 ### Data, codebook, and R packages {#sec-chap08-data-codebook-packages}
 
-::: my-resource
-::: my-resource-header
-Data, codebook, and R packages for learning about descriptive statistics
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap08-resources}
+: Data, codebook, and R packages for learning about descriptive statistics
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 **Data**
 
 Two options:
@@ -1155,7 +1157,9 @@ The same is true with percent values, but there are some worries how to model pe
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap08-percentage-data}
 Dealing with percentage data
+::::::
 :::
 ::::{.my-resource-container}
 - Logistic regression [@zhao2001] 

@@ -57,12 +57,14 @@ In this chapter we are going to reproduce @fig-transgender-table1 and add some a
 
 ## Data, codebook, and R packages
 
-::: my-resource
-::: my-resource-header
-Data, codebook, and R packages for learning about descriptive statistics
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap02-resources}
+: Data, codebook, and R packages for learning about descriptive statistics
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 
 **Data**
 
@@ -927,7 +929,9 @@ With the exception of two (`B` and `HREL`) these indices do not have problems wi
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap02-iqv}
 Resources about indices of variation (IQVs)
+::::::
 :::
 ::::{.my-resource-container}
 
@@ -1816,7 +1820,9 @@ WATCH OUT! Be patienet: Calculation of `statpsych::test.skew()` needs time
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap02-test-normal-dist}
 Articles on identifying non-normal distributions
+::::::
 :::
 ::::{.my-resource-container}
 Harris referenced [@kim2013] for the assessment table above. I noticed that there are many [short articles about different types of test.](https://synapse.koreamed.org/advanced/index.php). Just put the search string "Statistical[ALL] AND notes[ALL] AND clinical[ALL] AND researchers[ALL]" into the Kamje search engine.

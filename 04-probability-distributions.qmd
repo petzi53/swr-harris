@@ -53,12 +53,14 @@ Treatment programs as well as policies depend partly on the distance people have
 
 ### Data, codebook, and R packages {#sec-chap04-data-codebook-packages}
 
-::: my-resource
-::: my-resource-header
-Data, codebook, and R packages for learning about descriptive statistics
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap04-resources}
+: Data, codebook, and R packages for learning about descriptive statistics
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 
 **Data**
 
@@ -594,7 +596,9 @@ binomial_data |>
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap04-econ41-lab}
 Helpful code snippet at "ECON 41 Lab"
+::::::
 :::
 ::::{.my-resource-container}
 I got help for the code from [15 Tutorial 4: The Binomial Distribution](https://bookdown.org/gabriel_butler/ECON41Labs/tutorial-4-the-binomial-distribution.html) [@butler2019].

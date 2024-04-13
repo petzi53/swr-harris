@@ -56,12 +56,14 @@ Objectives
 
 ### Data, codebook, and R packages {#sec-chap03-data-codebook-packages}
 
-::: my-resource
-::: my-resource-header
-Data, codebook, and R packages for data visualization
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap03-resources}
+: Data, codebook, and R packages for data visualization
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 **Data**
 
 There are two options:
@@ -2156,12 +2158,14 @@ recommended"** for several reasons
     labels and the slices can be hard work and small percentages (which
     might be important) are tricky to show.
 
-::: my-resource
-::: my-resource-header
-Why you shouldn’t use pie charts
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap03-no-pie-charts}
+: Why you shouldn’t use pie charts
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 -   [Why you shouldn’t use pie
     charts](https://scc.ms.unimelb.edu.au/resources/data-visualisation-and-exploration/no_pie-charts):
     Very convincing examples that demonstrate why pie charts provide
@@ -3237,12 +3241,14 @@ contrast to histograms --- if there are gaps in the data. But if you
 choose a very small bandwidth like `ucv` then you get a distribution
 similar to a histogram.
 
-::: my-resource
-::: my-resource-header
-Information about kernel density estimation and bandwidth
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap03-kernel-density-bandwidth}
+: Information about kernel density estimation and bandwidth
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 Much of my understanding about bandwidth and kernel density estimation
 comes from the video [Intro to Kernel Density
 Estimation](https://www.youtube.com/watch?v=x5zLaWT5KPs) by od webel
@@ -3658,7 +3664,9 @@ Concerning color friendly palettes I have added several experiments with differe
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap03-vcd}
 {vcd} / {vcdExtra} are other packages for mosaic graphs (and more)
+::::::
 :::
 ::::{.my-resource-container}
 
@@ -5768,7 +5776,9 @@ Read more details about {**viridis**} scales in the vignette [Introduction to th
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap03-colorblind-friendly-palettes}
 Other colorblind friendly palettes
+::::::
 :::
 ::::{.my-resource-container}
 
@@ -6804,12 +6814,14 @@ All the options to add the {**viridis**} palette does not change the `alpha` arg
 
 ### Online resources
 
-::: my-resource
-::: my-resource-header
-Online resources of {**ggplot2**} code examples
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap03-ggplot2-code-examples}
+: Online resources of {**ggplot2**} code examples
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 ### R Graphs Galleries {.unnumbered}
 
 -   [**R Charts**](https://r-charts.com/): Code examples of R graphs

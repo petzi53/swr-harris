@@ -62,12 +62,14 @@ As there is no variable for rural or urban status in the amfAR database, the boo
 
 ### Data, codebook, and R packages {#sec-chap04-data-codebook-packages}
 
-::: my-resource
-::: my-resource-header
-Data, codebook, and R packages for learning about descriptive statistics
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap09-resources}
+: Data, codebook, and R packages for learning about descriptive statistics
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 
 **Data**
 
@@ -771,7 +773,9 @@ I want to confirm my internet research with the following quotes:
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap09-corr-coefficient}
 Understanding the different correlation coefficients
+::::::
 :::
 ::::{.my-resource-container}
 - [Kendall Tau-b vs Spearman: Which Correlation Coefficient Wins?](https://statisticseasily.com/kendall-tau-b-vs-spearman/): This important article wxplains the decisive factors in choosing the proper non-parametric correlation coefficient (Kendall Tau-b vs Spearman) for your data analysis. [@learnstatisticseasily2024]

@@ -70,12 +70,14 @@ Possible prolog sections:
 Most of these information are naturally occurring in the writing process
 of Quarto books.
 
-::: my-resource
-::: my-resource-header
-Literate Statistical Programming
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap01-literate-programming}
+: Literate Statistical Programming
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 -   Literate Programming:
     ([Wikipedia](https://en.wikipedia.org/wiki/Literate_programming))
 -   Introduction to Literate Programming with Quarto ([Online
@@ -672,7 +674,7 @@ You can choose from
 ::: {#bul-NAHNES-data-sections}
 :::::{.my-bullet-list}
 :::{.my-bullet-list-header}
-Bullet List
+Bullet List: NHANES has six different data sections
 :::
 ::::{.my-bullet-list-container}
 -   Demographics Data
@@ -695,7 +697,7 @@ following information:
 ::: {#bul-NHANES-data-pages}
 :::::{.my-bullet-list}
 :::{.my-bullet-list-header}
-Bullet List
+Bullet List: NHANES data pages has download links for documentation and data files
 :::
 ::::{.my-bullet-list-container}
 
@@ -1636,9 +1638,11 @@ myself.
 I have found several resources helping to work with the
 `r glossary("GSS")`. The most important one is the {**gssr**} package (see: @pak-gssr)
 
-::: my-resource
-::: my-resource-header
-asdfree: Analyze Survey Data for Free
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap01-asdf}
+: asdfree: Analyze Survey Data for Free
+::::::
 :::
 
 ::: my-resource-container
@@ -2065,12 +2069,14 @@ labelled vectors. As a completely new feature for me I looked at the
 Internet for their advantages and how to work with them. I found four
 important resources:
 
-::: my-resource
-::: my-resource-header
-How to work with labelled data?
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap01-survey-research-data}
+: How to work with labelled data?
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 
 [Survey Research Datasets and
 R](https://socialresearchcentre.github.io/r_survey_datasets/)
@@ -2855,7 +2861,9 @@ This R package provides an enhanced version of data.frames with more options for
     
 :::::{.my-remark}
 :::{.my-remark-header}
+:::::: {#rem-chap01-dt}
 My conclusion to {**DT**}
+::::::
 :::
 ::::{.my-remark-container}
 {**DT**} is my first choice for interactive data exploring and very useful for Explorative Data Analysis (`r glossary("ExDA", "EDA")`). I have already some experiences with this package but haven't use it lastly. 
@@ -2886,7 +2894,9 @@ It is said that {**flextable**} --- together with the sparsely used [{**huxtable
 
 :::::{.my-remark}
 :::{.my-remark-header}
+:::::: {#rem-chap01-flextable}
 My conclusion to {**flextable**}
+::::::
 :::
 ::::{.my-remark-container}
 {**flextable**} seems pretty well suited to create sophisticated tables for publications. It is often especially mentioned for exporting into Word files. Maybe I will look into this package in the near future, but currently my priority is {**gtsummary**}.
@@ -2926,7 +2936,9 @@ At the beginning of the development process {**gt**} supported only HTML, but no
     
 :::::{.my-remark}
 :::{.my-remark-header}
+:::::: {#rem-chap01-gt}
 My conclusion to {**gt**}
+::::::
 :::
 ::::{.my-remark-container}
 I tried to work with {**gt**} but it is cumbersome. I noticed a [bug even following the official online tutorial](https://github.com/rstudio/gt/issues/1535). Maybe
@@ -2948,7 +2960,9 @@ fig-align="center"}](https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown
 
 :::::{.my-remark}
 :::{.my-remark-header}
+:::::: {#rem-chap01-gtsummary}
 My conclusion to {**gtsummary**}
+::::::
 :::
 ::::{.my-remark-container}
 
@@ -2988,7 +3002,9 @@ Beside the extensive vignette documentation there are also some blog articles:
 
 :::::{.my-remark}
 :::{.my-remark-header}
+:::::: {#rem-chap01-htmltable}
 My conclusion to {**htmlTable**}
+::::::
 :::
 ::::{.my-remark-container}
 {**htmlTable**} seems an interesting package not only for creating complex tables but also for exporting them into Word. But to learn this package is at the moment not on my task list.
@@ -3009,7 +3025,9 @@ My conclusion to {**htmlTable**}
 
 :::::{.my-remark}
 :::{.my-remark-header}
-My conclusion to {**kableExtra**}
+:::::: {#rem-chap01-kableextra}
+My conclusion to {**kableExtra*}
+::::::
 :::
 ::::{.my-remark-container}
 I have already some experiences with {**kableExtra**}. I used it quasi as an add-on to `knitr::kable()` during personal HTML publications (Blog, bookdown, Quarto). I believe that other "Table 1" packages like {**gtsummary**} or maybe also {**tableOne**) are better suited for display and publication.
@@ -3027,7 +3045,9 @@ The first time I learned about the existence of {**tableone**} was in @sec-chap0
 
 :::::{.my-remark}
 :::{.my-remark-header}
+:::::: {#rem-chap01-tableone}
 My conclusion to {**tableone**}
+::::::
 :::
 ::::{.my-remark-container}
 The package is completely new for me. I have to check it out to see how and when to use. But my priority now is {**gtsummary**} because
@@ -3046,7 +3066,9 @@ The package is completely new for me. I have to check it out to see how and when
 
 :::::{.my-remark}
 :::{.my-remark-header}
+:::::: {#rem-chap01-xtable}
 My conclusion to {**xtable**}
+::::::
 :::
 ::::{.my-remark-container}
 Learning {**xtable**} is not on my agenda: It is not clear for me if {**xtable**} is still in developments and if it is supporting newer approaches. Learning other table packages, especially {**gtsummary**} probabily together with {**gt**} has priority for me.
@@ -3065,7 +3087,9 @@ sophisticated data tables in R. It is good to know about different packages but 
 
 :::::{.my-resource}
 :::{.my-resource-header}
-Other interesting table packages, but currently not considered for my personal purposes
+:::::: {#lem-chap01-table-packages}
+: Other interesting table packages, but currently not considered for my personal purposes
+::::::
 :::
 ::::{.my-resource-container}
 Just for a possible later reference I will add some other table packages I know of.

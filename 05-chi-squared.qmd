@@ -70,12 +70,14 @@ instance with automatic voter registration bills.
 
 ### Data, codebook, and R packages {#sec-chap05-data-codebook-packages}
 
-::: my-resource
-::: my-resource-header
-Data, codebook, and R packages for learning about descriptive statistics
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap05-resources}
+: Data, codebook, and R packages for learning about descriptive statistics
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 **Data**
 
 Two options for assessing the data:
@@ -626,7 +628,9 @@ Different ethnicities have distinct opinions about the character of voting.
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap05-cross-tabulation}
 Cross-Tabulation
+::::::
 :::
 ::::{.my-resource-container}
 
@@ -1782,7 +1786,9 @@ The book recommends to get the standardized residuals with `Descr::CrossTable()`
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap05-chi-squared}
 Packages with functions to get standardized residuals of chi-squared tests
+::::::
 :::
 ::::{.my-resource-container}
 The following list collects these resources I have found together with the approximate average download data of the appropriate package. This figures will give you an idea about package use, but will not say anything about the quality of the package or the standardized residual function we are looking for.
@@ -2077,7 +2083,9 @@ More detailed interpretation based on the degrees of freedom in [How to Interpre
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap05-cramer-v}
 Number of daily downloads for packages with functions to compute Cramér’s V
+::::::
 :::
 ::::{.my-resource-container}
 
@@ -2427,7 +2435,9 @@ n = sample size
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap05-odds-ratio}
 Explaining the odds ratio
+::::::
 :::
 ::::{.my-resource-container}
 The explication in `r glossary("SwR")` is not easy to understand. So I have used other material a well:
@@ -2657,7 +2667,9 @@ The p-value for odds ratios has the same broad meaning as p-values for the chi-s
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap05-packages-odds-ratio}
 Packages with odds ratio function
+::::::
 :::
 ::::{.my-resource-container}
 The book explains the manual calculation and recommends the {**fmsb**} package. I found via internet research some other packages with an odds ratio function: The following list is alphaetically sorted:

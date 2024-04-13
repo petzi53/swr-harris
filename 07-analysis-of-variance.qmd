@@ -59,12 +59,14 @@ Objectives
 
 ### Data, codebook, and R packages {#sec-chap04-data-codebook-packages}
 
-::: my-resource
-::: my-resource-header
-Data, codebook, and R packages for learning about descriptive statistics
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-chap07-resources}
+: Data, codebook, and R packages for learning about descriptive statistics
+::::::
 :::
 
-::: my-resource-container
+::: {.my-resource-container}
 
 **Data**
 
@@ -1962,7 +1964,9 @@ The `r glossary("Brown-Forsythe", "Brown-Forsythe F-statistic")` uses the distan
 
 :::::{.my-resource}
 :::{.my-resource-header}
+:::::: {#lem-chap07-brown-forsythe}
 Packages for Brown-Forsythe F-statistic
+::::::
 :::
 ::::{.my-resource-container}
 There are several packages with Brown-Forsythe F-statistic. Most of the explanations and examples in the internet propose {**onewaytests**}. Although this package has a low download figure under 100, I have added it to my package description in @sec-annex-a, because it includes many tests specialized for ANOVA with failed assumptions.
