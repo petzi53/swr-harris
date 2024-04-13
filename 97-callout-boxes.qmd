@@ -148,8 +148,7 @@ Here include text for experiment
 ::::
 :::::
 
-### Example 
-
+### Example (Example) `#exm-`
 :::::{.my-example}
 :::{.my-example-header}
 :::::: {#exm-ID-text}
@@ -161,7 +160,7 @@ Here include example text
 ::::
 :::::
 
-### Exercise
+### Exercise (Exercise) `#exr-`
 
 :::::{.my-exercise}
 :::{.my-exercise-header}
@@ -176,7 +175,7 @@ Here include exercise text
 
 
 
-### Lemma
+### Lemma (Resource) `#lem-`
 
 :::::{.my-resource}
 :::{.my-resource-header}
@@ -192,7 +191,7 @@ Here include text for the resource
 
 
 
-### Proposition 
+### Proposition (Procedure) `#prp-`
 
 :::::{.my-procedure}
 :::{.my-procedure-header}
@@ -205,7 +204,7 @@ Here include procedure text
 ::::
 :::::
 
-### Remark
+### Remark (*Remark*) `#rem-`
 
 :::::{.my-remark}
 :::{.my-remark-header}
@@ -219,7 +218,7 @@ Here include remark text
 :::::
 
 
-### Solution
+### Solution (*Solution*) `#sol-`
 
 :::::{.my-solution}
 :::{.my-solution-header}
@@ -234,7 +233,7 @@ Here include text for the solution
 
 
 
-### Theorem
+### Theorem (Formula) `#thm-`
 
 :::::{.my-theorem}
 :::{.my-theorem-header}
@@ -244,7 +243,9 @@ Here include text for the solution
 :::
 ::::{.my-theorem-container}
 $$
-Here include text for the theorem
+\begin{align*}
+\text{Here include text for the theorem}
+\end{align*}
 $$ {#eq-chapXY-formula}
 ::::
 :::::
@@ -274,15 +275,55 @@ Here include checklist text
 
 
 
-::: {#sol-line}
-
-## Line
-
-The equation of any straight line, called a linear equation, can be written as:
-
-$$
-y = mx + b
-$$
+:::::: {#tdo-ID-text}
+:::::{.my-checklist}
+:::{.my-checklist-header}
+Numbered TODO title
+:::
+::::{.my-checklist-container}
+Here include checklist text
+::::
+:::::
+Title for TODO List
 :::
 
-See @sol-line.
+
+
+::: {#obj-chapXX}
+:::::{.my-objectives}
+:::{.my-objectives-header}
+Objectives for Chapter XX
+:::
+::::{.my-objectives-container}
+Here include solution text
+::::
+:::::
+Achievements for chapter XX
+:::
+
+
+:::::: {#wat-ID-text}
+:::::{.my-watch-out}
+:::{.my-watch-out-header}
+Numbered watch-out title
+:::
+::::{.my-watch-out-container}
+Here include watch-out text
+::::
+:::::
+Title for watch-out text
+:::    
+
+
+
+:::::: {#ipt-ID-text}
+:::::{.my-important}
+:::{.my-important-header}
+Numbered important title
+:::
+::::{.my-important-container}
+Here include important text
+::::
+:::::
+Title for important text
+:::

@@ -40,12 +40,14 @@ save_data_file("chap06", cranlogs_misc, "cranlogs_misc.rds")
 
 ## Achievements to unlock
 
-::: my-objectives
-::: my-objectives-header
-Objectives
+
+::: {#obj-chap06}
+::: {.my-objectives}
+::: {.my-objectives-header}
+Objectives for chapter 06
 :::
 
-::: my-objectives-container
+::: {.my-objectives-container}
 **SwR Achievements**
 
 - **Achievement 1**: Understanding the relationship between one categorical variable and one continuous variable using histograms, means, and standard deviations (@sec-chap06-achievement1)
@@ -58,6 +60,9 @@ Objectives
 
 :::
 :::
+Achievements for chapter 06
+:::
+
 
 
 ## The blood pressure predicament

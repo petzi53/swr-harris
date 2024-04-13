@@ -10,12 +10,13 @@ base::source(file = "R/helper.R")
 
 ## Achievements to unlock
 
-::: my-objectives
-::: my-objectives-header
-Achievements:
+::: {#obj-chap01}
+::: {.my-objective}s
+::: {.my-objectives-header}
+Objectives for chapter 01
 :::
 
-::: my-objectives-container
+::: {.my-objectives-container}
 **SwR Achievements**
 
 -   (~~Observations and variables~~)
@@ -44,6 +45,8 @@ during reading the book.
 - Introducing {**gtsummary**}, a packages for presentation-ready data summary and analytic result tables (see: @pak-gtsummary @sec-chap01-experiments-gtsummary)
 - Developing timeline graph (1973-2022) about opinions of respondents from `r glossary("GSS")` surveys about legalizing marijuana (@sec-chap01-grass-timeline)
 :::
+:::
+Achievements for chapter 01
 :::
 
 ## Using reproducible research practices {#sec-chap01-reproducibility}

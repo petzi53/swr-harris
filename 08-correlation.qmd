@@ -10,12 +10,13 @@ ggplot2::theme_set(ggplot2::theme_bw())
 
 ## Achievements to unlock
 
-::: my-objectives
-::: my-objectives-header
-Objectives
+::: {#obj-chap08}
+::: {.my-objectives}
+::: {.my-objectives-header}
+Objectives for chapter 08
 :::
 
-::: my-objectives-container
+::: {.my-objectives-container}
 **SwR Achievements**
 
 -   **Achievement 1**: Exploring the data using graphics and descriptive
@@ -37,6 +38,8 @@ Objectives
 -   **Achievement 8**: Introducing partial correlations
     (@sec-chap08-achievement8).
 :::
+:::
+Achievements for chapter 08
 :::
 
 ## The clean water conundrum

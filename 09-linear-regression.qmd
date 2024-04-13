@@ -20,12 +20,14 @@ As I have already read some books on linear regression I will not follow exactly
 
 ## Achievements to unlock
 
-::: my-objectives
-::: my-objectives-header
-Objectives
+
+::: {#obj-chap09}
+::: {.my-objectives}
+::: {.my-objectives-header}
+Objectives for chapter 09
 :::
 
-::: my-objectives-container
+::: {.my-objectives-container}
 **SwR Achievements**
 
 - **Achievement 1**: Using exploratory data analysis to learn about the data before developing a linear regression model (@sec-chap09-achievement1)
@@ -37,6 +39,9 @@ Objectives
 - **Achievement 7**: Adding variables to the model and using transformation (@sec-chap09-achievement7)
 
 :::
+:::
+
+Achievements for chapter 09
 :::
 
 
@@ -1175,7 +1180,7 @@ gallons <- 3 + (2 * weeks) + rnorm(12, 0, 2.5)
 # make a data frame of weeks and gallons
 water <- data.frame(weeks, gallons)
 
-# calculate the residuals (deviations, errors) from the linear model
+# calculate the residuals from the linear model
 res <- base::summary(
     stats::lm(gallons ~ weeks, data = water)
     )$residuals
@@ -1317,6 +1322,7 @@ Once the slope is computed, the intercept can be computed by putting the slope a
 ::::::
 :::
 ::::{.my-r-code-container}
+::: {#lst-est-lm-r}
 ```{r}
 #| label: est-lm-r
 
@@ -1332,15 +1338,104 @@ base::summary(
 
 ```
 
+Linear regression of distance to syringe program by percent uninsured
+:::
 ***
 
 - `r glossary("Intercept")`: The $y$-intercept of 12.48 is the $y$-value when $x$ is zero. The model predicts that a county with 0% of people being uninsured would have a distance to the nearest syringe program of 12.48 miles.
 - `r glossary("Slope")`: The slope of 7.82 is the change in $y$ for every one-unit change in $x$. If the percent uninsured goes up by 1% in a county, the distance in miles to a syringe program would change by 7.82 miles.
 
+***
 
+$$
+\begin{align*}
+distance = 12.48 + 7.82 \times \text{no\_insurance} \\
+distance = 12.48 + 7.82 \times 10 = 90.68
+\end{align*}
+$$
+Based on the linear regression model, a county with 10% of people uninsured would be 90.68 miles from the nearest syringe program.
 ::::
 :::::
 
+### Understanding residuals
+
+In @fig-example-lm-water-weeks-with-errors I have already graphed a demonstration how the residuals relate to the regression line. The regression line minimizes the residual differences between the values predicted by the regression line and the observed values. 
+
+This is how `r glossary("OLS")` works. OLS minimizes those distances captured in @fig-example-lm-water-weeks-with-errors by the solid vertical lines: It minimizes the `r glossary("residually", "residuals")`.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-regression-with-residuals}
+: Regression with residuals between percentage without health insurance and distance to nearest SSP
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-regression-with-residuals
+#| tbl-cap: "Relationship between percentage without health insurance and distance to nearest syringe program in 500 counties with residuals"
+
+# calculate the linear model
+lm_dist  <-  stats::lm(
+        formula = dist_ssp ~ no_insurance, 
+        data = distance_ssp_clean
+        )
+
+df_lm <- distance_ssp_clean |>
+    dplyr::mutate(
+        lm_fitted_values = lm_dist$fitted.values
+    ) |> 
+    dplyr::mutate(
+        lm_residuals = lm_dist$residuals
+    )
+
+df_lm |> 
+      ggplot2::ggplot(
+          ggplot2::aes(
+                y = dist_ssp,
+                x = no_insurance
+          )
+      ) +
+      ggplot2::geom_smooth(
+          formula = y ~ x,
+          method = "lm",
+          se = FALSE,
+          ggplot2::aes(
+                linetype = "Linear model"
+          ), 
+          color = "gray60", 
+          linewidth = 1
+      ) +
+      ggplot2::geom_point(
+            ggplot2::aes(
+                color = "Observation"
+          ), 
+          size = 1, 
+          alpha = .6
+      ) +
+      ggplot2::geom_segment(
+          ggplot2::aes(
+              x = no_insurance,
+              y = dist_ssp,
+              xend = no_insurance,
+              yend = lm_fitted_values - lm_residuals
+          ),
+          color = "grey",
+          alpha = .6
+      )  +
+      ggplot2::labs(
+          y = "Distance to nearest SSP facility", 
+          x = "Percentage of people without health insurance "
+          ) +
+      ggplot2::scale_linetype_manual(values = 2, name = "") +
+      ggplot2::scale_color_manual(values = "#7463AC", name = "")
+```
+***
+
+This is the replication of Figure 9.12, where no example code is available. After I had calculated the linear model I needed the position on the regression line (`lm_fitted_values` in my case) and the values of the residuals (`lm_residuals`). I couldn't use `base::summary(stats::lm())` because `fitted.values` are calculated only for the `lm` object (in my case `lm_dist`), which also has the residuals computed and included. 
+::::
+:::::
+
+## Achievement 4: Slope interpretation and significance {#sec-chap09-achievement4}
 
 
 ## Exercises (empty)

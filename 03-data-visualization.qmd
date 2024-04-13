@@ -9,12 +9,13 @@ base::source(file = "R/helper.R")
 
 ## Achievements to unlock
 
-::: my-objectives
-::: my-objectives-header
-Objectives
+::: {obj-chap03}
+::: {.my-objectives}
+::: {.my-objectives-header}
+Objectives for chapter 03
 :::
 
-::: my-objectives-container
+::: {.my-objectives-container}
 **SwR Achievements**
 
 -   **Achievement 1**: Choosing and creating graphs for a single
@@ -25,6 +26,8 @@ Objectives
     once (@sec-chap03-achievement-3)
 -   **Achievement 4**: Ensuring graphs are well-formatted (@sec-chap03-graph-well-formatted)
 :::
+:::
+Achievements for chapter 03
 :::
 
 ## Gun violence in the US

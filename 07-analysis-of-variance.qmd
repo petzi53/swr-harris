@@ -26,12 +26,13 @@ save_data_file("chap07", cranlogs_brown_forsythe, "cranlogs_brown_forsythe.rds")
 
 ## Achievements to unlock
 
-::: my-objectives
-::: my-objectives-header
-Objectives
+::: {#obj-chap07}
+::: {.my-objectives}
+::: {.my-objectives-header}
+Objectives for chapter 07
 :::
 
-::: my-objectives-container
+::: {.my-objectives-container}
 **SwR Achievements**
 
 - **Achievement 1**: Exploring the data using graphics and descriptive statistics {@sec-chap07-achievement1}
@@ -43,6 +44,8 @@ Objectives
 - **Achievement 7**: Understanding and conducting two-way ANOVA {@sec-chap07-achievement7}
 
 :::
+:::
+Achievements for chapter 07
 :::
 
 `r glossary("ANOVA")` is the statistical method used for comparing means across three or more groups. 

@@ -9,12 +9,13 @@ base::source(file = "R/helper.R")
 
 ## Achievements to unlock
 
-::: my-objectives
-::: my-objectives-header
-Objectives
+::: {#obj-chap02}
+::: {.my-objectives}
+::: {.my-objectives-header}
+Objectives for chapter 02
 :::
 
-::: my-objectives-container
+::: {.my-objectives-container}
 **SwR Achievements**
 
 -   **Achievement 1**: (~~Understanding variable types and data types~~)
@@ -29,6 +30,8 @@ Objectives
 -   **Achievement 4**: Developing clear tables for reporting descriptive
     statistics (@sec-chap02-create-tables-for-publishing)
 :::
+:::
+Achievements for chapter 02
 :::
 
 ## The transgender health care problem

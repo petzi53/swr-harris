@@ -109,6 +109,18 @@ crossref:
       kind: float
       reference-prefix: Watch-Out
 
+    - key: obj
+      kind: float
+      reference-prefix: Objectives
+
+    - key: tdo
+      kind: float
+      reference-prefix: TODO
+
+    - key: ipt
+      kind: float
+      reference-prefix: Important
+
 
 
 tip-cap-location: top

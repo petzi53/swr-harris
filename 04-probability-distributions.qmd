@@ -12,12 +12,13 @@ base::source(file = "R/helper.R")
 
 ## Achievements to unlock
 
-::: my-objectives
-::: my-objectives-header
-Objectives
+::: {#obj-chap04}
+::: {.my-objectives}
+::: {.my-objectives-header}
+Objectives for chapter 04
 :::
 
-::: my-objectives-container
+::: {.my-objectives-container}
 **SwR Achievements**
 
 - **Achievement 1**: Defining and using probability distributions to infer from a sample (@sec-chap04-achievement1)
@@ -28,6 +29,8 @@ Objectives
 - **Achievement 6**: Computing and interpreting confidence intervals around means and proportions (@sec-chap04-achievement6)
 
 :::
+:::
+Achievements for chapter 04
 :::
 
 
