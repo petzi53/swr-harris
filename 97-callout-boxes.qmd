@@ -1,18 +1,68 @@
-# Callout Boxes {#sec-annex-b}
+# Callout Boxes {#sec-annex-callout}
+
+::: {.callout-note style="color: blue;"}
+## This page is still under construction
+:::
+
 
 ## Introduction
 
 I am using five different types of cross references. Many numbered links refer to three different types of callout boxes:
 
-1. [Quarto callout blocks](https://quarto.org/docs/authoring/callouts.html): These are five standard small callout boxes: Note, Tip, Important, Caution, and Warning. In contrast to the other two typespf callout boxes there are no menu tabs inside these boxes.
+1. [Quarto callout blocks](https://quarto.org/docs/authoring/callouts.html): These are five standard small callout boxes: Note, Tip, Important, Caution, and Warning. In contrast to the other two types of callout boxes I am not using menu tabs inside these boxes. (@sec-annex-callout-blocks)
 2. [Theorems](https://quarto.org/docs/authoring/cross-references.html#theorems-and-proofs): These boxes are the commonly used theorems in articles and books in mathematics. There are ten theorem variations supported, each with their own label prefix: Theorem, Lemma, Corollary, Proposition, Conjecture, Definition, Example, Exercise, Solution, and Remark. I have changed most of these labels to highlight certain text types of my personal notes. Some of the theorems variation are used (partly with different name / label) as a collection of related R code chunks.
 3. [Custom boxes](https://quarto.org/docs/authoring/cross-references-custom.html): As I needed more text types I have added several custom boxes. In contrast to the theorems and callout blocks is the numbering and title not in header but in an extra line above or under the box.
 4. [Special cases](https://quarto.org/docs/authoring/cross-references.html#overview): Figures, Tables and Listings have special treatments. They are used inside R code chunks, have special  and have routines in {{< latex >}} to [generate listings](https://quarto.org/docs/authoring/cross-references.html#lists). You can also generate dynamic captions and labels. Unfortunately there is still a glitch in Quarto version 1.4.549 with `#lst-` for code listing: If you are using it inside the code chunk then the code is always visible, e.g., your `code-fold: true` argument does not work. I have therefore used the listings --- similar as custom boxes --- with the header as an extra top line.
 5. [Citations](https://quarto.org/docs/authoring/footnotes-and-citations.html): I am using [Zotero](https://www.zotero.org/) to organize my citations and have all references collected into the `references.bib` file. 
 
-## Quarto callout boxes
+## Quarto callout blocks {#sec-annex-callout-blocks}
 
-I have used the following [Quarto callout blocks](https://quarto.org/docs/authoring/callouts.html):
+In Quarto there are [five predefined callout blocks](https://quarto.org/docs/authoring/callouts.html#callout-types): note, tip, caution, warning and important. Callout boxes have different features.
+
+### Default
+
+#### With default title
+
+::: {.callout-important}
+This is the default mode for a callout block, in this case for callout type `important`.
+:::
+
+You can change the default title in `_quarto.yml`, for instance, with the line
+`callout-important-title: "Your default title"`
+
+
+
+#### With Header
+
+::: {.callout-important}
+## Callout with header
+This is still the default mode for a callout block, but in this case with a header specified by you. 
+:::
+
+For this to happen you have either to provide the first line as a markdown header (e.g., `## Your default title`) or to add `title="Your default title"` in the definition line of the callout.
+
+### Changing appearances
+
+There are several ways to change the appearance of the callout.
+
+#### Collapsed / Expanded (default)
+
+::: {.callout-important #imp-collapsed collapse=true}
+This is the default mode for a callout block of type `important`, but in this case collapsed.
+:::
+
+There is the expanded default mode but with `collapse=true` you can fold and therefore hide the text inside the callout. With clicking on the header users can open the callout box and read the text.
+
+I haven't used the collapse mode in this book, because the text inside a closed box cannot be found with a browser search.
+
+See cross-reference: @imp-collapsed
+
+
+- If the first text line is a header starting with a sequence of `#` than the content of the header is included into the header of the callout block.
+- If the definition line does not contain the code for cross references (starting with `{#nte-}`) than the box is not numbered. If you have provided a different title for the block (for instance in `_quarto.yml`) than this title will appear unnumbered at the block header.
+- If you include `style="color: <color>;"` in the definition line, than the block text will be colored. You can use Hex code for the colors or color names, but --- as far as I know --- only the first color of the different 78 boxes in [R Charts Colors](https://r-charts.com/colors/) works, e.g. colors without a number behind the name.
+
+I have used the [Quarto callout blocks](https://quarto.org/docs/authoring/callouts.html) in this book for the following purposes:
 
 ### Callout Note
 
@@ -25,6 +75,9 @@ For more theoretical or personal thoughts I have used the theorem variation "Rem
 
 There is a second usage of callout note without numbering: In this case it highlights the wording for the null and alternate hypotheses with the title "Wording for H0 and HA".
 :::
+
+
+See cross-reference: @nte-annex-b
 
 ### Callout Tip
 
@@ -75,6 +128,15 @@ So far I have used this callout box only 3 times. I have to check if these appli
 This box indicates crucial points, very often reminder to me to observe something or to learn something in greater detail or more thoroughly.
 
 So far I haven't used this callout box, instead,I have applied an unnumbered custom box alternative 22 times. Again I am planning an transfer to a numbered alternative, possibly to this callout box.
+:::
+
+
+### Plain `callout` class 
+
+::: {.callout}
+## Exercise
+
+You can also use a plain `callout` class to get a simple callout treatment.
 :::
 
 
@@ -250,7 +312,7 @@ $$ {#eq-chapXY-formula}
 ::::
 :::::
 
-
+See @thm-theorem-text
 
 ## Custom boxes
 
@@ -319,6 +381,7 @@ Title for watch-out text
 :::::: {#ipt-ID-text}
 :::::{.my-important}
 :::{.my-important-header}
+
 Numbered important title
 :::
 ::::{.my-important-container}
@@ -327,3 +390,73 @@ Here include important text
 :::::
 Title for important text
 :::
+
+
+## Generating new box types
+
+### Callout blocks with pre-defined name
+
+
+::: {.solutionbox }
+
+::::{.solutionbox-header collapse=true} 
+::::: {.solutionbox-icon}
+:::::
+::::::  {#sol-test}
+:::::: 
+This is my test for a new kind of solution box 
+::::
+
+:::: {.solutionbox-body } 
+It uses a with pre-defined cross reference `#sol-`
+
+And here comes some other content inside of it
+::::
+
+:::
+
+
+
+::: {.solutionbox}
+
+::::{.solutionbox-header} 
+::::: {.solutionbox-icon}
+:::::
+
+This is my test solution box without numbering
+::::
+
+:::: {.solutionbox-body} 
+And some content inside of it
+::::
+
+:::
+
+
+See: @sol-test
+
+### Callout box with custom name
+
+
+::: {.my-reportbox}
+
+::::{.my-reportbox-header} 
+::::: {.my-reportbox-icon}
+:::::
+::::::  {#rep-test}
+:::::: 
+: This is my test for a theorem box 
+::::
+
+:::: {.my-reportbox-body } 
+I use a custom cross reference `#rep-`.
+
+The percentage of uninsured residents in a county is a statistically significant predictor of the distance to the nearest syringe program (b = 7.82; p < .05) in our sample. For every 1% increase in uninsured residents in a county, the predicted distance to the nearest syringe program increases by 7.82 miles.
+
+And here comes some other content inside of it
+::::
+
+:::
+
+
+See: @rep-test

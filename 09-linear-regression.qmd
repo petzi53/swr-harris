@@ -1437,6 +1437,211 @@ This is the replication of Figure 9.12, where no example code is available. Afte
 
 ## Achievement 4: Slope interpretation and significance {#sec-chap09-achievement4}
 
+### Interpreting statistical significance of the slope
+
+The output of @lst-est-lm-r for the linear model included a `r glossary("p-value")` for the `r glossary("slope")` (<2e16) and a p-value for the `r glossary("intercept")` (0.221). 
+The statistical significance of the slope in linear regression is tested using a `r glossary("Wald", "Wald test")`, which is like a `r glossary("one-sample", "one-sample t-test")` where the hypothesized value of the slope is zero. To get the p-value from the regression model of distance to syringe program, the slope of 12.48 was compared to a hypothesized value of zero using the Wald test.
+
+
+#### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The slope of the line is equal to zero.
+- **HA**: The slope of the line is not equal to zero.
+:::
+
+#### NHST Step 2
+
+Compute the test statistic. 
+
+The test statistic for the Wald test in `r glossary("OLS")` regression is the `r glossary("t-statistic")`.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap09-wald-test}
+: Formula for the for the Wald test in OLS regression
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\begin{align*}
+t = &\frac{b_{1}-0}{se_{b_{1}}} \\
+t = &\frac{7.8190-0}{0.7734} = 10.11
+\end{align*}
+$$ {#eq-chap09-wald-test}
+
+***
+
+Note that the formula is the same as the formula for the one-sample t-test from @eq-chap06-t-statistic, but with the slope of the regression model instead of the mean. The t-statistic, that was computed manually in @eq-chap09-wald-test can also be found in the model output of @lst-est-lm-r.
+
+::::
+:::::
+
+#### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value of the slope in @lst-est-lm-r is < 2e-16.
+
+#### NHST Step 4
+
+Conclude and write report.
+
+The p-value is < 0.01 and therefore the null hypothesis is rejected in favor of the alternate hypothesis that the slope is not equal to zero.
+
+::: {.callout #rep-chap09-1 style="color: darkgreen;"}
+## Interpretation of the linear regression model (first draft)
+
+The percentage of uninsured residents in a county is a statistically significant predictor of the distance to the nearest syringe program (b = 7.82; p < .05) in our sample. For every 1% increase in uninsured residents in a county, the predicted distance to the nearest syringe program increases by 7.82 miles.
+:::
+
+### Computing confidence intervals
+
+`stats::confint()` computes the confidence interval for the intercept and the slope.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-confint}
+: Confidence interval for regression parameters
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: tbl-confint
+#| tbl-cap: "Computing confidence interval for regression parameters"
+
+stats::confint(
+        stats::lm(
+            formula = dist_ssp ~ no_insurance,
+            data = distance_ssp_clean, 
+            na.action = na.exclude
+            )
+)
+
+```
+***
+
+The intercept is often reported but not interpreted because it does not usually contribute much to answering the research question.
+
+::: {.callout #rep-chap09-2 style="color: darkgreen;"}
+## Interpretation of the linear regression model (second draft)
+
+The percentage of uninsured residents in a county is a statistically significant predictor of the distance to the nearest syringe program (b = 7.82; p < .05). For every 1% increase in uninsured residents in a county, the predicted distance to the nearest syringe program increases by 7.82 miles. The value of the slope in the sample is 7.82, and the value of the slope is likely between 6.30 and 9.34 in the population that the sample came from (95% CI: 6.30–9.34). With every 1% increase in uninsured residents in a county, the nearest syringe program is between 6.30 and 9.34 more miles away. These results suggest that counties with a larger percentage of uninsured are farther from this resource, which may exacerbate existing health disparities.
+:::
+
+
+::::
+:::::
+
+### Making predcition
+
+Predicted values of $y$ are called `y-hat` and denoted $\hat{y}$. The `stats::predict()` function can be used to find the predicted values for all observations, or for a specific value of the independent variable.
+
+::: {.callout-important #imp-ID}
+## `stats::predict()` as a generic function 
+
+`stats::predict()` is a generic function for predictions from the results of various model fitting functions. The function invokes particular methods which depend on the class of the first argument. 
+
+In our case we have to consult the help page of `stats::predict.lm()`. R knows which method to apply so just using `stats::predict()` is enough to invoke the correct computation.
+
+Most prediction methods which are similar to those for linear models have an argument `newdata` specifying the first place to look for explanatory variables to be used for prediction. 
+:::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-prediction}
+: Using the model to make prediction
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Predict value
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-predict-one-value}
+: Predict distance for a county where 10% of people are uninsured
+::::::
+:::
+::::{.my-r-code-container}
+
+
+
+
+```{r}
+#| label: predict-one-value
+#| lst-label: lst-chap09-predict-one-value
+#| lst-cap: "Predict distance for a county where 10% of people are uninsured"
+
+stats::predict.lm(
+        stats::lm(
+            formula = dist_ssp ~ no_insurance,
+            data = distance_ssp_clean, 
+            na.action = na.exclude
+            ),
+        newdata = data.frame(no_insurance = 10),
+        interval = "confidence"
+)
+```
+
+
+
+***
+
+The predicted distance to a syringe program from a county with 10% of people uninsured is 90.67 miles with a confidence interval for the prediction (sometimes called a prediction interval) of 82.42 to 98.92 miles.
+
+::::
+:::::
+
+
+###### Predict all
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-predict-all-values}
+: Find predictions for all observed values
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: tbl-predict-all-values
+#| tbl-cap: "Predicted values for all observed x"
+
+pred_all <- tibble::as_tibble(
+    stats::predict.lm(
+        stats::lm(
+            formula = dist_ssp ~ no_insurance,
+            data = distance_ssp_clean, 
+            na.action = na.exclude
+            ),
+        interval = "confidence"
+    )
+)
+
+glance_data(pred_all)
+```
+***
+
+This is the same code as in @lst-chap09-predict-one-value but without the `newdata` line.
+See @tbl-predict-all-values
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+## Achievement 5: Model fit {#sec-chap09-achievement5}
 
 ## Exercises (empty)
 
