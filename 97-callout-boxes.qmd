@@ -316,6 +316,17 @@ See @thm-theorem-text
 
 ## Custom boxes
 
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Title for bullet list
+:::
+::::{.my-bullet-list-container}
+Here include bullet list
+::::
+:::::
+
+***
+
 :::::{.my-package}
 :::{.my-package-header}
 Package Name
@@ -394,12 +405,17 @@ Title for important text
 
 ## Generating new box types
 
+::: {.callout-note #nte-test2}
+Standard Box to compare.
+:::
+
+
 ### Callout blocks with pre-defined name
 
 
 ::: {.solutionbox }
 
-::::{.solutionbox-header collapse=true} 
+::::{.solutionbox-header} 
 ::::: {.solutionbox-icon}
 :::::
 ::::::  {#sol-test}
@@ -408,7 +424,7 @@ This is my test for a new kind of solution box
 ::::
 
 :::: {.solutionbox-body } 
-It uses a with pre-defined cross reference `#sol-`
+It uses a with pre-defined cross reference `#exm-`
 
 And here comes some other content inside of it
 ::::
@@ -434,6 +450,28 @@ And some content inside of it
 
 
 See: @sol-test
+
+### Callout block with custom name
+
+::: {.bulletbox }
+
+::::{.bulletbox-header} 
+::::: {.bulletbox-icon}
+:::::
+::::::  {#bul-test}
+:::::: 
+: This is my test for a new kind of bullet list box 
+::::
+
+:::: {.bulletbox-body } 
+It uses a with pre-defined cross reference `#bul-`
+
+Ass you can see the generated number has a different header style
+::::
+
+:::
+
+See: @bul-test
 
 ### Callout box with custom name
 

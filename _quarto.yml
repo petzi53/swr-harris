@@ -126,6 +126,7 @@ crossref:
 tip-cap-location: top
 pak-cap-location: top
 bul-cap-location: bottom
+lst-cap-location: bottom
 
 language:
    crossref-cnj-title: "R Code"      # replaces "Conjecture"
@@ -135,7 +136,7 @@ language:
    crossref-exr-title: "Exercise"    # remains  "Exercise"
    crossref-fig-title: "Graph"       # replaces "Figure"
    crossref-lem-title: "Resource"    # replaces "Lemma"
-   crossref-lst-title: "Listing"     # remains  "Listing"
+   crossref-lst-title: "Listing / Output"  # replaces  "Listing"
    crossref-prp-title: "Procedure"   # replaces "Proposition"
    crossref-tbl-title: "Table"       # remains  "Table"
    crossref-thm-title: "Formula"     # replaces "Theorem"

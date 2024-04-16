@@ -723,7 +723,7 @@ iframe {
     content: "";
     background-repeat: no-repeat;
     background-size: 0.9rem 0.9rem;
-    margin-top: .5rem;
+    margin-top: .4rem;
     padding-right: 1.25rem;
     background-image: url("img/icons8/report-100.png");
 }
@@ -733,10 +733,12 @@ iframe {
     border-bottom: none;
     font-weight: 600;
     opacity: 85%;
+/*    font-size: 1em; */
     font-size: 0.9rem;
     padding-left: 0.5em;
     padding-right: 0.5em;
     display: flex;
+/*    color: #6d7a86; */
     background-color: #f5e8ff;
     height: 2em;
     overflow: hidden;
@@ -758,6 +760,62 @@ iframe {
     padding-bottom: 0.5rem;
     margin-bottom: 0;
 }
+
+
+/* #############    Bullet list      ################ */
+/* ############################################### */
+
+.my-bulletbox {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-radius: .25rem;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    border-left-color: #008B00 !important;
+}
+
+.my-bulletbox-icon {
+    height: 2rem;
+    width: 2rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 2rem 2rem;
+    margin-top: -.2rem;
+    padding-right: 1.5rem;
+    background-image: url("img/icons8/bullet-list.png");
+}
+
+.my-bulletbox-header {
+    margin-bottom: 0.5em;
+    padding-top: 0.3em;
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 1em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    display: flex;
+    color: #6d7a86;
+    background-color: mediumspringgreen;
+    height: 2em;
+    overflow: hidden;
+}
+
+.my-bulletbox-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.my-bulletbox-body > :last-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+}
+
 
 /* #############    Report      ################ */
 /* ############################################### */
@@ -799,7 +857,6 @@ iframe {
 }
 
 .my-reportbox-body {
-/*    font-size: 0.9rem; */
     font-weight: 400;
     margin-top: 5px;
     padding-left: 0.5em;

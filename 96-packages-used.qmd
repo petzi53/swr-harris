@@ -2065,6 +2065,18 @@ along with a couple of special placeholder objects.
 {**patchwork**}: A Package for Composing Plots
 :::
 
+See [Using plot arithmetic functions with `::` syntax](https://github.com/thomasp85/patchwork/issues/351#issuecomment-1931140157)
+
+| operator | function                  |effect         |
+|----------|---------------------------|---------------|
+| +        | ggplot2:::"+.gg"()        | side by side  |
+| -        | patchwork:::"-.ggplot"()  |               |
+| \|       | patchwork:::"\|.ggplot"() |               |
+| /        | patchwork:::"/.ggplot"()  | stacked       |
+| *        | patchwork:::"*.gg"()      |               |
+| &        | patchwork:::"&.gg"()      |               |
+
+
 :::
 :::
 
