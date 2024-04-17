@@ -453,17 +453,17 @@ See: @sol-test
 
 ### Callout block with custom name
 
-::: {.bulletbox }
+::: {.my-bulletbox }
 
-::::{.bulletbox-header} 
-::::: {.bulletbox-icon}
+::::{.my-bulletbox-header} 
+::::: {.my-bulletbox-icon}
 :::::
 ::::::  {#bul-test}
 :::::: 
 : This is my test for a new kind of bullet list box 
 ::::
 
-:::: {.bulletbox-body } 
+:::: {.my-bulletbox-body } 
 It uses a with pre-defined cross reference `#bul-`
 
 Ass you can see the generated number has a different header style

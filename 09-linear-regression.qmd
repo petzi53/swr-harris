@@ -2104,12 +2104,12 @@ A simple linear regression analysis found that the percentage of uninsured resid
 : Assumptions of simple linear regression
 ::::
 :::: {.my-bulletbox-body}
-- Observations are independent. **No**: Counties in the same state are not really independent.
-- The outcome is continuous. **Yes**: The distance to a syringe program is measured in miles and can take any value of zero or higher.
-- The relationship between the two variables is linear (`r glossary("linearity")`). **No**: See: @sec-chap09-check-linearity
-- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`). **No**: See @sec-chap09-check-homoscedasticity 
-- The `r glossary("residuals")` are independent. **Yes**: See @sec-chap09-check-residuals-independence
-- The residuals are normally distributed. **No**: See @sec-chap09-check-normality-residuals
+- Observations are independent. 
+- The outcome is continuous.
+- The relationship between the two variables is linear (`r glossary("linearity")`).
+- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`). 
+- The `r glossary("residuals")` are independent.
+- The residuals are normally distributed.
 ::::
 :::
 
@@ -2172,8 +2172,65 @@ Checking the linearity assumption
 
 :::
 
+***
+
+The linearity assumption is met if a scatterplot of the two variables shows a relationship that falls along a line. An example where this assumption is met in the author’s opinion is @fig-graph1-cor. The route of the loess curve follows not exact the regression line, but there are only small deviations from the regression line. 
+
+The situation in @lst-chap09-check-linearity is a little different: Here the loess line is curved and shows deviation from the linear relationship especially at the lower level of the predictor but also at the zeniths of the two arcs. Harris therefore decided that in @lst-chap09-check-linearity the linearity assumption has failed. 
+
+:::::{.my-remark}
+:::{.my-remark-header}
+:::::: {#rem-chap09-linearity-assumption}
+: How to check the linearity assumption more objectively?
+::::::
+:::
+::::{.my-remark-container}
+I think that these kinds of linearity judgements are quite subjective. It is easy to assess that both examples failed or vice versa have met the assumption. It would be nice to have a more objective test, similar to the `r glossary("Breusch-Pagan", "Breusch-Pagan test")` for the `r glossary("homoscedasticity")` assumption in @lst-chap09-check-homoscedasticity-breusch-pagan or generally the `r glossary("Shapiro-Wilk")` or `r glossary("Anderson-Darling")` tests for the normality assumption.
+
+Diagnostics are very important for linear regression models. I have not (yet) much experience but I am pretty sure there exist some tests for the linearity assumption of linear models. For instance I have found a reference in [Linear Regression Assumptions and Diagnostics in R: Essentials](http://www.sthda.com/english/articles/39-regression-model-diagnostics/161-linear-regression-assumptions-and-diagnostics-in-r-essentials#regression-diagnostics-reg-diag) [@kassambara2018] to functions for plotting a collection of four diagnostic tests either in base R with `stats::plot(<model name>)` or using {**ggplot2**} with {**ggfortify**} with .
+
+
+To give you an example of the power of these functions consider the following graph created with only 4 lines of code including calculating the model from scratch:
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-test-ggfortify}
+: Applying {**ggfortify**} to model and diagnose our model `lm9.1`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-test-ggfortify}
+
+```{r}
+#| label: test-ggfortify
+#| results: false
+
+library(ggfortify)
+
+graphics::par(mfrow = c(1, 2))
+m <- stats::lm(dist_ssp ~ no_insurance, data = df_lm)
+
+ggplot2::autoplot(m, which = 1:6, ncol = 3, label.size = 3)
+
+base::detach("package:ggfortify", unload = TRUE)
+base::detach("package:ggplot2", unload = FALSE)
+```
+
+Applying {**ggfortify**} to model and diagnose our model `lm9.1`
+:::
+
 ::::
 :::::
+
+::::
+:::::
+
+
+**Conclusion**: The linearity assumption is *not* met.
+
+::::
+:::::
+
 
 ### Checking homoscedasticity {#sec-chap09-check-homoscedasticity}
 
@@ -2206,6 +2263,16 @@ lmtest::bptest(formula = lm9.1)
 Checking the homoscedasticity with the Breusch-Pagan test
 
 :::
+
+***
+
+The assumption of `r glossary("homoscedasticity")` requires the data points are evenly distributed around the regression line. One way would be to check again @lst-chap09-check-linearity: The points seem closer to the line on the far left and then are more spread out around the line at the higher values of percentage uninsured. Zhis is an indicator that the assumption has failed.
+
+But the `r glossary("Breusch-Pagan", "Breusch-Pagan test")` is another -- more objective -- way to test the homoscedasticity assumption. The tiny p-value confirm our first impression: The Null assumption, that the data points are evenly distributed around the regression line has to be rejected.
+
+**Conclusion**: The homoscedasticity assumption is *not* met.
+
+
 ::::
 :::::
 
@@ -2215,7 +2282,7 @@ Checking the homoscedasticity with the Breusch-Pagan test
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap09-check-homoscedasticity-residuals}
-: Numbered R Code Title (Tidyverse)
+: Check homoscedasticity assumption plotting predicted values vs. residuals
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -2258,6 +2325,17 @@ gg_scatter_mean
 Predicted values and residuals from linear regression model of distance to syringe program by percentage uninsured in a county
 
 :::
+***
+
+Another (third) way to examine the constant error variance assumption is plotting the predicted values versus the residuals. In @lst-chap09-check-homoscedasticity-residuals a dashed line is shown to indicate no relationship between the fitted (or predicted) values and the residuals, which would be the ideal situation to meet the assumption. This line is a helpful reference point for looking at these types of graphs.
+
+For the homoscedasticity assumption to be met, the points should be roughly evenly distributed around the dashed line with no clear patterns. It should look like a cloud or random points on the graph with no distinguishable patterns. 
+
+In @lst-chap09-check-homoscedasticity-residuals, there is a clear pattern. Under the dashed line the distribution of the points suggest a negative correlation whereas above the line the points are distributed more randomly. This finding confirms the Breusch-Pagan test result.
+
+Conclusion: The homoscedasticity assumption of the residuals is **not** met.
+
+
 ::::
 :::::
 
@@ -2285,7 +2363,13 @@ lmtest::dwtest(formula = lm9.1)
 
 Testing the independence of residuals with the Durbin-Watson test
 :::
+***
 
+Residuals have to be independent or unrelated to each other. Residuals that are independent do not follow a pattern. Conceptually, residuals are the variation in the outcome that the regression line does not explain. If the residuals form a pattern then the regression model is doing better for certain types of observations and worse for others.
+
+The independence assumption of the residuals can be checked with the `r glossary("Durbin-Watson", "Durbin-Watson test")`. A Durbin-Watson (`DW`, or `D-W`) statistic of 2 indicates perfectly independent residuals, meaning that the null hypothesis of the test (that the residuals are independet) cannot be rejected. An this in fact the case in @lst-chap09-check-residuals-independence, as the DW-value is very near to 2.
+
+**Conclusion**: The independence of residuals assumption *is* met.
 
 ::::
 :::::
@@ -2326,6 +2410,12 @@ my_hist_dnorm(
 ```
 Testing the normality of residuals assumption with a histogram of the residuals
 :::
+
+***
+
+The histogram with the overlaid density curve of the theoretical normal distribution in @lst-chap09-check-normality-residuals-hist shows a right skewed distribution. This is an indicator that the normality assumption is not met.
+
+Conclusion: The normality assumption of the residuals is *not* met
 ::::
 :::::
 
@@ -2335,7 +2425,7 @@ Testing the normality of residuals assumption with a histogram of the residuals
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap09-check-normality-residuals-qq-plot}
-: Numbered R Code Title (Tidyverse)
+: Checking normality assumption of the residuals with a Q-Q plot
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -2356,15 +2446,387 @@ my_qq_plot(
 Testing the normality of residuals assumption with a q-q plot
 :::
 
+The q-q plot in @lst-chap09-check-normality-residuals-qq-plot shows some deviation form the normal distribution. Although it is again a quite subjective decision (See @rem-chap09-linearity-assumption) it seems that the assumption of normality has failed.
+
+**Conclusion**: The normality assumption of the residuals is *not* met.
+
 ::::
 :::::
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-normality-residuals-shapiro-wilk}
+: Checking normality assumption of the residuals with the Shapiro-Wilk normality test
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-normality-residuals-shapiro-wilk}
+```{r}
+#| label: normality-residuals-shapiro-wilk
+
+stats::shapiro.test(df_lm$lm_residuals)
+```
+
+Checking normality assumption of the residuals of linear model `lm9.1` with the Shapiro-Wilk normality test
+:::
+
+This method is not mentioned, but I believe that you can also use the `r glossary("Shapiro-Wilk", "Shapiro-Wilk test")` for testing the normal distribution of residuals. At least the very tiny p-value rejects the Null (that the residuals have a normal distribution) and suggest the same conclusion as the other two (visually decided) tests.
+
+**Conclusion**: The normality assumption of the residuals is *not* met.
+
+::::
+:::::
+
 
 :::
 
 ::::
 :::::
 
+### Interpreting the assumption tests
+
+:::{.my-bulletbox}
+:::: {.my-bulletbox-header}
+::::: {.my-bulletbox-icon}
+:::::
+:::::: {#bul-chap09-lm-assumptions-lm9.1}
+::::::
+: Checking simple linear regression assumptions for model `lm9.1m`
+::::
+:::: {.my-bulletbox-body}
+- Observations are independent. **No**: Counties in the same state are not really independent. (This is a general problem for geographical data analysis.)
+- The outcome is continuous. **Yes**: The distance to a syringe program is measured in miles and can take any value of zero or higher.
+- The relationship between the two variables is linear (`r glossary("linearity")`). **No**: See: @sec-chap09-check-linearity
+- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`). **No**: See @lst-chap09-check-homoscedasticity-breusch-pagan and @lst-chap09-check-homoscedasticity-residuals.
+- The `r glossary("residuals")` are independent. **Yes**: See @sec-chap09-check-residuals-independence.
+- The residuals are normally distributed. **No**: See @lst-chap09-check-normality-residuals-hist and @lst-chap09-check-normality-residuals-qq-plot.
+::::
+:::
+
+Because linear model `lm9.1` does not meet all the assumptions, the model has to be considered biased and should be interpreted with caution. Specifically, the results of a biased model are not usually considered generalizable to the population.
+
+### Using models diagnostics
+
+We are not quite done checking model quality using `r glossary("diagnostics")`. In addition to testing assumptions, we need to identify problematic observations: `r glossary("outliers")` or other `r glossary("influential observation", "influential observations")`.
+
+There are several measures: 
+
+- standardized residuals, 
+- df-betas, 
+- Cook’s distance, and 
+- leverage. 
+
+One good strategy for identifying the truly problematic observations is to identify those observations that are outliers or influential observations on two or more of these four measures.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-models-diagnostics}
+: Using models diagnostics to find outliers and influential values
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Standardizing residuals
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-standardize-residuals}
+: Standardize residuals to find outliers with `stats::rstandard()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-standardize-residuals}
+```{r}
+#| label: diagnostics-standardize-residuals
+#| results: hold
+#| cache: true
+
+df2_lm <- df_lm |> 
+    dplyr::mutate(
+        standard_res = stats::rstandard(model = lm9.1),
+        predicted = stats::predict(object = lm9.1)
+    ) 
+
+save_data_file("chap09", df2_lm, "df2_lm.rds")
+
+lm9.1_std_res <- df2_lm |> 
+    dplyr::filter(base::abs(standard_res) > 1.96) |> 
+    dplyr::select(c(county, state, dist_ssp, 
+                    no_insurance, standard_res, predicted)) |> 
+    dplyr::arrange(standard_res)
+
+print(lm9.1_std_res, n = 30)
+```
+
+Standardizing residuals to find outliers with `stats::rstandard`
+:::
+
 ***
+
+Standardized `r glossary("residuals")` are `r glossary("z-score", "z-scores")` for the residual values. 
+
+
+
+::: {.callout-caution  #cau-diagnostics-standardize-residuals}
+##### Filter counties with absolute values of the residuals greater than 1.96
+
+In my first trial, I forgot to filter using the *absolute* standardized residual values. I got a list of 24 counties -- the two counties at the top of the list with negative values were missing.
+:::
+
+That there are only two counties with negative values means that most counties had 2018 distances to syringe programs that were farther away than predicted. Another observation: Most of the outlier counties are situated in Texas, including one that is nearer than predicted.
+
+::::
+:::::
+
+There are 26 counties with outlier values, e.g., standardized residuals with an absolute value greater than 1.96.
+
+
+###### Standardizing residuals 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-standardize-residuals2}
+: Standardize residuals manually to find outliers
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-standardize-residuals2}    
+```{r}
+#| label: diagnostics-standardize-residuals2
+#| results: hold
+#| cache: true
+
+df2a_lm <- df_lm |> 
+    dplyr::mutate(
+        standard_res = (lm_residuals - 
+            base::mean(lm_residuals)) / stats::sd(lm_residuals),
+        predicted = stats::predict(object = lm9.1)
+    ) 
+
+lm9.1_outlier2 <- df2a_lm |> 
+    dplyr::filter(base::abs(standard_res) > 1.96) |> 
+    dplyr::select(c(county, state, dist_ssp, 
+                    no_insurance, standard_res, predicted)) |> 
+    dplyr::arrange(standard_res)
+
+print(lm9.1_outlier2, n = 30)
+```
+
+Find outliers with standardized residuals computed manually
+:::
+
+***
+With @lst-chap09-diagnostics-standardize-residuals2 I have standardized residuals manually through `(lm_residuals - base::mean(lm_residuals)) / stats::sd(lm_residuals)`. There are small rounding differences in some counties but the list of outlier counties is identical.
+
+::::
+:::::
+
+###### dfbeta
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-dfbeta}
+: Using `dfbeta` to find influential values
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-dfbeta}
+```{r}
+#| label: diagnostics-dfbeta
+
+df3a_lm <- df2_lm |> 
+    dplyr::mutate(
+        dfbeta_intercept = stats::dfbeta(model = lm9.1)[, 1],
+        dfbeta_slope = stats::dfbeta(model = lm9.1)[, 2]
+    ) 
+
+save_data_file("chap09", df3a_lm, "df3a_lm.rds")
+
+lm9.1_dfbeta <- df3a_lm |> 
+    dplyr::filter(base::abs(dfbeta_intercept) > 2 | 
+                      base::abs(dfbeta_slope) > 2) |> 
+    dplyr::select(c(county, state, dist_ssp, 
+                    no_insurance, predicted, 
+                    dfbeta_intercept, dfbeta_slope))
+
+print(lm9.1_dfbeta, n = 30)
+```
+
+Computing `dfbeta` to find influential values with `dfbeta` > 2
+:::
+
+***
+
+Computing `dfbeta` is a method to find influential values. `df_beta` removes each observation from the data frame, conducts the analysis again, and compares the intercept and slope for the model with and without the observation. Observations with high `dfbeta` values may be influencing the model. The book recommends a cutoff of 2.
+
+
+
+::: {.callout-warning #wrn-chap09-diagnostics-df-beta}
+##### Difference between `dfbeta` and `dfbetas`
+
+Reading other resources [@zach2020a; @goldstein-greenwood2022] I noticed that they used another threshold: Instead of using 2 they recommended $2 / \sqrt{n}$, where `n` is the sample size. But this would result in a cutoff value of $2 / \sqrt{500}$ = `r 2 / sqrt(500)` with the absurd high number of 343 counties as influential values.
+
+But later I became aware that these resources are talking from `dfbetas` (plural) and not `dfbeta` (singular). Between these two measure there is a big difference: `dfbetas` are the standardized values, whereas `dfbeta` values depend on the scale of the data. 
+
+> Consequently, some analysts opt to standardize DFBETA values—in which case they’re referred to as DFBETAS --- by dividing each DFBETA by the standard error estimate for $\hat{\beta_{j}}$ [Detecting Influential Points in Regression with DFBETA(S)](https://library.virginia.edu/data/articles/detecting-influential-points-in-regression-with-dfbetas) [@goldstein-greenwood2022]
+
+:::
+
+::::
+:::::
+
+The result is a list of seven counties, six situated in Texas and one in Florida. All of them are listed because of higher absolute `dfbeta` intercept values.
+
+###### dfbetas
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-dfbetas}
+: Using `dfbetas` to find influential values
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-dfbetas}
+
+```{r}
+#| label: diagnostics-dfbetas
+
+df3_lm <- df2_lm |> 
+    dplyr::mutate(
+        dfbetas_intercept = stats::dfbetas(model = lm9.1)[, 1],
+        dfbetas_slope = stats::dfbetas(model = lm9.1)[, 2]
+    ) 
+
+save_data_file("chap09", df3_lm, "df3_lm.rds")
+
+lm9.1_dfbetas <- df3_lm |> 
+    dplyr::filter(base::abs(dfbetas_intercept) > (2 / base::sqrt(dplyr::n())) | 
+                  base::abs(dfbetas_slope) > (2 / base::sqrt(dplyr::n()))) |> 
+    dplyr::select(c(county, state, dist_ssp, 
+                    no_insurance, predicted, 
+                    dfbetas_intercept, dfbetas_slope))
+
+print(lm9.1_dfbetas, n = 50)
+```
+
+Computing `dfbetas` to find influential values with `dfbetas` > $ 2 / \sqrt(500)$
+:::
+
+
+::::
+:::::
+
+Instead of seven we got now a bigger list with 40 counties.
+
+###### Cook’s D
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-cooks-d}
+: Using Cook’s distance to find influential values
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-cooks-d}
+```{r}
+#| label: diagnostics-cooks-d
+
+
+
+df4_lm <- df3_lm |> 
+    dplyr::mutate(
+        cooks_d = stats::cooks.distance(model = lm9.1)
+    ) 
+
+save_data_file("chap09", df4_lm, "df4_lm.rds")
+
+lm9.1_cooks_d <- df4_lm |> 
+    dplyr::filter(cooks_d > (4 / dplyr::n())) |> 
+    dplyr::select(c(county, state, dist_ssp, 
+                    no_insurance, predicted, 
+                    cooks_d))
+
+print(lm9.1_cooks_d, n = 50)
+```
+
+Using Cook’s distance to find influential values
+:::
+
+***
+
+`r glossary("Cook’s D")` is computed in a very similar way as `dfbeta(s)`. That is, each observation is removed and the model is re-estimated without it. Cook’s D then combines the differences between the models with and without an observation for all the parameters together instead of one at a time like the `dfbeta(s)`.
+
+The cutoff for a high Cook’s D value is usually $4/n$.
+
+
+::::
+:::::
+
+Thirty-two counties had a high Cook’s D. Most were in Texas (TX), but a few were in Maine (ME), Massachusetts (MA), and Vermont (VT).
+
+###### leverage
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-leverage}
+: Using leverage to find influential values
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-leverage}
+```{r}
+#| label: diagnostics-leverage
+
+
+
+df5_lm <- df4_lm |> 
+    dplyr::mutate(
+        leverage = stats::hatvalues(model = lm9.1)
+    ) 
+
+save_data_file("chap09", df5_lm, "df5_lm.rds")
+
+lm9.1_leverage <- df5_lm |> 
+    dplyr::filter(leverage > 2 * 2 / dplyr::n()) |> 
+    dplyr::select(c(county, state, dist_ssp, 
+                    no_insurance, predicted, 
+                    leverage))
+
+print(lm9.1_leverage, n = 50)
+```
+
+Using leverage to find influential values
+:::
+
+***
+
+Leverage is determined by the difference between the value of an observation for a predictor and the mean value of the predictor. The farther away an observed value is from the mean for a predictor, the more likely the observation will be influential. Leverage values range between 0 and 1. A threshold of $2p / n$ is often used with `p` being the number of parameters and `n` being the sample size.
+
+The leverage values to find influential states are computed by using the `stats::hatvalues()` function, because the predicted value of $y$ is often depicted as $\hat{y}$.
+
+::::
+:::::
+
+This time we got a list of 28 counties.
+
+:::
+
+::::
+:::::
+
+### Summarizing outliers and influential values
+
+
+
+
+## Achievement 7: Adding variables and transformation {#sec-chap09-achievement7}
+
+
+
+
+
 
 ## Exercises (empty)
 

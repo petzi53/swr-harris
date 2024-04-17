@@ -3,6 +3,7 @@
     font-weight: bold;
 }
 
+
 .figure-caption {
     font-weight: bold;
     font-size: var(--bs-body-font-size);
@@ -18,6 +19,8 @@ figcaption {
 .quarto-layout-panel > figure > figcaption {
     margin-top: -10pt;
 }
+
+
 
 iframe {
   border: 1px solid black;
