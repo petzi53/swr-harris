@@ -4,6 +4,8 @@
 #| label: setup
 #| include: false
 
+options(warn = 0) # default value: change for debugging
+
 base::source(file = "R/helper.R")
 ggplot2::theme_set(ggplot2::theme_bw()) 
 ```
@@ -609,15 +611,15 @@ insurance_test <- stats::fligner.test(
 
 hiv_test2 <-  car::leveneTest(
     distance_ssp_clean$dist_ssp,
-    distance_ssp_clean$hiv_prevalence
+    forcats::as_factor(distance_ssp_clean$hiv_prevalence)
     )
 opioid_test2 <- car::leveneTest(
     distance_ssp_clean$dist_ssp,
-    distance_ssp_clean$opioid_rate
+    forcats::as_factor(distance_ssp_clean$opioid_rate)
     )
 insurance_test2 <- car::leveneTest(
     distance_ssp_clean$dist_ssp,
-    distance_ssp_clean$no_insurance
+    forcats::as_factor(distance_ssp_clean$no_insurance)
     )
 
 
@@ -2693,15 +2695,15 @@ The result is a list of seven counties, six situated in Texas and one in Florida
 ```{r}
 #| label: diagnostics-dfbetas
 
-df3_lm <- df2_lm |> 
+df3b_lm <- df3a_lm |> 
     dplyr::mutate(
         dfbetas_intercept = stats::dfbetas(model = lm9.1)[, 1],
         dfbetas_slope = stats::dfbetas(model = lm9.1)[, 2]
     ) 
 
-save_data_file("chap09", df3_lm, "df3_lm.rds")
+save_data_file("chap09", df3b_lm, "df3b_lm.rds")
 
-lm9.1_dfbetas <- df3_lm |> 
+lm9.1_dfbetas <- df3b_lm |> 
     dplyr::filter(base::abs(dfbetas_intercept) > (2 / base::sqrt(dplyr::n())) | 
                   base::abs(dfbetas_slope) > (2 / base::sqrt(dplyr::n()))) |> 
     dplyr::select(c(county, state, dist_ssp, 
@@ -2735,7 +2737,7 @@ Instead of seven we got now a bigger list with 40 counties.
 
 
 
-df4_lm <- df3_lm |> 
+df4_lm <- df3b_lm |> 
     dplyr::mutate(
         cooks_d = stats::cooks.distance(model = lm9.1)
     ) 
@@ -2818,12 +2820,276 @@ This time we got a list of 28 counties.
 
 ### Summarizing outliers and influential values
 
+It would be useful to have all the counties identified by at least two of these four measures in a single list or table to more easily see all the counties that seemed problematic.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-diagnostics-summary}
+: Summarizing outliers and influential values
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Outliers 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-summary1}
+: Summarizing diagnostics for outliers and influential values with `dfbeta`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-summary1}
+```{r}
+#| label: diagnostics-summary1
+
+df_lm_diag1 <- df5_lm |> 
+    dplyr::mutate(outliers = 
+       as.numeric(x = leverage > 2 * 2 / dplyr::n()) +
+       as.numeric(x = cooks_d > 4 / dplyr::n()) +
+       as.numeric(x = abs(x = dfbeta_intercept) > 2) +
+       as.numeric(x = abs(x = dfbeta_slope) > 2) +
+       as.numeric(x = abs(x = standard_res) > 1.96)) |> 
+    dplyr::filter(outliers >= 2) |> 
+    dplyr::select(county, state, dist_ssp, 
+                  no_insurance, predicted, outliers) |> 
+    dplyr::mutate(county = stringr::word(county, 1))
+    
+df_print1 <- df_lm_diag1 |> 
+    DT::datatable(
+        class = "compact",
+        options = list(
+            paging = FALSE,
+            searching = FALSE
+            ),
+        filter = "top",
+        colnames = c("ID" = 1)
+    ) |> 
+    DT::formatRound(c("dist_ssp", "predicted"), 2) |> 
+    DT::formatRound("no_insurance", 1)
+    
+
+df_print1
+```
+
+Listing of all counties with influential values at least in two tests (using `dfbeta` like in the book)
+:::
+
+***
+
+Here I have use the threshold for the non-standardized `dfbeta` values, which in my opinion is the wrong option.
+
+I have used the R datatable package {**DT**} (see: @pak-DT), so you can experiment with the listed counties, for example sorting after certain columns or filtering certain states.
+
+::::
+:::::
+
+###### Outliers 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-summary2}
+: Summarizing diagnostics for outliers and influential values with `dfbetas`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-summary2}    
+```{r}
+#| label: diagnostics-summary2
+
+df_lm_diag2 <- df5_lm |> 
+    dplyr::mutate(outliers = 
+       as.numeric(x = leverage > 2 * 2 / dplyr::n()) +
+       as.numeric(x = cooks_d > 4 / dplyr::n()) +
+       as.numeric(x = abs(x = dfbetas_intercept) > 2 / sqrt(dplyr::n())) +
+       as.numeric(x = abs(x = dfbetas_slope) > 2 / sqrt(dplyr::n())) +
+       as.numeric(x = abs(x = standard_res) > 1.96)) |> 
+    dplyr::filter(outliers >= 2) |> 
+    dplyr::select(county, state, dist_ssp, 
+                  no_insurance, predicted, outliers)  |> 
+    dplyr::mutate(county = stringr::word(county, 1))
+    
+df_print2 <- df_lm_diag2 |> 
+    DT::datatable(
+        class = "compact",
+        options = list(
+            paging = FALSE,
+            searching = FALSE
+            ),
+        filter = "top",
+        colnames = c("ID" = 1)
+    ) |> 
+    DT::formatRound(c("dist_ssp", "predicted"), 2) |> 
+    DT::formatRound("no_insurance", 1)
+    
+
+df_print2
+```
+
+Listing of all counties with influential values at least in two tests (using `dfbetas`, different from the book)
+:::
+
+***
+
+Here I have use the threshold for the standardized `dfbetas` values, which in my opinion is the correct option. Although there is a big difference in the number of counties with cutoff `dfbeta` (7 counties) to `dfbetas`(40 counties) in the end the difference is only 11 counties. The listing shows some counties exceeding the threshold 5 times. The reason is that counties can have outliers corresponding to `dfbetas` intercept and `dfbetas` slope.
+
+I have used the R datatable package {**DT**} (see: @pak-DT), so you can experiment with the listed counties, for example sorting after certain columns or filtering certain states. If you sort for instance the distances to the next syringe program you will see that there are some counties with similar values that are not included in @lst-chap09-diagnostics-summary1, like kiowa county with similar values as garfied county.
+
+::::
+:::::
+
+###### difference
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-diagnostics-dfbetas-diff}
+: Difference between `dfbeta` and `dfbetas` results
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-diagnostics-dfbetas-diff}
+```{r}
+#| label: diagnostics-dfbetas-diff
+
+county_join <- dplyr::full_join(df_lm_diag1, df_lm_diag2, by = c("county", "state"))
+county_diff <- county_join |> dplyr::filter(is.na(dist_ssp.x)) |> 
+    dplyr::select(-(3:6)) |> 
+    dplyr::arrange(desc(dist_ssp.y))
+
+print(county_diff, n = 20)
+```
+
+Additional counties calculated with the standardized `dfbetas` (and not `dfbeta`)
+:::
+
+***
+
+These 11 counties have not been included in the book’s version because of a different method (using unstandardized `dfbeta` with an undocumented threshold of 2 versus standardized `dfbetas` with the in several resource documented cutoff $2 / \sqrt{n = samplesize}$.
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+When an observation is identified as an outlier or influential value, it is worth looking at the data to see if there is anything that seems unusual. Sometimes, the observations are just different from the rest of the data, and other times, there is a clear data entry or coding error.
+
+
 
 
 
 ## Achievement 7: Adding variables and transformation {#sec-chap09-achievement7}
 
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-lm9.2}
+: Adding binary variable `metro` into the model
+::::::
+:::
+::::{.my-example-container}
 
+::: {.panel-tabset}
+
+###### Compute lm9.2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-lm9.2}
+: Linear regression: Distance to syringe program by uninsured percent and metro status
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-lm9.2}
+```{r}
+#| label: lm9.2
+
+lm9.2 <- stats::lm(formula = dist_ssp ~ no_insurance + metro,
+                   data = distance_ssp_clean)
+
+save_data_file("chap09", lm9.2, "lm9.2.rds")
+
+base::summary(lm9.2)
+```
+
+
+Linear regression: Distance to syringe program by uninsured percent and metro status
+:::
+
+- Small p-values indicate that percentage uninsured and metro status both statistically significantly help to explain the distance to a syringe program.
+- The model is statistically significant, with an `r glossary("F-statistic")` of F(2, 497) = 58.88 and a p-value of < .001.
+- $R_{adj}^2$ indicates that 18.83% of the variation in distance to syringe program is accounted for by this model with `no_insurance` and `metro` in it. This is somewhat higher than the $R_{adj}^2$ of 16.86 from the simple linear model with just `no_insurance` in it.
+- The coefficient for no_insurance of 7.30 means that for a county with 1% more uninsured people the distance to SSP grows by 7.30 miles.
+- `metronon-metro` is confusing because it combines two aspects: The variable name (here `metro`) and the category to which the coefficient refers (here `non-metro`). The other group name `metro` is the reference group for the `metro` variable[^linear-regression-2]. The non-metro counties are 28.05 miles farther away from the nearest syringe program than the metro counties.
+
+[^linear-regression-2]: Especially confusing here is that the variable has the same name as one group and additionally it is puzzling the the other group `non-metro` has a dash in its name that separates the second part with exactly the same name as variable and group coefficient. Another example to make things clearer: Imagine a binary variable `region` that consists of the two categories `urban` and `countryside` then we would see `regionurban` instead of `metronon-metro`.
+
+::::
+:::::
+
+
+###### Plot lm9.2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-plot-lm9.2}
+: Graphing the regression model `lm9.2` with percent uninsured and metro
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-plot-lm9.2}    
+```{r}
+#| label: plot-lm9.2
+
+distance_ssp_clean |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = no_insurance, 
+          y = dist_ssp, 
+          group = metro)
+      ) +
+  ggplot2::geom_line(
+      data = broom::augment(x = lm9.2),
+      ggplot2::aes(
+          y = .fitted, 
+          linetype = metro
+          )
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(
+          color = metro
+          ), 
+      size = 2
+      ) +
+  ggplot2::labs(
+      y = "Miles to nearest syringe program",
+      x = "County percent uninsured"
+      ) +
+  ggokabeito::scale_color_okabe_ito(
+      order = c(1,3),
+      alpha = .4,
+      name = "County"
+      ) +
+  ggplot2::scale_linetype_manual(
+      values = c(1, 2), 
+      name = "Regression line\n(predicted values)") 
+```
+
+Regression model `lm9.2` with percent uninsured and metro
+:::
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
 
 
 

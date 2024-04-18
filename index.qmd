@@ -155,9 +155,14 @@ entries.\]
 :::
 
 ::: my-r-code-container
-::: {#lst-preview-load-glossary}
+
 
 ```{r}
+#| label: load-glossary
+#| lst-label: lst-preface-load-glossary
+#| lst-cap: "Install and load the glossary package with the appropriate glossary.yml file"
+
+
 ## 1. Install the glossary package:
 ## https://debruine.github.io/glossary/
 
@@ -179,9 +184,6 @@ glossary::glossary_path("../glossary-pb/glossary.yml")
 ```
 
 
-Install and load the glossary package with the appropriate glossary.yml
-file
-:::
 :::
 :::
 
@@ -217,7 +219,7 @@ work out of the box. Load down the `glossary.yml` file from [my
 glossary-pb GitHub
 repo](https://github.com/petzi53/glossary-pb/blob/master/glossary.yml),
 store it on your hard disk and change the path in the code chunk
-@lst-preview-load-glossary.
+@lst-preface-load-glossary.
 
 In any case I am the only responsible person for this text, especially
 if I have used code from the resources wrongly or misunderstood a quoted
