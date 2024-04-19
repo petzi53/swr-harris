@@ -60,7 +60,7 @@ Summarizes key information about statistical objects in tidy tibbles. This makes
 
 For a detailed introduction, please see [Introduction to broom](https://broom.tidymodels.org/articles/broom.html).
 
-broom tidies 100+ models from popular modelling packages and almost all of the model objects in the stats package that comes with base R. 
+{**broom**} tidies 100+ models from popular modelling packages and almost all of the model objects in the stats package that comes with base R. 
 
 The vignette [Available methods](https://broom.tidymodels.org/articles/available-methods.html) lists method availability.
 
