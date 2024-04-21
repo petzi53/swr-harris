@@ -2069,12 +2069,12 @@ See [Using plot arithmetic functions with `::` syntax](https://github.com/thomas
 
 | operator | function                  |effect         |
 |----------|---------------------------|---------------|
-| +        | ggplot2:::"+.gg"()        | side by side  |
-| -        | patchwork:::"-.ggplot"()  |               |
-| \|       | patchwork:::"\|.ggplot"() |               |
-| /        | patchwork:::"/.ggplot"()  | stacked       |
-| *        | patchwork:::"*.gg"()      |               |
-| &        | patchwork:::"&.gg"()      |               |
+| +        | `ggplot2:::"+.gg"()`        | side by side  |
+| -        |` patchwork:::"-.ggplot"()`  |               |
+| \|       | `patchwork:::"\|.ggplot"()` |               |
+| /        | `patchwork:::"/.ggplot"()`  | stacked       |
+| *        | `patchwork:::"*.gg"()`      |               |
+| &        | `patchwork:::"&.gg"()`      |               |
 
 
 :::

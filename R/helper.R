@@ -58,7 +58,7 @@ first_and_last_row <-  function(df) {
 # col_dens  = character: color of density curve
 # col_dnorm = character: color of dnorm curve
 
-my_hist_dnorm <- function(df, v, n_bins = 20,
+my_hist_dnorm <- function(df, v, n_bins = 30,
                        col_fill = "gray90",
                        col_color = "black",
                        col_dnorm = "Normal",
