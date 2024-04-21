@@ -238,7 +238,7 @@ Besides to call the appropriate website for 2015-2016 [examination codebook](nha
 bpx_2016 <- base::readRDS("data/chap06/bpx_2016.rds")
 
 skimr::skim(bpx_2016)
-glance_data(bpx_2016)
+my_glance_data(bpx_2016)
 ```
 Glance at NHANES data for blood pressure examination with demographics variable for 2015-2016
 

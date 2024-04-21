@@ -300,14 +300,18 @@ Order and completeness of the following tasks is not mandatory.
     - **Read the codebook:** It is important to understand what the different variables mean.
     - **Check structure:** Examine with `utils::str()` if the dataset has special structures, e.g. labelled data, attributes etc.
     - **Glimpse actual data**: To get a feeling about data types and actual values use `dplyr::glimpse()`.
-    - **Glance at example rows**: As an alternative of `utils::head()` / `utils::tails()` get random row examples including first and last row of the dataset with my own function `glance_data()`.
+    - **Glance at example rows**: As an alternative of `utils::head()` / `utils::tails()` get random row examples including first and last row of the dataset with my own function `my_glance_data()`.
 2. **Check normality assumption**:
-    - **Draw histograms of numeric variables**: To get a better idea I have these histogram overlaid with the theoretical normal distribution and the density curve of the current data. The difference between these two curves gives a better impression if normality is met or not.
+    - **Draw histograms of numeric variables**: To get a better idea I have these `r glossary("histogram", "histograms")` overlaid with the theoretical normal distributions and the `r glossary("density plots")` of the current data. The difference between these two curves gives a better impression if normality is met or not.
     - **Draw Q-Q plots of numeric variables**: `r glossary("Q-Q-Plot", "Q-Q plots")` gives even a more detailed picture if normality is met.
     - **Compute normality tests**: If your data has less than 5.000 rows then use the `r glossary("Shapiro-Wilk", "Shapiro-Wilk test")`, otherwise the `r glossary("Anderson-Darling"," Anderson-Darling test")`. 
 3. **Check homogeneity assumption**: If the normality assumption is not met, then test if the homogeneity of variance assumption between groups is met with `r glossary("Levene", "Levene’s test")` or with the more robust `r glossary("Fligner", "Fligner-Killeen’s test")`. In the following steps use always median instead of mean and do not compute the `r glossary("Pearson", "Pearson’s r")` but the `r glossary("Spearman", "Spearman’s rho")` coefficient. 
-4. **Compute correlation coefficient**: Apply either Pearson’s r or the Spearman’s rho coefficient. There are function like `graphics::pairs()` or `GGally::ggpairs()` (@pak-GGally) that provide a graphical and statistical representation of all combinations of bivariate relationships.
-5. **Explore categorical data with box plots or violin plots**: Box plots work well between a numerical and categorical variable. You could also overlaid the data and violin plots to maximize the information in one single graph.
+4. **Compute correlation coefficient**: Apply either Pearson’s r or the Spearman’s rho coefficient. 
+5. **Explore categorical data with box plots or violin plots**: Box plots work well between a numerical and categorical variable. You could also overlay the data and violin plots to maximize the information in one single graph (see @fig-chap09-eda-violin-boxplot).
+
+***
+
+There are packages like {**GGally**} and {**ggfortify**} (see @pak-GGally and @pak-ggfortify) that provide a graphical and statistical representation of all combinations of bivariate relationships. They can be used as convenient shortcuts to many of the task listed here above.
 ::::
 :::::
 
@@ -894,113 +898,6 @@ distance_ssp_clean |>
 ::::
 :::::
 
-###### pairs
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap09-plot-pairs}
-: Scatterplots of variable pairs from dataset of chapter 9
-::::::
-:::
-::::{.my-r-code-container}
-```{r}
-#| label: fig-plot-pairs
-#| fig-cap: "Scatterplots of variable pairs from dataset of chapter 9"
-#| fig-height: 10
-#| fig-width: 10
-
-
-lt_purple <- t_col("purple3", perc = 50, name = "lt.purple")
-
-panel.hist <- function(x, ...)
-{
-    usr <- par("usr")
-    par(usr = c(usr[1:2], 0, 1.5) )
-    h <- hist(x, plot = FALSE)
-    breaks <- h$breaks; nB <- length(breaks)
-    y <- h$counts; y <- y/max(y)
-    rect(breaks[-nB], 0, breaks[-1], y, col = "grey80", ...)
-}
-
-
-graphics::pairs(distance_ssp_clean[3:6], 
-                pch = 23, 
-                panel = panel.smooth,
-                cex = 1.5, 
-                bg = lt_purple, 
-                horOdd = TRUE,
-                diag.panel = panel.hist, 
-                cex.labels = 2, 
-                font.labels = 2,
-                gap = 0
-                )
-
-```
-
-::::
-:::::
-
-###### metro
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap09-plot-pairs-metro}
-: Distance to SSP with different numeric variable and metro/nonmetro location
-::::::
-:::
-::::{.my-r-code-container}
-```{r}
-#| label: fig-plot-pairs-metro
-#| fig-cap: "Distance to SSP -- Metro (red) & Nonmetro (blue)"
-#| fig-height: 10
-#| fig-width: 10
-
-panel.hist <- function(x, ...) {
-    usr <- par("usr")
-    par(usr = c(usr[1:2], 0, 1.5) )
-    h <- hist(x, plot = FALSE)
-    breaks <- h$breaks; nB <- length(breaks)
-    y <- h$counts; y <- y/max(y)
-    rect(breaks[-nB], 0, breaks[-1], y, col = "grey80", ...)
-}
-
-graphics::pairs(distance_ssp_clean[3:6], 
-                main = "Distance to SSP -- Metro (red) & Nonmetro (blue)",
-                panel = panel.smooth,
-                horOdd = TRUE,
-                diag.panel = panel.hist, 
-                pch = 21, 
-                gap = 0,
-                bg = c("red", "blue")[unclass(distance_ssp_clean$metro)])
-
-```
-
-::::
-:::::
-
-###### ggpairs
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap09-plot-ggpairs}
-: Scatterplots of variable pairs from dataset of chapter 9
-::::::
-:::
-::::{.my-r-code-container}
-```{r}
-#| label: fig-plot-ggpairs
-#| fig-cap: "Scatterplots of variable pairs from dataset of chapter 9"
-#| fig-height: 10
-#| fig-width: 10
-
-GGally::ggpairs(distance_ssp_clean,
-                columns = 3:7)
-
-```
-
-::::
-:::::
-
 
 
 
@@ -1008,6 +905,25 @@ GGally::ggpairs(distance_ssp_clean,
 
 ::::
 :::::
+
+:::::: {#tdo-chap09-exploring-several-variables-together}
+:::::{.my-checklist}
+:::{.my-checklist-header}
+TODO: Exploring several variables together with {**GGally}
+:::
+::::{.my-checklist-container}
+During working the material of `r glossary("SwR")` I had often to look for more details in the internet. During one of this (re)searches I learned about about the possibility to explore multiple variables together with graphics::pairs and the {**tidyverse**} pendant {**GGally**}.
+
+After exploring {**GGally**} I noticed that there is with the `ggnostic()` function, working as a wrapper around `GGally::ggduo()`, also a tool that displays full model diagnostics for each given explanatory variable. There are even many other tools where "GGally extends ggplot2 by adding several functions to reduce the complexity of combining geoms with transformed data" [GGally: Extension to ggplot2](https://ggobi.github.io/ggally/index.html). 
+
+I plotted some examples in @sec-chap09-experiments but I need to learn these very practical tools much more in detail. Admittedly I have to understand all these different diagnostic tests before I am going to read the extensive documentation (currently 14 articles) and trying to apply shortcuts with the {**GGally**} functions.
+
+
+::::
+:::::
+Learn to explore several variables together with {**GGally**}
+:::
+
 
 ## Achivement 2: Exploring line model {#sec-chap09-achievement2}
 
@@ -1699,7 +1615,7 @@ pred_all <- tibble::as_tibble(
     )
 )
 
-glance_data(pred_all)
+my_glance_data(pred_all)
 ```
 
 Predicted values for all observed x
@@ -2180,58 +2096,28 @@ The linearity assumption is met if a scatterplot of the two variables shows a re
 
 The situation in @lst-chap09-check-linearity is a little different: Here the loess line is curved and shows deviation from the linear relationship especially at the lower level of the predictor but also at the zeniths of the two arcs. Harris therefore decided that in @lst-chap09-check-linearity the linearity assumption has failed. 
 
-:::::{.my-remark}
-:::{.my-remark-header}
-:::::: {#rem-chap09-linearity-assumption}
-: How to check the linearity assumption more objectively?
-::::::
-:::
-::::{.my-remark-container}
-I think that these kinds of linearity judgements are quite subjective. It is easy to assess that both examples failed or vice versa have met the assumption. It would be nice to have a more objective test, similar to the `r glossary("Breusch-Pagan", "Breusch-Pagan test")` for the `r glossary("homoscedasticity")` assumption in @lst-chap09-check-homoscedasticity-breusch-pagan or generally the `r glossary("Shapiro-Wilk")` or `r glossary("Anderson-Darling")` tests for the normality assumption.
-
-Diagnostics are very important for linear regression models. I have not (yet) much experience but I am pretty sure there exist some tests for the linearity assumption of linear models. For instance I have found a reference in [Linear Regression Assumptions and Diagnostics in R: Essentials](http://www.sthda.com/english/articles/39-regression-model-diagnostics/161-linear-regression-assumptions-and-diagnostics-in-r-essentials#regression-diagnostics-reg-diag) [@kassambara2018] to functions for plotting a collection of four diagnostic tests either in base R with `stats::plot(<model name>)` or using {**ggplot2**} with {**ggfortify**} with .
-
-
-To give you an example of the power of these functions consider the following graph created with only 4 lines of code including calculating the model from scratch:
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap09-test-ggfortify}
-: Applying {**ggfortify**} to model and diagnose our model `lm9.1`
-::::::
-:::
-::::{.my-r-code-container}
-::: {#lst-chap09-test-ggfortify}
-
-```{r}
-#| label: test-ggfortify
-#| results: false
-
-library(ggfortify)
-
-graphics::par(mfrow = c(1, 2))
-m <- stats::lm(dist_ssp ~ no_insurance, data = df_lm)
-
-ggplot2::autoplot(m, which = 1:6, ncol = 3, label.size = 3)
-
-base::detach("package:ggfortify", unload = TRUE)
-base::detach("package:ggplot2", unload = FALSE)
-```
-
-Applying {**ggfortify**} to model and diagnose our model `lm9.1`
-:::
-
-::::
-:::::
-
-::::
-:::::
-
-
 **Conclusion**: The linearity assumption is *not* met.
 
 ::::
 :::::
+
+
+
+
+:::::: {#tdo-chap09-linearity-test}
+:::::{.my-checklist}
+:::{.my-checklist-header}
+TODO: How to test the linearity assumption more objectively?
+:::
+::::{.my-checklist-container}
+I think that linearity judgements on the basis of visualizations are quite subjective. It would be nice to have a more objective test, similar to the `r glossary("Breusch-Pagan", "Breusch-Pagan test")` for the `r glossary("homoscedasticity")` assumption in @lst-chap09-check-homoscedasticity-breusch-pagan or generally the `r glossary("Shapiro-Wilk")` or `r glossary("Anderson-Darling")` tests for the normality assumption.
+
+Diagnostics are very important for linear regression models. I have not (yet) much experience but I am pretty sure there exist some tests for the linearity assumption of linear models. I just have to look and find them!
+::::
+:::::
+Look for packages with linearity test functions
+:::
+
 
 
 ### Checking homoscedasticity {#sec-chap09-check-homoscedasticity}
@@ -2448,7 +2334,7 @@ my_qq_plot(
 Testing the normality of residuals assumption with a q-q plot
 :::
 
-The q-q plot in @lst-chap09-check-normality-residuals-qq-plot shows some deviation form the normal distribution. Although it is again a quite subjective decision (See @rem-chap09-linearity-assumption) it seems that the assumption of normality has failed.
+The q-q plot in @lst-chap09-check-normality-residuals-qq-plot shows some deviation form the normal distribution. Although it is again a quite subjective decision (See @tdo-chap09-linearity-test) it seems that the assumption of normality has failed.
 
 **Conclusion**: The normality assumption of the residuals is *not* met.
 
@@ -3100,72 +2986,6 @@ This is my reproduction of Figure 9.21. There are two differences noteworthy:
 ::::
 :::::
 
-###### interactive plot (experiment)
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap09-plot-interactive-lm9.2}
-: Graphing the regression model `lm9.2` as an interactive plot (experiment)
-::::::
-:::
-::::{.my-r-code-container}
-::: {#lst-chap09-plot-interactive-lm9.2}    
-```{r}
-#| label: plot-lm9.2-interactive
-
-test_plot <- distance_ssp_clean |> 
-  ggplot2::ggplot(
-      ggplot2::aes(
-          x = no_insurance, 
-          y = dist_ssp, 
-          group = metro)
-      ) +
-  ggplot2::geom_line(
-      data = broom::augment(x = lm9.2),
-      ggplot2::aes(
-          y = .fitted, 
-          linetype = metro
-          )
-      ) +
-  ggplot2::geom_point(
-      ggplot2::aes(
-          text = county,
-          color = metro
-          ), 
-      size = 2
-      ) +
-  ggplot2::labs(
-      y = "Miles to nearest syringe program",
-      x = "County percent uninsured"
-      ) +
-  ggokabeito::scale_color_okabe_ito(
-      order = c(1,3),
-      alpha = .4,
-      name = "County"
-      ) +
-  ggplot2::scale_linetype_manual(
-      values = c(1, 2), 
-      name = "Regression line\n(predicted values)") 
-
-plotly::ggplotly(
-    p = test_plot,
-    tooltip = c("dist_ssp", "no_insurance", "text")
-)
-
-
-```
-
-Interactive regression model `lm9.2` with percent uninsured and metro
-:::
-
-*** 
-
-This is an experiment with interactive graphic using the `ggplotly()` function from the {**plotly**) package. This is my first try. There is still something wrong with the legend. I have to go into more detail, especially reading [Interactive Web-Based Data Visualization With R, Plotly, and Shiny](https://plotly-r.com/) [@sievert2020].
-
-
-
-::::
-:::::
 
 
 :::
@@ -3241,11 +3061,102 @@ If we add the values in the column `.resid` to our predicted values in `.fitted`
 ::::
 :::::
 
-### Adding more variable
+### Adding more variables
+
+Before adding (more) variables one has to check the assumptions. For instance: Before we are going to add another continuous variable we should check for normality. If they are not normally distributed then it doesn't pay the effort to regress with these variables without an appropriate transformation.
+
+Checking the distribution of the continuous variables brings nothing new to my understanding. It is the already usual plotting of histograms and q-q plots. So I will not go into every details.
+
+But what is interesting is the book's conclusion of the `no_insurance` distribution (the percentage of uninsured residents): It claims that the normality assumption is met. But I will show that this is not the case and that a logit transformation improves the situation essentially.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-exploring-no-insurance-dist}
+: Exploring `no_insurance` distribution
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### check
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-a}
+: Checking normality assumption of `no_insurance`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-logit-no-insurance}
+```{r}
+#| label: logit-noinsurance
+#| results: hold
+
+gg1 <- my_hist_dnorm(distance_ssp_clean, distance_ssp_clean$no_insurance)
+gg2 <- my_qq_plot(distance_ssp_clean, distance_ssp_clean$no_insurance)
+
+ggplot2:::"+.gg"(gg1, gg2)
+
+shapiro.test(distance_ssp_clean$no_insurance)
+
+```
+Checking normality assumption of residents without insurance. Left: Histogram with overlaid density curve. Right: Q-Q plot. Bottom: Shapiro-Wilk test.
+:::
+
+***
+All three checks indicate that the normality assumption with the percentage of uninsured residents is not met. 
+
+::::
+:::::
+
+
+###### logit
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-logit-transform-noinsurance}
+: Checking normality assumption of `no_insurance` after logit transformation
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-listing-ID}    
+```{r}
+#| label: logit-transform-noinsurance
+
+dist_ssp2 <- distance_ssp_clean |> 
+    dplyr::mutate(no_insurance_logit = car::logit(no_insurance))
+
+gg1 <- my_hist_dnorm(dist_ssp2, dist_ssp2$no_insurance_logit)
+gg2 <- my_qq_plot(dist_ssp2, dist_ssp2$no_insurance_logit)
+
+ggplot2:::"+.gg"(gg1, gg2)
+
+shapiro.test(dist_ssp2$no_insurance_logit)
+```
+
+Checking normality assumption of residents without insurance after logit transformation. Left: Histogram with overlaid density curve. Right: Q-Q plot. Bottom: Shapiro-Wilk test.
+:::
+
+The Shapiro-Wilk test is still statistically significant p < .05, and therefore the Null (that the `no_insurance` is normally distributed) has to be rejected. But the situation has drastically improved as one can seen in both graphs. In contrast to the book I would the variable for the percentage of uninsured residents logit transform. 
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+
 
 ```{r}
 #| fig-height: 10
 #| fig-width: 10
+#| eval: false
+#| include: false
 
 
 tbl_test <- distance_ssp_clean |> 
@@ -3271,7 +3182,186 @@ patchwork:::"/.ggplot"(gg3, gg4)
 ```
 
 
-## Experiments
+## Experiments {#sec-chap09-experiments}
+
+### Compute and visualize several variables combined
+
+During working the material of SwR I consulted many times the internet. So I learned about the reference to plots where several graphs are combined. See: [Linear Regression Assumptions and Diagnostics in R: Essentials](http://www.sthda.com/english/articles/39-regression-model-diagnostics/161-linear-regression-assumptions-and-diagnostics-in-r-essentials#regression-diagnostics-reg-diag) [@kassambara2018]. It includes functions for plotting a collection of four diagnostic tests either in base R with `stats::plot(<model name>)` or using {**ggfortify**} with `ggplot2::autoplot()`. There exist also with the {**autoplotly**} package an interactive version of {**ggfortify**}.
+
+After exploring {**GGally**} I noticed that there is with the `ggnostic()` function, working as a wrapper around `GGally::ggduo()`, also a tool that displays full model diagnostics for each given explanatory variable. 
+
+:::::: {#tdo-chap09-learn-ggfortify}
+:::::{.my-checklist}
+:::{.my-checklist-header}
+TODO: Looking at the packages {**ggfortify**} and {**autoplotly**}
+:::
+::::{.my-checklist-container}
+In addition to learn {**GGally**} I have also to study the packages {**ggfortify**} --- and together with {**plotly**} --- the package {**autoplotly**}.
+
+- {**ggfortify**}: This package offers `fortify()` and `autoplot()` functions to allow automatic {**ggplot2**} to visualize statistical result of popular R packages. (See: @pak-ggfortify).
+- {**autoplotly**}: provides functionalities to automatically generate interactive visualizations for many popular statistical results supported by {**ggfortify**} package with [plotly.js](https://plotly.com/javascript/) and {**ggplot2**} style. The generated visualizations can also be easily extended using {**ggplot2**} syntax while staying interactive. (See: @pak-plotly and @pak-autoplotly).
+::::
+:::::
+Learning how to work with {**ggfortify**} and {**autoplotly**}
+:::
+
+To give you examples of the power of these functions I did several experiments. But I have to confess that I do still not understand the different options.
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-chap09-combining-geoms}
+: Visualizing several variables together
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### pairs
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-plot-pairs}
+: Scatterplots of variable pairs from dataset of chapter 9
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-plot-pairs
+#| fig-cap: "Scatterplots of variable pairs from dataset of chapter 9"
+#| fig-height: 10
+#| fig-width: 10
+
+
+lt_purple <- t_col("purple3", perc = 50, name = "lt.purple")
+
+panel.hist <- function(x, ...)
+{
+    usr <- par("usr")
+    par(usr = c(usr[1:2], 0, 1.5) )
+    h <- hist(x, plot = FALSE)
+    breaks <- h$breaks; nB <- length(breaks)
+    y <- h$counts; y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = "grey80", ...)
+}
+
+
+graphics::pairs(distance_ssp_clean[3:6], 
+                pch = 23, 
+                panel = panel.smooth,
+                cex = 1.5, 
+                bg = lt_purple, 
+                horOdd = TRUE,
+                diag.panel = panel.hist, 
+                cex.labels = 2, 
+                font.labels = 2,
+                gap = 0
+                )
+
+```
+
+::::
+:::::
+
+###### metro
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-plot-pairs-metro}
+: Distance to SSP with different numeric variable and metro/nonmetro location
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-plot-pairs-metro
+#| fig-cap: "Distance to SSP -- Metro (red) & Nonmetro (blue)"
+#| fig-height: 10
+#| fig-width: 10
+
+panel.hist <- function(x, ...) {
+    usr <- par("usr")
+    par(usr = c(usr[1:2], 0, 1.5) )
+    h <- hist(x, plot = FALSE)
+    breaks <- h$breaks; nB <- length(breaks)
+    y <- h$counts; y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = "grey80", ...)
+}
+
+graphics::pairs(distance_ssp_clean[3:6], 
+                main = "Distance to SSP -- Metro (red) & Nonmetro (blue)",
+                panel = panel.smooth,
+                horOdd = TRUE,
+                diag.panel = panel.hist, 
+                pch = 21, 
+                gap = 0,
+                bg = c("red", "blue")[unclass(distance_ssp_clean$metro)])
+
+```
+
+::::
+:::::
+
+###### ggpairs
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-plot-ggpairs}
+: Scatterplots of variable pairs from dataset of chapter 9
+::::::
+:::
+::::{.my-r-code-container}
+```{r}
+#| label: fig-plot-ggpairs
+#| fig-cap: "Scatterplots of variable pairs from dataset of chapter 9"
+#| fig-height: 10
+#| fig-width: 10
+
+GGally::ggpairs(distance_ssp_clean,
+                columns = 3:7)
+
+```
+
+::::
+:::::
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-test-ggfortify}
+: Applying {**ggfortify**} to model and diagnose our model `lm9.1`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-test-ggfortify}
+
+```{r}
+#| label: test-ggfortify
+#| results: false
+
+library(ggfortify)
+
+graphics::par(mfrow = c(1, 2))
+m <- stats::lm(dist_ssp ~ no_insurance, data = df_lm)
+
+ggplot2::autoplot(m, which = 1:6, ncol = 3, label.size = 3)
+
+base::detach("package:ggfortify", unload = TRUE)
+base::detach("package:ggplot2", unload = FALSE)
+```
+
+Applying {**ggfortify**} to model and diagnose our model `lm9.1`
+:::
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
 
 ### Using {**broom**} {#sec-chap09-broom-exeriments}
 
@@ -3467,7 +3557,91 @@ Additionally there is the option to include:
 ::::
 :::::
 
-***
+### Interactive plots
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-plot-interactive-lm9.2}
+: Graphing the regression model `lm9.2` as an interactive plot
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-plot-interactive-lm9.2}    
+```{r}
+#| label: plot-lm9.2-interactive
+
+test_plot <- distance_ssp_clean |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = no_insurance, 
+          y = dist_ssp, 
+          group = metro)
+      ) +
+  ggplot2::geom_line(
+      data = broom::augment(x = lm9.2),
+      ggplot2::aes(
+          y = .fitted, 
+          linetype = metro
+          )
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(
+          text = county,
+          color = metro
+          ), 
+      size = 2
+      ) +
+  ggplot2::labs(
+      y = "Miles to nearest syringe program",
+      x = "County percent uninsured"
+      ) +
+  ggokabeito::scale_color_okabe_ito(
+      order = c(1,3),
+      alpha = .4,
+      name = "County"
+      ) +
+  ggplot2::scale_linetype_manual(
+      values = c(1, 2), 
+      name = "Regression line\n(predicted values)") 
+
+plotly::ggplotly(
+    p = test_plot,
+    tooltip = c("dist_ssp", "no_insurance", "text")
+)
+
+
+```
+
+Interactive regression model `lm9.2` with percent uninsured and metro
+:::
+
+*** 
+
+This is an experiment with interactive graphic using the `ggplotly()` function from the {**plotly**) package. This is my first try. There is still something wrong with the legend. 
+
+
+:::::: {#tdo-chap09-learning-plotly}
+:::::{.my-checklist}
+:::{.my-checklist-header}
+TODO: Interactive graphics with {**plotly**}
+:::
+::::{.my-checklist-container}
+The problem with the legend indicates my lacking knowledge about the {**plotly**} package. I have to go into more detail. Although it is easy to apply {**plotly**} by converting a {**ggplot2**} graph, there are many finer points to learn. It is therefore one of my most important intent to study [Interactive Web-Based Data Visualization With R, Plotly, and Shiny](https://plotly-r.com/) [@sievert2020].
+
+BTW: The package {**autoplotly**} in the context of {**ggfortify**) as mentioned in @tdo-chap09-learn-ggfortify is another is another tool supporting interactive plots.
+
+
+::::
+:::::
+Learning to develop interactive graphics with {**plotly**}
+:::
+
+
+
+::::
+:::::
+
+
 
 
 ## Exercises (empty)

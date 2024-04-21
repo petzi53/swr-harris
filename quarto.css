@@ -34,67 +34,32 @@ iframe {
 /*                                                                          */
 /* #######################################################################  */
 
+/* ##############   Assessment   ############# */
 
-/* ##############   Resources   ############# */
-
-.my-resource {
+.my-assessment {
   margin: 1em 0;
-  border: 2px solid gray;
-  border-left: 10px solid teal;
+  border: 2px solid #2F4F4F;
+  border-left: 10px solid #2F4F4F;
   border-radius: 10px;
 }
 
-.my-resource-header {
+.my-assessment-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  15px;
   padding-bottom: 0.1em;
-  color: white;
-  background-color: rgb(123, 173, 173);
+  color: black;
+  background-color: #8DEEEE;
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/books-48.png");
+  background-image: url("img/icons8/check-64.png");
 }
 
-.my-resource-container {
-  padding-top: 5px;
-  padding-left: 10px;
-  color: black;
-  background-color: white;
-  border-bottom-right-radius: 10px;
-}
-
-
-/* ##############   Experiment   ############# */
-
-.my-experiment {
-  margin: 1em 0;
-  border: 2px solid #5D478B;
-  border-left: 10px solid #5D478B;
-  border-radius: 10px;
-}
-
-.my-experiment-header {
-  margin-left: 0;
-  padding-left:  60px;
-  padding-top:  15px;
-  padding-bottom: 0.1em;
-  color: black;
-  background-color: #e2d9f4;
-  border-top-right-radius: 10px;
-  font-size: 1em;
-  font-weight: bold;
-  background-size: 40px;
-  background-repeat: no-repeat;
-  background-position: 15px center;
-  background-image: url("img/icons8/experiment-53.png");
-}
-
-.my-experiment-container {
+.my-assessment-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -104,33 +69,66 @@ iframe {
 
 
 
-/* ##############   Remark   ############# */
+/* ##############   Checklist / ToDo  ############# */
 
-.my-remark {
+.my-checklist {
   margin: 1em 0;
-  border: 2px solid #2780e3;
-  border-left: 10px solid #2780e3;
+  border: 2px solid #838B8B;  /* azure4 */
+  border-left: 10px solid #838B8B;
   border-radius: 10px;
 }
 
-.my-remark-header {
+.my-checklist-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  15px;
   padding-bottom: 0.1em;
   color: black;
-  background-color: #ecf4fd;
+  background-color: #E0EEEE; /* azure2 */
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/remark-48.png");
+  background-image: url("img/icons8/checklist-80.png");
+}
+
+.my-checklist-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
 }
 
 
-.my-remark-container {
+/* ##############   Definition   ############# */
+
+.my-definition {
+  margin: 1em 0;
+  border: 2px solid #8B3A62;
+  border-left: 10px solid #8B3A62;
+  border-radius: 10px;
+}
+
+.my-definition-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: hotpink;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/dictionary-64.png");
+}
+
+.my-definition-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -207,32 +205,33 @@ iframe {
   border-bottom-right-radius: 10px;
 }
 
-/* ##############   R Code   ############# */
 
-.my-r-code {
+/* ##############   Experiment   ############# */
+
+.my-experiment {
   margin: 1em 0;
-  border: 2px solid burlywood;
-  border-left: 10px solid #8B7355;
+  border: 2px solid #5D478B;
+  border-left: 10px solid #5D478B;
   border-radius: 10px;
 }
 
-.my-r-code-header {
+.my-experiment-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  15px;
   padding-bottom: 0.1em;
   color: black;
-  background-color: #FFD39B;
+  background-color: #e2d9f4;
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/r-code.png");
+  background-image: url("img/icons8/experiment-53.png");
 }
 
-.my-r-code-container {
+.my-experiment-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -240,32 +239,32 @@ iframe {
   border-bottom-right-radius: 10px;
 }
 
-/* ##############   Solution   ############# */
+/* ##############   Important   ############# */
 
-.my-solution {
+.my-important {
   margin: 1em 0;
-  border: 2px solid darkseagreen;
-  border-left: 10px solid #698B69;
+  border: 2px solid #f90439;
+  border-left: 10px solid #f90439;
   border-radius: 10px;
 }
 
-.my-solution-header {
+.my-important-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  15px;
   padding-bottom: 0.1em;
   color: black;
-  background-color: #C1FFC1;
+  background-color: #fee9ee;
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/solution-48.png");
+  background-image: url("img/icons8/double-exclamation-48.png");
 }
 
-.my-solution-container {
+.my-important-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -273,38 +272,74 @@ iframe {
   border-bottom-right-radius: 10px;
 }
 
-/* ##############   Watch out!   ############# */
 
-.my-watch-out {
+/* ##############   Objectives   ############# */
+
+.my-objectives {
   margin: 1em 0;
-  border: 2px solid #8B5A2B;
-  border-left: 10px solid #CD853F;
+  border: 2px solid #548B54;
+  border-left: 10px solid #548B54;
   border-radius: 10px;
 }
 
-.my-watch-out-header {
+.my-objectives-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  15px;
   padding-bottom: 0.1em;
   color: black;
-  background-color: orange;
+  background-color: #eef9eb;
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/eyes-94.png");
+  background-image: url("img/icons8/bullseye-48.png");
 }
 
-.my-watch-out-container {
+.my-objectives-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
   background-color: white;
   border-bottom-right-radius: 10px;
 }
+
+
+/* ##############  Package (plum1 & plum4)  ############# */
+
+.my-package {
+  margin: 1em 0;
+  border: 2px solid #8B668B;
+  border-left: 10px solid #8B668B;
+  border-radius: 10px;
+}
+
+.my-package-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #FFBBFF;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/package-48.png");
+}
+
+.my-package-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
 
 /* ##############   Procedure   ############# */
 
@@ -339,32 +374,102 @@ iframe {
   border-bottom-right-radius: 10px;
 }
 
-/* ##############   Checklist / ToDo  ############# */
 
-.my-checklist {
+/* ##############   Remark   ############# */
+
+.my-remark {
   margin: 1em 0;
-  border: 2px solid #36648B;
-  border-left: 10px solid steelblue;
+  border: 2px solid #2780e3;
+  border-left: 10px solid #2780e3;
   border-radius: 10px;
 }
 
-.my-checklist-header {
+.my-remark-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #ecf4fd;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/remark-48.png");
+}
+
+
+.my-remark-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   R Code   ############# */
+
+.my-r-code {
+  margin: 1em 0;
+  border: 2px solid burlywood;
+  border-left: 10px solid #8B7355;
+  border-radius: 10px;
+}
+
+.my-r-code-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #FFD39B;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/r-code.png");
+}
+
+.my-r-code-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Resources   ############# */
+
+.my-resource {
+  margin: 1em 0;
+  border: 2px solid gray;
+  border-left: 10px solid teal;
+  border-radius: 10px;
+}
+
+.my-resource-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  15px;
   padding-bottom: 0.1em;
   color: white;
-  background-color: #63B8FF;
+  background-color: rgb(123, 173, 173);
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/checklist-80.png");
+  background-image: url("img/icons8/books-48.png");
 }
 
-.my-checklist-container {
+.my-resource-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -372,38 +477,75 @@ iframe {
   border-bottom-right-radius: 10px;
 }
 
-/* ##############   Objectives   ############# */
 
-.my-objectives {
+/* ##############   Solution   ############# */
+
+.my-solution {
   margin: 1em 0;
-  border: 2px solid #548B54;
-  border-left: 10px solid #548B54;
+  border: 2px solid darkseagreen;
+  border-left: 10px solid #698B69;
   border-radius: 10px;
 }
 
-.my-objectives-header {
+.my-solution-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  15px;
   padding-bottom: 0.1em;
   color: black;
-  background-color: #eef9eb;
+  background-color: #C1FFC1;
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/bullseye-48.png");
+  background-image: url("img/icons8/solution-48.png");
 }
 
-.my-objectives-container {
+.my-solution-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
   background-color: white;
   border-bottom-right-radius: 10px;
 }
+
+
+
+/* ##############   Tip / Hint   ############# */
+
+.my-tip {
+  margin: 1em 0;
+  border: 2px solid#008B00;
+  border-left: 10px solid #008B00;
+  border-radius: 10px;
+}
+
+.my-tip-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #00CD00;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/tip-48.png");
+}
+
+.my-tip-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
 
 /* ##############   Theorem   ############# */
 
@@ -471,131 +613,34 @@ iframe {
   border-bottom-right-radius: 10px;
 }
 
-/* ##############   Important   ############# */
 
-.my-important {
+
+/* ##############   Watch out!   ############# */
+
+.my-watch-out {
   margin: 1em 0;
-  border: 2px solid #f90439;
-  border-left: 10px solid #f90439;
+  border: 2px solid #8B5A2B;
+  border-left: 10px solid #CD853F;
   border-radius: 10px;
 }
 
-.my-important-header {
+.my-watch-out-header {
   margin-left: 0;
   padding-left:  60px;
   padding-top:  15px;
   padding-bottom: 0.1em;
   color: black;
-  background-color: #fee9ee;
+  background-color: orange;
   border-top-right-radius: 10px;
   font-size: 1em;
   font-weight: bold;
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: 15px center;
-  background-image: url("img/icons8/double-exclamation-48.png");
+  background-image: url("img/icons8/eyes-94.png");
 }
 
-.my-important-container {
-  padding-top: 5px;
-  padding-left: 10px;
-  color: black;
-  background-color: white;
-  border-bottom-right-radius: 10px;
-}
-
-/* ##############   Definition   ############# */
-
-.my-definition {
-  margin: 1em 0;
-  border: 2px solid #8B3A62;
-  border-left: 10px solid #8B3A62;
-  border-radius: 10px;
-}
-
-.my-definition-header {
-  margin-left: 0;
-  padding-left:  60px;
-  padding-top:  15px;
-  padding-bottom: 0.1em;
-  color: black;
-  background-color: hotpink;
-  border-top-right-radius: 10px;
-  font-size: 1em;
-  font-weight: bold;
-  background-size: 40px;
-  background-repeat: no-repeat;
-  background-position: 15px center;
-  background-image: url("img/icons8/dictionary-64.png");
-}
-
-.my-definition-container {
-  padding-top: 5px;
-  padding-left: 10px;
-  color: black;
-  background-color: white;
-  border-bottom-right-radius: 10px;
-}
-
-/* ##############   Assessment   ############# */
-
-.my-assessment {
-  margin: 1em 0;
-  border: 2px solid #2F4F4F;
-  border-left: 10px solid #2F4F4F;
-  border-radius: 10px;
-}
-
-.my-assessment-header {
-  margin-left: 0;
-  padding-left:  60px;
-  padding-top:  15px;
-  padding-bottom: 0.1em;
-  color: black;
-  background-color: #8DEEEE;
-  border-top-right-radius: 10px;
-  font-size: 1em;
-  font-weight: bold;
-  background-size: 40px;
-  background-repeat: no-repeat;
-  background-position: 15px center;
-  background-image: url("img/icons8/check-64.png");
-}
-
-.my-assessment-container {
-  padding-top: 5px;
-  padding-left: 10px;
-  color: black;
-  background-color: white;
-  border-bottom-right-radius: 10px;
-}
-
-/* ##############   Tip / Hint   ############# */
-
-.my-tip {
-  margin: 1em 0;
-  border: 2px solid#008B00;
-  border-left: 10px solid #008B00;
-  border-radius: 10px;
-}
-
-.my-tip-header {
-  margin-left: 0;
-  padding-left:  60px;
-  padding-top:  15px;
-  padding-bottom: 0.1em;
-  color: black;
-  background-color: #00CD00;
-  border-top-right-radius: 10px;
-  font-size: 1em;
-  font-weight: bold;
-  background-size: 40px;
-  background-repeat: no-repeat;
-  background-position: 15px center;
-  background-image: url("img/icons8/tip-48.png");
-}
-
-.my-tip-container {
+.my-watch-out-container {
   padding-top: 5px;
   padding-left: 10px;
   color: black;
@@ -637,38 +682,7 @@ iframe {
   border-bottom-right-radius: 10px;
 }
 
-/* ##############  Package (plum1 & plum4)  ############# */
 
-.my-package {
-  margin: 1em 0;
-  border: 2px solid #8B668B;
-  border-left: 10px solid #8B668B;
-  border-radius: 10px;
-}
-
-.my-package-header {
-  margin-left: 0;
-  padding-left:  60px;
-  padding-top:  15px;
-  padding-bottom: 0.1em;
-  color: black;
-  background-color: #FFBBFF;
-  border-top-right-radius: 10px;
-  font-size: 1em;
-  font-weight: bold;
-  background-size: 40px;
-  background-repeat: no-repeat;
-  background-position: 15px center;
-  background-image: url("img/icons8/package-48.png");
-}
-
-.my-package-container {
-  padding-top: 5px;
-  padding-left: 10px;
-  color: black;
-  background-color: white;
-  border-bottom-right-radius: 10px;
-}
 
 /* ############### Colored text ################# */
 

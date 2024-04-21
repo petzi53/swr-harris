@@ -403,6 +403,21 @@ Title for important text
 :::
 
 
+:::::{.my-typo}
+:::{.my-typo-header}
+Typo Title
+:::
+::::{.my-typo-container}
+Here include typo text
+::::
+:::::
+
+
+
+
+my-definition
+
+
 ## Generating new box types
 
 ::: {.callout-note #nte-test2}

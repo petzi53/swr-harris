@@ -1,5 +1,31 @@
 # Packages used {#sec-annex-a}
 
+## autoplotly
+
+:::::{.my-package}
+:::{.my-package-header}
+autoplotly: Automatic Generation of Interactive Visualizations for Statistical Results 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-autoplotly}
+
+***
+
+{**autoplotly**}: [Automatic Generation of Interactive Visualizations for Statistical Results](https://github.com/terrytangyuan/autoplotly) [@autoplotly]
+
+Functionalities to automatically generate interactive visualizations for statistical results supported by {**ggfortify**}, such as time series, PCA, clustering and survival analysis, with [plotly.js](https://plotly.com/)  and {**ggplot2**} style. The generated visualizations can also be easily extended using {**ggplot2**} and {**plotly**} syntax while staying interactive.
+
+{**autoplotly**}: Automatic Generation of Interactive Visualizations for Statistical Results
+:::
+
+***
+::::
+:::::
+
+
 ## BSDA
 
 :::::{.my-package}
@@ -844,6 +870,39 @@ The R package {**ggplot2**} is a plotting system based on the grammar of graphic
 ***
 ::::
 :::::
+
+
+## ggfortify
+
+:::::{.my-package}
+:::{.my-package-header}
+ggfortify: Data Visualization Tools for Statistical Analysis Results 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-ggfortify}
+
+***
+
+{**ggfortify**}: [Data Visualization Tools for Statistical Analysis Results](https://github.com/sinhrks/ggfortify) [@ggfortify]
+
+
+(*There is no hexagon logo for {**ggfortify**} available*)
+
+Unified plotting tools for statistics commonly used, such as GLM, time series, PCA families, clustering and survival analysis. The package offers a single plotting interface for these analysis results and plots in a unified style using {**ggplot2**}.
+
+This package offers `fortify()` and `autoplot()` functions to allow automatic {**ggplot2**} to visualize statistical result of popular R packages. Check out our R Journal paper for more details on the overall architecture design and a gallery of visualizations created with this package. Also check out autoplotly package that could automatically generate interactive visualizations with plotly.js style based on ggfortify. The generated visualizations can also be easily extended using ggplot2 syntax while staying interactive.
+
+{**ggfortify**}: Data Visualization Tools for Statistical Analysis Results
+:::
+
+The packages has for this book  to be loaded explicitly. Calling functions with the `ggfortify::` syntax will not work, because {**ggfortify**} needs (and loads) {**ggplot**}.
+***
+::::
+:::::
+
 
 
 ## ggmosaic
@@ -1879,6 +1938,9 @@ Five omnibus tests for testing the composite hypothesis of normality.
 ::::
 :::::
 
+
+
+
 ## onewaytests
 
 :::::{.my-package}
@@ -1969,6 +2031,7 @@ The package contains data sets used in our open-source textbooks along with cust
 ***
 ::::
 :::::
+
 
 
 ## paletteer
@@ -2080,76 +2143,42 @@ See [Using plot arithmetic functions with `::` syntax](https://github.com/thomas
 :::
 :::
 
-## nhanesA
+## plotly
 
 :::::{.my-package}
 :::{.my-package-header}
-nhanesA: NHANES Data Retrieval 
+plotly: Create Interactive Web Graphics via 'plotly.js' 
 :::
 ::::{.my-package-container}
 
 ***
 
-::: {#pak-nhanesA}
+::: {#pak-plotly}
 
 ***
 
-{**nhanesA**}: [NHANES Data Retrieval](https://github.com/cjendres1/nhanes/) [@nhanesA]
+{**plotly**}: [Create Interactive Web Graphics via 'plotly.js'](https://plotly.com/r/) [@plotly]
 
 ::: {layout="[10, 30]" layout-valign="center"}
-![](img/chap06/logoi/logo-nhanesA-min.png){width="176"}
+![](img/chap09/logoi/logo-plotly-min.png){width="176"}
 
-
-Utility to retrieve data from the National Health and Nutrition Examination Survey (NHANES) website <https://www.cdc.gov/nchs/nhanes/index.htm>.
+Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.
 
 :::
 
-{**nhanesA**} is an R package for browsing and retrieving data from the National Health And Nutrition Examination Survey (NHANES). This package is designed to be useful for research and instructional purposes.
+Plotly.js is a standalone Javascript data visualization library, and it also powers the Python and R modules named plotly in those respective ecosystems (referred to as Plotly.py and Plotly.R).
 
-The functions in the {**nhanesA**} package allow for fully customizable selection and import of data directly from the NHANES website thus it is essential to have an active network connection.
+Plotly.js can be used to produce dozens of chart types and visualizations, including statistical charts, 3D graphs, scientific charts, SVG and tile maps, financial charts and more.
 
-There are other similar packages also available, but the are more restricted as newer data than 2014 cant be downloaded: 
-
-- {**NHANES**}: For the years 2009-2012
-- {**RNHANES**}: For the years 1999-2014
-
-
-{**nhanesA**}: NHANES Data Retrieval
+{**plotly**}: Create Interactive Web Graphics via 'plotly.js'
 :::
 
-See for my other reflection of packages for downloading NHANES data in @imp-chap01-nhanesA-pkg and @sec-chap03-rnhanes.
+<Other text not included in the package reference>
 
 ***
 ::::
 :::::
-
-## nortest
-
-:::::{.my-package}
-:::{.my-package-header}
-nortest: Tests for Normality 
-:::
-::::{.my-package-container}
-
-***
-
-::: {#pak-nortest}
-
-***
-
-{**nortest**}: [Tests for Normality](https://cran.r-project.org/package=nortest) [@nortest]
-
-
-(*There is no hexagon logo for {**nortest**} available*)
-
-Five omnibus tests for testing the composite hypothesis of normality.
-
-{**nortest**}: Tests for Normality
-:::
-
-***
-::::
-:::::
+  
 
 ## ppcor
 

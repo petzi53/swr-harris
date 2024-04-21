@@ -9,7 +9,7 @@
 
 
 ##########################################################
-# glance_data: Glance at a specified number of random data
+# my_glance_data: Glance at a specified number of random data
 # Purpose:
   # To prevent possible bias with head()/tail() or
   # other function that print some data excerpts
@@ -21,7 +21,7 @@
 # N    = number of records chosen randomly
 # seed = set.seed for reproducibility
 
-glance_data <- function(df, N = 8, seed = 42){
+my_glance_data <- function(df, N = 8, seed = 42){
     df_temp <- first_and_last_row(df)
 
     set.seed(seed)

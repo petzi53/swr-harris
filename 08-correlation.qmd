@@ -11,12 +11,12 @@ ggplot2::theme_set(ggplot2::theme_bw())
 ## Achievements to unlock
 
 ::: {#obj-chap08}
-::: {.my-objectives}
-::: {.my-objectives-header}
+::: my-objectives
+::: my-objectives-header
 Objectives for chapter 08
 :::
 
-::: {.my-objectives-container}
+::: my-objectives-container
 **SwR Achievements**
 
 -   **Achievement 1**: Exploring the data using graphics and descriptive
@@ -39,6 +39,7 @@ Objectives for chapter 08
     (@sec-chap08-achievement8).
 :::
 :::
+
 Achievements for chapter 08
 :::
 
@@ -67,14 +68,15 @@ Achievements for chapter 08
 
 ### Data, codebook, and R packages {#sec-chap08-data-codebook-packages}
 
-::: {.my-resource}
-::: {.my-resource-header}
-:::::: {#lem-chap08-resources}
-: Data, codebook, and R packages for learning about descriptive statistics
-::::::
+::: my-resource
+::: my-resource-header
+::: {#lem-chap08-resources}
+: Data, codebook, and R packages for learning about descriptive
+statistics
+:::
 :::
 
-::: {.my-resource-container}
+::: my-resource-container
 **Data**
 
 Two options:
@@ -161,7 +163,6 @@ save_data_file("chap08", water_educ, "water_educ.rds")
 ```
 
 (*For this R code chunk is no output available*)
-
 :::
 :::
 
@@ -212,14 +213,9 @@ descriptive information.
     and secondary school
 :::
 :::
-
-
-:::
-
-
 :::
 :::
-
+:::
 
 ## Exploring data {#sec-chap08-achievement1}
 
@@ -565,26 +561,25 @@ ways, one of which is as the mean of the summed products of
 :::
 :::
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap08-correlation}
+::: my-example
+::: my-example-header
+::: {#exm-chap08-correlation}
 : Compute and show correlation
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### compute cor()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-cor-water-pov-female}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-cor-water-pov-female}
 : Compute correlations for water access, poverty and female education
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: cor-water-pov-female
 
@@ -604,21 +599,20 @@ water_educ |>
          )
      )
 ```
-
-::::
-:::::
-
+:::
+:::
 
 ###### graph1 cor
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-graph1-cor}
-: Display correlation water access and female education with `lm` and `loess` smoother with a special constructed legend
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-graph1-cor}
+: Display correlation water access and female education with `lm` and
+`loess` smoother with a special constructed legend
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-graph1-cor
 #| fig-cap: "Display correlation water access and female education with `lm` and `loess` smoother with a special constructed legend"
@@ -662,48 +656,61 @@ water_educ |>
       ) +      
   ggplot2::scale_size_manual(values = 2, name = "")
 ```
-***
+
+------------------------------------------------------------------------
 
 **`ggplot2::geom_smooth()` layer**
 
-- The formula argument would not be necessary, because the program assumes y ~ x for fewer than 1000 observations.
-- If I haven't specified the method with `lm` than the default value would have been chosen, e.g. (depending on fewer than 1000) which is a local polynomial regression fitting.
-- To show the difference I had used both `method = lm` and in another layer `method = loess`. The `r glossary("Loess", "Loess curve")` results in the slightly curved line (the red curve). Instead of fitting the whole data at once (= "lm"), method "loess" creates a local regression because the fitting at say point x is weighted toward the data nearest to x and not to the general mean.
+-   The formula argument would not be necessary, because the program
+    assumes y \~ x for fewer than 1000 observations.
+-   If I haven't specified the method with `lm` than the default value
+    would have been chosen, e.g. (depending on fewer than 1000) which is
+    a local polynomial regression fitting.
+-   To show the difference I had used both `method = lm` and in another
+    layer `method = loess`. The `r glossary("Loess", "Loess curve")`
+    results in the slightly curved line (the red curve). Instead of
+    fitting the whole data at once (= "lm"), method "loess" creates a
+    local regression because the fitting at say point x is weighted
+    toward the data nearest to x and not to the general mean.
 
-
-:::::{.my-watch-out}
-:::{.my-watch-out-header}
-WATCH OUT! Legends are generated from attributes inside the `ggplot2::aes()` statement 
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Legends are generated from attributes inside the
+`ggplot2::aes()` statement
 :::
-::::{.my-watch-out-container}
-It is important to know: 
 
-- If all aesthetics are determined outside the `ggplot2::aes()` functions then there is not legend generated. 
-- The name of the aesthetics are arbitrary and result as labels inside the legend. 
+::: my-watch-out-container
+It is important to know:
 
-In this case I have used twice the "color" aesthetic, but as value I gave as argument was the type of line and not an actual color. The actual color for the lines you will fin in the `ggplot2::scale_color_manual()` layer at the very bottom of the code. 
+-   If all aesthetics are determined outside the `ggplot2::aes()`
+    functions then there is not legend generated.
+-   The name of the aesthetics are arbitrary and result as labels inside
+    the legend.
 
-See also the next two graphs (@fig-graph2-cor and @fig-graph3-cor) about water access and female education where I have explored different types of points and lines inside the aesthetic function.
-::::
-:::::
+In this case I have used twice the "color" aesthetic, but as value I
+gave as argument was the type of line and not an actual color. The
+actual color for the lines you will fin in the
+`ggplot2::scale_color_manual()` layer at the very bottom of the code.
 
-
-
-
-
-::::
-:::::
+See also the next two graphs (@fig-graph2-cor and @fig-graph3-cor) about
+water access and female education where I have explored different types
+of points and lines inside the aesthetic function.
+:::
+:::
+:::
+:::
 
 ###### graph2 cor
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-graph3-cor}
-: Display correlation water access and female education with two legends explaining what the different symbols represent
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-graph3-cor}
+: Display correlation water access and female education with two legends
+explaining what the different symbols represent
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-graph2-cor
 #| fig-cap: "Display correlation water access and female education with two legends explaining what the different symbols represent"
@@ -737,34 +744,39 @@ water_educ |>
   ggplot2::scale_color_manual(values = "gray60", name = "Legend 2") +
   ggplot2::scale_size_manual(values = 2, name = "Legend 1")
 ```
-***
 
-:::::{.my-watch-out}
-:::{.my-watch-out-header}
-WATCH OUT! Legends are generated from attributes inside the `ggplot2::aes()` statement 
+------------------------------------------------------------------------
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Legends are generated from attributes inside the
+`ggplot2::aes()` statement
 :::
-::::{.my-watch-out-container}
-The two `ggplot2::aes()` functions used for this graph are `ggplot2::aes(size = "Country")` and `ggplot2::aes(linetype = "Linear fit line")`. To get two different legends (point and lines), two different attributes were used within the `aes()`. 
-::::
-:::::
 
-
-
-
-
-::::
-:::::
+::: my-watch-out-container
+The two `ggplot2::aes()` functions used for this graph are
+`ggplot2::aes(size = "Country")` and
+`ggplot2::aes(linetype = "Linear fit line")`. To get two different
+legends (point and lines), two different attributes were used within the
+`aes()`.
+:::
+:::
+:::
+:::
 
 ###### graph3 cor
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-graph3-cor}
-: Display correlation water access and female education with a legend explaining what the different symbols represent
-::::::
-:::
-::::{.my-r-code-container}
+::: my-r-code
+::: my-r-code-header
+<div>
 
+: Display correlation water access and female education with a legend
+explaining what the different symbols represent
+
+</div>
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-graph3-cor
 #| fig-cap: "Display correlation water access and female education with a legend explaining what the different symbols represent"
@@ -800,38 +812,54 @@ water_educ |>
       values = c("#7463AC", "gray60") 
       )
 ```
-***
 
-:::::{.my-watch-out}
-:::{.my-watch-out-header}
+------------------------------------------------------------------------
+
+::: my-watch-out
+::: my-watch-out-header
 WATCH OUT! The name of the attribute inside the `aes()` is arbitrary
 :::
-::::{.my-watch-out-container}
-@fig-graph3-cor has the color attribute for both the points and the line within `aes()` and so both colors are included in the only legend.
 
-The name of the attribute inside the `aes()` is arbitrary and will result in the **label of the legend**. The type of this attribute has to be addressed and specified with the correct manual scale (`ggplot2::scale_xxx_manual()`) and will display the appropriate symbol for the attribute.
+::: my-watch-out-container
+@fig-graph3-cor has the color attribute for both the points and the line
+within `aes()` and so both colors are included in the only legend.
 
-**ATTENTION**: With new versions of {**ggplot2**} the symbols are not merged as in the book’s version. This would have been not correct, because the line does not go through all points. Points and lines are different aesthetics but they are merged under on legend with one common attribute, their color.
-::::
-:::::
+The name of the attribute inside the `aes()` is arbitrary and will
+result in the **label of the legend**. The type of this attribute has to
+be addressed and specified with the correct manual scale
+(`ggplot2::scale_xxx_manual()`) and will display the appropriate symbol
+for the attribute.
 
-::: {.callout-tip}
-The Pearson’s product-moment correlation coefficient demonstrated that the percentage of females in school is positively correlated with the percentage of citizens with basic access to drinking water (r = 0.81). Essentially, as access to water goes up, the percentage of females in school also increases in countries.
+**ATTENTION**: With new versions of {**ggplot2**} the symbols are not
+merged as in the book’s version. This would have been not correct,
+because the line does not go through all points. Points and lines are
+different aesthetics but they are merged under on legend with one common
+attribute, their color.
+:::
 :::
 
-::::
-:::::
+::: callout-tip
+The Pearson’s product-moment correlation coefficient demonstrated that
+the percentage of females in school is positively correlated with the
+percentage of citizens with basic access to drinking water (r = 0.81).
+Essentially, as access to water goes up, the percentage of females in
+school also increases in countries.
+:::
+:::
+:::
 
 ###### graph4 cor
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-graph4-cor}
-: Display relationship of percentage of citizens living on less than $1 per day and the percent of school-aged females in school in countries worldwide
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-graph4-cor}
+: Display relationship of percentage of citizens living on less than \$1
+per day and the percent of school-aged females in school in countries
+worldwide
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-graph4-cor
 #| fig-cap: "Display correlation of percentage of citizens living on less than $1 per day and the percent of school-aged females in school in countries worldwide"
@@ -867,136 +895,141 @@ water_educ |>
       values = c("#7463AC", "gray60") 
       )
 ```
-***
 
-
-
-::::
-:::::
-
-::: {.callout-tip}
-The Pearson’s product-moment correlation coefficient demonstrated that the percentage of females in school is negatively correlated with the percentage of citizens living on less than $1 per day (r = -0.71). Essentially, as the percentage of citizens living on less than $1 per day goes up, the percentage of females in school decreases in countries.
+------------------------------------------------------------------------
+:::
 :::
 
+::: callout-tip
+The Pearson’s product-moment correlation coefficient demonstrated that
+the percentage of females in school is negatively correlated with the
+percentage of citizens living on less than \$1 per day (r = -0.71).
+Essentially, as the percentage of citizens living on less than \$1 per
+day goes up, the percentage of females in school decreases in countries.
 :::
-
-::::
-:::::
+:::
+:::
+:::
 
 ## Achievement 3: Inferential statistical test for Pearson’s r {#sec-chap08-achievement3}
 
 ### Introduction
 
-The null hypothesis is tested using a `r glossary("t-statistic")` comparing the `r glossary("correlation", "correlation coefficient of r")` to a hypothesized value of zero.
+The null hypothesis is tested using a `r glossary("t-statistic")`
+comparing the
+`r glossary("correlation", "correlation coefficient of r")` to a
+hypothesized value of zero.
 
-
-
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-cor-test}
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-cor-test}
 : One.sample t-test
-::::::
 :::
-::::{.my-theorem-container}
+:::
 
+::: my-theorem-container
 $$
 t = \frac{m_{x}-0}{se_{m_{x}}}
 $$ {#eq-chap08-one-sample-t-test}
 
-***
+------------------------------------------------------------------------
 
-- **$m_{x}$**: mean of $x$
-- **$se_{m_{x}}$**: standard error of the mean of $x$
-
-::::
-:::::
-
-But we are not actually working with means, but instead comparing the correlation of $r_{xy}$ to zero.
-
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-cor-test}
-: Rewriting @eq-chap08-one-sample-t-test to get the t-statistic for the significance test of *r*
-::::::
+-   $m_{x}$: mean of $x$
+-   $se_{m_{x}}$: standard error of the mean of $x$
 :::
-::::{.my-theorem-container}
+:::
 
+But we are not actually working with means, but instead comparing the
+correlation of $r_{xy}$ to zero.
+
+::: my-theorem
+::: my-theorem-header
+<div>
+
+: Rewriting @eq-chap08-one-sample-t-test to get the t-statistic for the
+significance test of *r*
+
+</div>
+:::
+
+::: my-theorem-container
 $$
 t = \frac{r_{xy}}{se_{r_{xy}}} 
 $$ {#eq-chap08-t-test-for-r}
-::::
-:::::
-
-There are multiple ways to compute the standard error for a correlation coefficient:
-
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-se-for-r}
-: Standard error for a correlation coefficient
-::::::
 :::
-::::{.my-theorem-container}
+:::
 
+There are multiple ways to compute the standard error for a correlation
+coefficient:
+
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-se-for-r}
+: Standard error for a correlation coefficient
+:::
+:::
+
+::: my-theorem-container
 $$
 se_{r_{xy}} = \sqrt\frac{1-r_{xy}^2}{n-2}
 $$ {#eq-chap08-se-for-r}
-::::
-:::::
-
-Now we can substitute $se_{r_{xy}}$ into the t-statistic of @eq-chap08-t-test-for-r and simplify the formula.
-
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-cor-test}
-: t-statistic for the significance test of r
-::::::
 :::
-::::{.my-theorem-container}
+:::
 
+Now we can substitute $se_{r_{xy}}$ into the t-statistic of
+@eq-chap08-t-test-for-r and simplify the formula.
+
+::: my-theorem
+::: my-theorem-header
+<div>
+
+: t-statistic for the significance test of r
+
+</div>
+:::
+
+::: my-theorem-container
 $$
 \begin{align*}
 t = \frac{r_{xy}}{\sqrt\frac{1-r_{xy}^2}{n-2}} =\\
 t = \frac{r_{xy}\sqrt{n-2}}{\sqrt{1-r_{xy}^2}}
 \end{align*}
 $$ {#eq-chap08-t-test-for-significance-test-r}
-::::
-:::::
-
+:::
+:::
 
 ### NHST Step 1
 
 Write the null and alternate hypotheses:
 
-::: {.callout-note}
-- **H0**: There is no relationship between the two variables (r = 0).
-- **HA**: There is a relationship between the two variables (r ≠ 0).
+::: callout-note
+-   **H0**: There is no relationship between the two variables (r = 0).
+-   **HA**: There is a relationship between the two variables (r ≠ 0).
 :::
 
 ### NHST Step 2
 
-Compute the test statistic. 
+Compute the test statistic.
 
-
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-ID-text}
+::: my-example
+::: my-example-header
+::: {#exm-ID-text}
 : Compute t-statistic for the significance test of r
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### manual
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-cor-test-manual}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-cor-test-manual}
 : Compute t-statistic for the significance test of *r* manually
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: cor-test-manual
 
@@ -1014,22 +1047,20 @@ test_data <- water_educ |>
 (test_data$cor_females_water * (sqrt(test_data$sample_n - 2))) /
     (sqrt(1 - (test_data$cor_females_water^2)))
 ```
-
-::::
-:::::
-
+:::
+:::
 
 ###### cor.test()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-cor-test-pearson}
-: Compute t-statistic for the significance test of *r* with `stats::cor.test()`
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-cor-test-pearson}
+: Compute t-statistic for the significance test of *r* with
+`stats::cor.test()`
 :::
-::::{.my-r-code-container}
+:::
 
-
+::: my-r-code-container
 ```{r}
 #| label: tbl-cor-test-pearson
 #| tbl-cap: "T-statistic for the significance test of *r* with `stats::cor.test()`"
@@ -1043,60 +1074,78 @@ cor.test(
     data = water_educ
     )
 ```
-***
-I have used the formula interface because it has a different syntax as I thought. My first trials were with `female.in.school ~ perc.basic2015water` but this didn't work. The (last) example in the help page demonstrated to me the other syntax.
 
-Note that it is not necessary to remove NA’s before applying `cor.test()` in both cases.
+------------------------------------------------------------------------
 
-::::
-:::::
+I have used the formula interface because it has a different syntax as I
+thought. My first trials were with
+`female.in.school ~ perc.basic2015water` but this didn't work. The
+(last) example in the help page demonstrated to me the other syntax.
 
+Note that it is not necessary to remove NA’s before applying
+`cor.test()` in both cases.
+:::
+:::
+:::
+:::
 :::
 
-::::
-:::::
-
-***
+------------------------------------------------------------------------
 
 ### NHST Step 3
 
-Review and interpret the test statistics: 
-Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+Review and interpret the test statistics: Calculate the probability that
+your test statistic is at least as big as it is if there is no
+relationship (i.e., the null is true).
 
-The very tiny p-value is statistically significant. 
+The very tiny p-value is statistically significant.
 
 ### NHST Step 4
 
 Conclude and write report.
 
-::: {.callout-tip}
-The percentage of people who have basic access to water is statistically significantly, positively, and very strongly correlated with the percentage of primary- and secondary-age females in school in a country [r = .81; t(94) = 13.33; p < .05]. As the percentage of people living with basic access to water goes up, the percentage of females in school also goes up. While the correlation is .81 in the sample, it is likely between .73 and .87 in the population (95% CI: .73–.87).
+::: callout-tip
+The percentage of people who have basic access to water is statistically
+significantly, positively, and very strongly correlated with the
+percentage of primary- and secondary-age females in school in a country
+\[r = .81; t(94) = 13.33; p \< .05\]. As the percentage of people living
+with basic access to water goes up, the percentage of females in school
+also goes up. While the correlation is .81 in the sample, it is likely
+between .73 and .87 in the population (95% CI: .73–.87).
 :::
 
 ## Achievement 4: Coefficient of determiniation as effect size {#sec-chap08-achievement4}
 
-Pearson’r is already a kind of effect size because it measures the strength of a relationship. But with the `r glossary("determination", "coefficient of determination")` $R^2$ (also $r^2$) there is another effect size measure with a more direct interpretation. The coefficient of determination is the percentage of the variance in one variable that is shared, or explained, by the other variable.
+Pearson’r is already a kind of effect size because it measures the
+strength of a relationship. But with the
+`r glossary("determination", "coefficient of determination")` $R^2$
+(also $r^2$) there is another effect size measure with a more direct
+interpretation. The coefficient of determination is the percentage of
+the variance in one variable that is shared, or explained, by the other
+variable.
 
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-formula-r-squared}
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-formula-r-squared}
 : Computing the coefficient of determination $R^2$
-::::::
 :::
-::::{.my-theorem-container}
+:::
+
+::: my-theorem-container
 $$
 r_{xy}^2 = (\frac{cov_{xy}}{s_{x}s_{y}})^2
 $$ {#eq-chap08-r-squared}
-::::
-:::::
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-compute-r-squared}
-: Compute r-squared ($R^2$)
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-compute-r-squared}
+: Compute r-squared ($R^2$)
+:::
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: compute-r-squared
 
@@ -1107,98 +1156,127 @@ $$ {#eq-chap08-r-squared}
 )^2
 
 ```
-***
 
-The `stats::cor.test()` function creates an object of type `htest` which is a list of 9 different object. One of these object is the numeric vector `estimate` that holds the correlation value. There are two option to calculate r-squared:
+------------------------------------------------------------------------
 
-1. Assign the result of `stats::cor.test()` function to a named object. Append `$estimate^2` to this object to get r-squared. I have this done in one step, and appended `$estimate^2` at the end of the function without providing an interim object.
-2. You could calculate the correlation with `stats:cor()` or `stats::cor.test()` and then take the result and square it to get r-squared. But this method is more error-prone.
+The `stats::cor.test()` function creates an object of type `htest` which
+is a list of 9 different object. One of these object is the numeric
+vector `estimate` that holds the correlation value. There are two option
+to calculate r-squared:
 
-
-::::
-:::::
+1.  Assign the result of `stats::cor.test()` function to a named object.
+    Append `$estimate^2` to this object to get r-squared. I have this
+    done in one step, and appended `$estimate^2` at the end of the
+    function without providing an interim object.
+2.  You could calculate the correlation with `stats:cor()` or
+    `stats::cor.test()` and then take the result and square it to get
+    r-squared. But this method is more error-prone.
+:::
+:::
 
 ## Achievement 5: Checking assumptions for Pearson’s r {#sec-chap08-achievement5}
 
 ### Introduction {#sec-chap08-check-independence}
 
-
 ::: {#bul-assumptions-pearson-r}
-:::::{.my-bullet-list}
-:::{.my-bullet-list-header}
+::: my-bullet-list
+::: my-bullet-list-header
 Bullet List
 :::
-::::{.my-bullet-list-container}
 
-- Observations are independent (@sec-chap08-check-independence). 
-- Both variables are continuous (@sec-chap08-check-continuous). 
-- Both variables are normally distributed (@sec-chap08-check-normality).
-- The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-check-linearity). 
-- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity).
-
-::::
-:::::
-Assumptions for Pearson’s r
-
+::: my-bullet-list-container
+-   Observations are independent (@sec-chap08-check-independence).
+-   Both variables are continuous (@sec-chap08-check-continuous).
+-   Both variables are normally distributed
+    (@sec-chap08-check-normality).
+-   The relationship between the two variables is linear
+    (`r glossary("linearity")`) (@sec-chap08-check-linearity).
+-   The variance is constant with the points distributed equally around
+    the line (`r glossary("homoscedasticity")`)
+    {@sec-chap08-homoscedasticity).
+:::
 :::
 
-***
+Assumptions for Pearson’s r
+:::
 
-So far the book had mentioned siblings and other family members or testing the same individuals several time as examples for not independent observations. Now we got two more examples:
+------------------------------------------------------------------------
 
-- Countries that are geographically close to each other, or that are in the same geographic region, may be more likely to share characteristics and therefore fail this assumption.
-- Countries in the analysis were those reporting data on the variables of interest, rather than a random sample of countries. Countries reporting data may be different from countries missing data. For example, they may have better computing infrastructure and more human and financial resources to afford to collect, store, and report data.
+So far the book had mentioned siblings and other family members or
+testing the same individuals several time as examples for not
+independent observations. Now we got two more examples:
+
+-   Countries that are geographically close to each other, or that are
+    in the same geographic region, may be more likely to share
+    characteristics and therefore fail this assumption.
+-   Countries in the analysis were those reporting data on the variables
+    of interest, rather than a random sample of countries. Countries
+    reporting data may be different from countries missing data. For
+    example, they may have better computing infrastructure and more
+    human and financial resources to afford to collect, store, and
+    report data.
 
 ### Continuous variables {#sec-chap08-check-continuous}
 
-Both variables need to be of type `numeric`. In our case we have the number of countries as integer variable: Counting something is integer, measuring something is continuous. But in our case it can be treated statistically like a continuous variable.
+Both variables need to be of type `numeric`. In our case we have the
+number of countries as integer variable: Counting something is integer,
+measuring something is continuous. But in our case it can be treated
+statistically like a continuous variable.
 
-The same is true with percent values, but there are some worries how to model percentages statistically. 
+The same is true with percent values, but there are some worries how to
+model percentages statistically.
 
-> A couple of … papers suggested that percentage variables are problematic for statistical models that have the purpose of predicting values of the outcome because predictions can fall outside the range of 0 to 100.
+> A couple of … papers suggested that percentage variables are
+> problematic for statistical models that have the purpose of predicting
+> values of the outcome because predictions can fall outside the range
+> of 0 to 100.
 
-
-:::::{.my-resource}
-:::{.my-resource-header}
-:::::: {#lem-chap08-percentage-data}
+::: my-resource
+::: my-resource-header
+::: {#lem-chap08-percentage-data}
 Dealing with percentage data
-::::::
 :::
-::::{.my-resource-container}
-- Logistic regression [@zhao2001] 
-- Beta regression [@schmid2013; @cribari-neto2010; @ferrari2004]
-- Transforming the percentage 
-- Recoding the variable to categorical and using a nonparametric method like `r glossary("chi-squared")`.
-::::
-:::::
+:::
 
+::: my-resource-container
+-   Logistic regression [@zhao2001]
+-   Beta regression [@schmid2013; @cribari-neto2010; @ferrari2004]
+-   Transforming the percentage
+-   Recoding the variable to categorical and using a nonparametric
+    method like `r glossary("chi-squared")`.
+:::
+:::
 
 ### Normality {#sec-chap08-check-normality}
 
-Comparing `r glossary("histograms")` and `r glossary("Q-Q-plot", "Q-Q plots")` is one of the most applied techniques to test the normality assumption. I am also using histograms with an overlaid normal distribution and have an extra function developed for this recurring task.
+Comparing `r glossary("histograms")` and
+`r glossary("Q-Q-plot", "Q-Q plots")` is one of the most applied
+techniques to test the normality assumption. I am also using histograms
+with an overlaid normal distribution and have an extra function
+developed for this recurring task.
 
-I will provide all three different graphs here one again, although I have already understood and memorized these practices.
+I will provide all three different graphs here one again, although I
+have already understood and memorized these practices.
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap08-normality-assumption}
+::: my-example
+::: my-example-header
+::: {#exm-chap08-normality-assumption}
 : Checking the normality assumption
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### hist female
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-normality-female-hist}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-normality-female-hist}
 : Check normality of `female.in.school` variable
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-normality-female-hist
 #| fig-cap: "Distribution of percentage of school-aged females in school"
@@ -1221,21 +1299,20 @@ water_educ  |>
   )
 
 ```
-
-::::
-:::::
-
+:::
+:::
 
 ###### dnorm female
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-normality-female-hist-dnorm}
-: Percentage of school-aged females in school with an overlaid normal distribution
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-normality-female-hist-dnorm}
+: Percentage of school-aged females in school with an overlaid normal
+distribution
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-normality-female-hist-dnorm
 #| fig-cap: "Distribution of percentage of school-aged females in school"
@@ -1249,19 +1326,20 @@ my_hist_dnorm(
   ggplot2::scale_x_continuous(labels = scales::percent)
 
 ```
-
-::::
-:::::
+:::
+:::
 
 ###### abline()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-normality-female-qqplot-abline}
-: Comparison of the distribution of school-aged females in school with the theoretical normal distribution
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-normality-female-qqplot-abline}
+: Comparison of the distribution of school-aged females in school with
+the theoretical normal distribution
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-normality-female-qqplot-abline
 #| fig-cap: "Q-Q-Plot: Distribution of school-aged females in school compared with the theoretical normal distribution"
@@ -1293,37 +1371,46 @@ water_educ  |>
 
 
 ```
-***
 
-This graph is the replication of Figure 8.15. It uses `ggplot2::geom_abline()` by calculating the mean as intercept and the slop as standard deviation. This is more complex as the `ggplot2::geom_qq_line()` resp. `ggplot2::stat_qq_line()` but has the advantage that the legend displays the line symbol with the same slope.
+------------------------------------------------------------------------
 
-A more simple alternative is `ggplot2::geom_qq_line()` resp. `ggplot2::stat_qq_line()` because these commands compute automatically the slope and intercept of the line connecting the points at specified quartiles of the theoretical and sample distributions. I have this more simple approach already used when I checked the `r glossary("t-test")` assumptions in @sec-chap06-achievement6. 
+This graph is the replication of Figure 8.15. It uses
+`ggplot2::geom_abline()` by calculating the mean as intercept and the
+slop as standard deviation. This is more complex as the
+`ggplot2::geom_qq_line()` resp. `ggplot2::stat_qq_line()` but has the
+advantage that the legend displays the line symbol with the same slope.
 
-But here we are using percentages, e.g. we need to limit the y-axis to values between 0 and 100%. And this restrictions prevents to show the line of the theoretical normal distribution. 
+A more simple alternative is `ggplot2::geom_qq_line()` resp.
+`ggplot2::stat_qq_line()` because these commands compute automatically
+the slope and intercept of the line connecting the points at specified
+quartiles of the theoretical and sample distributions. I have this more
+simple approach already used when I checked the `r glossary("t-test")`
+assumptions in @sec-chap06-achievement6.
 
-
-
-
-
-
-::::
-:::::
-
-:::::{.my-watch-out}
-:::{.my-watch-out-header}
-WATCH OUT! Do not forget, that the required aesthetic for the q-q-plot is "sample" and not "x"!
+But here we are using percentages, e.g. we need to limit the y-axis to
+values between 0 and 100%. And this restrictions prevents to show the
+line of the theoretical normal distribution.
 :::
-:::::
+:::
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Do not forget, that the required aesthetic for the q-q-plot
+is "sample" and not "x"!
+:::
+:::
 
 ###### stat_qq_line()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-normality-female-qqplot-stat_qq-line}
-: Comparison of the distribution of school-aged females in school with the theoretical normal distribution
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-normality-female-qqplot-stat_qq-line}
+: Comparison of the distribution of school-aged females in school with
+the theoretical normal distribution
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-normality-female-qqplot-stat_qq-line
 #| fig-cap: "Q-Q-Plot: Distribution of school-aged females in school compared with the theoretical normal distribution"
@@ -1378,64 +1465,85 @@ gridExtra::grid.arrange(
     p2, p1, ncol = 2
 )
 ```
-***
 
-::: {.callout-warning}
-- Each group consists of only one observation. Do you need to adjust the aesthetic?
-- Removed 1 row containing missing values or values outside the scale range (`geom_path()`).
+------------------------------------------------------------------------
+
+::: callout-warning
+-   Each group consists of only one observation. Do you need to adjust
+    the aesthetic?
+-   Removed 1 row containing missing values or values outside the scale
+    range (`geom_path()`).
 :::
 
-- The left panel didn't use the `ggplot2::ylim(0, 100)` restriction. It display the line for the theoretical normal distribution far outside the upper limit.
-- The right panel used the ylim restriction but failed to show the line for the theoretical normal distribution and displays two warnings.
-
-::::
-:::::
-
+-   The left panel didn't use the `ggplot2::ylim(0, 100)` restriction.
+    It display the line for the theoretical normal distribution far
+    outside the upper limit.
+-   The right panel used the ylim restriction but failed to show the
+    line for the theoretical normal distribution and displays two
+    warnings.
+:::
+:::
+:::
+:::
 :::
 
-::::
-:::::
-
-There is nothing new when checking the normality assumption for basic water access. So I will skip these two graphs.
+There is nothing new when checking the normality assumption for basic
+water access. So I will skip these two graphs.
 
 ### Linearity {#sec-chap08-check-linearity}
 
-The linearity assumption requires that the relationship between the two variables falls along a line. I have already graphed the appropriate data in a previous section. For instance this assumption is met in @fig-graph2-cor. If it is difficult to tell, a `r glossary("Loess", "Loess curve")` can be added to confirm linearity as I have done it in @fig-graph1-cor.
+The linearity assumption requires that the relationship between the two
+variables falls along a line. I have already graphed the appropriate
+data in a previous section. For instance this assumption is met in
+@fig-graph2-cor. If it is difficult to tell, a
+`r glossary("Loess", "Loess curve")` can be added to confirm linearity
+as I have done it in @fig-graph1-cor.
 
-It is instructive to see relationships that are non-linear. The next graph shows some relationships but they fall along curves instead of along straight lines.
+It is instructive to see relationships that are non-linear. The next
+graph shows some relationships but they fall along curves instead of
+along straight lines.
 
-![Examples for nonlinear relationships (Screenshot of book’s Figure 8.19)](img/chap08/Nonlinear-relationships-min.png){#fig-nonlinear-relations
+![Examples for nonlinear relationships (Screenshot of book’s Figure
+8.19)](img/chap08/Nonlinear-relationships-min.png){#fig-nonlinear-relations
 fig-alt="The two variables seen in these two graphs are labeled x and y and are on the x and y axes respectively. Both graphs have a linear fit line as well as a less curve. The graph on the left titled 1, has x axis values that range from -10 to 5, in intervals of 5. The values on the y axis range from -100, to 100, in intervals of 50. The linear fit line in this graph is a horizontal line at the y axis value of about 30. The loess curve joins the data points in this graph in a U-shape with the midpoint at about (0, 0). The graph on the right titled 2, has x axis values that range from -10 to 5, in intervals of 5. The values on the y axis range from -100, to 100, in intervals of 50. The linear fit line in this graph is an upward-sloping line that starts at about (-65, -10) and ends at about (65, 10). The loess curve joins the data points in this graph in a curve that starts at about (-100, -10), rises sharply until about (-2.5, 0), and is parallel to the x axis until about (0.5, 0) and rises sharply again until about (10, 100). The loess curve intersects the linear fit line at three points, including at (0,0)."
 fig-align="center"}
 
-Another example of failing the linearity assumption can be seen after data transforming in @fig-check-linearity-transformed. 
+Another example of failing the linearity assumption can be seen after
+data transforming in @fig-check-linearity-transformed.
 
 ### Homoscedasticity {#sec-chap08-homoscedasticity}
 
-Another assumption is the equal distribution of points around the line, which is often called the assumption of `r glossary("homoscedasticity")`.
+Another assumption is the equal distribution of points around the line,
+which is often called the assumption of
+`r glossary("homoscedasticity")`.
 
-Besides a visual graphical inspection the `r glossary("Breusch-Pagan", "Breusch-Pagan test")` could be used to test the null hypothesis that the variance is constant around the line. The Breusch-Pagan test relies on the `r glossary("chi-squared")` distribution, and the `lmtest::bptest()` function can be found in the {**lmtest**} package (see @pak-lmtest).
+Besides a visual graphical inspection the
+`r glossary("Breusch-Pagan", "Breusch-Pagan test")` could be used to
+test the null hypothesis that the variance is constant around the line.
+The Breusch-Pagan test relies on the `r glossary("chi-squared")`
+distribution, and the `lmtest::bptest()` function can be found in the
+{**lmtest**} package (see @pak-lmtest).
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap08-test-homoscedasticity}
+::: my-example
+::: my-example-header
+::: {#exm-chap08-test-homoscedasticity}
 : Check if the homoscedasticity assumption is met
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### graph
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-test-homoscedasticity-graph}
-: Examine graphically if the equal distribution of points around the line (homoscedasticity assumption) is met
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-test-homoscedasticity-graph}
+: Examine graphically if the equal distribution of points around the
+line (homoscedasticity assumption) is met
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-homoscedasticity-graph
 #| fig-cap: "Check if the homoscedasticity assumption is met"
@@ -1497,34 +1605,40 @@ plt <- water_educ |>
 
 base::suppressWarnings(base::print(plt))
 ```
-***
 
-This is the replication of Figure 8.20 of the book, that had no accompanying R code. I have applied trial and error for the `geom_segment()` layer. Later I noticed that I could have used the figures of the last paragraph of the fig-alt description.
+------------------------------------------------------------------------
 
-The funnel shape of the data indicated that the points were not evenly spread around the line from right to left. On the left of the graph they were more spread out than on the right, where they were very close to the line. This indicates the data do not meet the homoscedasticity assumption.
+This is the replication of Figure 8.20 of the book, that had no
+accompanying R code. I have applied trial and error for the
+`geom_segment()` layer. Later I noticed that I could have used the
+figures of the last paragraph of the fig-alt description.
 
+The funnel shape of the data indicated that the points were not evenly
+spread around the line from right to left. On the left of the graph they
+were more spread out than on the right, where they were very close to
+the line. This indicates the data do not meet the homoscedasticity
+assumption.
+:::
+:::
 
+::: callout-warning
+I suppressed two warning from {**ggplot2**}, one for each
+`ggplot2::geom_segment()` layer:
 
-
-::::
-:::::
-
-::: {.callout-warning}
-I suppressed two warning from {**ggplot2**}, one for each `ggplot2::geom_segment()` layer:
-
-> All aesthetics have length 1, but the data has 96 rows. Did you mean to use `annotate()`?
+> All aesthetics have length 1, but the data has 96 rows. Did you mean
+> to use `annotate()`?
 :::
 
 ###### Breusch-Pagan
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-test-homoscedasticity-breusch-pagan}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-test-homoscedasticity-breusch-pagan}
 : Check homoscedasticity with the Breusch-Pagan test
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: test-homoscedasticity-breusch-pagan
 
@@ -1532,169 +1646,208 @@ lmtest::bptest(
     formula = water_educ$female.in.school ~ water_educ$perc.basic2015water)
 ```
 
-***
+------------------------------------------------------------------------
 
-The Breusch-Pagan test statistic has a low p-value (BP = 12.37; p = 0.0004), indicating that the null hypothesis that the variance is constant would be rejected, e.g., the homoscedasticity assumption is not met.
-::::
-:::::
-
+The Breusch-Pagan test statistic has a low p-value (BP = 12.37; p =
+0.0004), indicating that the null hypothesis that the variance is
+constant would be rejected, e.g., the homoscedasticity assumption is not
+met.
 :::
-
-::::
-:::::
+:::
+:::
+:::
+:::
 
 ### Conclusion
 
-
 ::: {#bul-chap08-assumptions-pearson-r-summary}
-:::::{.my-bullet-list}
-:::{.my-bullet-list-header}
+::: my-bullet-list
+::: my-bullet-list-header
 Bullet List
 :::
-::::{.my-bullet-list-container}
 
+::: my-bullet-list-container
+-   Observations are independent (@sec-chap08-check-independence):
+    **No**.
+-   Both variables are continuous (@sec-chap08-check-continuous):
+    **Yes**.
+-   Both variables are normally distributed
+    (@sec-chap08-check-normality): **No**.
+-   The relationship between the two variables is linear
+    (`r glossary("linearity")`) (@sec-chap08-check-linearity): **Yes**.
+-   The variance is constant with the points distributed equally around
+    the line (`r glossary("homoscedasticity")`)
+    {@sec-chap08-homoscedasticity): **No**.
+:::
+:::
 
-- Observations are independent (@sec-chap08-check-independence): **No**. 
-- Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
-- Both variables are normally distributed (@sec-chap08-check-normality): **No**.
-- The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-check-linearity): **Yes**. 
-- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity): **No**.
-
-::::
-:::::
 Summary of testing the assumptions for Pearson’s r in the example data
 :::
 
-***
+------------------------------------------------------------------------
 
-The big question is: What can be done that several of the assumptions are not met? The books gives some words of advice:
+The big question is: What can be done that several of the assumptions
+are not met? The books gives some words of advice:
 
-- Report the results and explain that the analysis does not meet assumptions, so that it is unclear if what is happening in the sample is a good reflection of what is happening in the population. 
-- Transform the two variables to try and meet the assumptions for Pearson’s r and conduct the analysis again.
-- Choose a different type of analysis with assumptions that can be met by these data. 
+-   Report the results and explain that the analysis does not meet
+    assumptions, so that it is unclear if what is happening in the
+    sample is a good reflection of what is happening in the population.
+-   Transform the two variables to try and meet the assumptions for
+    Pearson’s r and conduct the analysis again.
+-   Choose a different type of analysis with assumptions that can be met
+    by these data.
 
-:::::{.my-remark}
-:::{.my-remark-header}
+::: my-remark
+::: my-remark-header
 My opinion to the three tips
 :::
-::::{.my-remark-container}
-- The first advice is no solution. This strategy declares that the inferential process has failed.
-- Yes, this is a promising strategy. But as it turns out that works (more or less) for the `female.in.school` but not for the `perc.basic2015water` variable. More on this analysis in @sec-chap08-achievement6.
-- Instead of using `r glossary("Pearson", "Pearson’s r")` one could use `r glossary("Spearman", "Spearman’s rho")` which does not have the same strict assumptions. See @sec-chap08-achievement7.
 
-Compare testing the assumptions for Pearson’s r in the example data in @bul-chap08-assumptions-pearson-r-summary with testing the assumptions for Pearson’s r with the transformed data in @bul-chap08-assumptions-pearson-r-transformed-summary.
-::::
-:::::
+::: my-remark-container
+-   The first advice is no solution. This strategy declares that the
+    inferential process has failed.
+-   Yes, this is a promising strategy. But as it turns out that works
+    (more or less) for the `female.in.school` but not for the
+    `perc.basic2015water` variable. More on this analysis in
+    @sec-chap08-achievement6.
+-   Instead of using `r glossary("Pearson", "Pearson’s r")` one could
+    use `r glossary("Spearman", "Spearman’s rho")` which does not have
+    the same strict assumptions. See @sec-chap08-achievement7.
+
+Compare testing the assumptions for Pearson’s r in the example data in
+@bul-chap08-assumptions-pearson-r-summary with testing the assumptions
+for Pearson’s r with the transformed data in
+@bul-chap08-assumptions-pearson-r-transformed-summary.
+:::
+:::
 
 ## Achievement 6: Transforming data {#sec-chap08-achievement6}
 
 ### Introduction
 
-One of the ways to deal with data that do not meet assumptions for Pearson’s *r* is to use a data transformation and examine the relationship between the transformed variables.
+One of the ways to deal with data that do not meet assumptions for
+Pearson’s *r* is to use a data transformation and examine the
+relationship between the transformed variables.
 
-
-::: {#bul-data-transformations}
-:::::{.my-bullet-list}
-:::{.my-bullet-list-header}
-Bullet List
-:::
-::::{.my-bullet-list-container}
-
-
-- `r glossary("Linear transformations")` keep existing linear relationships between variables, often by multiplying or dividing one or both of the variables by some amount. 
-- `r glossary("Nonlinear transformations")` increase (or decrease) the linear relationship between two variables by applying an exponent (i.e., `r glossary("power transformations")`) or other function to one or both of the variables.
-- `r glossary("Logit transformations")` and `r glossary("arcsine transformations")` are often used for variables that are percentages or proportions because they account for `r glossary("floor")` and `r glossary("ceiling")` effects.
-
-::::
-:::::
-Types of data transformations
-
+::: my-bulletbox
+::: my-bulletbox-header
+::: my-bulletbox-icon
 :::
 
-***
+::: {#bul-chap08-data-transformation-types}
+:::
+
+: Types of data transformations
+:::
+
+::: my-bulletbox-body
+-   `r glossary("Linear transformations")` keep existing linear
+    relationships between variables, often by multiplying or dividing
+    one or both of the variables by some amount.
+-   `r glossary("Nonlinear transformations")` increase (or decrease) the
+    linear relationship between two variables by applying an exponent
+    (i.e., `r glossary("power transformations")`) or other function to
+    one or both of the variables.
+-   `r glossary("Logit transformations")` and
+    `r glossary("arcsine transformations")` are often used for variables
+    that are percentages or proportions because they account for
+    `r glossary("floor")` and `r glossary("ceiling")` effects.
+:::
+:::
 
 ### Logit transformation
 
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-logit-transformation}
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-logit-transformation}
 : Formula for the logit transformation
-::::::
 :::
-::::{.my-theorem-container}
+:::
+
+::: my-theorem-container
 $$
 y_{logit} = log(\frac{y}{1-y})
 $$ {#eq-chap08-logit}
 
-***
+------------------------------------------------------------------------
 
-y is a percent ranging from 0 to 1.
+-   **y**: is a ~~percent~~ proportion ranging from 0 to
+    1[^08-correlation-1].
 
-The logit transformation uses @eq-chap08-logit to make percentage data more normally distributed.
-::::
-:::::
+The logit transformation uses @eq-chap08-logit to make percentage data
+more normally distributed.
+:::
+:::
 
+[^08-correlation-1]: The book says 'percent', but I believe proportion
+    would be correct, as the range of percents is from 0-100%
 
 ### Arcsine transformation
 
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-arcsine}
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-arcsine}
 : Formula for the arcsine transformation
-::::::
 :::
-::::{.my-theorem-container}
+:::
+
+::: my-theorem-container
 $$
 y_{arcsine} = arcsine(\sqrt{y})
 $$ {#eq-chap08-arcsine}
 
-The arcsine transformation e.g., the inverse of the sine function, is also used to normalize percentage or proportion data by using @eq-chap08-arcsine to transform the variable $y$.
+-   **y**: proportion ranging from 0 to 1
 
-***
-::::
-:::::
+------------------------------------------------------------------------
+The arcsine transformation is the inverse of the sine function. This function is
+also used to normalize percentage or proportion data by using
+@eq-chap08-arcsine to transform the variable $y$. Besides calculating manually, it could also be computed with `car::logit()` (see @pak-car and a practical example in @lst-chap09-logit-no-insurance).
+
+:::
+:::
 
 ### Folded power transformation
 
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-folded-power}
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-folded-power}
 : Formula for the folded power transformation
-::::::
 :::
-::::{.my-theorem-container}
+:::
+
+::: my-theorem-container
 $$
 y_{folded.power} = y^\frac{1}{p} - (1-y)^\frac{1}{p}
 $$ {#eq-chap08-folded-power}
 
-***
+------------------------------------------------------------------------
 
-$p$ is the power to raise that could be calculated with `rcompanion::transformTukey()` (see @pak-rcompanion).
-::::
-:::::
+$p$ is the power to raise that could be calculated with
+`rcompanion::transformTukey()` (see @pak-rcompanion).
+:::
+:::
 
 ### Data transforming and checking normality assumption {#sec-chap08-transformed-normality}
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap08-transform-data}
+::: my-example
+::: my-example-header
+::: {#exm-chap08-transform-data}
 : Transforming data and checking normality assumptions
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### logit & arcsine
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-transform-logit-arcsine}
-: Logit and arcsine transformation of variables `female.in.school` & `perc.basic2015water`
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-transform-logit-arcsine}
+: Logit and arcsine transformation of variables `female.in.school` &
+`perc.basic2015water`
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: transform-logit-arcsine
 
@@ -1727,29 +1880,36 @@ save_data_file("chap08", water_educ2, "water_educ2.rds")
 skimr::skim(water_educ2)
 ```
 
-***
+------------------------------------------------------------------------
 
-We got several warnings. We can easily see that our new variable `logit.perc.basic.water` has problems because it contains infinite values. The reason is the formula for the logit function, that has as denominator $1-y$. When $y = 1$ for 100%, the denominator is zero and it is impossible to divide by zero. 
+We got several warnings. We can easily see that our new variable
+`logit.perc.basic.water` has problems because it contains infinite
+values. The reason is the formula for the logit function, that has as
+denominator $1-y$. When $y = 1$ for 100%, the denominator is zero and it
+is impossible to divide by zero.
 
-The intuitive idea to change the original data slightly, e.g., to subtract a very tiny amount so that the results is not zero anymore, is a bad idea. It destroys the reproducibility and adds error into the dataset. A better solution is to try instead another transformation.
+The intuitive idea to change the original data slightly, e.g., to
+subtract a very tiny amount so that the results is not zero anymore, is
+a bad idea. It destroys the reproducibility and adds error into the
+dataset. A better solution is to try instead another transformation.
 
-The suggestion is to use the folded power transformation (@thm-chap08-folded-power). But before we can apply the formula we need to compute the power for the transforming of the variables.
-
-
-::::
-:::::
-
+The suggestion is to use the folded power transformation
+(@thm-chap08-folded-power). But before we can apply the formula we need
+to compute the power for the transforming of the variables.
+:::
+:::
 
 ###### transformTukey1
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-transform-tukey}
-: Tukey transformation to get power for transforming the variables `female.in.school` & `perc.basic2015water`
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-transform-tukey}
+: Tukey transformation to get power for transforming the variables
+`female.in.school` & `perc.basic2015water`
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: transform-folded-power
 
@@ -1774,25 +1934,29 @@ p_water <- rcompanion::transformTukey(
 
 
 ```
-***
 
-Using the Tukey transformation we get as power for transforming for the 
+------------------------------------------------------------------------
 
-- female.in.school variable: `r p_female` and for the
-- perc.basic2015water variabe: `r p_water`.
-::::
-:::::
+Using the Tukey transformation we get as power for transforming for the
+
+-   female.in.school variable: `r p_female` and for the
+-   perc.basic2015water variabe: `r p_water`.
+:::
+:::
 
 ###### transformTukey2
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-transform-tukey}
-: Tukey transformation to get power for transforming the variables `female.in.school` & `perc.basic2015water` with accompanying plots
-::::::
-:::
-::::{.my-r-code-container}
+::: my-r-code
+::: my-r-code-header
+<div>
 
+: Tukey transformation to get power for transforming the variables
+`female.in.school` & `perc.basic2015water` with accompanying plots
+
+</div>
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-transform-folded-power
 #| fig-cap: "Tukey transformation to get plots of Shapiro-Wilks W or Anderson-Darling A vs. lambda, a histogram of transformed values, and a quantile-quantile plot of transformed values."
@@ -1814,27 +1978,38 @@ p_water <- rcompanion::transformTukey(
 
 
 ```
-***
 
-After changing the argument from `plotit = FALSE` to the default value of `plotit = TRUE` we get different plots for the normality assumption. 
+------------------------------------------------------------------------
 
-- The first three graphs are plots for `r glossary("Shapiro-Wilk", "Shapiro-Wilks W")` vs. lambda with `r glossary("histogram")` and `r glossary("Q-Q-plot", "quantile-quantile plot")` for the `female.in.school` variable (argument: `statistic = 1`, the default value).
-- The last three graphs are plots for `r glossary("Anderson-Darling", "Anderson-Darling A")` vs. lambda with histogram and Q-Q-plot for the `perc.basic2015water` variable (argument: `statistic = 2`).
+After changing the argument from `plotit = FALSE` to the default value
+of `plotit = TRUE` we get different plots for the normality assumption.
 
-For more information about Shapiro-Wilk and Anderson-Darling tests see @sec-chap06-omnibus-tests.
+-   The first three graphs are plots for
+    `r glossary("Shapiro-Wilk", "Shapiro-Wilks W")` vs. lambda with
+    `r glossary("histogram")` and
+    `r glossary("Q-Q-plot", "quantile-quantile plot")` for the
+    `female.in.school` variable (argument: `statistic = 1`, the default
+    value).
+-   The last three graphs are plots for
+    `r glossary("Anderson-Darling", "Anderson-Darling A")` vs. lambda
+    with histogram and Q-Q-plot for the `perc.basic2015water` variable
+    (argument: `statistic = 2`).
 
-::::
-:::::
+For more information about Shapiro-Wilk and Anderson-Darling tests see
+@sec-chap06-omnibus-tests.
+:::
+:::
 
 ###### power
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-folded-power-transformation}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-folded-power-transformation}
 : Compute variable with folded power transformation
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: folded-power-transformation
 
@@ -1864,21 +2039,20 @@ save_data_file("chap08", water_educ3, "water_educ3.rds")
 # check the data
 skimr::skim(water_educ3)
 ```
-
-::::
-:::::
-
-
+:::
+:::
 
 ###### graphs
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-check-normality-transformed-data-graphs}
-: Check the normality assumptions of the transformed data with histograms
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-check-normality-transformed-data-graphs}
+: Check the normality assumptions of the transformed data with
+histograms
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-check-normality-transformed-data-graphs
 #| fig-cap: "Histograms for checking normality assumptions of the transformed data"
@@ -1922,44 +2096,55 @@ gridExtra::grid.arrange(
     plt1, plt2, plt3, plt4, nrow = 2
 )
 ```
-***
 
-- **Top-Left**: The arcsine transformation of females in school looks better than the not transformed data in @fig-normality-female-hist-dnorm. But still it is not a normal but a left-skewed distribution.
-- **Top-Right**: The folded power transformation looks much better. It is still somewhat left-skewed but approaches quite well a normal distribution.
-- **Bottom-Left**: The arcsine transformation of basic water access looks terrible. 
-- **Bottom-Right**: The folded power transformation of basic water access looks not better, maybe even worse. 
+------------------------------------------------------------------------
 
-The book suggests that the `perc.basic2015water` variable should better be recoded into categories. Since so many countries have 100% access, the variable could be binary, with 100% access in one category and less than 100% access in another category.
+-   **Top-Left**: The arcsine transformation of females in school looks
+    better than the not transformed data in
+    @fig-normality-female-hist-dnorm. But still it is not a normal but a
+    left-skewed distribution.
+-   **Top-Right**: The folded power transformation looks much better. It
+    is still somewhat left-skewed but approaches quite well a normal
+    distribution.
+-   **Bottom-Left**: The arcsine transformation of basic water access
+    looks terrible.
+-   **Bottom-Right**: The folded power transformation of basic water
+    access looks not better, maybe even worse.
 
-Although `perc.basic2015water` did not meet the normality assumption the book applies the `r glossary("NHST")` procedure. I think the reason was just to practice the procedure because in my opinion it would not make sense to apply a significance test for correlation if several of the assumptions are not met.
+The book suggests that the `perc.basic2015water` variable should better
+be recoded into categories. Since so many countries have 100% access,
+the variable could be binary, with 100% access in one category and less
+than 100% access in another category.
 
-
-
-::::
-:::::
-
-
+Although `perc.basic2015water` did not meet the normality assumption the
+book applies the `r glossary("NHST")` procedure. I think the reason was
+just to practice the procedure because in my opinion it would not make
+sense to apply a significance test for correlation if several of the
+assumptions are not met.
 :::
-
-::::
-:::::
-
+:::
+:::
+:::
+:::
 
 ### Testing assumptions for Pearson’s *r* with transformed data
 
 #### Normality
 
-This assumption is not met, see the different graphs in @sec-chap08-transformed-normality.
+This assumption is not met, see the different graphs in
+@sec-chap08-transformed-normality.
 
 #### Linearity {#sec-chap08-linearity-transformed}
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-check-linearity-transformed}
-: Check linearity assumption with transformed data with linear fit line and Loess curve
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-check-linearity-transformed}
+: Check linearity assumption with transformed data with linear fit line
+and Loess curve
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-check-linearity-transformed
 #| fig-cap: "Check linearity assumption with transformed data"
@@ -2008,15 +2193,19 @@ water_educ3 |>
       values = c("gray60","darkred")) +
   ggplot2::scale_size_manual(values = 2)
 ```
-***
-The plot shows a pretty terrible deviation from linearity, which looks like it is mostly due to all the countries with 100% basic water access. An indicator for this guess is that both lines are bent by the right vertical line of countries with 100% basic water access. Without the lines would end around 0.45x / 0.5y.
 
-Transforming the data worsened the linearity assumption, as you can see with a comparison of @fig-graph1-cor.
+------------------------------------------------------------------------
 
+The plot shows a pretty terrible deviation from linearity, which looks
+like it is mostly due to all the countries with 100% basic water access.
+An indicator for this guess is that both lines are bent by the right
+vertical line of countries with 100% basic water access. Without the
+lines would end around 0.45x / 0.5y.
 
-::::
-:::::
-
+Transforming the data worsened the linearity assumption, as you can see
+with a comparison of @fig-graph1-cor.
+:::
+:::
 
 #### Homoscedasticity {#sec-chap08-homoscedasticity-transformed}
 
@@ -2024,23 +2213,23 @@ Transforming the data worsened the linearity assumption, as you can see with a c
 
 Write the null and alternate hypotheses:
 
-::: {.callout-note}
-- **H0**: The data is spread equal around the regression line.
-- **HA**: The data is not spread equal around the regression line.
+::: callout-note
+-   **H0**: The data is spread equal around the regression line.
+-   **HA**: The data is not spread equal around the regression line.
 :::
-
 
 ##### NHST Step 2
 
-Compute the test statistic. 
+Compute the test statistic.
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-check-homoscedasticity-transformed}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-check-homoscedasticity-transformed}
 : Check homoscedasticity assumption with transformed data
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: check-homoscedasticity-transformed
 
@@ -2051,120 +2240,165 @@ lmtest::bptest(
         water_educ3$folded.p.basic.water
     )
 ```
-
-
-
-::::
-:::::
+:::
+:::
 
 ##### NHST Step 3
 
-Review and interpret the test statistics: 
-Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+Review and interpret the test statistics: Calculate the probability that
+your test statistic is at least as big as it is if there is no
+relationship (i.e., the null is true).
 
-The p-value of .01 is below .05 therefore statistically significant. 
+The p-value of .01 is below .05 therefore statistically significant.
 
 ##### NHST Step 4
 
 Conclude and write report.
 
-With a p-value of .01, the null hypothesis is rejected and the assumption fails. The data transformation worked to mostly address the problem of normality for the females in school variable, but the transformed data were not better for linearity or homoscedasticity.
+With a p-value of .01, the null hypothesis is rejected and the
+assumption fails. The data transformation worked to mostly address the
+problem of normality for the females in school variable, but the
+transformed data were not better for linearity or homoscedasticity.
 
-::: {.callout-tip}
-There was a statistically significant, positive, and strong (r = .67; t = 8.82; p < .05; 95% CI: .55–.77) relationship between the transformed variables for percentage of females in school and percentage of citizens with basic water access in a sample of countries. As the percentage of citizens with basic water access increases, so does the percentage of school-age females in school. The data failed several of the assumptions for **r* and so these results should not be generalized outside the sample.
+::: callout-tip
+There was a statistically significant, positive, and strong (r = .67; t
+= 8.82; p \< .05; 95% CI: .55–.77) relationship between the transformed
+variables for percentage of females in school and percentage of citizens
+with basic water access in a sample of countries. As the percentage of
+citizens with basic water access increases, so does the percentage of
+school-age females in school. The data failed several of the assumptions
+for \*\*r\* and so these results should not be generalized outside the
+sample.
 :::
 
-:::::{.my-remark}
-:::{.my-remark-header}
-Inferential statistics without generalizing conclusion outside the sample?
+::: my-remark
+::: my-remark-header
+Inferential statistics without generalizing conclusion outside the
+sample?
 :::
-::::{.my-remark-container}
-I find it very disappointing that most of the time the assumptions for the different tests are not met. As far as I understand all the many tests and hypotheses failed, so that one can't say anything outside the data of the sample. 
 
-In the above summary are included a `r glossary("p-value")` and a `r glossary("confidence interval")`. As both values are for generalizing from a sample to a population and some of the assumptions are not met, it is --- in my opinion --- not allowed to mention these values. They "could" not omitted as the book claims but I think the should mandatory not included in the summary. These results are not reliable when the assumptions are failed and should not be mentioned at all because that creates more informative results as effectively is the case.
+::: my-remark-container
+I find it very disappointing that most of the time the assumptions for
+the different tests are not met. As far as I understand all the many
+tests and hypotheses failed, so that one can't say anything outside the
+data of the sample.
 
-Another thing that annoys me after eight chapter is the high redundancy with all the tests and NHST procedures. I got the impression that the honest account of the book shows that there is something wrong with the frequentist approach of statistics. Most of the frequentist textbooks I already have read do not so thoroughly check their assumptions. I am eager to learn more about the Bayesian alternative!
-::::
-:::::
+In the above summary are included a `r glossary("p-value")` and a
+`r glossary("confidence interval")`. As both values are for generalizing
+from a sample to a population and some of the assumptions are not met,
+it is --- in my opinion --- not allowed to mention these values. They
+"could" not omitted as the book claims but I think the should mandatory
+not included in the summary. These results are not reliable when the
+assumptions are failed and should not be mentioned at all because that
+creates more informative results as effectively is the case.
 
+Another thing that annoys me after eight chapter is the high redundancy
+with all the tests and NHST procedures. I got the impression that the
+honest account of the book shows that there is something wrong with the
+frequentist approach of statistics. Most of the frequentist textbooks I
+already have read do not so thoroughly check their assumptions. I am
+eager to learn more about the Bayesian alternative!
+:::
+:::
 
 ### Conclusion
 
-
-
 ::: {#bul-chap08-assumptions-pearson-r-transformed-summary}
-:::::{.my-bullet-list}
-:::{.my-bullet-list-header}
+::: my-bullet-list
+::: my-bullet-list-header
 Bullet List
 :::
-::::{.my-bullet-list-container}
 
-- Observations are independent (@sec-chap08-check-independence): **No**. 
-- Both variables are continuous (@sec-chap08-check-continuous): **Yes**. 
-- Both variables are normally distributed (@sec-chap08-transformed-normality): **No**.
-- The relationship between the two variables is linear (`r glossary("linearity")`) (@sec-chap08-linearity-transformed): **No**. 
-- The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`) {@sec-chap08-homoscedasticity-transformed): **No**.
+::: my-bullet-list-container
+-   Observations are independent (@sec-chap08-check-independence):
+    **No**.
+-   Both variables are continuous (@sec-chap08-check-continuous):
+    **Yes**.
+-   Both variables are normally distributed
+    (@sec-chap08-transformed-normality): **No**.
+-   The relationship between the two variables is linear
+    (`r glossary("linearity")`) (@sec-chap08-linearity-transformed):
+    **No**.
+-   The variance is constant with the points distributed equally around
+    the line (`r glossary("homoscedasticity")`)
+    {@sec-chap08-homoscedasticity-transformed): **No**.
+:::
+:::
 
-::::
-:::::
 Summary of testing the assumptions for Pearson’s r with transformed data
 :::
 
-***
+------------------------------------------------------------------------
 
-All in all the situation has deteriorated: In contrast to the example data the linearity assumption is not met after the transformation. Compare @fig-graph1-cor with @sec-chap08-linearity-transformed.
-
+All in all the situation has deteriorated: In contrast to the example
+data the linearity assumption is not met after the transformation.
+Compare @fig-graph1-cor with @sec-chap08-linearity-transformed.
 
 ## Achievement 7: Spearman’s rho {#sec-chap08-achievement7}
 
 ### Introduction
 
-`r glossary("Spearman", "Spearman’s rho")`  rank correlation coefficient is the most common alternative for `r glossary("Pearson", "Pearson’s r")`. Spearman’s rho or $r_{s}$ is just using another transformation, but instead of computing the arcsine or raising the variables to a power, the values of the variables are transformed into ranks, like with some of the alternatives to the `r glossary("t-test", "t-tests")`. The values of the variables are ranked from lowest to highest, and the calculations for correlation are conducted using the ranks instead of the raw values for the variables.
+`r glossary("Spearman", "Spearman’s rho")` rank correlation coefficient
+is the most common alternative for
+`r glossary("Pearson", "Pearson’s r")`. Spearman’s rho or $r_{s}$ is
+just using another transformation, but instead of computing the arcsine
+or raising the variables to a power, the values of the variables are
+transformed into ranks, like with some of the alternatives to the
+`r glossary("t-test", "t-tests")`. The values of the variables are
+ranked from lowest to highest, and the calculations for correlation are
+conducted using the ranks instead of the raw values for the variables.
 
 ### Computing Spearman’s rho
 
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-formula-spearman-rho}
+::: my-theorem
+::: my-theorem-header
+::: {#thm-formula-spearman-rho}
 : Compute Spearman’s rho
-::::::
 :::
-::::{.my-theorem-container}
+:::
+
+::: my-theorem-container
 $$
 p = \frac{6 \sum{d^2}}{n(n^2-1)}
 $$ {#eq-chap08-spearman-rho}
 
-***
+------------------------------------------------------------------------
 
- - **d** is the difference between the ranks of the two variables 
- - **n** is the number of observations
+-   **d** is the difference between the ranks of the two variables
+-   **n** is the number of observations
+:::
+:::
 
-::::
-:::::
-
-For females in school and basic water access Spearman’s rho would be computed by first ranking the values of percentage of females in school from lowest to highest and then ranking the values of basic water access from lowest to highest.
-
+For females in school and basic water access Spearman’s rho would be
+computed by first ranking the values of percentage of females in school
+from lowest to highest and then ranking the values of basic water access
+from lowest to highest.
 
 #### NHST Step 1
 
 Write the null and alternate hypotheses:
 
-::: {.callout-note}
-- **H0**: There is no correlation between the percentage of females in school and the percentage of citizens with basic water access (ρ = 0).
-- **HA**: There is a correlation between the percentage of females in school and the percentage of citizens with basic water access (ρ ≠ 0).
+::: callout-note
+-   **H0**: There is no correlation between the percentage of females in
+    school and the percentage of citizens with basic water access (ρ =
+    0).
+-   **HA**: There is a correlation between the percentage of females in
+    school and the percentage of citizens with basic water access (ρ ≠
+    0).
 :::
 
 #### NHST Step 2
 
-Compute the test statistic. 
+Compute the test statistic.
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-compute-spearman-rho}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-compute-spearman-rho}
 : Computing Spearman’s rho
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: tbl-compute-spearman-rho
 #| tbl-cap: "Computing Spearman’s rho"
@@ -2177,63 +2411,64 @@ Compute the test statistic.
 )
 ```
 
-***
+------------------------------------------------------------------------
 
-While Pearson’s r between females in school and basic water access in @cnj-chap08-cor-test-pearson was 0.81, $r_{s}$ is slightly lower at 0.77.
-
-
-
-::::
-:::::
-
-Instead of a t-statistic, the output for $r_{s}$ reports the S test statistic.
-
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-spearman-rho-s-test-statistic}
-: Formula for Spearman’s rho S test statistic
-::::::
+While Pearson’s r between females in school and basic water access in
+@cnj-chap08-cor-test-pearson was 0.81, $r_{s}$ is slightly lower at
+0.77.
 :::
-::::{.my-theorem-container}
+:::
+
+Instead of a t-statistic, the output for $r_{s}$ reports the S test
+statistic.
+
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-spearman-rho-s-test-statistic}
+: Formula for Spearman’s rho S test statistic
+:::
+:::
+
+::: my-theorem-container
 $$
 S = (n^3 - n) \frac{1-r_{s}}{6}
 $$ {#eq-chap08-spearman-rho-s-test-statistic}
 
-
-- **$r_{s}$**: Spearman’s correlation coefficient
-- **n**: Sample size
-
-::::
-:::::
-
-The `r glossary("p-value")` in the output of the `stats::cor.test()` function is not from the S test statistic. Instead, it is determined by computing an approximation of the `r glossary("t-statistic")` and `r glossary("degrees of freedom")`.
-
-:::::{.my-theorem}
-:::{.my-theorem-header}
-:::::: {#thm-chap08-approx-t-statistic}
-: Approximation of t-statistic
-::::::
+-   $r_{s}$: Spearman’s correlation coefficient
+-   **n**: Sample size
 :::
-::::{.my-theorem-container}
+:::
+
+The `r glossary("p-value")` in the output of the `stats::cor.test()`
+function is not from the S test statistic. Instead, it is determined by
+computing an approximation of the `r glossary("t-statistic")` and
+`r glossary("degrees of freedom")`.
+
+::: my-theorem
+::: my-theorem-header
+::: {#thm-chap08-approx-t-statistic}
+: Approximation of t-statistic
+:::
+:::
+
+::: my-theorem-container
 $$
 t_{s} = r_{s}\sqrt\frac{n-2}{1-r_{s}^2}
 $$ {#eq-chap08-approx-t-statistic}
-
-
-::::
-:::::
-
-
-
-While it is not included in the output from R, the t-statistic can be computed easily by using R as a calculator.
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-approx-t-statistics-spearman}
-: Approximating t-statistics for Spearman’s rho manually
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+While it is not included in the output from R, the t-statistic can be
+computed easily by using R as a calculator.
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-approx-t-statistics-spearman}
+: Approximating t-statistics for Spearman’s rho manually
+:::
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: chap08-t-statistics-spearman-manually
 
@@ -2250,24 +2485,23 @@ water_educ |>
           base::sqrt((n - 2) / (1 - spearman_female_water$estimate^2))
   )
 ```
-
-::::
-:::::
-
-
+:::
+:::
 
 #### NHST Step 3
 
-Review and interpret the test statistics: 
-Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+Review and interpret the test statistics: Calculate the probability that
+your test statistic is at least as big as it is if there is no
+relationship (i.e., the null is true).
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-t-dist-value}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-t-dist-value}
 : Display a student-t distribution
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: fig-t-dist-94-df-with-t-value
 #| fig-cap: "Student-t distribution with 94 degress of freedom and a vertical line at t = 11.67"
@@ -2288,51 +2522,55 @@ ggplot2::ggplot() +
         y = "Density"
     )
 ```
-***
 
-In this case, t is 11.67 with 94 degrees of freedom (n = 96). A quick plot of the t-distribution with 94 degrees of freedom revealed that the probability of a t-statistic this big or bigger would be very tiny if the null hypothesis were true.
+------------------------------------------------------------------------
 
-::::
-:::::
-
+In this case, t is 11.67 with 94 degrees of freedom (n = 96). A quick
+plot of the t-distribution with 94 degrees of freedom revealed that the
+probability of a t-statistic this big or bigger would be very tiny if
+the null hypothesis were true.
+:::
+:::
 
 #### NHST Step 4
 
-Conclude and write report.
-With this tiny p-value we have to reject the Null.
+Conclude and write report. With this tiny p-value we have to reject the
+Null.
 
-::: {.callout-tip}
-There was a statistically significant positive correlation between basic access to water and females in school $(r_{s} = 0.77; p < .001)$. As the percentage of the population with basic access to water increases, so does the percentage of females in school.
+::: callout-tip
+There was a statistically significant positive correlation between basic
+access to water and females in school $(r_{s} = 0.77; p < .001)$. As the
+percentage of the population with basic access to water increases, so
+does the percentage of females in school.
 :::
 
 ### Checking assumptions for Spearman’s rho
 
 #### Introduction
 
-
 ::: {#bul-assumptions-spearman-rho}
-:::::{.my-bullet-list}
-:::{.my-bullet-list-header}
+::: my-bullet-list
+::: my-bullet-list-header
 Bullet List
 :::
-::::{.my-bullet-list-container}
 
-
-- Observations are independent (@sec-chap08-check-independence). 
-- Both variables must be at least ordinal or even closer to continuous. (@sec-chap08-check-continuous). 
-- The relationship between the two variables must be monotonic.
-
-::::
-:::::
-Assumptions for Spearman’s rho
-
+::: my-bullet-list-container
+-   Observations are independent (@sec-chap08-check-independence).
+-   Both variables must be at least ordinal or even closer to
+    continuous. (@sec-chap08-check-continuous).
+-   The relationship between the two variables must be monotonic.
+:::
 :::
 
-***
+Assumptions for Spearman’s rho
+:::
+
+------------------------------------------------------------------------
 
 #### Independence of observations
 
-Nothing has changed with the data source. This assumption is still not met. (See @sec-chap08-check-independence for the argumentation.)
+Nothing has changed with the data source. This assumption is still not
+met. (See @sec-chap08-check-independence for the argumentation.)
 
 #### At least ordinal data {#sec-chap08-ordinal}
 
@@ -2340,79 +2578,113 @@ This assumption is met, because both variables are continuous.
 
 #### Monotonic {#sec-chap08-monotonic}
 
-A `r glossary("monotonic")` relationship is a relationship that goes in only one direction, e.g. the relationship can have curves as long as it goes always in the same direction. For instance in a positive correlation the rate of the ascending y-value can change but must not be under 0, e.g. reversing the direction.
+A `r glossary("monotonic")` relationship is a relationship that goes in
+only one direction, e.g. the relationship can have curves as long as it
+goes always in the same direction. For instance in a positive
+correlation the rate of the ascending y-value can change but must not be
+under 0, e.g. reversing the direction.
 
-The following screenshot from the books demonstrates this with different examples:
+The following screenshot from the books demonstrates this with different
+examples:
 
-![Monotonic relationship examples (Screenshot of book’s Figure 8.27)](img/chap08/monotonic-demonstration-min.png){#fig-monotonic-examples
+![Monotonic relationship examples (Screenshot of book’s Figure
+8.27)](img/chap08/monotonic-demonstration-min.png){#fig-monotonic-examples
 fig-alt="The variables on the x and y axes are labeled x and y respectively, on all three graphs. The values of x on the x axis range from 0 to 10, in intervals of 5 and the y values on the y axis range from -20 to 500, in intervals of 250. The first graph is titled, monotonic (negative corr), and the data points on this graph are clustered along the y axis value of 0 and -125, and between the x axis values of -2.5 and 5. The loess curve seen in this graph starts at about (0, 0) and curves downward, steeply until about (8, -245). The second graph is titled, monotonic (positive corr), and the data points on this graph are clustered along the y axis value of 0 and 125, and between the x axis values of -2.5 and 5. The loess curve seen in this graph starts at about (0, 0) and curves upward, steeply until about (8, 450). The last graph is titled, not monotonic, and the data points on this graph are clustered closer along the y axis value of 0 and 375, and between the x axis values of -2.5 and 5. The loess curve seen in this graph starts at about (0, 187) and curves upward to form two small peaks before falling below the start point and then rising against steeply to form the third peak at about (7, 310) an then falling again."
 fig-align="center"}
 
-The Loess curve in @fig-check-linearity-transformed only goes up, which demonstrates that the relationship between females in school and basic water access meets the monotonic assumption.
+The Loess curve in @fig-check-linearity-transformed only goes up, which
+demonstrates that the relationship between females in school and basic
+water access meets the monotonic assumption.
 
 #### Conclusion
 
-::: {#bul-assumptions-spearman-rho}
+<div>
 
-- Observations are independent (@sec-chap08-check-independence). **No**
-- Both variables must be at least ordinal or even closer to continuous. (@sec-chap08-ordinal). **Yes**
-- The relationship between the two variables must be monotonic. (@sec-chap08-monotonic) **Yes**
+-   Observations are independent (@sec-chap08-check-independence).
+    **No**
+-   Both variables must be at least ordinal or even closer to
+    continuous. (@sec-chap08-ordinal). **Yes**
+-   The relationship between the two variables must be monotonic.
+    (@sec-chap08-monotonic) **Yes**
 
 Summary of testing the assumptions for Spearman’s rho
 
+</div>
+
+Spearman’s rho met more assumptions than Pearson’s r with the original
+data or with the transformed variables. Even so, the independent
+observation assumption failed, so any reporting should stick to
+descriptive statistics about the sample and not generalize to the
+population.
+
+::: callout-tip
+There was a positive correlation between basic access to water and
+females in school ($r_{s} = 0.77$). As the percentage of the population
+with basic access to water increases, so does the percentage of females
+in school.
 :::
 
-Spearman’s rho met more assumptions than Pearson’s r with the original data or with the transformed variables. Even so, the independent observation assumption failed, so any reporting should stick to descriptive statistics about the sample and not generalize to the population.
-
-::: {.callout-tip}
-There was a positive correlation between basic access to water and females in school ($r_{s} = 0.77$). As the percentage of the population with basic access to water increases, so does the percentage of females in school.
-:::
-
-
-
-:::::{.my-remark}
-:::{.my-remark-header}
+::: my-remark
+::: my-remark-header
 Many assumptions not met
 :::
-::::{.my-remark-container}
-With the exception of the `r glossary("chi-squared")` test of systolic blood pressure in @sec-chap05 all of the test assumptions have failed. 
 
-This is not only disappointing but I believe also a disaster for frequentist inferential statistics. As far as I understood it means that --- with the one mentioned exception --- we cannot say anything about the population parameters and have to stick with the description of the sample. Instead of inferential statistics just descriptive statistics.
+::: my-remark-container
+With the exception of the `r glossary("chi-squared")` test of systolic
+blood pressure in @sec-chap05 all of the test assumptions have failed.
 
-I am not sure if the situation would be better with Bayesian statistics. I still have alsmost no experience with Bayesian statistics. But after a quick research I got the impression that all the assumptions that hold for the frequentist approach must also to be met with the Bayesian framework. (See: [What are the assumptions in bayesian statistics?](https://stats.stackexchange.com/questions/435298/what-are-the-assumptions-in-bayesian-statistics) in CrossValidated)
-::::
-:::::
+This is not only disappointing but I believe also a disaster for
+frequentist inferential statistics. As far as I understood it means that
+--- with the one mentioned exception --- we cannot say anything about
+the population parameters and have to stick with the description of the
+sample. Instead of inferential statistics just descriptive statistics.
+
+I am not sure if the situation would be better with Bayesian statistics.
+I still have alsmost no experience with Bayesian statistics. But after a
+quick research I got the impression that all the assumptions that hold
+for the frequentist approach must also to be met with the Bayesian
+framework. (See: [What are the assumptions in bayesian
+statistics?](https://stats.stackexchange.com/questions/435298/what-are-the-assumptions-in-bayesian-statistics)
+in CrossValidated)
+:::
+:::
 
 ## Achievement 8: Partial correlation {#sec-chap08-achievement8}
 
 ### Introduction
 
-`r glossary("PartialCorr", "Partial corrections")` is a method for examining how multiple variables share variance with each other. 
+`r glossary("PartialCorr", "Partial corrections")` is a method for
+examining how multiple variables share variance with each other.
 
-For instance it could be the case that females in school and basic water access might both be related to poverty, and that poverty might be the reason both of these variables increase at the same time. The argumentation is: Countries with higher poverty have fewer females in school and lower percentages of people with basic water access. So in the end poverty was the reason for the shared variance between females in school and basic water access.
+For instance it could be the case that females in school and basic water
+access might both be related to poverty, and that poverty might be the
+reason both of these variables increase at the same time. The
+argumentation is: Countries with higher poverty have fewer females in
+school and lower percentages of people with basic water access. So in
+the end poverty was the reason for the shared variance between females
+in school and basic water access.
 
 ### Computing Pearson’ r partial correlation
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap08-partial-correlation}
+::: my-example
+::: my-example-header
+::: {#exm-chap08-partial-correlation}
 : Computing Pearson’ r partial correlation
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### stats::cor()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-pearson-cor}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-pearson-cor}
 : Examine bivariate Pearson’s r correlation
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: pearson-cor
 
@@ -2443,23 +2715,21 @@ water_educ4 |>
     )
 ```
 
-All three correlations are strong related. Using `ppcor::pcor()` determines how they were interrelated.
-
-
-::::
-:::::
-
+All three correlations are strong related. Using `ppcor::pcor()`
+determines how they were interrelated.
+:::
+:::
 
 ###### ppcor::pcor()
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-partial-corr-poverty-pearson}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-partial-corr-poverty-pearson}
 : Partial correlation of Pearson’s r of poverty
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: partial-corr-poverty-pearson
 
@@ -2467,56 +2737,82 @@ water_educ4 |>
     ppcor::pcor(method = "pearson")
 ```
 
-***
+------------------------------------------------------------------------
 
-While Pearson’s r between females in school and basic water access in @tbl-cor-test-pearson was 0.81, Speaman’s $r_{s}$ is in @tbl-compute-spearman-rho slightly lower at 0.77.
+While Pearson’s r between females in school and basic water access in
+@tbl-cor-test-pearson was 0.81, Speaman’s $r_{s}$ is in
+@tbl-compute-spearman-rho slightly lower at 0.77.
 
-Looking at the first section of the output from `ppcor::pcor()` under the `$estimate` subheading, it shows the partial correlations between all three of the variables. The partial correlation between females in school and basic water access is $r_{partial} = .44$. So, after accounting for poverty, the relationship between females in school and basic water access is a moderate .44.
-
-
-::::
-:::::
-
+Looking at the first section of the output from `ppcor::pcor()` under
+the `$estimate` subheading, it shows the partial correlations between
+all three of the variables. The partial correlation between females in
+school and basic water access is $r_{partial} = .44$. So, after
+accounting for poverty, the relationship between females in school and
+basic water access is a moderate .44.
 :::
-
-::::
-:::::
+:::
+:::
+:::
+:::
 
 ### Interpretation
 
-To understand partial correlation better some screenshots from the book may help:
+To understand partial correlation better some screenshots from the book
+may help:
 
 **Shared variance and Venn diagrams for two variables**
 
-![Visualizing percentage of shared variance (Screenshot of Figure 8.13)](img/chap08/shared-variance-examples-min.png){#fig-shared-variance-examples
-fig-alt="This figure has six scatter plots in two rows of three scatter plots each, and three Venn diagrams on the third row. In the scatterplots along the first column, the x axis is labeled x and the values on this axis range from -2 to 2, in intervals of 1. The y axis on both these scatterplots is labeled y, and the values on this axis range from -3 to 3, in intervals of 1. The data points on both these graphs are widely dispersed at the center of the plot area. The first graph in the first row also has a fit line that slopes slightly upward from left to right just below and above the 0 value on the y axis. The text above this graph reads, r=.1, r-squared = .01 The first graph in the second row also has a fit line that slopes slightly downward from left to right just above and below the 0 value on the y axis. The text above this graph read, r=. -1, r-squared = .01. In the second column of scatterplots, the data points are seen closer to the fit line. In the second graph on the first row, the fit line is steeper than that seen on the first graph, and slopes from the bottom left to the top right. The text above this graph reads, r=.5, rsquared = .25. In the second graph on the second row, the fit line is steeper than that seen on the first graph, and slopes from the top left to the bottom right. The text above this graph reads, r=-.5, r-squared = .25. In the third column of scatterplots, the data points are seen clustered along the fit line. In the third graph on the first row, the fit line is steepest and slopes from almost the bottom left corner, to a point close to the top right corner of the plot area. The text above this graph reads, r=.9, r-squared = .81. In the third graph on the second row, the fit line is steepest and slopes from almost the top left corner, to a point close to the bottom right corner of the plot area. The text above this graph reads, r=-.9, r-squared = .81. The third row has three Venn diagrams with two circles in each labeled y and x, on the left and right respectively. In the first Venn diagram, the two circles barely intersect and the text above reads, 1% shared variance. In the second Venn diagram, the circles intersect and overlap and the text above reads, 25% shared variance. In the third Venn diagram, the two circles intersect up to almost the middle of both circles and the text above reads, 81% shared variance. Each of these Venn diagrams align to the first, second, and third columns of scatterplots described above." fig-align="center"}
+![Visualizing percentage of shared variance (Screenshot of Figure
+8.13)](img/chap08/shared-variance-examples-min.png){#fig-shared-variance-examples
+fig-alt="This figure has six scatter plots in two rows of three scatter plots each, and three Venn diagrams on the third row. In the scatterplots along the first column, the x axis is labeled x and the values on this axis range from -2 to 2, in intervals of 1. The y axis on both these scatterplots is labeled y, and the values on this axis range from -3 to 3, in intervals of 1. The data points on both these graphs are widely dispersed at the center of the plot area. The first graph in the first row also has a fit line that slopes slightly upward from left to right just below and above the 0 value on the y axis. The text above this graph reads, r=.1, r-squared = .01 The first graph in the second row also has a fit line that slopes slightly downward from left to right just above and below the 0 value on the y axis. The text above this graph read, r=. -1, r-squared = .01. In the second column of scatterplots, the data points are seen closer to the fit line. In the second graph on the first row, the fit line is steeper than that seen on the first graph, and slopes from the bottom left to the top right. The text above this graph reads, r=.5, rsquared = .25. In the second graph on the second row, the fit line is steeper than that seen on the first graph, and slopes from the top left to the bottom right. The text above this graph reads, r=-.5, r-squared = .25. In the third column of scatterplots, the data points are seen clustered along the fit line. In the third graph on the first row, the fit line is steepest and slopes from almost the bottom left corner, to a point close to the top right corner of the plot area. The text above this graph reads, r=.9, r-squared = .81. In the third graph on the second row, the fit line is steepest and slopes from almost the top left corner, to a point close to the bottom right corner of the plot area. The text above this graph reads, r=-.9, r-squared = .81. The third row has three Venn diagrams with two circles in each labeled y and x, on the left and right respectively. In the first Venn diagram, the two circles barely intersect and the text above reads, 1% shared variance. In the second Venn diagram, the circles intersect and overlap and the text above reads, 25% shared variance. In the third Venn diagram, the two circles intersect up to almost the middle of both circles and the text above reads, 81% shared variance. Each of these Venn diagrams align to the first, second, and third columns of scatterplots described above."
+fig-align="center"}
 
 **Shared variance with Venn diagrams with three variables**
 
-![Visualizing shared variance with Venn diagrams with three variables (Screenshot Figure 8.29)](img/chap08/shared-variance-three-variables-min.png){#fig-shared-variance-three-variables 
-fig-alt="Three overlapping circles in different colors named 'female-school', 'basic.water' and 'less.than.dollar'. There are places where two of the circles overlap and a central place where all three circles overlap each other." fig-align="center" width="60%"}
+![Visualizing shared variance with Venn diagrams with three variables
+(Screenshot Figure
+8.29)](img/chap08/shared-variance-three-variables-min.png){#fig-shared-variance-three-variables
+fig-alt="Three overlapping circles in different colors named 'female-school', 'basic.water' and 'less.than.dollar'. There are places where two of the circles overlap and a central place where all three circles overlap each other."
+fig-align="center" width="60%"}
 
-There are two ways the variables overlap in Figure 8.28. There are places where just two of the variables overlap in fig-shared-variance-three-variables (`female.in.school` and `perc.basic2015water` overlap, `female.in.school` and `perc.1dollar` overlap, `perc.basic2015water` and `perc.1dollar` overlap), and there is the space where `female.in.school` and `perc.basic2015water` and `perc.1dollar` all overlap in the center of the diagram. 
+There are two ways the variables overlap in Figure 8.28. There are
+places where just two of the variables overlap in
+fig-shared-variance-three-variables (`female.in.school` and
+`perc.basic2015water` overlap, `female.in.school` and `perc.1dollar`
+overlap, `perc.basic2015water` and `perc.1dollar` overlap), and there is
+the space where `female.in.school` and `perc.basic2015water` and
+`perc.1dollar` all overlap in the center of the diagram.
 
-**The overlap between just two colors is the `r glossary("partialcorr", "partial correlation")` between the two variables. It is the extent to which they vary in the same way after accounting for how they are both related to the third variable involved.**
+**The overlap between just two colors is the
+`r glossary("partialcorr", "partial correlation")` between the two
+variables. It is the extent to which they vary in the same way after
+accounting for how they are both related to the third variable
+involved.**
 
-To get the percentage of shared variance, this `r glossary("determination", "coefficient of determination")` $r^2$ could be computed and reported as a percentage. The squared value of .44 is .194, so 19.4% of the variance in percentage of females in school is shared with the percentage who have basic access to water.
+To get the percentage of shared variance, this
+`r glossary("determination", "coefficient of determination")` $r^2$
+could be computed and reported as a percentage. The squared value of .44
+is .194, so 19.4% of the variance in percentage of females in school is
+shared with the percentage who have basic access to water.
 
-::: {.callout-note}
-The assumptions that applied to the two variables for a Pearson’s r correlation would apply to all three variables for a partial Pearson’s r correlation. Each variable would be continuous and normally distributed, each pair of variables would demonstrate linearity, and each pair would have to have constant variances (homoscedasticity).
+::: callout-note
+The assumptions that applied to the two variables for a Pearson’s r
+correlation would apply to all three variables for a partial Pearson’s r
+correlation. Each variable would be continuous and normally distributed,
+each pair of variables would demonstrate linearity, and each pair would
+have to have constant variances (homoscedasticity).
 :::
-
 
 ### Computing Spearman’s rho partial correlation
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-partial-corr-poverty-spearman}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-partial-corr-poverty-spearman}
 : Partial correlation of Spearman’s rho of poverty
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: tbl-partial-corr-poverty-spearman
 #| tbl-cap: "Partial correlation of Spearman’s rho of poverty"
@@ -2525,24 +2821,25 @@ water_educ4 |>
     ppcor::pcor(method = "spearman")
 ```
 
-***
+------------------------------------------------------------------------
 
-Speaman’s $r_{s}$ was originally in @tbl-compute-spearman-rho 0.77, but the partial Spearman’s rs correlation between females in school and basic water access after accounting for poverty was .43. Including poverty reduced the magnitude of the correlation by nearly half.
-
-
-::::
-:::::
+Speaman’s $r_{s}$ was originally in @tbl-compute-spearman-rho 0.77, but
+the partial Spearman’s rs correlation between females in school and
+basic water access after accounting for poverty was .43. Including
+poverty reduced the magnitude of the correlation by nearly half.
+:::
+:::
 
 ### Testing significance of partial correlation
 
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-partial-corr-p-value}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-partial-corr-p-value}
 : Compute p-value of partial correlation
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ```{r}
 #| label: tbl-partial-corr-p-value
 #| tbl-cap: "Compute p-value of partial correlation with `ppcor::pcor.test()`"
@@ -2555,45 +2852,62 @@ ppcor::pcor.test(
     )
 ```
 
-With `ppcor::pcor.test()` there is a special function for testing significance of a partial correlation. But you can also take the p-values from the result of the `ppcor::pcor()` function. Compare the second section titled `$p.value` in @tbl-partial-corr-poverty-spearman with the result in @tbl-partial-corr-p-value.
+With `ppcor::pcor.test()` there is a special function for testing
+significance of a partial correlation. But you can also take the
+p-values from the result of the `ppcor::pcor()` function. Compare the
+second section titled `$p.value` in @tbl-partial-corr-poverty-spearman
+with the result in @tbl-partial-corr-p-value.
 
-
-***
+------------------------------------------------------------------------
 
 ::: {#rep-partial-corr-wrong}
-::: {.callout-tip}
+::: callout-tip
 ## Significance test wrongly reported as the assumptions for partial correlation are not met
 
-The partial correlation between percentage of females in school and the percentage of citizens who have basic water access was moderate, positive, and statistically significant ($r_{s}.partial = 0.43; t = 3.73; p < .05$). Even after poverty is accounted for, increased basic water access was moderately, positively, and significantly associated with an increased percentage of females in school.
+The partial correlation between percentage of females in school and the
+percentage of citizens who have basic water access was moderate,
+positive, and statistically significant
+($r_{s}.partial = 0.43; t = 3.73; p < .05$). Even after poverty is
+accounted for, increased basic water access was moderately, positively,
+and significantly associated with an increased percentage of females in
+school.
 
 Compare this report with @rep-partial-corr-changed-report.
 :::
 
-Significance test wrongly reported as the assumptions for partial correlation are not met
+Significance test wrongly reported as the assumptions for partial
+correlation are not met
 :::
 
-***
+------------------------------------------------------------------------
 
-:::::{.my-watch-out}
-:::{.my-watch-out-header}
-WATCH OUT! Assumptions not met therefore no statistically significance test possible
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Assumptions not met therefore no statistically significance
+test possible
 :::
-::::{.my-watch-out-container}
-As several assumption for the partial correlation are not met it is not correct to report about the result of a statistically significance test. 
-::::
-:::::
 
+::: my-watch-out-container
+As several assumption for the partial correlation are not met it is not
+correct to report about the result of a statistically significance test.
+:::
+:::
+:::
+:::
 
-
-::::
-:::::
-
-***
+------------------------------------------------------------------------
 
 ::: {#rep-partial-corr-changed-report}
-::: {.callout-tip}
+::: callout-tip
 ## Report about partial correlation when the assumptions are not met
-The partial correlation between the percentage of females in school and the percentage of citizens who have basic water access was moderate and positive ($r_{s.partial} = 0.43$). Even after poverty is accounted for, increased basic water access was moderately and positively associated with an increased percentage of females in school. The assumptions were not met, so it is not clear that the partial correlation from the sample of countries can be generalized to the population of all countries.
+
+The partial correlation between the percentage of females in school and
+the percentage of citizens who have basic water access was moderate and
+positive ($r_{s.partial} = 0.43$). Even after poverty is accounted for,
+increased basic water access was moderately and positively associated
+with an increased percentage of females in school. The assumptions were
+not met, so it is not clear that the partial correlation from the sample
+of countries can be generalized to the population of all countries.
 
 Compare this report with @rep-partial-corr-wrong.
 :::
@@ -2601,41 +2915,44 @@ Compare this report with @rep-partial-corr-wrong.
 Report about partial correlation when the assumptions are not met
 :::
 
-***
+------------------------------------------------------------------------
 
 ### Checking assumptions
 
 Before reporting we have to check the assumptions. We know already that
 
-- the independent observation assumption is not met
-- the at least ordinal variables assumptions is met for all three variables
-- that the monotonic assumption for `female.in.school` and `perc.basic2015.water` is met.
+-   the independent observation assumption is not met
+-   the at least ordinal variables assumptions is met for all three
+    variables
+-   that the monotonic assumption for `female.in.school` and
+    `perc.basic2015.water` is met.
 
 We still have to check
 
-- the monotonic assumption for `female.in.school` and `perc.1dollar` 
-- the monotonic assumption for `perc.basic2015.water` and `perc.1dollar` 
+-   the monotonic assumption for `female.in.school` and `perc.1dollar`
+-   the monotonic assumption for `perc.basic2015.water` and
+    `perc.1dollar`
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap08-check-monotonic-assumptionwith-poverty}
-: Check the monotonic assumptions with female in schools and basic water access
-::::::
+::: my-example
+::: my-example-header
+::: {#exm-chap08-check-monotonic-assumptionwith-poverty}
+: Check the monotonic assumptions with female in schools and basic water
+access
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### female -poverty
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-monotonic-female-poverty}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-monotonic-female-poverty}
 : Check the monotonic assumption for females and poverty
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-monotonic-female-poverty
 #| fig-cap: "Checking the monotonic assumption for females and poverty"
@@ -2679,21 +2996,19 @@ water_educ4 |>
   ggplot2::scale_color_manual(name = "", values = c("gray60", "darkred")) +
   ggplot2::scale_size_manual(name = "", values = 2)
 ```
-
-::::
-:::::
-
+:::
+:::
 
 ###### water - poverty
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap08-monotonic-water-poverty}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap08-monotonic-water-poverty}
 : Check the monotonic assumption for water access and poverty
-::::::
 :::
-::::{.my-r-code-container}
+:::
 
+::: my-r-code-container
 ```{r}
 #| label: fig-monotonic-water-poverty
 #| fig-cap: "Checking the monotonic assumption for water access and poverty"
@@ -2737,37 +3052,56 @@ water_educ4 |>
   ggplot2::scale_color_manual(name = "", values = c("gray60", "darkred")) +
   ggplot2::scale_size_manual(name = "", values = 2)
 ```
-
-::::
-:::::
-
+:::
+:::
+:::
+:::
 :::
 
-::::
-:::::
+It turned out that the monotonic assumption was met for
+`female.in.school` and `perc.1dollar` but not for `perc.basic2015water`
+and `perc.1dollar`.
 
-It turned out that the monotonic assumption was met for `female.in.school` and `perc.1dollar` but not for `perc.basic2015water` and `perc.1dollar`.
-
-
-:::::{.my-remark}
-:::{.my-remark-header}
+::: my-remark
+::: my-remark-header
 Assumption of independent observations not met
 :::
-::::{.my-remark-container}
-The book mentions twice the idea to recode variables that do not met their normality, linearity or monotonic assumptions. For instance one could recode the basic access to water into a binomial variable (has basic access, does not have basic access). The second idea was to recode the poverty variable into an ordinal variable. The ordinal variable could then be used in place of the original version of the variable and the $r_{s}$ analysis could be conducted again. 
 
-But then there is still the problem that the assumption of the independent observation are not met. This failure has two aspects:
+::: my-remark-container
+The book mentions twice the idea to recode variables that do not met
+their normality, linearity or monotonic assumptions. For instance one
+could recode the basic access to water into a binomial variable (has
+basic access, does not have basic access). The second idea was to recode
+the poverty variable into an ordinal variable. The ordinal variable
+could then be used in place of the original version of the variable and
+the $r_{s}$ analysis could be conducted again.
 
-1. It is not a sample but a collection of data some countries have provided. Therefore it could be the case that those countries without data had a reason not to provide their data. They could therefore different to those countries that provided data.
-2. Neighboring countries could influence each other or have other similar characteristics, e.g. similar soil or climate conditions.
+But then there is still the problem that the assumption of the
+independent observation are not met. This failure has two aspects:
 
-Ad 1) The only way to overcome failed assumption is to get data of all countries. We would then work with the population and not a sample. Or we could draw a sample from this population. --- I wonder what different framework of analysis is necessary if working with population data instead with data from a sample. One obvious change is that we would not need significance tests and confidence intervals. Also we would not need `r glossary("Bessel’s correction")` for the variance calculation. What else? 
+1.  It is not a sample but a collection of data some countries have
+    provided. Therefore it could be the case that those countries
+    without data had a reason not to provide their data. They could
+    therefore different to those countries that provided data.
+2.  Neighboring countries could influence each other or have other
+    similar characteristics, e.g. similar soil or climate conditions.
 
-Ad 2) I see no way to overcome the influence of neighboring countries. But maybe with a real sample or population data, this assumption would not be a problem. One could argue that similar natural conditions like climate or regional cultural customs are a fact that we should take into account and should not classify as a failed assumption.
-::::
-:::::
+Ad 1) The only way to overcome failed assumption is to get data of all
+countries. We would then work with the population and not a sample. Or
+we could draw a sample from this population. --- I wonder what different
+framework of analysis is necessary if working with population data
+instead with data from a sample. One obvious change is that we would not
+need significance tests and confidence intervals. Also we would not need
+`r glossary("Bessel’s correction")` for the variance calculation. What
+else?
 
-
+Ad 2) I see no way to overcome the influence of neighboring countries.
+But maybe with a real sample or population data, this assumption would
+not be a problem. One could argue that similar natural conditions like
+climate or regional cultural customs are a fact that we should take into
+account and should not classify as a failed assumption.
+:::
+:::
 
 ## Exercises (empty)
 

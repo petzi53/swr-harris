@@ -210,7 +210,7 @@ base::summary(pdmp_2017_book)
 
 glue::glue("")
 glue::glue("****************** Show selected data ****************")
-glance_data(pdmp_2017_book)
+my_glance_data(pdmp_2017_book)
 ```
 
 ::::
@@ -238,7 +238,7 @@ base::summary(dist_mat)
 
 glue::glue("")
 glue::glue("****************** Show selected data ****************")
-glance_data(dist_mat)
+my_glance_data(dist_mat)
 
 ```
 
@@ -289,7 +289,7 @@ dist_mat_clean <- dist_mat |>
 save_data_file("chap04", dist_mat_clean, "dist_mat_clean.rds")
 
 base::summary(dist_mat_clean)
-glance_data(dist_mat_clean)
+my_glance_data(dist_mat_clean)
 ```
 
 ::::

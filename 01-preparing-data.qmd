@@ -218,15 +218,15 @@ Read the provided dataset as a .csv file into R and show
 
 The output of `base::summary` is in this case not very informative.
 Looking around for appropriate reporting function I developed with
-`glance_data()` my private command. (See
+`my_glance_data()` my private command. (See
 @lst-chap01-read-csv-glance-data in next tab.)
 
-###### glance_data()
+###### my_glance_data()
 
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-code-name-b}
-Look at data with my private function `glance_data()`
+Look at data with my private function `my_glance_data()`
 :::
 :::
 
@@ -237,7 +237,7 @@ Look at data with my private function `glance_data()`
 
 gss_2016_book |>
     dplyr::select(c(age, grass)) |> 
-    glance_data(N = 8, seed = 2016)
+    my_glance_data(N = 8, seed = 2016)
 ```
 
 Display 8 randomly chosen rows in addition to the first and last row
@@ -245,7 +245,7 @@ Display 8 randomly chosen rows in addition to the first and last row
 :::
 :::
 
-I developed a private function `glance_data()` to provide a first
+I developed a private function `my_glance_data()` to provide a first
 impression about the data. The function prints the first and last row of
 the dataset, so you know implicitly how many rows the dataset has.
 Between the first and last row the function adds randomly `N` other rows
@@ -254,14 +254,14 @@ separate column. (The column header `obs` stands for "observation".) For
 reproducibility purposes you can also add a number for the `set.seed()`
 command.
 
-The idea of `glance_data()` is to get a first impression of the dataset.
+The idea of `my_glance_data()` is to get a first impression of the dataset.
 Other printing methods show only the first (or last) rows of the
 dataset. This could be misleading, giving a wrong impression about
 typical data.
 
-###### glance_data
+###### my_glance_data
 
-Maybe you are interested to use `glance_data()` yourself? It isn't
+Maybe you are interested to use `my_glance_data()` yourself? It isn't
 available through a package, but you can copy the source code from the
 next R chunk.
 
@@ -277,8 +277,8 @@ of the Quarto documentation.)
 #| code-fold: show
 #| eval: false
 
-### function glance_data ##############
-glance_data <- function(df, N = 8, seed = 42){
+### function my_glance_data ##############
+my_glance_data <- function(df, N = 8, seed = 42){
     df_temp <- first_and_last_row(df)
     
     set.seed(seed)
@@ -419,7 +419,7 @@ base::summary(gss_2016_clean)
 print("*******************   GLANCE AT SOME DATA  **********************")
 gss_2016_clean |>
     dplyr::select(c(age_cat, grass)) |> 
-    glance_data(N = 8, seed = 2016)
+    my_glance_data(N = 8, seed = 2016)
 ```
 
 Replicate data structure for Figures 1.1 and 1.2 of the book)
@@ -891,12 +891,12 @@ blood_pressure_demo |>
 :::
 :::
 
-###### glance_data()
+###### my_glance_data()
 
 ::: my-r-code
 ::: my-r-code-header
 ::: {#cnj-chap01-show-random-blood-pressure-demo}
-: Show some blood pressure data with my private function `glance_data()`
+: Show some blood pressure data with my private function `my_glance_data()`
 :::
 :::
 
@@ -912,7 +912,7 @@ blood_pressure_demo |>
     dplyr::rename(arm_selected = BPAOARM) |> 
     dplyr::rename(systolic = BPXOSY1) |> 
     dplyr::rename(diastolic = BPXODI1) |> 
-    glance_data()
+    my_glance_data()
 ```
 :::
 :::
@@ -1782,7 +1782,7 @@ gss_2016_man <-
 
 gss_2016_man |>
     dplyr::select(c(age, grass)) |> 
-    glance_data(N = 8, seed = 2016)
+    my_glance_data(N = 8, seed = 2016)
 ```
 
 Import STATA GSS 2016 file into R using (**haven**) and glance at the
@@ -1879,7 +1879,7 @@ gss_2016_aut <- base::readRDS("data/chap01/gss_2016_aut.rds")
 
 gss_2016_aut |> 
     dplyr::select(c(age, grass)) |> 
-    glance_data(N = 8, seed = 2016)
+    my_glance_data(N = 8, seed = 2016)
 
 ```
 
@@ -1974,7 +1974,7 @@ base::file.rename(from = old_filename, to = new_filename)
 gss_2016_cat <- base::readRDS("data/chap01/gss_2016_cat.rds")
 gss_2016_cat |> 
     dplyr::select(c(age, grass)) |> 
-    glance_data(N = 8, seed = 2016)
+    my_glance_data(N = 8, seed = 2016)
 ```
 
 Get GSS data for the year 2016 via the {**lodown**} package
@@ -2031,7 +2031,7 @@ gss_2016_gssr <- base::readRDS("data/chap01/gss_2016_gssr.rds")
 
 ## glance at data
 gss_2016_gssr |> 
-    glance_data(N = 8, seed = 2016)
+    my_glance_data(N = 8, seed = 2016)
 ```
 
 Get GSS 2016 Year Data Set (cross-section only) and glance at the data
@@ -2277,7 +2277,7 @@ base::print(gss_2016_gssr)
 :::
 :::
 
-###### glance_data()
+###### my_glance_data()
 
 ::: my-r-code
 ::: my-r-code-header
@@ -2291,7 +2291,7 @@ base::print(gss_2016_gssr)
 #| label: glance-labelled-data
 
 gss_2016_gssr |>
-    glance_data(N = 8, seed = 2016)
+    my_glance_data(N = 8, seed = 2016)
 
 ```
 :::
@@ -2732,7 +2732,7 @@ gss_2016_grass <- gss_2016_gssr |>
 
 gss_2016_grass |> 
     dplyr::mutate(grass_factor = haven::as_factor(grass)) |> 
-    glance_data(N = 8, seed = 42)
+    my_glance_data(N = 8, seed = 42)
 ```
 
 Here I am using `haven::as_factor()`. This function also knows how to
@@ -2755,7 +2755,7 @@ re-label missing values.
 
 gss_2016_grass |> 
     dplyr::mutate(grass_unlabelled = haven::zap_labels(grass)) |> 
-    glance_data(N = 8, seed = 42)
+    my_glance_data(N = 8, seed = 42)
 
 ```
 :::
@@ -2776,7 +2776,7 @@ gss_2016_grass |>
 
 gss_2016_grass |> 
     dplyr::mutate(grass_rgular_na = haven::zap_missing(grass)) |> 
-    glance_data(N = 8, seed = 42)
+    my_glance_data(N = 8, seed = 42)
 ```
 :::
 :::
