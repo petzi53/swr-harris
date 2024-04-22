@@ -2028,6 +2028,7 @@ A simple linear regression analysis found that the percentage of uninsured resid
 - The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`). 
 - The `r glossary("residuals")` are independent.
 - The residuals are normally distributed.
+- There is no perfect multicollinearity. (Only valid for multiple regression for continuous variables, see @sec-chap09-multicollinearity-assumption.)
 ::::
 :::
 
@@ -3123,6 +3124,7 @@ All three checks indicate that the normality assumption with the percentage of u
 ::: {#lst-listing-ID}    
 ```{r}
 #| label: logit-transform-noinsurance
+#| results: hold
 
 dist_ssp2 <- distance_ssp_clean |> 
     dplyr::mutate(no_insurance_logit = car::logit(no_insurance))
@@ -3138,7 +3140,12 @@ shapiro.test(dist_ssp2$no_insurance_logit)
 Checking normality assumption of residents without insurance after logit transformation. Left: Histogram with overlaid density curve. Right: Q-Q plot. Bottom: Shapiro-Wilk test.
 :::
 
-The Shapiro-Wilk test is still statistically significant p < .05, and therefore the Null (that the `no_insurance` is normally distributed) has to be rejected. But the situation has drastically improved as one can seen in both graphs. In contrast to the book I would the variable for the percentage of uninsured residents logit transform. 
+The Shapiro-Wilk test is still statistically significant p < .05, and therefore the Null (that the `no_insurance` is normally distributed) has to be rejected. But the situation has drastically improved as one can seen in both graphs. In contrast to the book I would the percentage of uninsured residents logit transform. 
+
+::: {.callout-note #nte-chap09-car-logit}
+In contrast to @lst-chap08-transform-logit-arcsine where I computed the logit transformation manually I used here the `logit()` function from the {**car**} package (see @pak-car).
+:::
+
 
 ::::
 :::::
@@ -3148,38 +3155,315 @@ The Shapiro-Wilk test is still statistically significant p < .05, and therefore 
 ::::
 :::::
 
+### Identifying transformation procedures
+
+All of the continuous variables are right skewed. To find an appropriate transformation algorithm the book proposes to check with several procedures and to compare the results: Square, cube, inverse and log transformation are used. (For percent or proportions literature recommend the logit or arcsine transformation. --- I have also tried arcsine and square but logit was by far the best.)
+
+It is easy to find out with visual inspection the best transformation by comparing their histograms.  Even if the situations with all of them has improved no histogram or q-q plot was so normally shaped as my `no_insurance` variable. But even my `logit()` transformation was not good enough that the Shapiro-Wilk test could confirm that the variable is normally distributed! 
+
+:::::{.my-remark}
+:::{.my-remark-header}
+:::::: {#rem-chap09-assumtions-not-met}
+: What should I do if the assumptions are not met?
+::::::
+:::
+::::{.my-remark-container}
+To choose the most normally distributed of the options does not guarantee that the variable finally really meet the assumption. What does this mean and how has one to proceed?
+
+The only option as far as I have learned in SwR is to interpret the results cautiously and to prevent inferences from the sample to the population. But then I do not understand the purpose of the whole inference procedure when --- in the end --- one has to abstain from inferences.
+::::
+:::::
+
+As I am not going to reproduce all the details of the section about finding the appropriate transformation, I will at least report two other noteworthy things I learned from the book:
+
+- It is not necessary to generate a new column in the data.frame of the transformed variable. You could add the transformation directly into the `ggplot2::aes()` or `stats:lm()` code.
+- A disadvantages of transformed variables is the model interpretation. We cannot take the values from the printed output to interpret the model as I have demonstrated it in @eq-chap09-example-multiple-regression. We have to take into account the transformation and to reverse the transformation for the interpretation. For instance if we have log-transformed one variable then we have to inverse this transformation by the appropriate exponential function. Or if we have applied  a cube transformation then we need to raise the printed output by the power of 3.
+
+
+### No multicollinearity assumption {#sec-chap09-multicollinearity-assumption}
+
+For multiple regression. e.g., when there are multiple predictor variables in the model, there is another assumption to met: Multicollinearity. (I have added this assumption to the @bul-chap09-lm-assumptions.)
+
+Multicollinearity occurs when predictors are linearly related, or strongly correlated, to each other. When two or more variables are linearly related to one another, the standard errors for their coefficients will be large and statistical significance will be impacted. This can be a problem for model estimation, so **variables that are linearly related to each other should not be in a model together**.
+
+There are several ways to check for multicollinearity. Examining correlation or --- with more complex models, where one variable is linearly related to a combination of other variables --- the use of variance inflation factor (VIF) statistics.
+
+The VIF statistics are calculated by running a separate regression model for each of the predictors where the predictor is the outcome and everything else stays in the model as a predictor. With this model, for example, the VIF for the `no_insurance` variable would be computed by running the model $no_insurance = log(x = hiv_prevalence) + metro$. 
+
+The $R^2$ from this linear regression model would be used to determine the VIF by substituting it into @eq-chap09-vif:
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap09-vif}
+: Computing the variance inflation factor (VIF)
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\begin{align*}
+VIF_{no\_insurance} = \frac{1}{1-R^2}
+\end{align*}
+$$ {#eq-chap09-vif}
+
+::::
+:::::
+
+:::::{.my-assessment}
+:::{.my-assessment-header}
+:::::: {#cor-chap09-vif}
+: Assessment of VIFs
+::::::
+:::
+::::{.my-assessment-container}
+
+- **1**: No variance
+- **> 1**: There is variance
+- **2.5**: Cutoff; too much collinearity. Corresponds to $R^2$ of 60% $\approx$ r of 77%, a little more than often used when correlation coefficients are calculated for checking multicollinearity. 
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-check-multicollinearity}
+: Checking for multicollinearity
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### cor
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-check-multicollinearity-cor}
+: Using correlation to check multicollinearity
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-check-multicollinearity-cor}
+```{r}
+#| label: check-multicollinearity-cor
+
+distance_ssp_clean  |> 
+  dplyr::mutate(log_hiv_prevalence = log(x = hiv_prevalence))  |> 
+  tidyr::drop_na(log_hiv_prevalence)  |> 
+  dplyr::summarize(cor_hiv_insurance = 
+       stats::cor(x = log_hiv_prevalence, y = no_insurance)
+       )
+```
+
+Checking for multicollinearity with correlation
+:::
 ***
 
+.24 is a weak correlation between percent residents uninsured (`no_insurance`) and the transformed value of `hiv_prevalence`. Multicollinearity would be a problem when the result would have been .7 or higher.
+
+::::
+:::::
 
 
+###### VIF
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-check-multilinearity-vif}
+: Checking for multicollinearity with variance inflation factor (VIF)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-check-multilinearity-vif}    
 ```{r}
-#| fig-height: 10
-#| fig-width: 10
-#| eval: false
-#| include: false
+#| label: check-multilinearity-vif
 
+lm9.3 <- 
+    lm(formula = (dist_ssp)^(1/3) ~ no_insurance + log(x = hiv_prevalence) + metro, 
+       data = distance_ssp_clean, 
+       na.action = na.exclude
+       )
 
-tbl_test <- distance_ssp_clean |> 
-    dplyr::mutate(
-        no_ins_log = car::logit(no_insurance),
-        no_ins_arcsin = asin(sqrt(no_insurance / 100)),
-        no_ins_sqrt = sqrt(no_insurance)
-        )
+car::vif(mod = lm9.3)
+```
 
-shapiro.test(distance_ssp_clean$no_insurance)
-shapiro.test(tbl_test$no_ins_log)
-shapiro.test(tbl_test$no_ins_arcsin)
-shapiro.test(tbl_test$no_ins_sqrt)
+Checking for multicollinearity with variance inflation factor (VIF)
+:::
 
-gg1 <- my_hist_dnorm(distance_ssp_clean, distance_ssp_clean$no_insurance)
-gg2 <- my_hist_dnorm(tbl_test, tbl_test$no_ins_log)
-gg3 <- my_hist_dnorm(tbl_test, tbl_test$no_ins_arcsin)
-gg4 <- my_hist_dnorm(tbl_test, tbl_test$no_ins_sqrt)
+***
 
-patchwork:::"/.ggplot"(gg1, gg2)
-patchwork:::"/.ggplot"(gg3, gg4)
+The `r glossary("VIF")` values are small, especially given that the lower limit of the VIF is 1. This confirmed no problem with multicollinearity with this model. The model meets the assumption of no perfect multicollinearity.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+There is nothing new in checking the other assumption. It is the same procedure as used for simple linear regression model.
+
+### Partial-F test: Choosing a model
+
+I skipped so far the summary of the third model with the `hiv_prevalence`variable. To fully understand this section I need to add it:
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-summary-lm9.3}
+: Summarize full model (`lm9.3`)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-summary-lm9.3}
+```{r}
+#| label: summary-lm9.3
+
+base::summary(lm9.3)
 
 ```
+
+Summary of the full model (`lm9.3`)
+:::
+
+::::
+:::::
+
+
+Which model to choose? The HIV variable was not a significant predictor in the full model, and all three models failed one or more of the assumptions.
+
+Before thinking about how a model performed, we have to ensure that 
+
+1. the model addresses the research question of interest and
+2. the model includes variables that have been demonstrated important in the past to help explain the outcome. (For instance: Smoking has to be included in a lung cancer study.)
+
+One tool for choosing between two linear regression models is a statistical test called the Partial-F test. The Partial-F test compares the fit of two nested models to determine if the additional variables in the larger model improve the model fit enough to warrant keeping the variables and interpreting the more complex model.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap09-partial-f-test}
+: Formula for the Partial-F test
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\begin{align*}
+F_{partial} = \frac{\frac{R_{full}^2 - R_{reduced}^2}{q}}{\frac{1-R_{full}^2}{n-p}}
+\end{align*}
+$$ {#eq-chap09-partial-f-test}
+
+***
+
+- **$R_{full}^2$**: $R^2$ for the larger model
+- **$R_{reduced}^2$**: $R^2$ for the smaller nestes model
+- **n**: sample size
+- **q**: difference in the number of parameters for the two models
+- **p**: number of parameters in the larger model
+
+The $F_{partial}$ statistic has $q$ and $n – p$ degrees of freedom.
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-compute-partial-f-test}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### manual
+
+Fill into formula @eq-chap09-partial-f-test the values from the summaries of `lm9.1` (@lst-chap09-summary-lm-distance-uninsured) and `lm9.2` (@lst-chap09-lm9.2):
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-compute-partial-f-test-manual}
+: Computing Partial-F statistic manually
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-compute-partial-f-test-manual}
+```{r}
+#| label: compute-partial-f-test-manual
+
+((.1915 - .1703) / 1) / ((1 - .1915) / (500 - 3))
+```
+
+Computing Partial-F statistic manually
+:::
+
+::::
+:::::
+
+
+###### anova()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap09-compute-partial-f-test-anova}
+: Computing Partial-F statistic with `anova()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap09-compute-partial-f-test-anova}    
+```{r}
+#| label: compute-partial-f-test-anova
+
+stats::anova(object = lm9.1, lm9.2)
+```
+
+Computing Partial-F statistic with `anova()`
+:::
+
+***
+
+The manual calculation of the Partial-F was with 13.03 a pretty good approximation to the `stats::anova()` computation with 13.06. to understand the p-value of .0003 we need a NHST procedure.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+
+#### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The larger model is no better than the smaller model at explaining the outcome.
+- **HA**: The larger model is better than the smaller model at explaining the outcome.
+:::
+
+#### NHST Step 2
+
+Compute the test statistic: The `r glossary("Partial-F")` is 13.06 with 1 and 497 `r glossary("degrees of freedom")`.
+
+#### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value is very small ($p = .0003$), so the probability is tiny that the test statistic would be this big or bigger if the null hypothesis were true.
+
+#### NHST Step 4
+
+Conclude and write report. The null hypothesis is rejected.
+
+::: {.callout #rep-chap09-lm9.3}
+##### Interpretation of the linear regression model `lm9.3` (without diganostics and assumption testing)
+
+A linear regression model including percent uninsured and metro status of a county to explain distance in miles to the nearest syringe program was statistically significantly better than a baseline model at explaining the outcome [F(2, 497) = 58.88]. The model explained 18.83% of the variation in distance to syringe programs . Percent uninsured was a statistically significant predictor of distance to the nearest syringe program (b = 7.30; t = 9.39; p < .001). In the sample, for every additional 1% uninsured people in a county, the distance to the nearest syringe program is 7.30 miles farther. The 95% confidence interval for the coefficient suggested that a 1% increase in uninsured in a county was associated with a 5.77- to 8.83-mile increase in distance to the nearest syringe program. Metro status was also a significant predictor of distance to a syringe program (b = 28.05; t = 7.76; p = .0003). Nonmetro counties are 28.05 miles farther than metro counties to the nearest syringe exchange in the sample and are 12.80 to 43.30 miles farther than metro counties from syringe programs in the population. Overall, the results suggest that more rural counties and counties that are poorer are farther from this health service, potentially exacerbating existing health disparities.
+
+:::
+
+
+
+
+
 
 
 ## Experiments {#sec-chap09-experiments}

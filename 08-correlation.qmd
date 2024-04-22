@@ -30,8 +30,7 @@ Objectives for chapter 08
 -   **Achievement 5**: Checking assumptions for Pearson’s *r*
     correlation analyses (@sec-chap08-achievement5).
 -   **Achievement 6**: Transforming the variables as an alternative when
-    Pearson’s *r* correlation assumptions are not met
-    (@sec-chap08-achievement6).
+    Pearson’s *r* correlation assumptions are not met (@sec-chap08-achievement6).
 -   **Achievement 7**: Using Spearman’s rho as an alternative when
     Pearson’s *r* correlation assumptions are not met
     (@sec-chap08-achievement7).
@@ -1848,6 +1847,8 @@ $p$ is the power to raise that could be calculated with
 :::
 
 ::: my-r-code-container
+
+::: {#lst-chap08-transform-logit-arcsine}
 ```{r}
 #| label: transform-logit-arcsine
 
@@ -1880,6 +1881,10 @@ save_data_file("chap08", water_educ2, "water_educ2.rds")
 skimr::skim(water_educ2)
 ```
 
+Logit and arcsine transformation of variables `female.in.school` &
+`perc.basic2015water`
+
+:::
 ------------------------------------------------------------------------
 
 We got several warnings. We can easily see that our new variable
