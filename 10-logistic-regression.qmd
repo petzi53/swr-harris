@@ -1,0 +1,326 @@
+# Binary Logistic regression {#sec-chap10}
+
+```{r}
+#| label: setup
+#| include: false
+
+options(warn = 0) # default value: change for debugging. See: ?warning
+
+base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw()) 
+```
+
+## Achievements to unlock
+
+::: {#obj-chap10}
+::: my-objectives
+::: my-objectives-header
+Objectives for chapter 10
+:::
+
+::: my-objectives-container
+**SwR Achievements**
+
+-   **Achievement 1**: Using exploratory data analysis before developing
+    a logistic regression models (@sec-chap10-achievement1)
+-   **Achievement 2**: Understanding the binary logistic regression
+    statistical model (@sec-chap10-achievement2)
+-   **Achievement 3**: Estimating a simple logistic regression model and
+    interpreting predictor significance and interpretation (@sec-chap10-achievement3)
+-   **Achievement 4**: Computing and interpreting two measures of model
+    fit (@sec-chap10-achievement4)
+-   **Achievement 5**: Estimating a larger logistic regression model
+    with categorical and continuous predictors (@sec-chap10-achievement5)
+-   **Achievement 6**: Interpreting the results of a larger logistic
+    regression model (@sec-chap10-achievement6)
+-   **Achievement 7**: Checking logistic regression assumptions and
+    using diagnostics to identify outliers and influential values (@sec-chap10-achievement7)
+-   **Achievement 8**: Using the model to predict probabilities for
+    observations that are outside the data set (@sec-chap10-achievement8)
+-   **Achievement 9**: Adding and interpreting interaction terms in
+    logistic regression (@sec-chap10-achievement9)
+-   **Achievement 10**: Using the likelihood ratio test to compare two
+    nested logistic regression models (@sec-chap10-achievement10)
+:::
+:::
+
+Achievements for chapter 10
+:::
+
+## The perplexing libraries problem
+
+Harris defines `r glossary("digital divide")` broader and includes both limited access
+to information and communication technologies (ICT) and a deficit in the
+ability to use information gained through access to
+ICTs[^10-logistic-regression-1]. 
+
+[^10-logistic-regression-1]: My current research indicates that mostly
+    only the first problem (limited access) falls under the definition
+    ([@wikipedia2024; @oecd2001].
+
+People were more likely to fall into this digital divide if they were poor, a racial minority, had limited education, had a disability, or lived in an area with low population density. The digital divide often exacerbated other problems like finding an employment either by not searching relevant offers using the internet or not getting the job because of missing ICT skills.
+
+The question this chapter tries to answer: "Which characteristics are associated with library use?"
+
+
+
+
+## Resources & Chapter Outline
+
+### Data, codebook, and R packages {#sec-chap10-data-codebook-packages}
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for learning about descriptive statistics
+:::
+
+::: my-resource-container
+**Data**
+
+Two options for accessing the data:
+
+1. Download the cleaned data set `pew_libraries_2016_cleaned_ch10.csv` from <https://edge.sagepub.com/harris1e>. 
+2. Follow the instructions in Box 10.1 to import and clean `pew_libraries_2016_ch10.csv` from <https://edge.sagepub.com/harris1e> or download from the original Internet data source and clean.
+
+I am using the first option because there is nothing new for me to import and clean data files.
+
+**Codebook**
+
+Two options:
+
+1. Download the `pew_libraries_2016_codebook_ch10.docx` codebook file from <https://edge.sagepub.com/harris1e>.
+2. Use the version that comes with the raw data file from Pew Research Center (https://www.pewinternet.org/dataset/march2016-libraries/)
+
+**Packages**
+
+1.  Packages used with the book (sorted alphabetically)
+
+-   {**car**}: @pak-car (John Fox)
+-   {**lmtest**}: @pak-lmtest (Achim Zeileis) 
+-   {**odds.n.ends**}: @pak-odds.n.ends (Jenine Harris) 
+-   {**tableone**}: @pak-tableone (Kazuki Yoshida) 
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+
+2.  My additional packages (sorted alphabetically)
+
+-   {**skimr**}: @pak-skimr (Elin Waring)
+
+:::
+:::
+
+### Get, show, and recode data
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap09-eda}
+: EDA: Get, show and recode data
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Get data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-get-data}
+: Import data from .csv file
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-get-data}
+```{r}
+#| label: get-data
+#| eval: false
+
+## run only once (manually)
+tbl10 <- readr::read_csv(
+    "data/chap10/pew_libraries_2016_cleaned_ch10.csv",
+    col_types = "nffffffff"
+)
+
+save_data_file("chap10", tbl10, "tbl10.rds")
+
+```
+Get data for chapter 10
+:::
+
+(*For this R code chunk is no output available*)
+
+***
+
+In my first import trial it turned out that all the factor variables are imported as character variables. So I had to add the columns specifications `col_types = "nffffffff"`.
+
+::::
+:::::
+
+
+###### Show data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-show-data}
+: Show raw data for chapter 10
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-show-data}    
+```{r}
+#| label: show-data
+
+tbl10 <- base::readRDS("data/chap10/tbl10.rds")
+
+skimr::skim(tbl10)
+```
+
+Skim raw data for chapter 10
+:::
+
+***
+
+
+
+I have used the {**skimr**} package instead of {**tableone**}. It wouldn't be necessary to plot a histogram for `age` to decide if the mean or median has to be used. The tiny histogram at the right side of the `age` line already shows that age is not normally distributed. But for the sake of practice I will create the histogram in the next tab.
+
+::::
+:::::
+
+###### age
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-age-hist}
+: Show age distribution
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-age-dist}
+```{r}
+#| label: age-dist
+
+my_hist_dnorm(tbl10, tbl10$age)
+
+```
+
+The distribution of age in the 2016 Pew Research Center library use data set
+:::
+
+::::
+:::::
+
+###### {tableone}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-desc-stats}
+: Table of descriptive statistics
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-desc-stats}
+```{r}
+#| label: desc-stats
+#| cache: true
+
+tab_desc <- tableone::CreateTableOne(
+    data = tbl10,
+    strata = 'uses.lib',
+    vars = c("age", "sex", "parent", "disabled",
+             "ses", "raceth", "educ", "rurality"))
+
+print(tab_desc,
+      nonnormal = 'age',
+      showAllLevels = TRUE)
+```
+
+Descriptive statistics with bivariate tests using {**tableone**}
+:::
+***
+
+:::::{.my-remark}
+:::{.my-remark-header}
+:::::: {#rem-chap10-test-all-variables-together}
+: Printing bivariate tests for all variables --- a `r glossary("QRP")`
+::::::
+:::
+::::{.my-remark-container}
+I have no good feelings to use {**tableone**} to print descriptive statistics with bivariate test for all variables. Besides the mentioned danger of a questionable research practice (QRP) in looking for statistically significance I would like to have more details, at least to have the chance also to inspect plots of the bivariate correlations. Therefore I prefer to use `GGally::ggpairs()` as already used in @lst-chap09-plot-ggpairs where I have experimented with this function.
+::::
+:::::
+
+
+
+
+
+::::
+:::::
+
+###### {GGally}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-bivariate-eda}
+: Bivariate exploratory data analysis for variables of chapter 10
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-bivariate-data}
+
+```{r}
+#| label: plot-ggpairs
+#| fig-height: 10
+#| fig-width: 10
+#| cache: true
+
+tbl10 |> 
+    GGally::ggpairs()
+```
+
+Bivariate exploratory data analysis for variables of chapter 10
+:::
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+## Achievement 1: EDA {#sec-chap10-achievement1}
+
+------------------------------------------------------------------------
+
+## Exercises (empty)
+
+## Packages introduced in this chapter (empty)
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+## Session Info {.unnumbered}
+
+::: my-r-code
+::: my-r-code-header
+Session Info
+:::
+
+::: my-r-code-container
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+:::
+:::

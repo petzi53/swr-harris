@@ -99,11 +99,11 @@ Two options for accessing the codebook:
 
 1. Packages used with the book (sorted alphabetically)
 
--   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
--   {**tableone**}: @pak-tableone (Kazuki Yoshida) 
--   {**lmtest**}: @pak-lmtest (Achim Zeileis) 
 -   {**broom**}, @pak-broom (David Robinson and Alex Hayes)
 -   {**car**}, @pak-car (John Fox)
+-   {**lmtest**}: @pak-lmtest (Achim Zeileis) 
+-   {**tableone**}: @pak-tableone (Kazuki Yoshida) 
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
 
     
 2. My additional packages (sorted alphabetically)
@@ -3585,29 +3585,38 @@ graphics::pairs(distance_ssp_clean[3:6],
 ::::
 :::::
 
-###### ggpairs
+###### GGally::ggpairs()
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap09-plot-ggpairs}
-: Scatterplots of variable pairs from dataset of chapter 9
+: Bivariate exploratory data analysis for variables of chapter 9
 ::::::
 :::
 ::::{.my-r-code-container}
+::: {#lst-chap09-plot-ggpairs}
 ```{r}
-#| label: fig-plot-ggpairs
-#| fig-cap: "Scatterplots of variable pairs from dataset of chapter 9"
+#| label: plot-ggpairs
 #| fig-height: 10
 #| fig-width: 10
 
-GGally::ggpairs(distance_ssp_clean,
-                columns = 3:7)
+distance_ssp_clean |> 
+    tidyr::drop_na() |> # remove 70 NA's from hiv_prevalence
+    GGally::ggpairs(
+        columns = 3:7,
+        lower = base::list(
+            combo = GGally::wrap("facethist", bins = 30)
+            )
+    )
 
 ```
 
+Bivariate exploratory data analysis for variables of chapter 9 (removed 70 NA's from `hiv_prevalence`)
+:::
 ::::
 :::::
 
+###### ggfortify::autoplot()
 
 :::::{.my-r-code}
 :::{.my-r-code-header}

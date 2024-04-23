@@ -1938,6 +1938,39 @@ Five omnibus tests for testing the composite hypothesis of normality.
 ::::
 :::::
 
+## odds.n.ends
+
+:::::{.my-package}
+:::{.my-package-header}
+odds.n.ends: Odds Ratios, Contingency Table, and Model Significance from a Generalized Linear Model 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-odds.n.ends}
+
+***
+
+{**odds.n.ends**}: [Odds Ratios, Contingency Table, and Model Significance from a Generalized Linear Model](https://cran.r-project.org/package=odds.n.ends)  [@odds.n.ends]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap10/logoi/logo-odds-n-ends-min.png){width="176"}
+
+Computes odds ratios and 95% confidence intervals from a generalized linear model object. It also computes model significance with the chi-squared statistic and p-value and it computes model fit using a contingency table to determine the percent of observations for which the model correctly predicts the value of the outcome. Calculates model sensitivity and specificity.
+
+:::
+
+{**odds.n.ends**} was created in order to take the results from a binary logistic regression model estimated using the `glm()` function and compute model significance, model fit, and the odds ratios and 95% confidence intervals typically reported from binary logistic regression analyses.
+
+
+{**odds.n.ends**}: Odds Ratios, Contingency Table, and Model Significance from a Generalized Linear Model
+:::
+
+***
+::::
+:::::
+
 
 
 
