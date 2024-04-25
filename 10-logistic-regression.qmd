@@ -108,6 +108,8 @@ Two options:
 :::
 :::
 
+## Achievement 1: EDA {#sec-chap10-achievement1}
+
 ### Get, show, and recode data
 
 :::::{.my-example}
@@ -245,7 +247,13 @@ Descriptive statistics with bivariate tests using {**tableone**}
 ::::::
 :::
 ::::{.my-remark-container}
-I have no good feelings to use {**tableone**} to print descriptive statistics with bivariate test for all variables. Besides the mentioned danger of a questionable research practice (QRP) in looking for statistically significance I would like to have more details, at least to have the chance also to inspect plots of the bivariate correlations. Therefore I prefer to use `GGally::ggpairs()` as already used in @lst-chap09-plot-ggpairs where I have experimented with this function.
+I am not feeling comfortable to use {**tableone**} to print descriptive statistics with bivariate test for all variables. Besides the mentioned danger of a `r glossary("QRP", "questionable research practice")` (QRP) in looking for statistically significance I would like to inspect the relationships more slowly and to see more details. I think at a minimum one should examine plots of the bivariate correlations. 
+
+I have the same skepticism about the advice to "examine the frequencies and percentages in the table to identify some possible categories that may be driving the significant results for the bivariate tests". I think one should be guided to inspect more in detail in the first instance by theoretical assumptions, an approach that is fairly well demonstrated with Bayesian model design in "Statistical Rethinking" [@mcelreath2020]. 
+
+To facilitate `r glossary("ExDA", "exploratory data analysis")` one could use packages that combine the analysis of different variables in one go, as my experiments with `GGally::ggpairs()` in @lst-chap09-plot-ggpairs or with `ggfortify::autoplot()` in @lst-chap09-test-ggfortify have shown. But this approach gets too overwhelming when there are more than 5-6 variables as I will demonstrate in @lst-chap10-bivariate-data with {**GGally**).
+
+
 ::::
 :::::
 
@@ -272,6 +280,7 @@ I have no good feelings to use {**tableone**} to print descriptive statistics wi
 #| fig-height: 10
 #| fig-width: 10
 #| cache: true
+#| warning: false
 
 tbl10 |> 
     GGally::ggpairs()
@@ -280,23 +289,337 @@ tbl10 |>
 Bivariate exploratory data analysis for variables of chapter 10
 :::
 
+*** 
+
+There are too many plots (variables) in this example. I could divide easily the amount of variables into different patches as demonstrated in [Columns and Mapping](https://ggobi.github.io/ggally/articles/ggpairs.html#columns-and-mapping) and inspect these results in more details. But in order to get all variations I have to plan the approach systematically which destroys the advantage of automatic plotting.
+
 ::::
 :::::
+
+
 
 :::
 
 ::::
 :::::
 
+## Achievement 2: Understanding binary logistic regression {#sec-chap10-achievement2}
+
+Binary logistic regression follows a similar format and process as linear regression (@sec-chap09), but the outcome or dependent variable is binary. Because the outcome is binary, or categorical consisting of two categories, the model predicts the probability that a person is in one of the two categories. In this chapter we want to predict the library use `uses.lib`.
+
+Because of the binary outcome the linear regression model would not work since it requires a continuous outcome. However, the `r glossary("linear regression")` statistical model can be transformed using the `r glossary("logit transformation")` in order to be useful for modeling binary outcomes.
+
+### Formula of the logistic model
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap10-logistic-model}
+: Formula for the statistical form of the logistic model
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\begin{align*}
+p(y) = \frac{1}{1+e^{-(b_{0}+b_{1}x_{1}+b_{2}x_{2})}}
+\end{align*}
+$$ {#eq-chap10-logistic-model}
+
 ***
 
-## Achievement 1: EDA {#sec-chap10-achievement1}
+- $y$: binary outcome variable (e.g., library use) 
+- $p(y)$: probability of the outcome (e.g., probability of library use) 
+- $b_{0}$: y-intercept 
+- $x_{1}$ and $x_{2}$: predictors of the outcome (e.g., age, rurality) 
+- $b_{1}$ and $b_{2}$: coefficients for $x_{1}$ and $x_{2}$
 
-------------------------------------------------------------------------
+::::
+:::::
+
+### Logistic function
+
+The logistic function has a `r glossary("sigmoid")` shape that stretches from $–∞$ to $∞$ on the x-axis and from $0$ to $1$ on the y-axis. The function can take any value along the x-axis and give the corresponding value between $0$ and $1$ on the y-axis.
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap10-logistic-function}
+: Formula of the logistic function
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\begin{align*}
+\sigma(t) &= \frac{e^t}{1+e^t} =\\
+&= \frac{1}{1 + e^{-t}}
+\end{align*}
+$$ {#eq-chap10-logistic-function}
+
+***
+
+$t$: value along the $x$-axis of the function
+$\sigma$: value of $y$ for a specific value of $t$, or the probability of $y$ given $t$.
+
+In the case of logistic regression, the value of $t$ will be the right-hand side of the regression model, which looks something like $β_{0} + β_{1}x$, where $x$ is an independent variable, $β_{1}$ is the coefficient (rather than slope) for that variable, and $β_{0}$ is the constant (rather than $y$-intercept).
+
+Substituting this regression model for $t$ in the logistic function:
+
+$$
+\begin{align*}
+p(y) = \frac{1}{1 + e^{-(β_{0} + β_{1}x)}}
+\end{align*}
+$$ {#eq-chap10-logistic-function}
+
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap10-logistic-function}
+: Drawing shape of logistic function empty and with example data points
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Shape
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-logistic-function-shape}
+: Shape of the logistic function
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-logistic-function-shape}
+```{r}
+#| label: logistic-function-shape
+
+ggplot2::ggplot(data = data.frame(x = c(-5, 5)), 
+         ggplot2::aes(x)) +
+    ggplot2::stat_function(fun = 
+           function(x) base::exp(x)/(1 + base::exp(x)), n = 100,
+           linewidth = 1,
+           ggplot2::aes(color = "Logistic function")
+           ) +
+    ggplot2::scale_x_continuous(
+        labels = seq.int(10, 35, length.out = 5)
+        ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = "hotpink2"
+    ) +
+    ggplot2::labs(
+        x = "Values of input",
+        y = "Value of outcome"
+    )
+```
+Shape of the logistic function
+:::
+
+::::
+:::::
+
+
+
+###### Example with data points
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-logistic-function-data}
+: Example of logistic function with data points
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-logistic-function-data}    
+```{r}
+#| label: logistic-function-data
+
+## generate fake data frame
+x1 = c(10.2, 13.0, 14.1, 14.3, 14.5, 14.7, 15.0, 15.5, 
+      16.1, 17.3, 19.0, 19.2, 19.8, 21.0, 26.5)
+y1 = rep(0, 15)
+x2 = c(17.8, 18.2, 19.0, 21.4, 21.5, 22.7, 24.0, 27.2, 31.0, 32.4, 33.8)
+y2 = rep(1, 11)
+tbl <-  tibble::tibble(x = c(x1, x2),
+                     y = c(y1, y2)) |> 
+    dplyr::arrange(x)
+
+## draw logistic function with faked data points
+ggplot2::ggplot( 
+        data = tbl,
+        ggplot2::aes(x = x, y = y,
+                 color = "Logistic function")
+    ) +
+    ggplot2::stat_smooth(
+        data = tbl,
+        formula = y ~ x,
+        method = "glm",
+        se = FALSE,
+        method.args = list(family = binomial)
+    ) +
+    ggplot2::geom_point(
+        ggplot2::aes(alpha = "Observation"),
+        color = "grey41"
+    ) +
+    ggplot2::labs(
+        x = "Values of input",
+        y = "Value of outcome"
+    ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = "hotpink2"
+    ) +
+    ggplot2::scale_alpha_manual(
+        name = "",
+        values = 0.5
+    )
+
+    
+    
+```
+
+Example of logistic function with data points
+:::
+
+***
+
+::::
+:::::
+
+###### Probability of outcome
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-logistic-function-data-annotated}
+: Example of logistic function showing probability of outcome for x = 20
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-logistic-function-data-annotated}    
+```{r}
+#| label: logistic-function-data-annotated
+
+## generate fake data frame
+x1 = c(10.2, 13.0, 14.1, 14.3, 14.5, 14.7, 15.0, 15.5, 
+      16.1, 17.3, 19.0, 19.2, 19.8, 21.0, 26.5)
+y1 = rep(0, 15)
+x2 = c(17.8, 18.2, 19.0, 21.4, 21.5, 22.7, 24.0, 27.2, 31.0, 32.4, 33.8)
+y2 = rep(1, 11)
+tbl <-  tibble::tibble(x = c(x1, x2),
+                     y = c(y1, y2)) |> 
+    dplyr::arrange(x)
+
+## draw logistic function with faked data points
+ggplot2::ggplot( 
+    data = tbl,
+    ggplot2::aes(x = x, y = y,
+                 color = "Logistic function")
+    ) +
+    ggplot2::stat_smooth(
+        data = tbl,
+        formula = y ~ x,
+        method = "glm",
+        se = FALSE,
+        method.args = list(family = binomial),
+        ggplot2::aes(linetype = "predictor = 20 and\noutcome = .44 example")
+    ) +
+    ggplot2::geom_point(
+        ggplot2::aes(alpha = "Observation"),
+        color = "grey41"
+        ) +
+    ggplot2::geom_segment(
+        x = 20, xend = 20,
+        y = 0, yend = .44,
+        color = "#1f6fca",
+        linetype = "dashed"
+    ) +
+    ggplot2::geom_segment(
+        x = 10, xend = 20,
+        y = .44, yend = .44,
+        color = "#1f6fca",
+        linetype = "dashed"
+    ) +
+    ggplot2::labs(
+        x = "Values of input",
+        y = "Value of outcome"
+    ) +
+    ggplot2::scale_color_manual(
+        name = "",
+        values = "hotpink2"
+    ) +
+    ggplot2::scale_alpha_manual(
+        name = "",
+        values = 0.5
+    ) +
+    ggplot2::scale_linetype_manual(
+        name = "",
+        values = c("dashed", "dashed")
+    ) +
+    ggplot2::annotate("text", x = 10, y = .48, label = "0.44", color = "#1f6fca" ) +
+    ggplot2::annotate("text", x = 20.5, y = -.02, label = "20", color = "#1f6fca" )
+    
+```
+
+Example of logistic function showing a probability of outcome for $x = 20$
+:::
+
+***
+
+Let's assume that the above graphic is a model for predicting library use from age. Then we can interpret it as a 44% probability of library use for a 20-year-old. Since 44% is lower than a 50% probability of the value of $y$, the model is predicting that the 20-year-old does not have the outcome. So, if the outcome is library use, the logistic model would predict this 20-year-old was not a library user. 
+
+
+::::
+:::::
+
+:::
+
+
+
+
+
+::::
+:::::
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap10-odds}
+: Formula of odds related to probability
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\begin{align*}
+odds = \frac{probability}{1-probability}
+\end{align*}
+$$ {#eq-chap10-odds}
+
+Substituting the logistic model from @eq-chap10-logistic-model:
+
+$$
+\begin{align*}
+odds &= \frac{\frac{1}{1+e^{-(\beta_{0}+\beta_{1}x)}}}{1- \frac{1}{1+e^{-(\beta_{0}+\beta_{1}x)}}} = 
+e^{\beta_{0} + \beta_{1}x}
+\end{align*}
+$$ {#eq-chap10-odds-logistic-model}
+
+To be equivalent to the interpretation of the coefficients in linear regression, however, there is one more step. That is, what is the increase or decrease in the odds of the outcome with a one-unit increase in $x$?
+
+
+$$
+\begin{align*}
+OR = \frac{e^{b_0+b_{1}(x+1)}}{e^{b_0+b_{1}x}}
+\end{align*}
+$$ {#eq-chap10-odds-ratio}
+
+::::
+:::::
+
+@eq-chap10-odds-ratio shows that for every one-unit increase in the independent variable $x$, the odds of the outcome increase or decrease by $e^{b_1}$. Taking $e$ to the power of $b_1$ is referred to as exponentiating $b_1.$ After a model is estimated, the analyst will usually exponentiate the b value(s) in order to report odds ratios describing the relationships between each predictor and the outcome.
+
+## Achievement 3: Interpreting a simple logistic regression {#sec-chap10-achievement3}
+
 
 ## Exercises (empty)
-
-## Packages introduced in this chapter (empty)
 
 ## Glossary
 

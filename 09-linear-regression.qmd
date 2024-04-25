@@ -3600,7 +3600,7 @@ graphics::pairs(distance_ssp_clean[3:6],
 #| fig-height: 10
 #| fig-width: 10
 
-distance_ssp_clean |> 
+pm <- distance_ssp_clean |> 
     tidyr::drop_na() |> # remove 70 NA's from hiv_prevalence
     GGally::ggpairs(
         columns = 3:7,
@@ -3609,6 +3609,7 @@ distance_ssp_clean |>
             )
     )
 
+pm
 ```
 
 Bivariate exploratory data analysis for variables of chapter 9 (removed 70 NA's from `hiv_prevalence`)
@@ -3658,7 +3659,7 @@ Applying {**ggfortify**} to model and diagnose our model `lm9.1`
 
 ### Using {**broom**} {#sec-chap09-broom-exeriments}
 
-{**broom**} converts untidy output into tidy tibbles. This is important whenever you want to combine results from multiple model (or tests). I have {**broom**} already used to compare results from the normality tests (`r glossary("Shapiro-Wilk")` and `r glossary("Anderson-Darling")`), and homogeneity tests (`r glossary("Levene")` and `r glossary("Fligner", "Fligner-Killeen")`. In the first case (normality) both tests result in `htest` objects. I could therefore bind as different rows in a new tibble dataframe (see: @tbl-chap09-eda-test-normality). In the second case (homogeneity) I got with `htest` and `anova` two different objects and had to work around the differences manually before I could bind them into the same tibble (See: @tbl-chap09-eda-test-homogeneity). 
+{**broom**} converts untidy output into tidy tibbles. This is important whenever you want to combine results from multiple model (or tests). I have {**broom**} already used to compare results from the normality tests (`r glossary("Shapiro-Wilk")` and `r glossary("Anderson-Darling")`), and homogeneity tests (`r glossary("Levene")` and `r glossary("Fligner", "Fligner-Killeen")`. In the first case (normality) both tests result in `htest` objects. I could therefore bind them as different rows in a new tibble dataframe (see: @tbl-chap09-eda-test-normality). In the second case (homogeneity) I got with `htest` and `anova` two different objects and had to work around the differences manually before I could bind them into the same tibble (See: @tbl-chap09-eda-test-homogeneity). 
 
 At that time I didn't know that I should have used only `broom::tidy()` and not improvise with `broom:::glance.htest()`. The real advantage of glance can be seen when it is applied to a linear model. 
 
