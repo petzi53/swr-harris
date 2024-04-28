@@ -1425,12 +1425,14 @@ tib_chisq |>
 ::::
 :::::
 
+See a more succinct example using a loop in [How to Plot a Chi-Square Distribution in R](https://lifewithdata.com/2023/07/30/how-to-plot-a-chi-square-distribution-in-r/) [@bprasad262023a]
+
 ###### $\chi^2$ as function
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap05-chi-squared-function}
-: Four chi-square probability distributions as ggplot function
+: Chi-square probability distributions with 3 degrees of freedom
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -1571,7 +1573,7 @@ It is more useful to know what the probability is of getting a chi-squared of *1
 
 The probability of the chi-squared value being 10 or higher is about 15%. Even if this value is not very probable it is way above to be statistically significant (5%). The probability of the squared differences between observed and expected adding up to 10 or more is low when there is no relationship between the variables and result in a chi-squared value well inside the probability density function (PDF).
 
-For instance: In our test case the $\chi^2$-value of 10.0 lies well inside the probability curve. The probability that this value can occur when there is no statistically relevant relationship is relatively high (15%). We can't therefore reject the H0, because we do not have a statistically significant value of 5% or less. This can be seen clearly in the resulting graph of @lst-pdf-test-example-2, created with the {**sjPlot**} package (see @pak-sjPlot).
+For instance: In our test case the $\chi^2$-value of 10.0 lies well inside the probability curve. The probability that this value can occur when there is no statistically relevant relationship is relatively high (15%). We can't therefore reject the H0, because we do not have a statistically significant value of 5% or less. This can be seen clearly in the resulting graph of @lst-pdf-test-example2, created with the {**sjPlot**} package (see @pak-sjPlot).
 
 
 
@@ -1589,7 +1591,7 @@ For instance: In our test case the $\chi^2$-value of 10.0 lies well inside the p
 :::
 ::::{.my-r-code-container}
 
-::: {#lst-pdf-test-example-2}
+::: {#lst-pdf-test-example2}
 ```{r}
 #| label: fig-pdf-test-example2
 #| fig-cap: "Chi-squared probability distribution (df = 5)"
@@ -1615,6 +1617,35 @@ This graph uses the {**sjPlot**) package and is very easy to produce. It shows t
 Even if the standard version of the plot is easy to create, to adapt the graph is another issue. In the background {**sjPlot**} uses the {**ggplot2**} package, but you can’t specify changes by mixing (**sjPlot**) with {**ggplot2**} commands. I tried it and it produced two different plots. To customize plot appearance you have to learn the many arguments of of `sjPlot:set_theme()` and `sjPlot::plot_grpfrq()`. (See also @pak-sjPlot)
 
 (I managed to change the theme in {**sjPlot**} by setting the default theme in {**ggplot2**} with `ggplot2::theme_set(ggplot2::theme:bw())` as global option in the setup chunk.)
+::::
+:::::
+
+###### test example3
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-pdf-test-example3}
+: Chi-squared probability distribution (df = 5)
+::::::
+:::
+::::{.my-r-code-container}
+
+::: {#lst-pdf-test-example3}
+```{r}
+#| label: fig-pdf-test-example3
+#| fig-cap: "Chi-squared probability distribution (df = 5)"
+
+nhstplot::plotchisqtest(chisq = 10, df = 5)
+```
+
+Chi-squared probability distribution (df = 5) created with {**nhstplot**}
+:::
+***
+
+Working at 2024-04.26 on @sec-chap10 I just learned of {**nhstplot**} as another package for illustrating graphically the most common Null Hypothesis Significance Testing (`r glossary("NHST")`) procedures (See @pak-nhstplot). This package is even easier to use than the {**sjPlot**) package and is more visually appealing.
+
+Especially valuabe is that the axes are automatically scaled to present the relevant part and the overall shape of the probability density function. {**nhstplot**} is especially intended for education purposes, as it provides a helpful support to help explain the Null Hypothesis Significance Testing process, its use and/or shortcomings.
+
 ::::
 :::::
 
@@ -1675,6 +1706,46 @@ Whenever possible, use the actual p-value rather than p < .05
 :::
 ::::{.my-watch-out-container}
 In this case the `r glossary("p-value")` is so small that it wouldn’t look nice to provide the exact figure.
+::::
+:::::
+
+###### Race & voting
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap05-chisq-voting}
+: Determine probability of ease of voting by race
+::::::
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: chap05-chisq-voting2
+#| fig-cap: "Chi-squared probability distribution of `ease_vote` by `race`"
+#| results: hold
+
+(
+    chisq_ease_vote_stats <- stats::chisq.test(ease_vote_table)
+)
+
+
+nhstplot::plotchisqtest(
+    chisq = chisq_ease_vote_stats[["statistic"]][["X-squared"]],
+    df = chisq_ease_vote_stats[["parameter"]][["df"]]
+    )
+
+
+```
+
+
+
+
+
+
+
+
+
+
 ::::
 :::::
 
@@ -2447,7 +2518,7 @@ The explication in `r glossary("SwR")` is not easy to understand. So I have used
 
 - Frost, J. (2022, January 11). Odds Ratio: Formula, Calculating & Interpreting. Statistics By Jim. https://statisticsbyjim.com/probability/odds-ratio/
 - Glen, S. (n.d). Odds Ratio Calculation and Interpretation. Statistics How To. https://www.statisticshowto.com/probability-and-statistics/probability-main-index/odds-ratio/
-- Poldrack, R. A. (2020, January 13). 10.12: Odds and Odds Ratios. Statistics LibreTexts. https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Statistical_Thinking_for_the_21st_Century_(Poldrack)/10%3A_Probability/10.12%3A_Odds_and_Odds_Ratios
+- Poldrack, R. A. (2020, January 13). 10.12: [Odds and Odds Ratios](https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Statistical_Thinking_for_the_21st_Century_(Poldrack)/10%3A_Probability/10.12%3A_Odds_and_Odds_Ratios). Statistics LibreTexts. 
 - Szumilas, M. (2010). Explaining Odds Ratios. Journal of the Canadian Academy of Child and Adolescent Psychiatry, 19(3), 227–229. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2938757/
 - Tenny, S., & Hoffman, M. R. (2024). Odds Ratio. In StatPearls. StatPearls Publishing. http://www.ncbi.nlm.nih.gov/books/NBK431098/
 
