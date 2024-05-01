@@ -2188,6 +2188,383 @@ Anscombe's 4 Regression data sets
 
 ## Achievement 8: Using the model for predictions {#sec-chap10-achievement8}
 
+Logistic regression models are useful not only for examining relationships between predictors and binary outcomes, but also for predicting probabilities for hypothetical or new cases that are not in the data frame.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-model-prediction}
+: Using the model to predict probabilities for observations that are outside the data set
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-model-prediction}
+```{r}
+#| label: model-prediction
+
+
+# make a new data frame containing the observations of interest
+glm10.3_example <- tibble::tibble(age = c(35, 65, 68),
+                         sex = c("male", "female", "male"),
+                         educ = c("Four-year degree or more",
+                                  "Four-year degree or more",
+                                  "Four-year degree or more"),
+                         disabled = c("no", "no", "no"),
+                         parent = c("not parent", "parent", "parent"),
+                         rurality = c("rural", "rural", "rural"),
+                         raceth = c("Non-Hispanic White",
+                                    "Non-Hispanic White",
+                                    "Non-Hispanic White"),
+                         ses = c("low", "medium", "medium"))
+
+# use the new data frame to predict
+predictions <- predict(object = glm10.3, newdata = glm10.3_example,
+                       type = "response")
+predictions
+```
+
+Predict probabilities for observations that are outside the data set
+:::
+
+::::
+:::::
+
+## Achievement 9: Adding and interpreting interaction terms {#sec-chap10-achievement9}
+
+An interaction term examines how two (or more) variables might work together to influence an outcome. A possible interaction between sex and parental status can be included in the logistic regression model by adding a term, $+ sex \times parent$, to the formula. When an interaction is included in a model, it is customary to also include the interacting variables separately. In a model with interaction terms, the terms that are not part of the interaction are called *main effects*.
+
+### Computing interaction
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-interaction-parent-sex}
+: Computing interaction parental status and sex
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-interaction-parent-sex}
+```{r}
+#| label: interaction-parent-sex
+
+# estimate the library use model for interaction term and print results
+glm10.4 <- glm(formula = uses.lib ~ age + sex + educ + parent +
+                         disabled + rurality + ses + raceth + sex*parent,
+             data = tbl10.4,
+             family = binomial("logit")
+             )
+
+odds.n.ends::odds.n.ends(mod = glm10.4)
+```
+
+Generalized linear model `glm10.4` with interaction parental status and sex
+:::
+
+::::
+:::::
+
+
+### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: A model containing age, sex, education, parent status, disability status, rurality, SES, race-ethnicity, and an interaction between sex and parent status is not useful in explaining library use.
+- **HA**: A model containing age, sex, education, parent status, disability status, rurality, SES, race-ethnicity, and an interaction between sex and parent status is useful in explaining library use.
+:::
+
+### NHST Step 2
+
+Compute the test statistic. 
+
+The test statistic is $χ^2 = 96.30$ with 13 degrees of freedom.
+
+### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value is less than .001.
+
+### NHST Step 4
+
+Conclude and write report.
+
+The null hypothesis is rejected. The model including age, sex, education, parent status, disability status, rurality, SES, race-ethnicity, and an interaction between sex and parent status is useful in explaining library use [$χ^2(13) = 96.30; p < .001$].
+
+::: {.callout #rep-chap10-interpret-glm10.4}
+##### Interpreation of `glm10.4` for library use with interaction parent status and sex
+
+Age, sex, having a four-year degree or more, and non-Hispanic Black race-ethnicity were statistically significant predictors of library use. For every 1year increase in age, the odds of library use decreased by 1% (OR = .99; 95% CI: .983–.996). Males have 55% lower odds of library use compared to females (OR = .45; 95% CI: .35–.58) and those with a four-year degree have 1.93 times higher odds of library use compared to those with less than a high school education (OR = 1.93; 95% CI: 1.28–2.94). Finally, non-Hispanic Black participants had 1.56 times higher odds of library use compared to Hispanic participants (OR = 1.56; 95% CI: 1.01–2.43). Disability status, SES, disabled status, and rurality were not significantly associated with library use, and those with a high school to 2-year degree had no higher nor lower odds of library use than those with less education. Likewise, non-Hispanic White participants had no higher nor lower odds of library use compared to Hispanic participants. There was no statistically significant interaction between sex and parent status on the odds of library use.
+
+The model correctly predicted 383 of 696 library users and 467 of 731 library nonusers. Overall, the model correctly predicted 850 of 1427 observations (59.6%); the model was more specific (63.9%) than sensitive (55.0%), indicating that it was better at classifying library nonusers than library users.
+:::
+
+### Check assumption
+
+Thee is nothing new in this section.
+
+## Achievement 10: Likelihood ratio test {#sec-chap10-achievement10}
+
+Given that the interaction term was not statistically significant and the model violated the linearity assumption, it seems preferable to report the previous model without the interaction term as the final model. However, there is a statistical test that can be used to determine whether a larger model is statistically significantly better than a smaller model. The test is called the `r glossary("likelihood-ratio", "likelihood ratio test")`.
+
+The likelihood ratio (LR) test compares two nested models where one model includes a subset of the variables in the other model. For example, the simple logistic regression model with age as the only predictor could be compared statistically to any of the larger models because they all have the age variable in them. The small model is nested in each of the larger models. In addition, the larger model without the interaction could be compared to the model with the interaction term. Models where the variables of one are completely different from the variables of the other cannot be compared with this test.
+
+The idea behind the LR test is to determine if the additional variables in a model make the model better enough to warrant the complexity of adding more variables to the model.
+
+
+### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: The larger model with the interaction term is no better at explaining library use compared to the model without the interaction term.
+- **HA**: The larger model with the interaction term is better at explaining library use compared to the model without the interaction term.
+:::
+
+### NHST Step 2
+
+Compute the test statistic. 
+
+The {**lmtest**} package (@pak-lmtest) has the `lrtest()` function, which can be used to compare two nested models. The LR test computes the difference between the log-likelihoods for the two models and multiplies this by 2; the result has a chi-squared distribution.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-lr-test}
+: Likelihood ratio test
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-lr-test}
+```{r}
+#| label: lr-test
+
+lmtest::lrtest(object = glm10.3, glm10.4)
+```
+
+Likelihood ratio test
+:::
+
+The output from `lmtest::lrtest()` shows the test statistic is $χ^2 = 1.56$.
+
+::::
+:::::
+
+
+### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The test statistic of $χ^2 = 1.56$ had a `r glossary("p-value")` of .21.
+
+### NHST Step 4
+
+Conclude and write report.
+
+::: {.callout #rep-chap10-lrtest}
+##### Report the result of the likelihood ratio test
+
+The null hypothesis was retained; the model with the interaction term was no different in explaining library use from the model without the interaction term ($χ^2 = 1.56; p = .21$).
+:::
+
+When the larger model is not statistically significantly better, then use of the smaller model to aid in interpretation is preferred. The more complex a model becomes, the more difficult it is to interpret. Generally speaking, parsimony is preferable. However, there are exceptions to this, such as when the larger model has variables in it that have been consistently related to the outcome in other research or are important to understanding the outcome for some other reason.
+
+
+### Complete interpretation of the final model
+
+::: {.callout #rep-chap10-final-interpretation}
+##### Interpretation of the final model
+
+**Model chosen**
+
+A logistic regression model with age, sex, education, parent status, socioeconomic status, race-ethnicity, and disability status was statistically significantly better than a baseline model at explaining library use [$χ^2(12) = 94.74; p < .001$]. 
+
+A likelihood ratio test comparing this model to a model that also included an interaction between sex and parent status showed that the larger model was not statistically significantly better than the smaller model [$χ^2(1) = 1.56; p = .21$], so the smaller model was retained. 
+
+**Odds of library use**
+
+- The odds of library use were 51% lower for males compared to females ($OR = .49; 95% CI: .39–.61$).
+- The odds of library use were 1.90 times higher for those with a four-year degree compared to those with less than a high school education ($OR = 1.90; 95% CI: 1.26–2.90$). 
+- The odds of library use are 1.55 times higher for non-Hispanic Black participants compared to Hispanic participants ($OR = 1.55; 95% CI: 1.002–2.42$). 
+- The odds of library use are 1% lower for every 1-year increase in a person’s age ($OR = .99; 95% CI: .984–.996$). 
+- The odds of library use are not statistically significantly different for urban or suburban residents compared to rural residents, for parents compared to nonparents, for non-Hispanic Whites compared to Hispanics, or for people with low or medium SES compared to high SES. 
+
+**Checked assumptions and model diagnostics**
+
+Assumption checking revealed a possible problem with the linearity of the age predictor, especially at the youngest ages. The other assumptions were met. 
+
+Diagnostics found two problematic outlying or influential observations, but the observations did not appear to be data entry mistakes or much different from the rest of the sample in any way.
+:::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap10-forest-plot}
+: Forest plot for reporting odds ratios
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### version 1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-forest-plot1}
+: Forest plot for reporting odds ratios (Version 1)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-forest-plot1}
+```{r}
+#| label: forest-plot1
+
+# get odds ratio table from glm10.3
+# not [4] as in the book, but [6]
+df10.3_odds <- data.frame(
+    odds.n.ends::odds.n.ends(mod = glm10.3)[6]
+)
+
+# change variable names for easier use
+names(df10.3_odds) <- c("OR", "lower", "upper")
+
+# make row names a variable
+tbl10.3_odds <- df10.3_odds |> 
+    tibble::rownames_to_column(var = "variable")  
+
+# forest plot of odds ratios from glm10.3 (Figure 10.15)
+tbl10.3_odds |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = variable, 
+          y = OR, 
+          ymin = lower, 
+          ymax = upper)
+      ) +
+  ggplot2::geom_pointrange(color = "#7463AC") +
+  ggplot2::geom_hline(
+      yintercept = 1, 
+      lty = 2, 
+      color = "deeppink",
+      linewidth = 1) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(x = "Variable from library use model", y = "Odds ratio (95% CI)") 
+```
+Association between demographic characteristics and library use from Pew Research Center 2016 library use survey (Version 1)
+:::
+
+::::
+:::::
+
+
+###### version 2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-forest-plot2}
+: Forest plot for reporting odds ratios (Version 2)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-forest-plot2}    
+```{r}
+#| label: forest-plot2
+
+# clean variable names for graph
+tbl10.3_odds_clean <- tbl10.3_odds |> 
+  dplyr::mutate(
+      variable = dplyr::recode(.x = variable,
+           "sexmale" = "Male",
+           "ruralityurban" = "Urban residence",
+           "ruralitysuburban" = "Suburban residence",
+           "parentparent" = "Parent",
+           "educHS to 2-year degree" = "HS to 2-year degree",
+           "educFour-year degree or more" = "Four-year degree or more",
+           "disabledyes" = "Disabled",
+           "age" = "Age",
+           "seslow" = "Low socioeconomic status",
+           "sesmedium" = "Medium socioeconomic status",
+           "racethNon-Hispanic White" = "Non-Hispanic White",
+           "racethNon-Hispanic Black" = "Non-Hispanic Black",
+           "(Intercept)" = "Intercept")
+      )
+
+# modify graph to include clean variable names (Figure 10.16)
+# change scale of y-axis (flipped) to log scale for visualization
+tbl10.3_odds_clean |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = variable, 
+          y = OR, 
+          ymin = lower, 
+          ymax = upper)) +
+  ggplot2::geom_pointrange(color = "#7463AC") +
+  ggplot2::geom_hline(
+      yintercept = 1, 
+      lty = 2, 
+      color = "deeppink", 
+      linewidth = 1) +
+  ggplot2::scale_y_log10(
+      breaks = c(0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10),
+                minor_breaks = NULL) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+      x = "Variable from library use model", 
+      y = "Odds ratio (95% CI)") 
+```
+
+Association between demographic characteristics and library use from Pew Research Center 2016 library use survey (Version 2)
+:::
+
+::::
+:::::
+
+###### final
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-forest-plot3}
+: Forest plot for reporting odds ratios (Final version)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-forest-plot3}
+```{r}
+#| label: forest-plot3
+
+tbl10.3_odds_clean |> 
+  ggplot2::ggplot(
+      ggplot2::aes(x = 
+               reorder(variable, OR), 
+               y = OR, 
+               ymin = lower, 
+               ymax = upper)) +
+  ggplot2::geom_pointrange(color = "#7463AC") +
+  ggplot2::geom_hline(
+      yintercept = 1, 
+      lty = 2, 
+      color = "deeppink", 
+      linewidth = 1) +
+  ggplot2::scale_y_log10(
+      breaks = c(0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10), 
+      minor_breaks = NULL) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+      x = "Variable from library use model", 
+      y = "Odds ratio (95% CI)")
+```
+
+Association between demographic characteristics and library use from Pew Research Center 2016 library use survey (Final version)
+:::
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
 
 
 ## Exercises (empty)

@@ -3830,7 +3830,7 @@ Using broom::augment() to add information about observations to a dataset
 With `broom::augment()` we got those diagnostic values that we have calculated individually for the `lm9.1` model in previous sections of this chapter:
 
 - Residuals and fitted values (columns `.resid` and `.fitted`): See @lst-chap09-regression-with-residuals.
-- Standardized residuals (column `.std.resid`): See (@lst-chap09-diagnostics-standardize-residuals).
+- Standardized residuals (column `.std.resid`): See (@lst-chap09-diagnostics-standardized-residuals).
 - Cook’s Distance (column `.cooksd`): See @lst-chap09-diagnostics-cooks-d.
 - Leverage (column `.hat`): See @lst-chap09-diagnostics-leverage
 - Sigma, here as column `.sigma` for the "estimated residual standard deviation when corresponding observation is dropped from model". (Where's the `.sigma` equivalent in this chapter?)
