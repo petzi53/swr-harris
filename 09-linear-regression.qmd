@@ -302,7 +302,7 @@ Order and completeness of the following tasks is not mandatory.
     - **Glimpse actual data**: To get a feeling about data types and actual values use `dplyr::glimpse()`.
     - **Glance at example rows**: As an alternative of `utils::head()` / `utils::tails()` get random row examples including first and last row of the dataset with my own function `my_glance_data()`.
 2. **Check normality assumption**:
-    - **Draw histograms of numeric variables**: To get a better idea I have these `r glossary("histogram", "histograms")` overlaid with the theoretical normal distributions and the `r glossary("density plots")` of the current data. The difference between these two curves gives a better impression if normality is met or not.
+    - **Draw histograms of numeric variables**: To get a better idea I have these `r glossary("histograms")` overlaid with the theoretical normal distributions and the `r glossary("density plots")` of the current data. The difference between these two curves gives a better impression if normality is met or not.
     - **Draw Q-Q plots of numeric variables**: `r glossary("Q-Q-Plot", "Q-Q plots")` gives even a more detailed picture if normality is met.
     - **Compute normality tests**: If your data has less than 5.000 rows then use the `r glossary("Shapiro-Wilk", "Shapiro-Wilk test")`, otherwise the `r glossary("Anderson-Darling"," Anderson-Darling test")`. 
 3. **Check homogeneity assumption**: If the normality assumption is not met, then test if the homogeneity of variance assumption between groups is met with `r glossary("Levene", "Levene’s test")` or with the more robust `r glossary("Fligner", "Fligner-Killeen’s test")`. In the following steps use always median instead of mean and do not compute the `r glossary("Pearson", "Pearson’s r")` but the `r glossary("Spearman", "Spearman’s rho")` coefficient. 
@@ -1184,7 +1184,7 @@ Errors and residuals are two closely related and easily confused measures:
 
 ### Introduction
 
-A `r glossary("simple linear regression")` model could be used to examine the relationship between the percentage of people without health insurance and the distance to a syringe program for a county.
+A `r glossary("simple-linear-regression", "simple linear- regression")` model could be used to examine the relationship between the percentage of people without health insurance and the distance to a syringe program for a county.
 
 :::::{.my-theorem}
 :::{.my-theorem-header}
@@ -2026,7 +2026,7 @@ A simple linear regression analysis found that the percentage of uninsured resid
 - The outcome is continuous.
 - The relationship between the two variables is linear (`r glossary("linearity")`).
 - The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`). 
-- The `r glossary("residuals")` are independent.
+- The `r glossary("residually", "residuals")` are independent.
 - The residuals are normally distributed.
 - There is no perfect multicollinearity. (Only valid for multiple regression for continuous variables, see @sec-chap09-multicollinearity-assumption.)
 ::::
@@ -2387,7 +2387,7 @@ This method is not mentioned, but I believe that you can also use the `r glossar
 - The outcome is continuous. **Yes**: The distance to a syringe program is measured in miles and can take any value of zero or higher.
 - The relationship between the two variables is linear (`r glossary("linearity")`). **No**: See: @sec-chap09-check-linearity
 - The variance is constant with the points distributed equally around the line (`r glossary("homoscedasticity")`). **No**: See @lst-chap09-check-homoscedasticity-breusch-pagan and @lst-chap09-check-homoscedasticity-residuals.
-- The `r glossary("residuals")` are independent. **Yes**: See @sec-chap09-check-residuals-independence.
+- The `r glossary("residually", "residuals")` are independent. **Yes**: See @sec-chap09-check-residuals-independence.
 - The residuals are normally distributed. **No**: See @lst-chap09-check-normality-residuals-hist and @lst-chap09-check-normality-residuals-qq-plot.
 ::::
 :::
@@ -2417,18 +2417,18 @@ One good strategy for identifying the truly problematic observations is to ident
 
 ::: {.panel-tabset}
 
-###### Standardizing residuals
+###### Standardizing residuals {#sec-chap09-standardized-residuals}
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap09-diagnostics-standardize-residuals}
+:::::: {#cnj-chap09-diagnostics-standardized-residuals}
 : Standardize residuals to find outliers with `stats::rstandard()`
 ::::::
 :::
 ::::{.my-r-code-container}
-::: {#lst-chap09-diagnostics-standardize-residuals}
+::: {#lst-chap09-diagnostics-standardized-residuals}
 ```{r}
-#| label: diagnostics-standardize-residuals
+#| label: diagnostics-standardized-residuals
 #| results: hold
 #| cache: true
 
@@ -2454,7 +2454,7 @@ Standardizing residuals to find outliers with `stats::rstandard`
 
 ***
 
-Standardized `r glossary("residuals")` are `r glossary("z-score", "z-scores")` for the residual values. 
+Standardized `r glossary("residually", "residuals")` are `r glossary("z-score", "z-scores")` for the residual values. 
 
 
 
@@ -2557,7 +2557,7 @@ Computing `dfbeta` is a method to find influential values. `df_beta` removes eac
 
 Reading other resources [@zach2020a; @goldstein-greenwood2022] I noticed that they used another threshold: Instead of using 2 they recommended $2 / \sqrt{n}$, where `n` is the sample size. But this would result in a cutoff value of $2 / \sqrt{500}$ = `r 2 / sqrt(500)` with the absurd high number of 343 counties as influential values.
 
-But later I became aware that these resources are talking from `dfbetas` (plural) and not `dfbeta` (singular). Between these two measure there is a big difference: `dfbetas` are the standardized values, whereas `dfbeta` values depend on the scale of the data. 
+But later I became aware that these resources are talking of `dfbetas` (plural) and not of `dfbeta` (singular). Between these two measure there is a big difference: `dfbetas` are the standardized values, whereas `dfbeta` values depend on the scale of the data. 
 
 > Consequently, some analysts opt to standardize DFBETA values—in which case they’re referred to as DFBETAS --- by dividing each DFBETA by the standard error estimate for $\hat{\beta_{j}}$ [Detecting Influential Points in Regression with DFBETA(S)](https://library.virginia.edu/data/articles/detecting-influential-points-in-regression-with-dfbetas) [@goldstein-greenwood2022]
 

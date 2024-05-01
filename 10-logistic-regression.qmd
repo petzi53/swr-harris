@@ -1,4 +1,4 @@
-# Binary Logistic regression {#sec-chap10}
+# Binary logistic regression {#sec-chap10}
 
 ```{r}
 #| label: setup
@@ -691,28 +691,29 @@ In contrast to the book the order of my levels for the `uses.lib` data is revers
 
 
 
-###### lm10.1
+###### glm10.1
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap10-lm10.1}
+:::::: {#cnj-chap10-glm10.1}
 : Estimate library use model and print results
 ::::::
 :::
 ::::{.my-r-code-container}
-::: {#lst-chap10-lm10.1}    
+::: {#lst-chap10-glm10.1}    
 ```{r}
-#| label: lm10.1
+#| label: glm10.1
 
-lm10.1 <- 
-    stats::glm(
+glm10.1 <- 
+    glm(
         formula = uses.lib ~ age, 
         data = tbl10.1, 
-        family = binomial(link = "logit")) 
+        family = binomial(link = "logit")
+        ) 
 
-save_data_file("chap10", lm10.1, "lm10.1.rds")
+save_data_file("chap10", glm10.1, "glm10.1.rds")
 
-base::summary(lm10.1)
+base::summary(glm10.1)
 ```
 
 Estimate the simple library use model and print (= summmarize) the results
@@ -720,10 +721,18 @@ Estimate the simple library use model and print (= summmarize) the results
 
 ***
 
-@lst-chap10-lm10.1 uses `stats::family = binomial(link = "logit")`to specify the outcome variable. The "family" argument provides a description of the error distribution and link function to be used in the model. This is a convenient way to specify the details of the models and to distinguish between different types of generalized linear models that are appropriate for different kinds of outcome variables. In addition to the `glm()` help page you get additional information if you type [?family](https://rdrr.io/r/stats/family.html) into the console.
+@lst-chap10-glm10.1 uses `stats::family = binomial(link = "logit")`to specify the outcome variable. The "family" argument provides a description of the error distribution and link function to be used in the model. This is a convenient way to specify the details of the models and to distinguish between different types of generalized linear models that are appropriate for different kinds of outcome variables. In addition to the `glm()` help page you get additional information if you type [?family](https://rdrr.io/r/stats/family.html) into the console.
 
 ::::
 :::::
+
+::: {.callout-warning #wrn-chap10-pkg-name-stats1}
+##### Problem with `stats::`-prefix in front of `glm()` in later R code
+
+Because of an error in the coding of the DescTools::PseudoR2() function I had to delete my `stats::`-prefix in front of the `glm()` function in @lst-chap10-glm10.1. (See @wrn-chap10-pkg-name-stats2)
+:::
+
+
 
 ###### Odds Ratio
 
@@ -738,7 +747,7 @@ Estimate the simple library use model and print (= summmarize) the results
 ```{r}
 #| label: compute-odds-ratio
 
-odds.n.ends::odds.n.ends(lm10.1)
+odds.n.ends::odds.n.ends(glm10.1)
 ```
 
 Model fit, model significance, and odds ratios
@@ -967,7 +976,7 @@ I found a lengthy video tutorial (19:31) using RStudio featuring chi-squared dis
 
 Conclude and write report.
 
-::: {.callout #rep-chap10-chisq-lm10.1}
+::: {.callout #rep-chap10-chisq-glm10.1}
 The chi-squared test statistic for a logistic regression model with age predicting library use had a p-value of .001. This p-value indicates there is a .1% chance of a chi-squared statistic this large or larger if the null hypothesis were true. The null hypothesis is therefore rejected in favor of the alternate hypothesis that the model is better than the baseline at predicting library use. A logistic regression model including age was statistically significantly better than a null model at predicting library use [$χ^2(1) = 10.82; p = .001$].
 :::
 
@@ -1038,7 +1047,7 @@ z-distribution for sample size of 1571
 Review and interpret the test statistics: 
 Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
 
-The area under the curve to the left of the test statistic in @lst-chap10-z-dist-odds-ratio is very small. Given this area is very small, the p-value of .00105 in the output @lst-chap10-lm10.1 from `base::summary(lm10.1)` makes sense. There is a .105% probability that this sample came from a population where there was no relationship between age and library use. Thus, there is a statistically significant relationship between age and library use (z = –3.28; p = .001).
+The area under the curve to the left of the test statistic in @lst-chap10-z-dist-odds-ratio is very small. Given this area is very small, the p-value of .00105 in the output @lst-chap10-glm10.1 from `base::summary(glm10.1)` makes sense. There is a .105% probability that this sample came from a population where there was no relationship between age and library use. Thus, there is a statistically significant relationship between age and library use (z = –3.28; p = .001).
 
 
 #### NHST Step 4
@@ -1083,7 +1092,7 @@ The @lst-chap10-compute-odds-ratio includes a table showing how many observation
 :::::{.my-theorem}
 :::{.my-theorem-header}
 :::::: {#thm-chap10-percent-correctly-predicted-example}
-: Calculate the percent correctly predicted with the `lm10.1` data
+: Calculate the percent correctly predicted with the `glm10.1` data
 ::::::
 :::
 ::::{.my-theorem-container}
@@ -1121,7 +1130,7 @@ For the library use data, the most common category is library nonuse (or 0), wit
 The model using age to predict library use was correct 53% of the time (Count $R^2$ = .53). The adjusted count $R^2$ would be $\frac{338+500-798}{1571-798}$ or .05.
 
 ::: {.callout #rep-chap10-adjusted-r-squared}
-##### Interpretation of adjusted $R^2$ in `lm10.1`
+##### Interpretation of adjusted $R^2$ in `glm10.1`
 
 There were 5% more correct predictions by the age model than by the baseline (Adjusted Count $R^2$ = .05).
 :::
@@ -1150,11 +1159,175 @@ Many of these packages have also function for percent correctly predicted and th
 :::
 
 
+:::::{.my-resource}
+:::{.my-resource-header}
+:::::: {#lem-chap10-computing-pseudo-r-squared}
+: Interpreting the different Pseudo-$R^2$
+::::::
+:::
+::::{.my-resource-container}
+There are many different pseudo-$R^2$ measures with different theoretical approaches. Therefore also the interpretation of these measures differ. 
+
+The best resource I found to explain these differences: [FAQ: What are pseudo R-squareds?](https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-what-are-pseudo-r-squareds/) [@ucla2011].
+
+But even in this resource not all different pseudo-$R^2$ measures are explained. Anyway it is an complex issues where I have to spend more time to study the details.
+
+::::
+:::::
+
+
 ::: {.callout-caution #cau-chap10-pseudo-r2}
 ##### Interpreting pseudo-$R^2$
 
-I haven't tried out yet the functions of @bul-chap10-pseudo-r2-functions. Besides I am not certain how to calculate and interpret the pseudo-$R^2$ measure. I have seen that there is diversity in the approaches and I need a better understanding of the theoretical background.
+Even in @lem-chap10-computing-pseudo-r-squared not all different pseudo-$R^2$ measures are explained. It is an complex issues where I have to spend more time to study the details.
 :::
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap10-pseudo-r-squared}
+: Computing Pseudo $R^2$ with different packages
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### DescTools
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-pseudo-r-squared-desctools}
+: Computing Pseudo-$R^2$ 
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-pseudo-r-squared-desctools}
+```{r}
+#| label: pseudo-r-squared-desctools
+
+DescTools::PseudoR2(
+    x = glm10.1,
+    which = "all")
+```
+Computing Pseudo-$R^2$ with {**DescTools**}
+:::
+
+::::
+:::::
+
+::: {.callout-warning #wrn-chap10-pkg-name-stats2}
+##### `DescTools::PseudoR2()` throws an error message
+
+From `DescTools::PseudoR2()` I got always the error that the function `stats::glm()`was not known. After two hours of trials I learned that the function was not programmed for the case that you provide the package name in front of the `glm()`function. After I deleted this prefix in @lst-chap10-glm10.1 the `DescTools::PseudoR2()` function worked. (See also @wrn-chap10-pkg-name-stats1)
+:::
+
+
+###### performance
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-pseudo-r-squared-performance}
+: Computing Pseudo-$R^2$ with {**performance**}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-pseudo-r-squared-performance}    
+```{r}
+#| label: pseudo-r-squared-performance
+
+performance::r2(glm10.1)
+performance::r2_tjur(glm10.1)
+
+performance::r2_mcfadden(glm10.1)
+performance::r2_coxsnell(glm10.1)
+performance::r2_nagelkerke(glm10.1)
+performance::r2_efron(glm10.1)
+performance::r2_mckelvey(glm10.1)
+```
+
+Computing Pseudo-$R^2$ with {**performance**}
+:::
+
+::::
+:::::
+
+###### rms
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-pseudo-r-squared-rms}
+: Computing Pseudo-$R^2$ with {**rms**}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-pseudo-r-squared-rms}
+```{r}
+#| label: pseudo-r-squared-rms
+
+rms::lrm(
+    formula = uses.lib ~ age,
+    data = tbl10.1
+)
+```
+
+Computing Pseudo-$R^2$ with {**rms**}
+:::
+
+::::
+:::::
+
+###### psel
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-pseudo-r-squared-pscl}
+: Computing Pseudo-$R^2$ with {**pscl**}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-pseudo-r-squared-pscl}
+```{r}
+#| label: pseudo-r-squared-pscl
+
+pscl::pR2(glm10.1)
+```
+
+Computing Pseudo-$R^2$ with {**pscl**}
+:::
+
+::::
+:::::
+
+###### pubh
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-pseudo-r-squared-pubh}
+: Computing Pseudo-$R^2$ with {**pubh**}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-pseudo-r-squared-pubh}
+```{r}
+#| label: pseudo-r-squared-pubh
+
+pubh::pseudo_r2(glm10.1)
+```
+
+Computing Pseudo-$R^2$ with {**pubh**}
+:::
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+***
 
 
 ### Sensitivity and specificity
@@ -1166,6 +1339,856 @@ Sometimes it is useful to know whether the model is better at predicting people 
 In @lst-chap10-compute-odds-ratio, the sensitivity is 43.7% while the specificity is 62.7%. The model was better at predicting the "no" values than the "yes" values. These percentages could also be computed from the frequency table in the output: The model predicted 500 of the 798 people in the 0 category correctly (62.7%) and 338 of the 773 in the 1 category correctly (43.7%).
 
 ## Achievement 5: Estimating a larger logistic regression model {#sec-chap10-achievement5}
+
+### Compute full logistic regression model
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap10-compute-full-glm}
+: Compute full logistic regression model
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### glm10.2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-compute-glm10.2}
+: Compute full logistic regression model, first try (`glm10.2`)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-compute-glm10.2}
+```{r}
+#| label: compute-glm10.2
+
+# estimate the full library use model and print results
+glm10.2 <- glm(
+    formula = uses.lib ~ age + sex + educ + parent +
+         disabled + rurality + raceth + ses,
+         data = tbl10.1,
+         na.action = na.exclude,
+         family = binomial("logit"))
+
+odds.n.ends::odds.n.ends(glm10.2)
+```
+
+Full logistic regression model for library use data (`glm2`)
+:::
+
+My values are quite different than the outcome in the book. The reason is that I have the levels ordered differently. I will order my levels so that I get the same result as in the book.
+
+::::
+:::::
+
+###### order levels
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-order-levels}
+: Order level to match the result from the book
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-order-levels}
+```{r}
+#| label: order-levels
+
+tbl10.3 <- tbl10.1 |> 
+    dplyr::mutate(educ =
+        forcats::fct_relevel(educ, "< HS", "Four-year degree or more",
+                             "HS to 2-year degree")
+    ) |> 
+    dplyr::mutate(parent =
+        forcats::fct_rev(parent)
+    ) |> 
+    dplyr::mutate(rurality =
+        forcats::fct_relevel(rurality, "rural", "suburban", "urban")
+    ) |> 
+    dplyr::mutate(raceth =
+        forcats::fct_relevel(raceth, "Hispanic", 
+                 "Non-Hispanic Black", "Non-Hispanic White")
+    ) |> 
+    dplyr::mutate(ses =
+        forcats::fct_relevel(ses, "high", 
+                 "low", "medium")
+    ) 
+
+save_data_file("chap10", tbl10.3, "tbl10.3.rds")
+```
+
+Level ordered to match the result from the book
+:::
+
+::: {.callout-caution #cau-chap10-level-order}
+##### Why levels such as `ses` not ordered to their intrinsically ordering?
+
+I have ordered the levels to match the book outcome. But I do not understand why some of the levels (`educ`, `rurality` or `ses`) are not ordered from high to low or vice versa. The highest or lowest level is in the order of the book always in the middle.
+:::
+
+
+
+
+::::
+:::::
+
+
+###### glm10.3
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-compute-glm10.3}
+: Compute full logistic regression model, final version (`glm10.3`)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-compute-glm10.3}
+
+```{r}
+#| label: compute-glm10.3
+
+# estimate the full library use model 
+# matching the level order from the book 
+# and print results with odds.n.ends()
+
+glm10.3 <- glm(
+    formula = uses.lib ~ age + sex + educ + parent +
+         disabled + rurality + raceth + ses,
+         data = tbl10.3,
+         na.action = na.exclude,
+         family = binomial("logit"))
+
+save_data_file("chap10", glm10.3, "glm10.3.rds")
+
+odds.n.ends::odds.n.ends(glm10.3)
+```
+
+Compute full logistic regression model, final version (`glm10.3`)
+:::
+
+::: {.callout-caution #cau-chap10-na-action}
+##### Using `na.action = na.omit` instead of `na.action = na.exlcude`
+
+To find influential values I have tried several different packages. Using {**glmtoolbox**} I received an error message when I used `na.action = na.exlcude`. In the help file to the `influence()` function I learned: 
+
+> Cases omitted in the fit are omitted unless a `na.action` method was used (such as `na.exclude`) which restores them. … If a model has been fitted with `na.action = na.exclude` (see `na.exclude`), cases excluded in the fit are considered here.
+
+This is a weird  behavior because I thought that `na.exclude` will exclude and not restore the NA-values. But if I tried to change therefore to `na.action = na.omit` I got an error message in @lst-chap10-check-residuals: "`res_std` must be size 1601 or 1, not 1427."
+
+Finally I decided to stick with `na.action = na.exclude` (or to delete this line completely with the same result) and not to use the {**glmtoolbox**} package.
+:::
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+
+
+
+
+
+### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: A model containing age, sex, education, parent status, disability status, rurality, SES, and race-ethnicity is no better than the baseline at explaining library use.
+- **HA**: A model containing age, sex, education, parent status, disability status, rurality, SES, and race-ethnicity is better than the baseline at explaining library use.
+:::
+
+### NHST Step 2
+
+Compute the test statistic. 
+
+The chi-squared test statistic of 94.74 was computed by the `odds.n.ends()` function.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-chi-squared-glm10.2}
+: Visualizing a chi-squared distribution with n = 1427, df = 12 and test statistic of 94.74
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-chi-squared-glm10.2}
+```{r}
+#| label: chi-squared-glm10.2
+
+nhstplot::plotchisqtest(
+    chisq = 94.74,
+    df = 12
+)
+
+```
+
+Chi-squared distribution with n = 1427, df = 12 and a test statistic of 94.74
+:::
+
+::::
+:::::
+
+
+### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The probability that the chi-squared would be 94.74 if the full model were no better than the null model is shown as the area under the curve to the right starting at 94.74. This corresponds with a very small p-value < .001.
+
+### NHST Step 4
+
+Conclude and write report.
+
+::: {.callout #rep-chap10-glm10.2}
+A logistic regression model containing age, sex, education, parental status, disability status, SES, race-ethnicity, and rurality was statistically significantly better than the baseline probability at predicting library use [$χ^2(12) = 94.74; p < .001$].
+:::
+
+## Achievement 6: Interpreting the results of a larger logistic regression model {#sec-chap10-achievement6}
+
+### Interpreting odds ratios
+
+@lst-chap10-compute-glm10.2 includes the odds ratio which are easier to interpret as the significance statistics for the predictors. When the `r glossary("confidence interval")` includes 1, the `r glossary("odds ratio")` could be 1 and this indicates it is not statistically significantly different from 1. If the odds ratio is greater than 1 *and* the confidence interval does not include 1, the odds ratio suggests a statistically significant increase in the odds of the outcome.
+
+Factor variables with two categories were interpreted with respect to the reference group, or the group *not* shown in the output. Since the factor variables can only change by going from one group to the other, instead of the odds ratio being for a one-unit change in the predictor, it is **the change in the odds of the outcome when moving from the reference group to the other group**.
+
+For the sex variable, `male` is the group shown in the output, so interpreting the odds ratio for `sex` is as follows: “Males have 51% lower odds of library use compared to females.” She showed Leslie that the 51% came from subtracting the odds ratio of .489 from 1 (1 – .49 = .51) and multiplying by 100.
+
+**For factor variables with more than two categories each odds ratio is interpreted with respect to the reference group for that variable**. For `educ`, the group not shown is the `< HS` group, indicating that it is the reference group. The odds ratio for the Four-year degree or more group is 1.90, so the interpretation would be that individuals with a four-year degree or more have 1.90 times higher odds of library use compared to people with less than a high school education.
+
+A list of the odds ratios where the confidence interval did not include 1: 
+
+- age (OR = .99; 95% CI: .984–.996) 
+- sexmale (OR = .49; 95% CI: .39–.61) 
+- educFour year degree or more (OR = 1.90; 95% CI: 1.26–2.90) 
+- racethNon-Hispanic Black (OR = 1.55; 95% CI: 1.002–2.417)
+
+#### Interpreting significant odds ratios greater than 1
+
+There were two significant predictors with odds ratios greater than 1. 
+
+::: {.callout #rep-chap10-interpret-educ-raceth}
+##### Interpreting `educ` and `raceth` as significant odds ratios greater than 1
+
+- People with a four-year degree or more education had 1.90 times higher odds of library use compared to people with less than a high school education (OR = 1.90; 95% CI: 1.26–2.90).
+- People who were non-Hispanic Black had 1.55 times higher odds of library use compared to people who were Hispanic (OR = 1.55; 95% CI: 1.002–2.417).
+:::
+
+
+
+#### Interpreting non-significant odds ratios greater than 1
+
+When the confidence interval includes 1, it is possible that the true value of the odds ratio is 1. Therefore the values would be reported without the interpretation of higher odds. For instance:
+
+::: {.callout #rep-chap10-interpret-rurality}
+##### Interpreting `rurality` as a non-significant odds ratio greater than 1
+
+The odds of library use were not statistically significantly different for urban residents compared to rural residents (OR = 1.23; 95% CI: .93–1.63).
+:::
+
+
+
+#### Interpreting significant odds ratios less than 1
+
+The age variable and male sex both show significant odds ratios lower than 1. 
+
+::: {.callout #rep-chap10-interpret-age-sex}
+##### Interpreting `age` and `sex` as significant odds ratios less than 1
+
+- For age, the odds of library use are 1% lower for every 1-year increase in a person’s age (OR = .99; 95% CI: .984–.996). 
+- For male sex, the reference group is female and the odds ratio is .49. Subtracting 1 – .49 results in .51, so the odds of library use are 51% lower for males compared to females (OR = .49; 95% CI: .39–.61).
+:::
+
+
+
+#### Interpreting non-significant odds ratios less than 1
+
+The low-SES category had a non-significant odds ratio of .93 (95% CI: .571.52). The interpretation would be as follows:
+
+::: {.callout #rep-chap10-interpret-ses}
+##### Interpreting `ses` as a non-significant odds ratio less than 1 
+
+The odds of library use are not statistically significantly different for those with low SES compared to those in the reference group of high SES (OR = .93; 95% CI: .57–1.52).
+:::
+
+
+### Compute and interpret model fit
+
+#### Count $R^2$
+
+The model correctly predicted 378 of the 696 who use the library and 482 of the 731 who do not use the library. Overall, it was correct for $\frac{378+482}{1427} = \frac{860}{1427}$ of the observations, or 60.3% of the time (count $R^2 = .603$). It was better at classifying those who do not use the library (specificity = 65.9%) than those who use the library (sensitivity = 54.3%).
+
+#### Adjusted count $R^2$
+
+$$
+R^2_{adj.count} = \frac{860-731}{1427-731} = .185
+$$
+
+The model predicted 18.5% more of the observations correctly than a baseline model would have.
+
+## Achievement 7: Checking logistic regression assumptions {#sec-chap10-achievement7}
+
+:::{.my-bulletbox}
+:::: {.my-bulletbox-header}
+::::: {.my-bulletbox-icon}
+:::::
+:::::: {#bul-chap10-logistic-regression-assumption}
+::::::
+: Logistic regression assumptions
+::::
+:::: {.my-bulletbox-body}
+There are three assumptions for logistic regression: 
+
+- independence of observations, 
+- linearity, and 
+- no perfect multicollinearity.
+::::
+:::
+
+### Logistic regresion assumptions
+
+#### Independence of observation
+
+The Pew Research Center conducted a phone survey where they selected a single person in a randomly selected household. **The assumption is met**.
+
+#### Linearity
+
+For logistic regression, the outcome variable is binary, so its relationship with another variable will never be linear. Instead of plotting the relationship of the `r glossary("outcome")` with each continuous predictor, `r glossary("linearity")` is tested by plotting the log-odds of the predicted probabilities for the outcome against each of the continuous `r glossary("Predictor Variable", "predictors")` in the model. For example, are the predicted values equally accurate for people of a younger age compared to people of an older age?
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-check-linearity-logistic-regression}
+: Checking linearity of the age variable for the model of library use `glm10.3`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-check-linearity-logistic-regression}
+```{r}
+#| label: check-linearity-logistic-regression
+
+#make a variable of the log-odds of the predicted values
+logit_use <- log(x = glm10.3$fitted.values / (1 - glm10.3$fitted.values))
+
+# make a small data frame with the log-odds variable and the age predictor
+tbl10_lin <- tibble::tibble(logit_use, age = glm10.3$model$age)
+
+# create a plot (Figure 10.9)
+tbl10_lin  |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = age, 
+          y = logit_use)
+      ) +
+  ggplot2::geom_point(
+      ggplot2::aes(
+          size = "Observation"
+          ), 
+      color = "gray60", 
+      alpha = .6
+      ) +
+  ggplot2::geom_smooth(
+      formula = y ~ s(x, bs = "cs"),
+      method = "gam",
+      se = FALSE, 
+      ggplot2::aes(
+          color = "Loess curve")
+      ) +
+  ggplot2::geom_smooth(
+      formula = y ~ x,
+      method = lm, 
+      se = FALSE, 
+      ggplot2::aes(
+          color = "linear"
+          )
+      ) +
+  ggplot2::labs(
+      x = "Age in years", 
+      y = "Log-odds of library use predicted probability") +
+  ggplot2::scale_color_manual(
+      name = "Type of fit line", 
+      values = c("dodgerblue2","deeppink")
+      ) +
+  ggplot2::scale_size_manual(
+      values = 1.5, 
+      name = ""
+      )
+
+```
+
+Checking linearity of the age variable for the model of library use `glm10.3`
+:::
+
+The graph shows the Loess curve close to the linear fit line with the exception of the youngest ages.
+
+
+::::
+:::::
+
+It is up to the analyst to determine whether the actual relationship is close enough to linear to meet this assumption. If the assumption is not met, this variable might be removed from analysis, transformed, or recoded.
+
+1. `r glossary("B-spline", "spline regression")` is one way to deal with problems of linearity in linear and logistic regression. 
+2. It might be worth considering that the data frame includes people as young as 16 years old; it is possible that there are different predictors of library use before adulthood and restricting the age range of the data frame to adults over 18 could be another option for addressing this deviation from linearity in the youngest survey participants.
+
+::: {.callout-note  #nte-chap10-rectify-assumptions-not-met}
+##### Why older than 18 and not older than 25?
+
+It seems for me that there is still a problem with people 18 years old. The loess curve in @lst-chap10-check-linearity-logistic-regression only gets better with people older than 25 years.
+
+Generally I have a bad feeling with the sentence: "It is up to the analyst to determine whether the actual relationship is close enough to linear to meet this assumption." For me there seems to much subjectivity in this approach. As I am already remarked in @tdo-chap09-linearity-test: I have to look for tools, like statistical tests to get a more objective decision if the assumption of linearity is met.  
+:::
+
+#### No perfect multicollinearity
+
+The `r glossary("GVIF")` is similar to the `r glossary("VIF")` used for linear regression, but modified to account for the categorical outcome. It examines how well each predictor variable in the model is explained by the group of other predictor variables. If a predictor is well explained by the others, it is redundant and unnecessary. For the GVIF, often a threshold of $GVIF^{\frac{1}{2 \times df}} < 2.5$ is used as a cutoff, with values of 2.5 or higher indicating a failed multicollinearity assumption.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-compute-gvif}
+: Compute GVIF
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-compute-gvif}
+```{r}
+#| label: compute-gvif
+
+car::vif(mod = glm10.3)
+
+```
+
+Compute and show GVIF values
+:::
+
+None of the values in the right-hand column have a value of 2.5 or higher, so there is no discernable problem with multicollinearity.
+
+::::
+:::::
+
+
+#### Conclusion
+
+Overall, the assumption checking revealed a possible problem with age as a predictor, mostly at the youngest ages. The other assumptions were met. It might be useful to restrict the age variable to adults or to transform the age variable.
+
+### Model diagnostics
+
+#### Finding outliers with standardized residuals
+
+Referring to @lst-chap09-diagnostics-standardized-residuals residuals are the distances between the predicted value of the outcome and the true value of the outcome for each person or observation in the data set.  
+
+These values are standardized by computing z-scores for each one so that they follow a z-distribution. **Standardized `r glossary("residually", "residuals")` are `r glossary("z-score", "z-scores")` for the residual values.** Z-scores that are greater than 1.96 or less than –1.96 are about two standard deviations or more away from the mean of a measure. In this case, they are more than two standard deviations away from the mean residual value. Very large values of standardized residuals can indicate that the predicted value for an observation is far from the true value for that observation, indicating that an examination of that observation could be useful.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap10-standardize-residuals}
+: Standardize residuals and check if z-scores greater than 2
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Computing
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-check-residuals}
+: Compute and check residuals
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-check-residuals}
+```{r}
+#| label: check-residuals
+
+# get standardized residuals and add to data frame
+tbl10.4 <-  tbl10.3 |> 
+    dplyr::mutate(res_std = stats::rstandard(model = glm10.3)) |> 
+    tibble::rowid_to_column("ID")
+
+# check the residuals for large values > 2
+tbl10.4  |> 
+  tidyr::drop_na(res_std)  |> 
+  dplyr::summarize(max_resid = max(abs(x = res_std)))
+
+save_data_file("chap10", tbl10.4, "tbl10.4.rds")
+```
+Compute and check residuals
+:::
+
+The maximum absolute value of any standardized residual was less than 1.96, so the standardized residuals did not reveal any outliers.
+
+::::
+:::::
+
+
+###### Plotting
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-graph-residuals}
+: Standardized residuals for library use model
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-graph-residuals}    
+```{r}
+#| label: graph-residuals
+
+tbl10.4 |> 
+    # tidyr::drop_na(res_std) |>
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = ID,
+            y = res_std,
+            group = "Library use"
+        )
+    ) +
+    ggplot2::geom_jitter(
+        ggplot2::aes(
+            color = uses.lib
+        )
+    ) +
+    ggplot2::labs(
+        x = "Observation number",
+        y = "Standarized reeisudals"
+    ) +
+    ggokabeito::scale_okabe_ito(
+        name = "Library use",
+        aesthetics = "color",
+        order = c(1,3),
+        alpha = .6
+        )
+```
+
+Standardized residuals for library use model
+:::
+
+This is my reproduction of book’s Figure 10.10, using the colorblind-friendly Okabe-Ito scale.
+Most predicted probabilities were about one standard deviation above or below the mean predicted probability. So there were not outliers to examine.
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+### dfbeta(s)
+
+As I already mentioned in @wrn-chap09-diagnostics-df-beta the book mixes `r glossary("dfbeta")` & `r glossary("dfbetas")` together. But these two are different measures:
+
+`dfbetas` (plural) are the standardized values, with a cutoff of $2 / \sqrt{n}$. Because of standardization `dfbetas` are the recommended measure to use. 
+- `dfbeta` (singular) values depend on the scale of the data.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap10-compute-influence-measures}
+: Computing dfbeta(s)
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### all together
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-compute-influence-measures}
+: Computing different influence measures
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-compute-influence-measures}
+```{r}
+#| label: compute-influence-measures
+#| results: hold
+
+## get influence statistics 
+infl10.3 <- stats::influence.measures(model = glm10.3)
+
+## print influential data
+glue::glue("The next two results are from 'example(influence.measure)'")
+glue::glue("")
+glue::glue("Print list of influential data")
+which(apply(infl10.3$is.inf, 1, any))
+
+## which observations 'are' influential
+glue::glue("")
+glue::glue("Which observations 'are' influential?")
+summary(infl10.3)
+
+## print all diagnostic data
+glue::glue("")
+glue::glue("Print a summary of all diagnostic data")
+base::summary(infl10.3$infmat)
+```
+
+Computing different influence measures
+:::
+
+Generally it turned out that there are no influential values! Otherwise I would have get an output where different variable results would have be signed with an asterisk.
+
+I had a hard time to understand the output, because the names of the variables do not conform to the name in the tibble. But after some trial and error I understood that I have to look for the variable name without vocals and add a combination of letters for the levels:
+
+- dfb.1_: intercept
+- dfb.age: age
+- dfb.sxml: sex-male
+- dfb.prnt: parent-parent
+- dfb.dsbl: disabled-yes
+- dfb.rrltys: rurality-suburban
+- dfb.rrltyr: rurality-rural
+- dfb.sslw: ses-low
+- dfb.ssmd: ses-medium
+- dfb.edom: educ-Four-year degree or more
+- dfb.et2d: educ-HS to 2-year degree
+- dfb.rN-B: raceth-Non-Hispanic Black
+- dfb.rN-W: raceth-Non-Hispanic White
+
+This list was confirmed after I computed `dfbetas` directly with @lst-chap10-compute-dfbetas because I got better variable names for the results.
+
+
+::::
+:::::
+
+I added to @lst-chap10-compute-influence-measures two measures provided by an additional example of the last line of the `stats::lm-influence()` help page ("For more "user level" examples, use example(influence.measures)") or respectively the examples in the `stats::influence.measures()` help page.
+
+
+###### dfbetas
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-compute-dfbetas}
+: Compute `dfbetas`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-compute-dfbetas}    
+```{r}
+#| label: compute-dfbetas
+
+base::summary(dfbetas(model = glm10.3))
+```
+
+Compute `dfbetas`
+:::
+
+Besides the better variable names it also turned out the in @lst-chap10-compute-influence-measures the results are dfbetas and not dfbeta as I have computed in @lst-chap10-compute-dfbeta to see the differences.
+
+::::
+:::::
+
+###### dfbeta
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-compute-dfbeta}
+: Compute `dfbeta`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-compute-dfbeta}    
+```{r}
+#| label: compute-dfbeta
+
+base::summary(dfbeta(model = glm10.3))
+```
+
+Compute `dfbeta`
+:::
+
+These `dfbeta` values are quite different to the `dfbetas`.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+
+::: {.callout-warning #wrn-chap10-dfbetas-glm}
+##### dfbetas suitable for Generalized Linear Models (GLMs)?
+
+I am not sure if the dfbeta values are --- beside of linear models computed with `stats::lm()` --- also valid for *generalized* linear models, computed with `stats::glm()`. My doubts are nurtured on the fact that in the help file all computed `dfbeta` and `dfbetas` require a method of class `lm`. This is in contrast to `r glossary("Cook’s D")` where a method for both classes `lm` and `glm` exists.
+
+See also the explanation of the argument ìnfl`: 
+
+> influence structure as returned by `lm.influence` or `influence` (the latter only for the glm method of rstudent and cooks.distance).
+:::
+
+
+
+### Cook’s Distance
+
+Cook’s Distance, is computed in a similar way to dfbeta(s) --- each observation is removed and the model is re-estimated without it. `r glossary("Cook’s D")` then combines the differences between the models with and without an observation for all the parameters together instead of one at a time like the dfbeta(s). A high Cook’s D would indicate that removing the observation made a big difference and therefore it might be considered influential.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-compute-cooks-d}
+: Compute Cook’s D
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-compute-cooks-d}
+```{r}
+#| label: compute-cooks-d
+
+tibble::tibble(infl_cooks_d = cooks.distance(glm10.3)) |> 
+    tidyr::drop_na() |>
+    dplyr::filter(infl_cooks_d > 4 / dplyr::n())
+```
+
+Compute Cook’s D
+:::
+
+Depending if I compute it with NA's or without NA's I got 12 or six influential values. This is in contrast to @lst-chap10-compute-influence-measures, where I couldn't detect any influential values.
+
+But I cannot see which row in the data these six values belong. I think that would be necessary to inspect and/or delete these values.
+
+::::
+:::::
+
+### Compute leverage 
+
+Leverage is the influence that the observed value of the outcome has on the predicted value of the outcome. Leverage values range between 0 and 1. To determine which leverage values indicate influential observations, a cutoff of $\frac{2p}{n}$is often used. In this case, we have 13 parameters, so the cutoff is $\frac{2 \times 13}{1427}= 0.01822004$
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-compute-hat-values}
+: Compute leverage (hat values)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-compute-hat-values}
+```{r}
+#| label: compute-hat-values
+
+infl_hat <- tibble::tibble(data.frame(infl10.3$infmat)) |> 
+    dplyr::select(hat) |> 
+    tidyr::drop_na() 
+
+infl_hat |> 
+    dplyr::filter(hat > 2 * 13 / dplyr::n())
+
+```
+
+Compute leverage (hat values)
+:::
+
+Instead of 35 values I got 95 influential values. The reason for the difference is that there are 1601 records and not 1427 as calculated in the book.
+
+But all in all I still think that both results 35 and 95 are wrong, because the variable `infl10.3$is.inf` has not even a single `TRUE` value for any measures as already shown in @lst-chap10-compute-influence-measures.
+
+::::
+:::::
+
+
+:::::: {#tdo-chap10-influential-values}
+:::::{.my-checklist}
+:::{.my-checklist-header}
+TODO: Look for other tutorials how to compute influential values
+:::
+::::{.my-checklist-container}
+I think that there are several reasons why the computation of the influential values in the book has some inaccuracies:
+
+- There is a misunderstanding in `dfbeta` and `dfbetas`. In the book both measures are treated the same, but there is a difference. (BTW: Both measures are written without a dash as is the case in the book.)
+- In my opinion it is not established that all of the `lm`-measures work the same with `glm`. In the help file there are several hints that there exist differences.
+- The output of `stats::influential.measures()` as explained in the examples of the help files does not show any `TRUE`s for the diagnosis variable `is.inf`. 
+- And last not least: There is no clear advice what I should do when I detect influential values. The books says that one should inspect the values and if there was a coding error to correct or remove the data. But if it was no coding error, should I stick with the influential values? Even if I notice a pattern of the influential errors such as we have seen with distances in Texas in @sec-chap09?
+
+There are many tutorials explaining how to work with outliers and influential values. But these texts --- often buried in textbooks --- are complex. I need to dedicate some time to read and to try out their data examples. But from the big importance that this subject has, I will explores some of these tutorials.
+
+
+::::
+:::::
+Look for other tutorials how to compute influential values
+:::
+
+
+:::::{.my-remark}
+:::{.my-remark-header}
+:::::: {#rem-chap10-outlier-vs-influential}
+: Difference between outliers and influential points
+::::::
+:::
+::::{.my-remark-container}
+There was no good explication in the book about the difference between `r glossary("outliers")` and `r glossary("influential observation", "influential values")`. (See for the [clarification in section 12.6](https://openstax.org/books/introductory-statistics/pages/12-6-outliers) of Introductory Statistics, [@illowsky2011, 541]).
+
+> **Outliers are observed data points that are far from the least squares line**. They have large "errors", where the "error" or residual is the vertical distance from the line to the point.
+
+> Besides outliers, a sample may contain one or a few points that are called **influential points**. Influential points are observed data points that are far from the other observed data points in the horizontal direction. These points may have a big effect on the slope of the regression line. To begin to identify an influential point, you can remove it from the data set and see if the slope of the regression line is changed significantly.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap10-anscombe-datasets}
+: Anscombe's Quartet of 'Identical' Simple Linear Regressions
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap10-anscombe-datasets}
+```{r}
+#| label: anscombe-datasets
+#| results: hold
+
+## Now, do what you should have done in the first place: PLOTS
+ff <- y ~ x
+mods <- setNames(as.list(1:4), paste0("lm", 1:4))
+for(i in 1:4) {
+    ff[2:3] <- lapply(paste0(c("y", "x"), i), as.name)
+    mods[[i]] <- lmi <- lm(ff, data = anscombe)
+}
+
+op <-
+    par(
+        mfrow = c(2, 2),
+        mar = 0.1 + c(4, 4, 1, 1),
+        oma =  c(0, 0, 2, 0)
+    )
+for (i in 1:4) {
+    ff[2:3] <- lapply(paste0(c("y", "x"), i), as.name)
+    plot(
+        ff,
+        data = anscombe,
+        col = "red",
+        pch = 21,
+        bg = "orange",
+        cex = 1.2,
+        xlim = c(3, 19),
+        ylim = c(3, 13)
+    )
+    abline(mods[[i]], col = "blue")
+}
+mtext("Anscombe's 4 Regression data sets",
+      outer = TRUE,
+      cex = 1.5)
+```
+
+Anscombe's 4 Regression data sets
+:::
+
+@lst-chap10-anscombe-datasets shows the difference between outlier and influential point very clearly: 
+
+- The point at the far right top of panel x4 is an outlier without any influence because it lies on the regression line.
+- The point at the right top of panel x3 is an  outlier and at the same time an influential point, because it changes the regression line.
+::::
+:::::
+
+::::
+:::::
+
+## Achievement 8: Using the model for predictions {#sec-chap10-achievement8}
+
+
 
 ## Exercises (empty)
 

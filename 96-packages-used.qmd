@@ -2212,6 +2212,43 @@ See [Using plot arithmetic functions with `::` syntax](https://github.com/thomas
 :::
 :::
 
+## performance
+
+:::::{.my-package}
+:::{.my-package-header}
+performance: Assessment of Regression Models Performance 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-performance}
+
+***
+
+{**performance**}: [Assessment of Regression Models Performance](https://easystats.github.io/performance/) [@performance]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/chap10/logoi/logo-performance-min.png){width="176"}
+
+Utilities for computing measures to assess model quality, which are not directly provided by R's 'base' or 'stats' packages. These include e.g. measures like r-squared, intraclass correlation coefficient (Nakagawa, Johnson & Schielzeth (2017) <doi:10.1098/rsif.2017.0213>), root mean squared error or functions to check models for overdispersion, singularity or zero-inflation and more. Functions apply to a large variety of regression models, including generalized linear models, mixed effects models and Bayesian models. References: Lüdecke et al. (2021) <doi:10.21105/joss.03139>.
+
+:::
+
+A crucial aspect when building regression models is to evaluate the quality of modelfit. It is important to investigate how well models fit to the data and which fit indices to report. Functions to create diagnostic plots or to compute fit measures do exist, however, mostly spread over different packages. There is no unique and consistent approach to assess the model quality for different kind of models.
+
+The primary goal of the performance package is to fill this gap and to provide utilities for computing indices of model quality and goodness of fit. These include measures like r-squared ($R^2$), root mean squared error (RMSE) or intraclass correlation coefficient (ICC) , but also functions to check (mixed) models for overdispersion, zero-inflation, convergence or singularity.
+
+
+{**performance**}: Assessment of Regression Models Performance
+:::
+
+***
+::::
+:::::
+
+
+
 ## plotly
 
 :::::{.my-package}
@@ -2278,6 +2315,34 @@ Calculates partial and semi-partial (part) correlations along with p value. [@ki
 :::::
 
 
+## pscl
+
+:::::{.my-package}
+:::{.my-package-header}
+pscl: Political Science Computational Laboratory 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-pscl}
+
+***
+
+{**pscl**}: [Political Science Computational Laboratory](https://github.com/atahk/pscl) [@pscl]
+
+(There is no hexagon logo for {**pscl**} available)
+
+Bayesian analysis of item-response theory (IRT) models, roll call analysis; computing highest density regions; maximum likelihood estimation of zero-inflated and hurdle models for count data; goodness-of-fit measures for GLMs; data sets used in writing and teaching; seats-votes curves.
+
+{**pscl**}: Political Science Computational Laboratory
+:::
+
+***
+::::
+:::::
+
+
 ## psych
 
 :::::{.my-package}
@@ -2315,6 +2380,34 @@ A general purpose toolbox developed originally for personality, psychometric the
 ***
 ::::
 :::::
+
+## pubh
+
+:::::{.my-package}
+:::{.my-package-header}
+pubh: A Toolbox for Public Health and Epidemiology 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-pubh}
+
+***
+
+{**pubh**}: [A Toolbox for Public Health and Epidemiology](https://cran.r-project.org/package=pubh) [@pubh]
+
+(There is no hexagon logo for {**pubh**} available)
+
+A toolbox for making R functions and capabilities more accessible to students and professionals from Epidemiology and Public Health related disciplines. Includes a function to report coefficients and confidence intervals from models using robust standard errors (when available), functions that expand {**ggplot2**} plots and functions relevant for introductory papers in Epidemiology or Public Health. Please note that use of the provided data sets is for educational purposes only.
+
+{**pubh**}: A Toolbox for Public Health and Epidemiology
+:::
+
+***
+::::
+:::::
+
 
 
 ## purrr
@@ -2606,6 +2699,36 @@ binary format. To parse `.xlsx`, we use the
 :::
 :::
 
+## rms
+
+:::::{.my-package}
+:::{.my-package-header}
+rms: Regression Modeling Strategies 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-rms}
+
+***
+
+{**rms**}: [Regression Modeling Strategies](https://hbiostat.org/r/rms/) [@rms]
+
+(There is no hexagon logo for {**rms**} available)
+
+Regression modeling, testing, estimation, validation, graphics, prediction, and typesetting by storing enhanced model design attributes in the fit. {**rms**} is a collection of functions that assist with and streamline modeling. 
+
+It also contains functions for binary and ordinal logistic regression models, ordinal models for continuous Y with a variety of distribution families, and the Buckley-James multiple regression model for right-censored responses, and implements penalized maximum likelihood estimation for logistic and ordinary linear models. 
+
+{**rms**} works with almost any regression model, but it was especially written to work with binary or ordinal regression models, Cox regression, accelerated failure time models, ordinary linear models, the Buckley-James model, generalized least squares for serially or spatially correlated observations, generalized linear models, and quantile regression.
+
+{**rms**}: Regression Modeling Strategies
+:::
+
+***
+::::
+:::::
 
 
 ## report
