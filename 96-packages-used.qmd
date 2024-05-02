@@ -1733,7 +1733,65 @@ A collection of tools intended to make introductory statistics easier to teach, 
 :::::
 
 
+## MASS
 
+:::::{.my-package}
+:::{.my-package-header}
+MASS: Package ‘MASS’ 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-MASS}
+
+***
+
+{**MASS**}: [Package ‘MASS’](http://www.stats.ox.ac.uk/pub/MASS4/) [@MASS]
+
+
+(*There is no hexagon logo for {**MASS**} available*)
+
+Functions and datasets to support Venables and Ripley, [Modern Applied Statistics with S](http://www.stats.ox.ac.uk/pub/MASS4/) [@venables2002] 
+
+{**MASS**}: Package ‘MASS’
+:::
+
+S is a powerful environment for the statistical and graphical analysis of data. It provides the tools to implement many statistical ideas that have been made possible by the widespread availability of workstations having good graphics and computational capabilities. This book is a guide to using S environments to perform statistical analyses and provides both an introduction to the use of S and a course in modern statistical methods. Implementations of S are available commercially in S-PLUS(R) workstations and as the Open Source R for a wide range of computer systems. The aim of this book is to show how to use S as a powerful and graphical data analysis system. Readers are assumed to have a basic grounding in statistics, and so the book is intended for would-be users of S-PLUS or R and both students and researchers using statistics. Throughout, the emphasis is on presenting practical problems and full analyses of real data sets. Many of the methods discussed are state of the art approaches to topics such as linear, nonlinear and smooth regression models, tree-based methods, multivariate analysis, pattern recognition, survival analysis, time series and spatial statistics. Throughout modern techniques such as robust methods, non-parametric smoothing and bootstrapping are used where appropriate. This fourth edition is intended for users of S-PLUS 6.0 or R 1.5.0 or later. A substantial change from the third edition is updating for the current versions of S-PLUS and adding coverage of R. The introductory material has been rewritten to emphasis the import, export and manipulation of data. Increased computational power allows even more computer-intensive methods to be used, and methods such as GLMMs.
+
+***
+::::
+:::::
+
+## mlogit
+
+:::::{.my-package}
+:::{.my-package-header}
+mlogit: Multinomial Logit Models 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-mlogit}
+
+***
+
+{**mlogit**}: [Multinomial Logit Models](https://cran.r-project.org/package=mlogit) [@mlogit]
+
+
+(*There is no hexagon logo for {**mlogit**} available*)
+
+Maximum likelihood estimation of random utility discrete choice models. The software is described in Croissant [-@croissant2020] and the underlying methods in Train [-@train2009].
+
+
+
+{**mlogit**}: Multinomial Logit Models
+:::
+
+***
+::::
+:::::
 
 
 
@@ -1945,6 +2003,36 @@ Although highly flexible (color theme, fonts, etc.), only the minimal number of 
 ::::
 :::::
 
+## nnet
+
+:::::{.my-package}
+:::{.my-package-header}
+nnet: Feed-Forward Neural Networks and Multinomial Log-Linear Models 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-nnet}
+
+***
+
+{**nnet**}: [Feed-Forward Neural Networks and Multinomial Log-Linear Models](http://www.stats.ox.ac.uk/pub/MASS4/) [@nnet]
+
+
+(*There is no hexagon logo for {**nnet**} available*)
+
+Software for feed-forward neural networks with a single hidden layer, and for multinomial log-linear models.
+
+{**nnet**}: Feed-Forward Neural Networks and Multinomial Log-Linear Models
+:::
+
+***
+::::
+:::::
+
+
+
 
 ## nortest
 
@@ -2101,6 +2189,34 @@ The package contains data sets used in our open-source textbooks along with cust
 ::::
 :::::
 
+## ordinal
+
+:::::{.my-package}
+:::{.my-package-header}
+ordinal: Regression Models for Ordinal Data 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-ordinal}
+
+***
+
+{**ordinal**}: [Regression Models for Ordinal Data](https://github.com/runehaubo/ordinal) [@ordinal]
+
+:
+(*There is no hexagon logo for {**ordinal**} available*)
+
+
+Implementation of cumulative link (mixed) models also known as ordered regression models, proportional odds models, proportional hazards models for grouped survival times and ordered logit/probit/... models. Estimation is via maximum likelihood and mixed models are fitted with the Laplace approximation and adaptive Gauss-Hermite quadrature. Multiple random effect terms are allowed and they may be nested, crossed or partially nested/crossed. Restrictions of symmetry and equidistance can be imposed on the thresholds (cut-points/intercepts). Standard model methods are available (summary, anova, drop-methods, step, confint, predict etc.) in addition to profile methods and slice methods for visualizing the likelihood function and checking convergence.
+
+{**ordinal**}: Regression Models for Ordinal Data
+:::
+
+***
+::::
+:::::
 
 
 ## paletteer

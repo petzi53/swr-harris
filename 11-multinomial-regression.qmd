@@ -1,0 +1,421 @@
+# Multinomial and ordinal logistic regression {#sec-chap11}
+
+```{r}
+#| label: setup
+#| include: false
+
+options(warn = 0) # default value: change for debugging. See: ?warning
+
+base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw()) 
+```
+
+## Achievements to unlock
+
+::: {#obj-chap11}
+::: {.my-objectives}
+::: {.my-objectives-header}
+Objectives for chapter 11
+:::
+
+::: {.my-objectives-container}
+**SwR Achievements**
+
+- **Achievement 1**: Using exploratory data analysis for multinomial logistic regression (@sec-chap11-achievement1)
+- **Achievement 2**: Estimating and interpreting a multinomial logistic regression model (@sec-chap11-achievement2)
+- **Achievement 3**: Checking assumptions for multinomial logistic regression (@sec-chap11-achievement3)
+- **Achievement 4**: Using exploratory data analysis for ordinal logistic regression (@sec-chap11-achievement4)
+- **Achievement 5**: Estimating and interpreting an ordinal logistic regression models (@sec-chap11-achievement5)
+- **Achievement 6**: Checking assumptions for ordinal logistic regression (@sec-chap11-achievement6)
+
+:::
+:::
+Achievements for chapter 11
+:::
+
+
+## The diversity dilemma in STEM
+
+There is a lack of diversity in the science, technology, engineering, and math (STEM) fields and specifically about the lack of women. There are fewer women college graduates in computer science and math jobs now compared to 15 years ago.
+
+There are three main reasons cited for fewer women in STEM: 
+
+- beliefs about natural ability,
+- societal and cultural norms, 
+- and institutional barriers.
+
+One thing that appeared to encourage women in STEM is the visibility of other women in STEM careers.
+
+## Resources & Chapter Outline
+
+### Data, codebook, and R packages {#sec-chap04-data-codebook-packages}
+
+::: my-resource
+::: my-resource-header
+Data, codebook, and R packages for learning about descriptive statistics
+:::
+
+::: my-resource-container
+
+**Data**
+
+Three options for accessing the data: 
+
+1. Download and save the original SAS file `stem-nsf-2017-ch11.xpt` from <https://edge.sagepub.com/harris1e> and run the code in the first code chunk to clean the data. 
+2. Download and save the original SAS file `stem-nsf-2017-ch11.xpt` from <https://edge.sagepub.com/harris1e> and follow the steps in Box 11.1 to clean the data.
+3. Download and save the original 2017 National Survey of College Graduates data from the National Science Foundation’s SESTAT Data Tool (https://ncsesdata.nsf.gov/datadownload/) and follow Box 11.1 to clean the data.
+
+As there is nothing new for me in the recoding procedures I will go for the first option.
+
+**Codebook**
+
+Two options for accessing the codebook: 
+
+- Download the `stem-nsf-2017-ch11-codebook.pdf` from <https://edge.sagepub.com/harris1e>
+- Use the version that comes when downloading the raw data file from the National Science Foundation’s SESTAT Data Tool (https://ncsesdata.nsf.gov/datadownload/)
+
+
+
+**Packages**
+
+1. Packages used with the book (sorted alphabetically)
+
+-   {**Hmsic**}: @pak-Hmisc (Frank Harrell) 
+-   {**MASS**}: @pak-MASS (Brian Ripley) 
+-   {**mlogit**}: @pak-mlogit (Yves Croissant) 
+-   {**nnet**}: @pak-nnet (Brian Ripley)
+-   {**ordinal**} @pak-ordinal (Rune Haubo Bojesen Christensen)
+-   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
+
+    
+2. My additional packages (sorted alphabetically)
+
+
+
+:::
+:::
+
+### Get & recode data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-get-data}
+: Get and recode data for chapter 11
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-get-data}
+```{r}
+#| label: get-data
+#| eval: false
+
+# tbl11 <- haven::read_xpt("data/chap11/stem-nsf-2017-ch11.xpt") ## extremely slow!!
+
+
+## using zip file because of GitHub file limit of 100 MB
+tbl11 <- utils::unzip(
+    zipfile = "data/chap11/stem-nsf-2017-ch11.xpt.zip", 
+    files = "stem-nsf-2017-ch11.xpt"
+    ) |> 
+    Hmisc::sasxport.get()
+
+
+# function to recode the satisfaction variables
+RecSatis <- function(x){
+  return(base::as.ordered(forcats::fct_recode(x,
+                "Very satisfied" = "1" ,
+                "Somewhat satisfied" = "2",
+                "Somewhat dissatisfied" = "3",
+                "Very dissatisfied" = "4",
+                NULL = "L")
+            )
+    )
+}
+
+# recode and rename
+tbl11.1 <- tbl11  |> 
+  dplyr::select(n2ocprmg, satadv, satsal, satsoc, gender, age)  |> 
+  dplyr::mutate(job_cat = forcats::as_factor(
+                    forcats::fct_recode(.f = n2ocprmg,
+                          "CS, Math, Eng" = "1",
+                          "Other Sciences" = "2",
+                          "Other Sciences" = "3",
+                          "Other Sciences" = "4",
+                          "CS, Math, Eng" = "5",
+                          "CS, Math, Eng" = "6",
+                          "Nonscience" = "7",
+                          NULL  = "8"
+                          )
+                    )
+                ) |> 
+  dplyr::mutate(satis_advance = RecSatis(x = satadv))  |> 
+  dplyr::mutate(satis_salary = RecSatis(x = satsal))  |> 
+  dplyr::mutate(satis_contrib = RecSatis(x = satsoc))  |> 
+  dplyr::mutate(sex = dplyr::recode(.x = gender, "M" = "Male", "F"= "Female"))  |> 
+  dplyr::mutate(sex = forcats::fct_relevel(.f = sex, c("Male", "Female"))) |> 
+  dplyr::mutate(age = as.numeric(x = age))  |> 
+  dplyr::select(-n2ocprmg, -satadv, -satsal, -satsoc, -gender) |> 
+  haven::zap_label()
+
+# # make sure the reordering worked
+# # re-order to have male first for ref group
+# print(levels(x = tbl11.1$sex))
+
+save_data_file("chap11", tbl11.1, "tbl11.1.rds")
+
+```
+
+Get and recode data for chapter 11
+:::
+
+(*For this R code chunk is no output available*)
+
+::::
+:::::
+
+***
+
+At first I thought that there are no new things in recoding the data for chapter 11.. But it turned out that there are some issues to report:
+
+1. **Using  `haven::read_xpt()` instead of `Hmisc::sasxport.get()`** 
+
+This was an error in two respects:
+
+- The variable names were not converted to lower case. So I had to change all variable names in the following recoding.
+- The {**haven**} function was *extremely* slow! In contrast to `sasxport.get()` with 3.94 seconds the file export took 104.12 second, e.g. more than 26 times longer!
+
+I therefore returned to the much fast solution with `Hmisc::sasxport.get()`.
+
+***
+
+2. **Labelled data**
+
+I got with the export of a SAS transport file a labelled data frame with very long labels. After the recoding I lost many of these labels except of two columns. Therfore I used `haven::zap_label()` to remove all variable labels.
+
+***
+
+3. **Likert-scale as ordered factors**
+
+I changed the factor levels in the `RecSatis()` function with the {**forcats**} package. Additionally I changed all Likert-scale factors to ordered factors.
+
+With this change I had some troubles, because I haven't had any experience how to do and also to check if the levels are ordered or not. The function `base::levels()` reports the sequence (chronological order) but not the order of the factor levels.
+
+::: {.callout-important #imp-chap11-ordered-factor-levels}
+##### No possibility found in {forcats} to create factor with ordered levels
+
+I could manipulate the (chronological) *appearance* of levels in many ways but I did not find an option to create the class `"ordered" "factor"`.
+
+Therefore I have to use one of the following base R options options:
+
+- `base::as.ordered()` 
+- `base::factor(x = c("A", "Z", "M"), levels = c("A", "B", "M", "Z"), ordered = TRUE)`
+- `base::ordered(c("A", "Z", "M"), level = c("Z", "M", "A"))`
+:::
+
+The following examples uses in the first line with `tbl11.1$satis_advance` an ordered factor, and with the second line (after the '---' line) with `tbl11.1$sex` a factor without order.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-checking-levels-order}
+: How to check the order of factor levels?
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-checking-levels-orderD}
+```{r}
+#| label: checking-levels-order
+#| results: hold
+
+tbl11.1 <- base::readRDS("data/chap11/tbl11.1.rds")
+
+glue::glue("##########################################################################")
+glue::glue("base::levels() does not reveal if theres is an order in the factor levels")
+base::levels(tbl11.1$satis_advance)
+glue::glue("--------------------------------------------------------------------------")
+base::levels(tbl11.1$sex)
+
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("If you display a value of an ordered factor, it reveals the order with '<'")
+head(tbl11.1$satis_advance, 1)
+glue::glue(" ")
+glue::glue("To prevent showing one value one can use forcats::fct_unique()")
+forcats::fct_unique(tbl11.1$satis_advance)
+glue::glue("--------------------------------------------------------------------------")
+head(tbl11.1$sex, 1)
+
+
+glue::glue("How to check if a factor has ordered levels, but not the order itself?")
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("utils::str()")
+utils::str(tbl11.1)
+
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("base::class()")
+base::class(tbl11.1$satis_advance)
+glue::glue("--------------------------------------------------------------------------")
+base::class(tbl11.1$sex)
+
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("base::is.ordered()")
+base::is.ordered(tbl11.1$satis_advance)
+glue::glue("--------------------------------------------------------------------------")
+base::is.ordered(tbl11.1$sex)
+
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("skimr::skim()) has a column 'ordered' about the status of the factor variable")
+tbl11.1 |> dplyr::select(satis_advance, sex) |> skimr::skim()
+```
+
+Several options to check the order of factor levels
+:::
+
+::::
+:::::
+
+
+
+### Show raw data
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-show-data}
+: Show summary of recoded data for chapter 11
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### tbl11.1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-show-tbl11.1}
+: Show recoded data for chapter 11 (`tbl11.1`) 
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-show-tbl11.1}
+```{r}
+#| label: show-tbl11.1
+#| results: hold
+
+tbl11.1 <- base::readRDS("data/chap11/tbl11.1.rds")
+
+glue::glue("********** Summarizing with base:summary() **************")
+base::summary(tbl11.1)
+
+glue::glue("  ")
+glue::glue("  ")
+glue::glue("********** Summarizing with skimr::skim() **************")
+glue::glue("  ")
+skimr::skim(tbl11.1)
+```
+Show recoded data for chapter 11 (`tbl11.1`) 
+:::
+
+***
+
+- **job_cat**: Job caktegory of current job. `n2ocprmg` was the original variable name. Recoded into three categories: 
+    - CS, Math, Eng = Computer science, math, and engineering fields 
+    - Other sciences = Other science fields 
+    - Nonscience = Not a science field 
+- **satis_advance**: Satisfaction with advancement opportunity. `satadv` was the original variable name. 4-point Likert scale from 4 = very dissatisfied to 1 = very satisfied.
+- `satis_salary`: Satisfaction with salary. `satsal` was the original variable name. 4-point Likert scale from 4 = very dissatisfied to 1 = very satisfied.
+- **satis.contrib**: Satisfaction with contribution to society. `satsoc` was the original variable name. 4-point Likert scale from 4 = very dissatisfied to 1 = very satisfied 
+- **sex**: gender was the original variable name. Two categories: Female, Male 
+- **age**: Age in years, not recoded or renamed
+
+::::
+:::::
+
+
+###### sample
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-sample-by-group}
+: Sample 1500 cases: 500 from each job category
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-sample-by-group}    
+```{r}
+#| label: sample-by-group
+#| results: hold
+
+# take a sample of 1500 cases
+# 500 from each job.cat category
+tbl11.2 <- tbl11.1 |> 
+  tidyr::drop_na(job_cat) |> 
+  dplyr::group_by(job_cat)  |> 
+  dplyr::slice_sample(n = 500)
+
+save_data_file("chap11", tbl11.2, "tbl11.2.rds")
+
+glue::glue("********** Summarizing with base:summary() **************")
+base::summary(tbl11.2)
+
+glue::glue(" ")
+glue::glue(" ")
+glue::glue("********** Summarizing with skimr::skim() **************")
+glue::glue(" ")
+skimr::skim(tbl11.2)
+```
+
+Show sampled data: 500 from each job category
+:::
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+## Achievement 1: EDA for multinomial logistic regression {#sec-chap11-achievement1}
+
+
+
+
+
+
+
+## Exercises (empty)
+
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+
+## Session Info {.unnumbered}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+Session Info
+:::
+::::{.my-r-code-container}
+
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+
+
+::::
+:::::
