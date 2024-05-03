@@ -13,38 +13,47 @@ ggplot2::theme_set(ggplot2::theme_bw())
 ## Achievements to unlock
 
 ::: {#obj-chap11}
-::: {.my-objectives}
-::: {.my-objectives-header}
+::: my-objectives
+::: my-objectives-header
 Objectives for chapter 11
 :::
 
-::: {.my-objectives-container}
+::: my-objectives-container
 **SwR Achievements**
 
-- **Achievement 1**: Using exploratory data analysis for multinomial logistic regression (@sec-chap11-achievement1)
-- **Achievement 2**: Estimating and interpreting a multinomial logistic regression model (@sec-chap11-achievement2)
-- **Achievement 3**: Checking assumptions for multinomial logistic regression (@sec-chap11-achievement3)
-- **Achievement 4**: Using exploratory data analysis for ordinal logistic regression (@sec-chap11-achievement4)
-- **Achievement 5**: Estimating and interpreting an ordinal logistic regression models (@sec-chap11-achievement5)
-- **Achievement 6**: Checking assumptions for ordinal logistic regression (@sec-chap11-achievement6)
+-   **Achievement 1**: Using exploratory data analysis for multinomial
+    logistic regression (@sec-chap11-achievement1)
+-   **Achievement 2**: Estimating and interpreting a multinomial
+    logistic regression model (@sec-chap11-achievement2)
+-   **Achievement 3**: Checking assumptions for multinomial logistic
+    regression (@sec-chap11-achievement3)
+-   **Achievement 4**: Using exploratory data analysis for ordinal
+    logistic regression (@sec-chap11-achievement4)
+-   **Achievement 5**: Estimating and interpreting an ordinal logistic
+    regression models (@sec-chap11-achievement5)
+-   **Achievement 6**: Checking assumptions for ordinal logistic
+    regression (@sec-chap11-achievement6)
+:::
+:::
 
-:::
-:::
 Achievements for chapter 11
 :::
 
-
 ## The diversity dilemma in STEM
 
-There is a lack of diversity in the science, technology, engineering, and math (STEM) fields and specifically about the lack of women. There are fewer women college graduates in computer science and math jobs now compared to 15 years ago.
+There is a lack of diversity in the science, technology, engineering,
+and math (STEM) fields and specifically about the lack of women. There
+are fewer women college graduates in computer science and math jobs now
+compared to 15 years ago.
 
-There are three main reasons cited for fewer women in STEM: 
+There are three main reasons cited for fewer women in STEM:
 
-- beliefs about natural ability,
-- societal and cultural norms, 
-- and institutional barriers.
+-   beliefs about natural ability,
+-   societal and cultural norms,
+-   and institutional barriers.
 
-One thing that appeared to encourage women in STEM is the visibility of other women in STEM careers.
+One thing that appeared to encourage women in STEM is the visibility of
+other women in STEM careers.
 
 ## Resources & Chapter Outline
 
@@ -56,61 +65,68 @@ Data, codebook, and R packages for learning about descriptive statistics
 :::
 
 ::: my-resource-container
-
 **Data**
 
-Three options for accessing the data: 
+Three options for accessing the data:
 
-1. Download and save the original SAS file `stem-nsf-2017-ch11.xpt` from <https://edge.sagepub.com/harris1e> and run the code in the first code chunk to clean the data. 
-2. Download and save the original SAS file `stem-nsf-2017-ch11.xpt` from <https://edge.sagepub.com/harris1e> and follow the steps in Box 11.1 to clean the data.
-3. Download and save the original 2017 National Survey of College Graduates data from the National Science Foundation’s SESTAT Data Tool (https://ncsesdata.nsf.gov/datadownload/) and follow Box 11.1 to clean the data.
+1.  Download and save the original SAS file `stem-nsf-2017-ch11.xpt`
+    from <https://edge.sagepub.com/harris1e> and run the code in the
+    first code chunk to clean the data.
+2.  Download and save the original SAS file `stem-nsf-2017-ch11.xpt`
+    from <https://edge.sagepub.com/harris1e> and follow the steps in Box
+    11.1 to clean the data.
+3.  Download and save the original 2017 National Survey of College
+    Graduates data from the National Science Foundation’s SESTAT Data
+    Tool (https://ncsesdata.nsf.gov/datadownload/) and follow Box 11.1
+    to clean the data.
 
-As there is nothing new for me in the recoding procedures I will go for the first option.
+As there is nothing new for me in the recoding procedures I will go for
+the first option.
 
 **Codebook**
 
-Two options for accessing the codebook: 
+Two options for accessing the codebook:
 
-- Download the `stem-nsf-2017-ch11-codebook.pdf` from <https://edge.sagepub.com/harris1e>
-- Use the version that comes when downloading the raw data file from the National Science Foundation’s SESTAT Data Tool (https://ncsesdata.nsf.gov/datadownload/)
-
-
+-   Download the `stem-nsf-2017-ch11-codebook.pdf` from
+    <https://edge.sagepub.com/harris1e>
+-   Use the version that comes when downloading the raw data file from
+    the National Science Foundation’s SESTAT Data Tool
+    (https://ncsesdata.nsf.gov/datadownload/)
 
 **Packages**
 
-1. Packages used with the book (sorted alphabetically)
+1.  Packages used with the book (sorted alphabetically)
 
--   {**Hmsic**}: @pak-Hmisc (Frank Harrell) 
--   {**MASS**}: @pak-MASS (Brian Ripley) 
--   {**mlogit**}: @pak-mlogit (Yves Croissant) 
+-   {**Hmsic**}: @pak-Hmisc (Frank Harrell)
+-   {**MASS**}: @pak-MASS (Brian Ripley)
+-   {**mlogit**}: @pak-mlogit (Yves Croissant)
 -   {**nnet**}: @pak-nnet (Brian Ripley)
 -   {**ordinal**} @pak-ordinal (Rune Haubo Bojesen Christensen)
+-   {**tableone**} @pak-tableone (Kazuki Yoshida)
 -   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
 
-    
-2. My additional packages (sorted alphabetically)
+2.  My additional packages (sorted alphabetically)
 
-
-
+-   {**glue**}: @pak-glue (Jennifer Bryan)
+-   {**haven**}: @pak-haven (Hadley Wickham)
+-   {**skimr**}: @pak-skimr (Elin Waring)
 :::
 :::
 
 ### Get & recode data
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap11-get-data}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap11-get-data}
 : Get and recode data for chapter 11
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ::: {#lst-chap11-get-data}
 ```{r}
 #| label: get-data
 #| eval: false
-
-# tbl11 <- haven::read_xpt("data/chap11/stem-nsf-2017-ch11.xpt") ## extremely slow!!
-
 
 ## using zip file because of GitHub file limit of 100 MB
 tbl11 <- utils::unzip(
@@ -142,7 +158,7 @@ tbl11.1 <- tbl11  |>
                           "Other Sciences" = "3",
                           "Other Sciences" = "4",
                           "CS, Math, Eng" = "5",
-                          "CS, Math, Eng" = "6",
+                          NULL = "6",
                           "Nonscience" = "7",
                           NULL  = "8"
                           )
@@ -169,58 +185,85 @@ Get and recode data for chapter 11
 :::
 
 (*For this R code chunk is no output available*)
+:::
+:::
 
-::::
-:::::
 
-***
+------------------------------------------------------------------------
 
-At first I thought that there are no new things in recoding the data for chapter 11.. But it turned out that there are some issues to report:
+At first I thought that there are no new things in recoding the data for
+chapter 11. But it turned out that there are some issues to report:
 
-1. **Using  `haven::read_xpt()` instead of `Hmisc::sasxport.get()`** 
+1.  **Using `haven::read_xpt()` instead of `Hmisc::sasxport.get()`**
 
 This was an error in two respects:
 
-- The variable names were not converted to lower case. So I had to change all variable names in the following recoding.
-- The {**haven**} function was *extremely* slow! In contrast to `sasxport.get()` with 3.94 seconds the file export took 104.12 second, e.g. more than 26 times longer!
+-   The variable names were not converted to lower case. So I had to
+    change all variable names in the following recoding.
+-   The {**haven**} function was *extremely* slow! In contrast to
+    `sasxport.get()` with 3.94 seconds the file export took 104.12
+    second, e.g. more than 26 times longer!
 
-I therefore returned to the much fast solution with `Hmisc::sasxport.get()`.
+I therefore returned to the much fast solution with
+`Hmisc::sasxport.get()`.
 
-***
+------------------------------------------------------------------------
 
-2. **Labelled data**
+2.  **Labelled data**
 
-I got with the export of a SAS transport file a labelled data frame with very long labels. After the recoding I lost many of these labels except of two columns. Therfore I used `haven::zap_label()` to remove all variable labels.
+I got with the export of a SAS transport file a labelled data frame with
+very long labels. After the recoding I lost many of these labels except
+of two columns. Therefore I used `haven::zap_label()` to remove all
+variable labels.
 
-***
+------------------------------------------------------------------------
 
-3. **Likert-scale as ordered factors**
+3.  **The original data file is too big for GitHub**
 
-I changed the factor levels in the `RecSatis()` function with the {**forcats**} package. Additionally I changed all Likert-scale factors to ordered factors.
+After I committed to GitHub I got an error, because the file
+`stem-nsf-2017-ch11.xpt` was too large. I compressed it as `.zip`-file
+and changed the import code slightly to adapt this change. After testing
+that it worked I deleted the uncompressed file.
 
-With this change I had some troubles, because I haven't had any experience how to do and also to check if the levels are ordered or not. The function `base::levels()` reports the sequence (chronological order) but not the order of the factor levels.
+------------------------------------------------------------------------
 
-::: {.callout-important #imp-chap11-ordered-factor-levels}
+4.  **Likert-scale as ordered factors**
+
+I changed the factor levels in the `RecSatis()` function with the
+{**forcats**} package. Additionally I changed all Likert-scale factors
+to ordered factors.
+
+With this change I had some troubles, because I haven't had any
+experience how to do and also to check if the levels are ordered or not.
+The function `base::levels()` reports the sequence (chronological order)
+but not the order of the factor levels.
+
+::: {#imp-chap11-ordered-factor-levels .callout-important}
 ##### No possibility found in {forcats} to create factor with ordered levels
 
-I could manipulate the (chronological) *appearance* of levels in many ways but I did not find an option to create the class `"ordered" "factor"`.
+I could manipulate the (chronological) *appearance* of levels in many
+ways but I did not find an option to create the class
+`"ordered" "factor"`.
 
 Therefore I have to use one of the following base R options options:
 
-- `base::as.ordered()` 
-- `base::factor(x = c("A", "Z", "M"), levels = c("A", "B", "M", "Z"), ordered = TRUE)`
-- `base::ordered(c("A", "Z", "M"), level = c("Z", "M", "A"))`
+-   `base::as.ordered()`
+-   `base::factor(x = c("A", "Z", "M"), levels = c("A", "B", "M", "Z"), ordered = TRUE)`
+-   `base::ordered(c("A", "Z", "M"), level = c("Z", "M", "A"))`
 :::
 
-The following examples uses in the first line with `tbl11.1$satis_advance` an ordered factor, and with the second line (after the '---' line) with `tbl11.1$sex` a factor without order.
+The following examples uses in the first line with
+`tbl11.1$satis_advance` an ordered factor, and with the second line
+(after the '---' line) with `tbl11.1$sex` a factor without order.
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap11-checking-levels-order}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap11-checking-levels-order}
 : How to check the order of factor levels?
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ::: {#lst-chap11-checking-levels-orderD}
 ```{r}
 #| label: checking-levels-order
@@ -273,33 +316,30 @@ tbl11.1 |> dplyr::select(satis_advance, sex) |> skimr::skim()
 
 Several options to check the order of factor levels
 :::
-
-::::
-:::::
-
-
+:::
+:::
 
 ### Show raw data
 
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap11-show-data}
+::: my-example
+::: my-example-header
+::: {#exm-chap11-show-data}
 : Show summary of recoded data for chapter 11
-::::::
 :::
-::::{.my-example-container}
+:::
 
-::: {.panel-tabset}
-
+::: my-example-container
+::: panel-tabset
 ###### tbl11.1
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap11-show-tbl11.1}
-: Show recoded data for chapter 11 (`tbl11.1`) 
-::::::
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap11-show-tbl11.1}
+: Show recoded data for chapter 11 (`tbl11.1`)
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ::: {#lst-chap11-show-tbl11.1}
 ```{r}
 #| label: show-tbl11.1
@@ -316,39 +356,51 @@ glue::glue("********** Summarizing with skimr::skim() **************")
 glue::glue("  ")
 skimr::skim(tbl11.1)
 ```
-Show recoded data for chapter 11 (`tbl11.1`) 
+
+Show recoded data for chapter 11 (`tbl11.1`)
 :::
 
-***
+------------------------------------------------------------------------
 
-- **job_cat**: Job caktegory of current job. `n2ocprmg` was the original variable name. Recoded into three categories: 
-    - CS, Math, Eng = Computer science, math, and engineering fields 
-    - Other sciences = Other science fields 
-    - Nonscience = Not a science field 
-- **satis_advance**: Satisfaction with advancement opportunity. `satadv` was the original variable name. 4-point Likert scale from 4 = very dissatisfied to 1 = very satisfied.
-- `satis_salary`: Satisfaction with salary. `satsal` was the original variable name. 4-point Likert scale from 4 = very dissatisfied to 1 = very satisfied.
-- **satis.contrib**: Satisfaction with contribution to society. `satsoc` was the original variable name. 4-point Likert scale from 4 = very dissatisfied to 1 = very satisfied 
-- **sex**: gender was the original variable name. Two categories: Female, Male 
-- **age**: Age in years, not recoded or renamed
-
-::::
-:::::
-
+-   **job_cat**: Job caktegory of current job. `n2ocprmg` was the
+    original variable name. Recoded into three categories:
+    -   CS, Math, Eng = Computer science, math, and engineering fields
+    -   Other sciences = Other science fields
+    -   Nonscience = Not a science field
+-   **satis_advance**: Satisfaction with advancement opportunity.
+    `satadv` was the original variable name. 4-point Likert scale from 4
+    = very dissatisfied to 1 = very satisfied.
+-   `satis_salary`: Satisfaction with salary. `satsal` was the original
+    variable name. 4-point Likert scale from 4 = very dissatisfied to 1
+    = very satisfied.
+-   **satis.contrib**: Satisfaction with contribution to society.
+    `satsoc` was the original variable name. 4-point Likert scale from 4
+    = very dissatisfied to 1 = very satisfied
+-   **sex**: gender was the original variable name. Two categories:
+    Female, Male
+-   **age**: Age in years, not recoded or renamed
+:::
+:::
 
 ###### sample
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap11-sample-by-group}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap11-sample-by-group}
 : Sample 1500 cases: 500 from each job category
-::::::
 :::
-::::{.my-r-code-container}
-::: {#lst-chap11-sample-by-group}    
+:::
+
+::: my-r-code-container
+::: {#lst-chap11-sample-by-group}
 ```{r}
 #| label: sample-by-group
 #| results: hold
 
+
+tbl11.1 <- base::readRDS("data/chap11/tbl11.1.rds")
+
+base::set.seed(seed = 143)
 # take a sample of 1500 cases
 # 500 from each job.cat category
 tbl11.2 <- tbl11.1 |> 
@@ -370,25 +422,416 @@ skimr::skim(tbl11.2)
 
 Show sampled data: 500 from each job category
 :::
+:::
+:::
+:::
+:::
+:::
+
+## Achievement 1: EDA for multinomial logistic regression {#sec-chap11-achievement1}
+
+### Visualizing employment
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-eda-employment}
+: Visualizing employment in computer science, math, and engineering by sex and age
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### sex-jobs
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-eda-sex-wihtin-jobtype}
+: Plotting distribution of sex within job type
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-eda-sex-wihtin-jobtype}
+```{r}
+#| label: eda-sex-wihtin-jobtype
+
+tbl11.2 <- base::readRDS("data/chap11/tbl11.2.rds")
+
+# plotting distribution of sex within job type (Figure 11.3)
+tbl11.2 |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+        x = sex, 
+        group = job_cat,
+        y = ggplot2::after_stat(prop)
+      )
+    ) +
+  ggplot2::geom_bar(fill = "#7463AC") +
+  ggplot2::labs(
+      y = "Percent within job category", 
+      x = "Sex"
+    ) +
+  # ggplot2::facet_grid(cols = ggplot2::vars(job_cat)) +
+  # using another, more simple facet_grid() function:
+  ggplot2::facet_grid(~ job_cat) +
+  ggplot2::scale_y_continuous(labels = scales::percent)
+```
+
+Distribution of sex within job type among 1,500 college graduates in 2017
+:::
+
+***
+
+`ggplot2::after_stat()` replaces the old approach surrounding the variable names with .., e.g. `..prop..`.  {**ggplot2**} throws a warning:
+
+> #> Warning: The dot-dot notation (`..prop..`) was deprecated in ggplot2 3.4.0.
+>
+> #> ℹ Please use `after_stat(prop)` instead.
+
+At first I had problems, because I used `y = ggplot2::after_stat(count/sum(count))` inside the `ggplot2::aes()` function. This calculated the percentage over all different categories and not within each job category. The I learned with **The 'computed variables' section in each stat lists which variables are available to access.** that {**ggplot2**} computes with the `ggplot2::stat_count()` function for bar charts also groupwise proportion with `ggplot2::after_stat(prop)`.
+
+
 
 ::::
 :::::
+
+:::::{.my-resource}
+:::{.my-resource-header}
+:::::: {#lem-chap11-using-ggplot2-after-stat}
+: How to use ggplot2::after_stat()?
+::::::
+:::
+::::{.my-resource-container}
+
+
+
+To learn how to use the `ggplot2::after_stat()` function:
+
+- Read the help page to understand the differences between the different stages of mapping (direct input, `after_stat()` and `after_scale()`). Very important is the sentence: **The 'computed variables' section in each stat lists which variables are available to access.**
+- Read the short article [Using after_stat() in {**ggplot2**}](https://rstudio-pubs-static.s3.amazonaws.com/789869_e4500f2be0ba45279290b1753d8358bc.html) to use `after_stat()` to show percentages in the bar chart. 
+- The first article of the very extensive series of articles going into many technical detail working --- at least for me --- as an eye opener how {**ggplot2**} works [Demystifying delayed aesthetic evaluation: Part 1](https://yjunechoe.github.io/posts/2022-03-10-ggplot2-delayed-aes-1/).
+- Hadley Wickham is currently preparing online the third edition of [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/) which also has many details about the `after_stat()` function, for instance in [13 Build a plot layer by layer](https://ggplot2-book.org/layers.html#sec-stat). 
+
+::::
+:::::
+
+
+
+###### jobs by sex
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-eda-jobtype-sex}
+: Distribution of job type by sex
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-eda-jobtype-sex}  
+```{r}
+#| label: eda-jobtype-sex
+
+# plotting distribution of job type by sex (Figure 11.4)
+tbl11.2 |> 
+  ggplot2::ggplot(
+      ggplot2::aes(
+          x = job_cat, 
+          group = sex,
+          y = ggplot2::after_stat(prop)
+      )
+  ) +
+  ggplot2::geom_bar(fill = "#7463AC") +
+  ggplot2::labs(
+      y = "Percent within sex category", 
+      x = "Job category"
+  ) +
+  ggplot2::facet_grid(cols = ggplot2::vars(sex)) +
+  ggplot2::scale_y_continuous(labels = scales::percent)
+```
+
+Distribution of job type by sex 
+:::
+
+::::
+:::::
+
+###### jobs by age
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-eda-jobtype-age}
+: Distribution of job type and age
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-eda-jobtype-age}
+```{r}
+#| label: eda-jobtype-age
+
+# plotting distribution of job type and age (Figure 11.5)
+tbl11.2 |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+      y = age, 
+      x = job_cat
+      )
+  ) +
+  ggplot2::geom_jitter(
+    ggplot2::aes(
+        color = job_cat
+        ), 
+    alpha = .6
+  ) +
+  ggplot2::geom_boxplot(
+    ggplot2::aes(
+          fill = job_cat
+          ), 
+    alpha = .4
+  ) +
+  ggplot2::scale_fill_manual(
+      values = c("dodgerblue2","#7463AC", "gray40"), 
+      guide = "none") +
+  ggplot2::scale_color_manual(values = c("dodgerblue2","#7463AC", "gray40"), 
+      guide = "none") +
+  ggplot2::labs(
+    x = "Job type", 
+    y = "Age in years"
+  )
+```
+
+Distribution of job type and age
+:::
+
+::::
+:::::
+
+###### jobs, age & sex
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-eda-jobtype-age-sex}
+: Distribution of jobtype by age and sex
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-eda-jobtype-age-sex}
+```{r}
+#| label: eda-jobtype-age-sex
+
+# plotting distribution of job type, age, and sex (Figure 11.6)
+tbl11.2  |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+      y = age, 
+      x = job_cat, 
+      fill = sex)
+  ) +
+  ggplot2::geom_jitter(
+    ggplot2::aes(
+      color = sex
+      ), 
+    alpha = .6
+  ) +
+  ggplot2::geom_boxplot(
+    ggplot2::aes(
+      fill = sex
+      ), 
+    alpha = .4) +
+  ggplot2::scale_fill_manual(
+    values = c("gray", "#7463AC"), 
+    name = "Sex"
+  ) +
+  ggplot2::scale_color_manual(
+    values = c("gray", "#7463AC"), 
+    guide = "none") +
+  ggplot2::labs(
+    x = "Job type", 
+    y = "Age in years"
+  )
+
+```
+
+Distribution of job type by age and sex
+:::
+
+
+::::
+:::::
+
+###### jobs by sex & age
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-eda-jobtype-sex-age}
+: Distribution by job type sex and age
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-eda-jobtype-sex-age}
+```{r}
+#| label: eda-jobtype-sex-age
+
+# plotting distribution of job type, sex, and age (Figure 11.7)
+tbl11.2  |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+      y = age, 
+      x = job_cat)
+  ) +
+  ggplot2::geom_jitter(
+    ggplot2::aes(
+      color = sex
+      ), 
+    alpha = .6
+  ) +
+  ggplot2::geom_boxplot(
+    ggplot2::aes(
+      fill = sex
+      ), 
+    alpha = .4
+  ) +
+  ggplot2::scale_fill_manual(
+    values = c("gray", "#7463AC"), 
+    guide = "none"
+  ) +
+  ggplot2::scale_color_manual(
+    values = c("gray", "#7463AC"), 
+    guide = "none"
+  ) +
+  ggplot2::labs(
+    x = "Job type", 
+    y = "Age in years"
+  ) +
+  ggplot2::facet_grid(cols = ggplot2::vars(sex))
+```
+
+Distribution by job type sex and age
+:::
+
+::::
+:::::
+
 
 :::
 
 ::::
 :::::
 
-## Achievement 1: EDA for multinomial logistic regression {#sec-chap11-achievement1}
+***
+
+::: {.callout #rep-chap11-visualizing-employment}
+##### Summary of the several plots about employment
+
+1. @lst-chap11-eda-sex-wihtin-jobtype: Computer science, math, and engineering have about a third as many females as males, other sciences and non-science were slightly more male than female.
+2. @lst-chap11-eda-jobtype-sex: Computer science, math, and engineering jobs were the least common for females while this category was the largest for males.
+3. @lst-chap11-eda-jobtype-age: While the age range for all the data appeared similar across the three job types, the computer science, math, and engineering field employed the youngest people on average.
+4. @lst-chap11-eda-jobtype-age-sex: In all three fields, the distribution of age showed that males have an older median age than females, and in the two science fields, the range of age is wider for males than females.
+5. @lst-chap11-eda-jobtype-sex-age: The lowest median age for females is in computer science, math, and engineering and higher in other sciences and non-science. The age distribution for males showed a similar pattern across the three job types. Computer science, math, and engineering has the youngest median age for both sexes.
+
+:::
+
+### Checking bivariate statistical associations
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-eda-bivariate-associations}
+: Checking bivariate statistical associations between job type, sex, and age
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### age distribution
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-eda-age-distribution}
+: Age distribution by job type among 1,500 college graduates in 2017
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-eda-age-distribution}
+
+```{r}
+#| label: eda-age-distribution
+
+# plotting distribution of age (Figure 11.8)
+tbl11.2  |> 
+  ggplot2::ggplot(
+    ggplot2::aes(x = age)
+  ) +
+  ggplot2::geom_histogram(
+    bins = 30,
+    fill = "#7463AC", 
+    color = "white"
+  ) +
+  ggplot2::labs(
+    x = "Age in years", 
+    y = "Number of observations"
+  ) +
+  ggplot2::facet_grid(cols = ggplot2::vars(job_cat))
+```
+
+Age distribution by job type among 1,500 college graduates in 2017
+
+:::
+
+***
+
+The histograms were not normally distributed for any of the three groups.
+
+::::
+:::::
 
 
+###### statistics
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-eda-statistics}
+: Table of statistics to examine `job_cat`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-eda-statistics}
+
+```{r}
+#| label: eda-statistics
+
+# make a table of statistics to examine job.cat
+table_desc <- tableone::CreateTableOne(
+  data = tbl11.2, 
+  strata = 'job_cat',
+  vars = c('sex', 'age')
+  )
+
+base::print(table_desc, 
+            showAllLevels = TRUE, 
+            nonnormal = 'age'
+            )
 
 
+```
+
+Table of statistics to examine `job_cat`
+:::
+
+***
+
+The visual differences in the graphs corresponded to statistically significant differences from the `r glossary("chi-squared")` and `r glossary("Kruskal-Wallis")` tests. The median age for college graduates in computer science, math, or engineering was 3 years lower than the median age in other sciences and 6 years younger than the median age in non-science careers. Computer science, math, and engineering has more than three times as many males as females.
+
+::::
+:::::
 
 
+:::
+
+::::
+:::::
+
+## Achievement 2: Estimating a multinomial logistic regression model {#sec-chap11-achievement2}
 
 ## Exercises (empty)
-
 
 ## Glossary
 
@@ -401,21 +844,18 @@ glossary_table()
 
 ------------------------------------------------------------------------
 
-
 ## Session Info {.unnumbered}
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
+::: my-r-code
+::: my-r-code-header
 Session Info
 :::
-::::{.my-r-code-container}
 
+::: my-r-code-container
 ```{r}
 #| label: session-info
 
 sessioninfo::session_info()
 ```
-
-
-::::
-:::::
+:::
+:::
