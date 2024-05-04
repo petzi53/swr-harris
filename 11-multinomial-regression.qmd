@@ -831,6 +831,485 @@ The visual differences in the graphs corresponded to statistically significant d
 
 ## Achievement 2: Estimating a multinomial logistic regression model {#sec-chap11-achievement2}
 
+### Introduction
+
+:::{.my-bulletbox}
+:::: {.my-bulletbox-header}
+::::: {.my-bulletbox-icon}
+:::::
+:::::: {#bul-chapp1-model-reporting}
+::::::
+: Important to report with every model
+::::
+:::: {.my-bulletbox-body}
+
+- **Model significance**: Is the model significantly better than some baseline at explaining the outcome? 
+- **Model fit:** How well does the model capture the relationships in the underlying data? 
+- **Predictor values and significance**: What is the size, direction, and significance of the relationship between each predictor and the outcome?
+- **Checking model assumptions**: Are the model assumptions met?
+::::
+:::
+
+
+### Check reference groups
+
+Before starting with the computation for the multinomial logistic regression it is practicable to check the reference groups with `base::levels()`. The results are easier to interpret if the reference groups (= the first level) is consistent with what one is interested in. Otherwise use `stats::relevel()` or one of the many functions in {**forcats**}, for instance `fct_recode()` or `fct_relevel()`.
+
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-check-levels}
+: Check reference groups for regression
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-check-levels}
+```{r}
+#| label: check-levels
+#| results: hold
+
+base::levels(tbl11.2$job_cat)
+base::levels(tbl11.2$sex)
+```
+Reference group for `job_cat` (= "CS, Math, Eng") and `sex` (= "Male")
+:::
+
+***
+The reference group are fine; no change is necessary.
+
+::::
+:::::
+
+
+### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: A multinomial model including sex and age is not useful in explaining or predicting job type for college graduates.
+- **HA**: A multinomial model including sex and age is useful in explaining or predicting job type for college graduates.
+:::
+
+### NHST Step 2
+
+A Google search revealed the most of the R tutorials use the {**nnet**} package recommended also by `r glossary("SwR")`. A newer approach uses the meta-package {**tidymodel**} (similar to **tidyverse**) which collects 22 packages for modeling, containing {**parsnip**} with the `multinom_reg()` function that ca fit different classification models, including {**nnet**} as default package.
+
+:::::: {#tdo-chap11-learn-tidymodels}
+:::::{.my-checklist}
+:::{.my-checklist-header}
+TODO: Learn {**tidymodels**}
+:::
+::::{.my-checklist-container}
+I already learned from the {**tidymodels**} approach three-four years ago. But at that time I thought that it is too advanced for my skill level. This has changed now. I have worked through all of the three pre-requisites mentioned on the [start page of tidymodels](https://www.tidymodels.org/start/). And now --- coming to the end of `r glossary("SwR")` --- I understand why this unification project is important.
+::::
+:::::
+Learn [{**tidymodels**}](https://www.tidymodels.org/)
+:::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-multinom-computation}
+: Computing a multinomial logical regression
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### model
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-estimate-multinomial-model}
+: Estimate model and print summary
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-estimate-multinomial-model}
+```{r}
+#| label: estimate-multinomial-model
+
+# estimate the model and print its summary
+mnm1 <- nnet::multinom(
+  formula = job_cat ~ age + sex + age*sex,
+  data = tbl11.2,
+  model = TRUE)
+
+summary(object = mnm1)
+```
+
+Computing a multinomial regression model for job types by age and sex with interaction 
+:::
+
+::::
+:::::
+
+
+###### null model
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-estimate-multinomial-null-model}
+: Estimate null model
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-estimate-multinomial-null-model}  
+```{r}
+#| label: estimate-multinomial-null-model
+
+# multinomial null model
+mnm2 <- nnet::multinom(
+  formula = job_cat ~ 1,
+  data = tbl11.2,
+  model = TRUE)
+
+summary(object = mnm2)
+```
+
+Multinomial null model
+:::
+
+::::
+:::::
+
+###### test statistics
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-mnm-test-statistics}
+: Compute test statistics for the multinomial model `mnm1`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-mnm-test-statistics}
+```{r}
+#| label: mnm-test-statistics
+
+# get the job model chi-squared
+job_chisq <- mnm2$deviance - mnm1$deviance
+
+# get the degrees of freedom for chi-squared
+job_df <- length(x = summary(object = mnm1)$coefficients) - 
+  length(x = summary(object = mnm2)$coefficients)
+
+# get the p-value for chi-squared
+job_p <- stats::pchisq(
+  q = job_chisq, 
+  df = job_df, 
+  lower.tail = FALSE
+  )
+
+# put together into a vector and round to 3 decimal places
+model_sig <- base::round(x = c(job_chisq, job_df, job_p), 3)
+
+# add names to the vector
+base::names(x = model_sig) <- c("Chi-squared", "df", "p")
+
+# print the vector
+model_sig
+```
+
+Test statistics for the multinomial model
+:::
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+**Finishing step 2 of the NHST procedure:**
+
+Compute the test statistics.
+
+The test statistic is a chi-squared of 124.77 with 6 degrees of freedom.
+
+### NHST Step 3
+
+Review and interpret the test statistics: 
+
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The probability computed for the chi-squared was < .001.
+
+
+### NHST Step 4
+
+Conclude and write report.
+
+::: {.callout #rep-chap11-mnm1}
+##### Report the conclusion of the interpretation of the multinomial model `mnm1`
+
+We have to reject the null hypothesis and conclude that a model including age, sex, and age*sex explained job type statistically significantly better [$χ^2(6) = 124.77; p < .001$] than a null model with no predictors.
+:::
+
+### Multinomial model fit
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-mnm-fit}
+: Multinomial model fit
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### fit & predict
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-show-fit-predict-values}
+: Show `fitted.values` and `predict()` results
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-show-fit-predict-values}
+```{r}
+#| label: show-fit-predict-values
+#| results: hold
+
+df1 <- my_glance_data(data.frame(mnm1$fitted.values))
+df2 <- my_glance_data(data.frame(predicted = stats::predict(mnm1)))
+dplyr::full_join(df1, df2, by = dplyr::join_by(obs))
+
+
+```
+
+Random example rows of `fitted.values` to compare with the results from the `predict()` function
+:::
+
+***
+
+- `obs` column: Number of row taken from the sample data `tbl11.2`.
+- The next column are the predicted probability for each person to be in each of the three job type groups. The data are taken from the `fitted-values` result of the multinomial model `mnm1`.
+- The last column predict the job category for each randomly chosen person. This is always the highest probability from the `fitted.values` categories.
+
+::::
+:::::
+
+
+###### observed & predicted
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-compare-observed-predicted}
+: Compare observed job category with the predicted value
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-compare-observed-predicted}  
+```{r}
+#| label: compare-observed-predicted
+#| results: hold
+
+# observed vs. predicted category for each observation
+fit_abs <- base::table(
+  observed = mnm1$model$job_cat,
+  predicted = stats::predict(object = mnm1))
+
+glue::glue("Absolute values: observed vs. predicted category for each observation")
+fit_abs
+
+# observed vs. predicted category for each observation
+fit_perc <- base::proportions(
+  base::table(
+    observed = mnm1$model$job_cat,
+    predicted = predict(object = mnm1)
+            ),
+  margin = 1
+)
+
+glue::glue(" ")
+glue::glue(" ")
+glue::glue("Percentages: observed vs. predicted category for each observation")
+fit_perc
+```
+
+Observed job category versus the predicted value of the model (absolute and percentages)
+:::
+***
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+The model was best at predicting the computer science, math, or engineering job type, with 68.4% of the observations in this category correctly predicted. The nonscience job type was predicted with 37.4% accuracy, and other sciences was predicted with 25.8% accuracy. Overall, the model predicted job type correctly for 658 out of 1,500 observations (43.9%). Given that the sample included 500 people from each job type, without any other information, we would guess that everyone was in a single category and would be right for 500, or 33.3%, of the observations. Although the overall correctness was low, it was higher than this baseline probability of correctly classifying observations by job type.
+
+### Multinomial model predictor interpretation
+
+We know that the model is statistically significantly better than baseline at explaining job type and that the predictions from the model were better than a baseline percentage would be. We also know that the prediction was best for computer science, math, and engineering. The next thing we want to examine is the predictor fit and significance.
+
+#### Predictor significance
+
+@lst-chap11-estimate-multinomial-model does not include any indication of whether or not each predictor (age, sex, age*sex) is statistically significantly associated with job type. To get statistical significance and more interpretable values, we need to compute odds ratios and 95% confidence intervals around the odds ratios.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-predictor-significance}
+: Predictor significance
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Odds ratios
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-odds-ratios}
+: Get odds ratios
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-odds-ratios}
+```{r}
+#| label: odds-ratios
+
+# get odds ratios and transpose to get 'standard' format
+base::t(x = base::exp(x = stats::coef(object = mnm1)))
+```
+
+Odds ratios
+
+:::
+
+::: {.callout-caution #cau-chap11-reference-groups}
+##### Watch out for the correct reference group
+
+It gets more complicated with this type of regression. Not only do the predictors have reference groups, but the outcome variable also has a reference group.
+
+:::
+
+The reference group for the outcome variable is computer science, math, or engineering. This was not only our result with @lst-chap11-check-levels but it is confirmed by missing this group in the result. (The missing group is always the reference group.)
+
+::::
+:::::
+
+::: {.callout #rep-chap11-example-jobtype-age}
+##### Example of an interpretation of the odds ratios
+
+For every year older a person gets, the odds of having a career in other sciences is 1.02 times higher compared to the odds of being in computer science, math, or engineering.
+:::
+
+
+###### confidence intervals
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-confidence-intervals}
+: Compute confidence intervals
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-confidence-intervals}  
+```{r}
+#| label: confidence-intervals
+
+# confidence intervals for odds ratios
+base::exp(x = stats::confint(object = mnm1))
+```
+
+Confidence intervals for odds ratios
+:::
+
+***
+
+Remember: A confidence interval of odds ratio is statistically significant if it does not include `1`. This is the case for `age` and `Female sex` but not for the interaction term `age:sexFemale`.
+
+::::
+:::::
+
+###### togehter
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-odds-ratio-confidence-intervals-table}
+: Put odd ratios and confidence interval together into the same data table
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-odds-ratio-confidence-intervals-table}
+```{r}
+#| label: odds-ratio-confidence-intervals-table
+
+# get odds ratios for other sciences from the model object
+oddsratio_other_sci <- 
+  base::t(x = base::exp(x = stats::coef(object = mnm1)))[ , 1]
+
+# get CI for other sciences
+confint_other_sci <- 
+  base::exp(x = stats::confint(object = mnm1))[ , 1:2, 1]
+
+# put into a data frame 
+other_sci <- base::data.frame(
+  oddsratio_other = oddsratio_other_sci,
+  ci_other = confint_other_sci)
+
+# get odds ratios for non-science
+oddsratio_non_sci <- 
+  base::t(x = base::exp(x = stats::coef(object = mnm1)))[ , 2]
+
+# get CI for non-science
+confint_non_sci <- 
+  base::exp(x = stats::confint(object = mnm1))[ , 1:2, 2]
+
+# put into a data frame
+non_sci <- base::data.frame(
+  oddsratio_non = oddsratio_non_sci,
+  ci_non = confint_non_sci)
+
+# all together
+data.frame(other_sci, non_sci)
+
+```
+
+Odd ratios and confidence intervals of the multinomial model `mnm1`
+:::
+
+***
+
+The first three columns of numbers are the odds ratios and confidence intervals for the job type of other sciences, while columns 4 through 6 are for the non-science job type.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+#### Predictor interpretation
+
+The outcome variable with multiple categories now had a reference group. In this case, the reference group is computer science, math, or engineering job type. The odds ratios are interpreted with respect to this reference group. This works OK for the continuous variable of age but gets a little tricky for the categorical variable of sex, where there are now two reference groups to consider.
+
+::: {.callout #rep-chap11-predictor-interpretation}
+##### Predictor interpretation of the multinomial logistic regression model `mnm1`
+
+The age row starts with the odds ratio of 1.02 with confidence interval 1.00–1.03. For every 1-year increase in age, the odds of being in an other sciences job are 1.02 times higher than being in a computer science, math, or engineering job ($95% CI: 1.00–1.03$). Likewise, for every 1-year increase in age, the odds of being in a non-science job are 1.03 times higher than being in a computer science, math, or engineering job ($95% CI: 1.02–1.04$). 
+
+Compared to males, the odds of females being in an other sciences job are 3.29 times higher than being in a computer science, math, or engineering job ($95% CI: 1.24–8.71$). Also, compared to males, females have 4.58 times higher odds of being in non-science jobs compared to computer science, math, or engineering jobs ($95% CI: 1.71–12.22$). 
+
+The interaction between age and sex was not statistically significant for either other sciences jobs or non-science jobs compared to computer science, math, or engineering jobs.
+
+Overall, it seems that females had higher odds than males of being in other sciences or nonscience compared to being in computer science, math, or engineering. Likewise, the older someone gets, the more likely they are to work in other sciences or non-science compared to computer science, math, or engineering. It seems that, overall, computer science, math, or engineering job types are most likely to be held by males and people who are younger.
+:::
+
+## Achievement 3: Checking assumptions for multinomial logistic regression {#sec-chap11-achievement3}
+
+
+
 ## Exercises (empty)
 
 ## Glossary
