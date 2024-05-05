@@ -561,6 +561,32 @@ The package contains furthermore functions to produce documents using MS Word (o
 
 
 
+## dfidx
+
+:::::{.my-package}
+:::{.my-package-header}
+dfidx: Indexed Data Frames 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-dfidx}
+
+***
+
+{**dfidx**}: [Indexed Data Frames](https://cran.r-project.org/package=dfidx) [@dfidx]
+
+
+(*There is no hexagon logo for {**dfidx**} available*)
+
+Provides extended data frames, with a special data frame column which contains two indexes, with potentially a nesting structure.
+
+{**dfidx**}: Indexed Data Frames
+:::
+***
+::::
+:::::
 
 
 

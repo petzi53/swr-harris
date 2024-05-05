@@ -11,7 +11,7 @@ base::source(file = "R/helper.R")
 ## Achievements to unlock
 
 ::: {#obj-chap01}
-::: {.my-objective}s
+::: {.my-objectives}
 ::: {.my-objectives-header}
 Objectives for chapter 01
 :::

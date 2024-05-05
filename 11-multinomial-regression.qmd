@@ -102,11 +102,13 @@ Two options for accessing the codebook:
 -   {**mlogit**}: @pak-mlogit (Yves Croissant)
 -   {**nnet**}: @pak-nnet (Brian Ripley)
 -   {**ordinal**} @pak-ordinal (Rune Haubo Bojesen Christensen)
+-   {**scales**} @pak-scales (Thomas Lin Pedersen) (not mentioned in the book)
 -   {**tableone**} @pak-tableone (Kazuki Yoshida)
 -   {**tidyverse**}: @pak-tidyverse (Hadley Wickham)
 
 2.  My additional packages (sorted alphabetically)
 
+-   {**dfidx**}: @pak-dfidx (Yves Croissant)
 -   {**glue**}: @pak-glue (Jennifer Bryan)
 -   {**haven**}: @pak-haven (Hadley Wickham)
 -   {**skimr**}: @pak-skimr (Elin Waring)
@@ -138,14 +140,13 @@ tbl11 <- utils::unzip(
 
 # function to recode the satisfaction variables
 RecSatis <- function(x){
-  return(base::as.ordered(forcats::fct_recode(x,
+  return(forcats::fct_recode(x,
                 "Very satisfied" = "1" ,
                 "Somewhat satisfied" = "2",
                 "Somewhat dissatisfied" = "3",
                 "Very dissatisfied" = "4",
                 NULL = "L")
-            )
-    )
+        )
 }
 
 # recode and rename
@@ -227,97 +228,10 @@ that it worked I deleted the uncompressed file.
 
 ------------------------------------------------------------------------
 
-4.  **Likert-scale as ordered factors**
+4. **Using the {forcats} package**
 
 I changed the factor levels in the `RecSatis()` function with the
-{**forcats**} package. Additionally I changed all Likert-scale factors
-to ordered factors.
-
-With this change I had some troubles, because I haven't had any
-experience how to do and also to check if the levels are ordered or not.
-The function `base::levels()` reports the sequence (chronological order)
-but not the order of the factor levels.
-
-::: {#imp-chap11-ordered-factor-levels .callout-important}
-##### No possibility found in {forcats} to create factor with ordered levels
-
-I could manipulate the (chronological) *appearance* of levels in many
-ways but I did not find an option to create the class
-`"ordered" "factor"`.
-
-Therefore I have to use one of the following base R options options:
-
--   `base::as.ordered()`
--   `base::factor(x = c("A", "Z", "M"), levels = c("A", "B", "M", "Z"), ordered = TRUE)`
--   `base::ordered(c("A", "Z", "M"), level = c("Z", "M", "A"))`
-:::
-
-The following examples uses in the first line with
-`tbl11.1$satis_advance` an ordered factor, and with the second line
-(after the '---' line) with `tbl11.1$sex` a factor without order.
-
-::: my-r-code
-::: my-r-code-header
-::: {#cnj-chap11-checking-levels-order}
-: How to check the order of factor levels?
-:::
-:::
-
-::: my-r-code-container
-::: {#lst-chap11-checking-levels-orderD}
-```{r}
-#| label: checking-levels-order
-#| results: hold
-
-tbl11.1 <- base::readRDS("data/chap11/tbl11.1.rds")
-
-glue::glue("##########################################################################")
-glue::glue("base::levels() does not reveal if theres is an order in the factor levels")
-base::levels(tbl11.1$satis_advance)
-glue::glue("--------------------------------------------------------------------------")
-base::levels(tbl11.1$sex)
-
-glue::glue(" ")
-glue::glue("##########################################################################")
-glue::glue("If you display a value of an ordered factor, it reveals the order with '<'")
-head(tbl11.1$satis_advance, 1)
-glue::glue(" ")
-glue::glue("To prevent showing one value one can use forcats::fct_unique()")
-forcats::fct_unique(tbl11.1$satis_advance)
-glue::glue("--------------------------------------------------------------------------")
-head(tbl11.1$sex, 1)
-
-
-glue::glue("How to check if a factor has ordered levels, but not the order itself?")
-glue::glue(" ")
-glue::glue("##########################################################################")
-glue::glue("utils::str()")
-utils::str(tbl11.1)
-
-glue::glue(" ")
-glue::glue("##########################################################################")
-glue::glue("base::class()")
-base::class(tbl11.1$satis_advance)
-glue::glue("--------------------------------------------------------------------------")
-base::class(tbl11.1$sex)
-
-glue::glue(" ")
-glue::glue("##########################################################################")
-glue::glue("base::is.ordered()")
-base::is.ordered(tbl11.1$satis_advance)
-glue::glue("--------------------------------------------------------------------------")
-base::is.ordered(tbl11.1$sex)
-
-glue::glue(" ")
-glue::glue("##########################################################################")
-glue::glue("skimr::skim()) has a column 'ordered' about the status of the factor variable")
-tbl11.1 |> dplyr::select(satis_advance, sex) |> skimr::skim()
-```
-
-Several options to check the order of factor levels
-:::
-:::
-:::
+{**forcats**} package. 
 
 ### Show raw data
 
@@ -931,12 +845,14 @@ Learn [{**tidymodels**}](https://www.tidymodels.org/)
 #| label: estimate-multinomial-model
 
 # estimate the model and print its summary
-mnm1 <- nnet::multinom(
+mnm11.1 <- nnet::multinom(
   formula = job_cat ~ age + sex + age*sex,
   data = tbl11.2,
   model = TRUE)
 
-summary(object = mnm1)
+save_data_file("chap11", mnm11.1, "mnm11.1.rds")
+
+summary(object = mnm11.1)
 ```
 
 Computing a multinomial regression model for job types by age and sex with interaction 
@@ -960,12 +876,12 @@ Computing a multinomial regression model for job types by age and sex with inter
 #| label: estimate-multinomial-null-model
 
 # multinomial null model
-mnm2 <- nnet::multinom(
+mnm11.0 <- nnet::multinom(
   formula = job_cat ~ 1,
   data = tbl11.2,
   model = TRUE)
 
-summary(object = mnm2)
+summary(object = mnm11.0)
 ```
 
 Multinomial null model
@@ -979,7 +895,7 @@ Multinomial null model
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap11-mnm-test-statistics}
-: Compute test statistics for the multinomial model `mnm1`
+: Compute test statistics for the multinomial model `mnm11.1`
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -988,11 +904,11 @@ Multinomial null model
 #| label: mnm-test-statistics
 
 # get the job model chi-squared
-job_chisq <- mnm2$deviance - mnm1$deviance
+job_chisq <- mnm11.0$deviance - mnm11.1$deviance
 
 # get the degrees of freedom for chi-squared
-job_df <- length(x = summary(object = mnm1)$coefficients) - 
-  length(x = summary(object = mnm2)$coefficients)
+job_df <- length(x = summary(object = mnm11.1)$coefficients) - 
+  length(x = summary(object = mnm11.0)$coefficients)
 
 # get the p-value for chi-squared
 job_p <- stats::pchisq(
@@ -1042,8 +958,8 @@ The probability computed for the chi-squared was < .001.
 
 Conclude and write report.
 
-::: {.callout #rep-chap11-mnm1}
-##### Report the conclusion of the interpretation of the multinomial model `mnm1`
+::: {.callout #rep-chap11-mnm11.1}
+##### Report the conclusion of the interpretation of the multinomial model `mnm11.1`
 
 We have to reject the null hypothesis and conclude that a model including age, sex, and age*sex explained job type statistically significantly better [$χ^2(6) = 124.77; p < .001$] than a null model with no predictors.
 :::
@@ -1074,8 +990,8 @@ We have to reject the null hypothesis and conclude that a model including age, s
 #| label: show-fit-predict-values
 #| results: hold
 
-df1 <- my_glance_data(data.frame(mnm1$fitted.values))
-df2 <- my_glance_data(data.frame(predicted = stats::predict(mnm1)))
+df1 <- my_glance_data(data.frame(mnm11.1$fitted.values))
+df2 <- my_glance_data(data.frame(predicted = stats::predict(mnm11.1)))
 dplyr::full_join(df1, df2, by = dplyr::join_by(obs))
 
 
@@ -1087,7 +1003,7 @@ Random example rows of `fitted.values` to compare with the results from the `pre
 ***
 
 - `obs` column: Number of row taken from the sample data `tbl11.2`.
-- The next column are the predicted probability for each person to be in each of the three job type groups. The data are taken from the `fitted-values` result of the multinomial model `mnm1`.
+- The next column are the predicted probability for each person to be in each of the three job type groups. The data are taken from the `fitted-values` result of the multinomial model `mnm11.1`.
 - The last column predict the job category for each randomly chosen person. This is always the highest probability from the `fitted.values` categories.
 
 ::::
@@ -1110,8 +1026,8 @@ Random example rows of `fitted.values` to compare with the results from the `pre
 
 # observed vs. predicted category for each observation
 fit_abs <- base::table(
-  observed = mnm1$model$job_cat,
-  predicted = stats::predict(object = mnm1))
+  observed = mnm11.1$model$job_cat,
+  predicted = stats::predict(object = mnm11.1))
 
 glue::glue("Absolute values: observed vs. predicted category for each observation")
 fit_abs
@@ -1119,8 +1035,8 @@ fit_abs
 # observed vs. predicted category for each observation
 fit_perc <- base::proportions(
   base::table(
-    observed = mnm1$model$job_cat,
-    predicted = predict(object = mnm1)
+    observed = mnm11.1$model$job_cat,
+    predicted = predict(object = mnm11.1)
             ),
   margin = 1
 )
@@ -1177,7 +1093,7 @@ We know that the model is statistically significantly better than baseline at ex
 #| label: odds-ratios
 
 # get odds ratios and transpose to get 'standard' format
-base::t(x = base::exp(x = stats::coef(object = mnm1)))
+base::t(x = base::exp(x = stats::coef(object = mnm11.1)))
 ```
 
 Odds ratios
@@ -1217,7 +1133,7 @@ For every year older a person gets, the odds of having a career in other science
 #| label: confidence-intervals
 
 # confidence intervals for odds ratios
-base::exp(x = stats::confint(object = mnm1))
+base::exp(x = stats::confint(object = mnm11.1))
 ```
 
 Confidence intervals for odds ratios
@@ -1245,11 +1161,11 @@ Remember: A confidence interval of odds ratio is statistically significant if it
 
 # get odds ratios for other sciences from the model object
 oddsratio_other_sci <- 
-  base::t(x = base::exp(x = stats::coef(object = mnm1)))[ , 1]
+  base::t(x = base::exp(x = stats::coef(object = mnm11.1)))[ , 1]
 
 # get CI for other sciences
 confint_other_sci <- 
-  base::exp(x = stats::confint(object = mnm1))[ , 1:2, 1]
+  base::exp(x = stats::confint(object = mnm11.1))[ , 1:2, 1]
 
 # put into a data frame 
 other_sci <- base::data.frame(
@@ -1258,11 +1174,11 @@ other_sci <- base::data.frame(
 
 # get odds ratios for non-science
 oddsratio_non_sci <- 
-  base::t(x = base::exp(x = stats::coef(object = mnm1)))[ , 2]
+  base::t(x = base::exp(x = stats::coef(object = mnm11.1)))[ , 2]
 
 # get CI for non-science
 confint_non_sci <- 
-  base::exp(x = stats::confint(object = mnm1))[ , 1:2, 2]
+  base::exp(x = stats::confint(object = mnm11.1))[ , 1:2, 2]
 
 # put into a data frame
 non_sci <- base::data.frame(
@@ -1274,7 +1190,7 @@ data.frame(other_sci, non_sci)
 
 ```
 
-Odd ratios and confidence intervals of the multinomial model `mnm1`
+Odd ratios and confidence intervals of the multinomial model `mnm11.1`
 :::
 
 ***
@@ -1295,7 +1211,7 @@ The first three columns of numbers are the odds ratios and confidence intervals 
 The outcome variable with multiple categories now had a reference group. In this case, the reference group is computer science, math, or engineering job type. The odds ratios are interpreted with respect to this reference group. This works OK for the continuous variable of age but gets a little tricky for the categorical variable of sex, where there are now two reference groups to consider.
 
 ::: {.callout #rep-chap11-predictor-interpretation}
-##### Predictor interpretation of the multinomial logistic regression model `mnm1`
+##### Predictor interpretation of the multinomial logistic regression model `mnm11.1`
 
 The age row starts with the odds ratio of 1.02 with confidence interval 1.00–1.03. For every 1-year increase in age, the odds of being in an other sciences job are 1.02 times higher than being in a computer science, math, or engineering job ($95% CI: 1.00–1.03$). Likewise, for every 1-year increase in age, the odds of being in a non-science job are 1.03 times higher than being in a computer science, math, or engineering job ($95% CI: 1.02–1.04$). 
 
@@ -1307,6 +1223,876 @@ Overall, it seems that females had higher odds than males of being in other scie
 :::
 
 ## Achievement 3: Checking assumptions for multinomial logistic regression {#sec-chap11-achievement3}
+
+Besides the assumption of  independence of observations (which is met), there is the `r glossary("IIA")` assumption. The independence of irrelevant alternatives assumption requires that the categories of the outcome be independent of one another. For example, the relative probability of having a job in the computer science, math, or engineering field compared to the other science field cannot depend on the existence of non-science jobs.
+
+This assumption can be tested by taking a subset of the data that includes two of the outcome categories and estimating binary logistic regression models with the same predictors. These model results can then be compared with the multinomial model results to see if the relationship is consistent. The test used for this assumption is the `r glossary("Hausman-McFadden")` test.
+
+:::::{.my-remark}
+:::{.my-remark-header}
+:::::: {#rem-chap11-iia}
+: What is the independence of irrelevant alternatives (IIA) assumption?
+::::::
+:::
+::::{.my-remark-container}
+The above explanation of `r glossary("IIA")` in `r glossary("SwR")` is easy to misunderstand. The important clarification is that the third alternative (C) is not an alternative of the choice between A and B. Therefore we are talking of *irrelevant* alternatives. So what we state is that the probability of choosing A or B is independent of C. The following quote from [Statistical Horizons](https://statisticalhorizons.com/iia/) brings an example that helped my understanding more than the example in SwR:
+
+> In discrete choice theory, the IIA assumption says that when people are asked to choose among a set of alternatives, their odds of choosing A over B should not depend on whether some other alternative C is present or absent. As an example, consider the 1992 U.S. presidential election. The two major party candidates were Bill Clinton and George H. W. Bush. But H. Ross Perot was also on the ballot in all 50 states. The IIA assumption says that, for each voter, the odds of choosing Clinton over Bush was not affected by Perot’s presence on the ballot. [@allison2012]
+
+The test strategy is the following: for each alternative, delete individuals who chose that alternative and re-estimate the model for the remaining alternatives; then construct a test comparing the new estimates with the original estimates.
+
+> In our voting example, for instance, we could exclude the people who voted for Perot, and estimate a binary logit model predicting Clinton vs. Bush. We could then test whether the binary coefficients were the same as the multinomial coefficients. We could also exclude the people who voted for Clinton and re-estimate the second equation by binary logit. Again, we could compare the binary coefficients with the multinomial coefficients. And, finally, we could redo the test with Bush as the excluded category.
+
+
+::::
+:::::
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-hausman-mcfadden}
+: Compute the Hausman-McFadden test for independence of irrelevant alternatives
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### model (re-)estimate
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-model-re-estimate}
+: Re-estimate the model with {**mlogit**}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-model-re-estimate}
+```{r}
+#| label: model-re-estimate
+
+# reshape data to use with the dfidx function from {dfidx}
+
+tbl11.2 <- base::readRDS("data/chap11/tbl11.2.rds")
+
+tbl11.2_wide <- dfidx::dfidx(data = tbl11.2,
+                               choice = "job_cat",
+                               shape = "wide")
+
+# estimate the model and print its summary
+mnm3 <- mlogit::mlogit(formula = job_cat ~ 0 | age + sex + age*sex,
+                     data = tbl11.2_wide)
+
+summary(object = mnm3)
+```
+
+Model re-estimated with the {**mlogit**} package.
+:::
+
+***
+The function `mlogit::mlogit.data()` used in the book is deprecated and should be replaced with `dfidx()` from the {**dfidx**} package (see: @pak-dfidx).
+
+::::
+:::::
+
+
+###### two categories
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-estimate-two-categories}
+: Estimate the model with two outcome categories
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-estimate-two-categories}  
+```{r}
+#| label: estimate-two-categories
+
+# estimate the model with two outcome categories and print its summary
+mnm3_alt <- 
+  mlogit::mlogit(formula = job_cat ~ 0 | age + sex + age*sex,
+  data = tbl11.2_wide,
+  alt.subset = c("CS, Math, Eng", "Nonscience"))
+
+summary(object = mnm3_alt)
+```
+
+Model estimated with two outcome categories
+:::
+
+::::
+:::::
+
+###### hfmtest()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-hausman-mcfadden-test}
+: Hausman-McFadden test
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-hausman-mcfadden-test}
+```{r}
+#| label: hausman-mcfadden-test
+
+mlogit::hmftest(x = mnm3, z = mnm3_alt)
+```
+
+Hausman-McFadden test
+:::
+
+The `r glossary("p-value")` was .97, which is much higher than .05, so the `r glossary("null hypothesis")` is retained and the `r glossary("IIA")` assumption is met.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Conclusion of the multinomial logistic regression
+
+::: {.callout #rep-chap11-multinomial-logistic-regression-final}
+##### Report of the multinomial logistic regression of job types versus age and sex (final version)
+
+A multinomial logistic regression including age, sex, and the interaction between age and sex was statistically significantly better at predicting job type than a null model with no predictors [$χ^2(6) = 124.77; p < .001$]. The model met its assumptions and correctly predicted the job type for 43.9% of observations. 
+
+- For every 1-year increase in age, the odds of being in an other sciences job are 1.02 times higher than being in a computer science, math, or engineering job (95% CI: 1.00–1.03). 
+- Likewise, for every 1-year increase in age, the odds of being in a nonscience job are 1.03 times higher than being in a computer science, math, or engineering job (95% CI: 1.02–1.04). 
+- Compared to males, the odds of females being in an other sciences job are 3.29 times higher than being in a computer science, math, or engineering job (95% CI: 1.24–8.71). 
+- Also, compared to males, females have 4.58 times higher odds of being in nonscience jobs compared to computer science, math, or engineering jobs (95% CI: 1.71–12.22). 
+- The interaction between age and sex was not a statistically significant indicator of job type.
+:::
+
+## Achievement 4: EDA for ordinal logistic regression {#sec-chap11-achievement4}
+
+### Introduction
+
+We are not going to compare satisfaction of women to the satisfaction of men with computer science, math, or engineering. Out interest is in understanding whether job satisfaction differs for women across the three job types.
+
+We will take a sample of female participants from the original data frame so that we would have a larger number in the sample than using the females from the subset of 1,500. Since there were very few people (relatively speaking) in the dissatisfied categories (see @lst-chap11-sample-by-group), we will take 250 people from each category of one of the satisfaction variables to ensure to get enough people in the dissatisfied categories.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-eda-ordinal-logistic-regression}
+: Exploratory data analysis for a ordinal logistic regression models
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### sample
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-get-sample-females}
+: Sample of 1,000 females
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-get-sample-females}
+```{r}
+#| label: get-sample-females
+
+
+tbl11.1 <- base::readRDS("data/chap11/tbl11.1.rds")
+
+base::RNGkind(sample.kind = "Rejection")
+set.seed(seed = 143)
+
+tbl11.3 <- tbl11.1  |> 
+  tidyr::drop_na(job_cat)  |> 
+  dplyr::filter(sex == "Female") |> 
+  dplyr::group_by(satis_contrib)  |> 
+  dplyr::slice_sample(n = 250)  |> 
+  dplyr::ungroup()
+
+save_data_file("chap11", tbl11.3, "tbl11.3.rds")
+
+# check work
+summary(object = tbl11.3)
+```
+Sample of 1,000 females
+:::
+
+::: {.callout-warning #wrn-chap11-different-sample-values}
+##### Different sample figures with the same `set.seed()` command
+
+
+I got different figures after data sampling. I do not know from where the difference comes from. I had tried exactly the same code (e.g., using the deprecated function `sample_n()`), also I changed the `set.seed()` command to `base::RNGkind(sample.kind = "Rounding")` to meet the randomized sampling before version R 3.6.0. But in every case I got different figures than in the book example.
+
+:::
+
+::::
+:::::
+
+
+###### job-society
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-job-satisfaction-society}
+: Job satisfaction by society contribution
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-job-satisfaction}  
+```{r}
+#| label: job-satisfaction-society
+
+# job satisfaction in job type
+tbl11.3  |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+        x = job_cat, 
+        fill = satis_contrib
+      )
+  ) +
+  ggplot2::geom_bar(position = "fill") + 
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "Job type", 
+    y = "Percent"
+  ) +
+  ggplot2::scale_fill_brewer(
+    name = "How satisfied\nwith contribution\nto society?",
+    palette = "Purples",
+     direction = -1) +
+  ggplot2::scale_y_continuous(labels = scales::percent)
+```
+
+Job satisfaction by society contribution
+:::
+
+::::
+:::::
+
+###### job-salary
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-job-satisfaction-salary}
+: Job satisfaction by salary
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-job-satisfaction-salary}  
+```{r}
+#| label: job-satisfaction-salary
+
+# job satisfaction by salary (Figure 11.14)
+tbl11.3  |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+        x = job_cat, 
+        fill = satis_salary
+      )
+  ) +
+  ggplot2::geom_bar(position = "fill") + 
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "Job type", 
+    y = "Percent"
+  ) +
+  ggplot2::scale_fill_brewer(
+    name = "How satisfied\nwith salary?",
+    palette = "Purples",
+     direction = -1) +
+  ggplot2::scale_y_continuous(labels = scales::percent)
+```
+
+Job satisfaction by salary
+:::
+
+::::
+:::::
+
+###### job-advance
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-job-satisfaction-advance}
+: Job satisfaction by advance of science
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-job-satisfaction-advance}  
+```{r}
+#| label: job-satisfaction-advance
+
+# job satisfaction by advance
+tbl11.3  |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+        x = job_cat, 
+        fill = satis_advance
+      )
+  ) +
+  ggplot2::geom_bar(position = "fill") + 
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    x = "Job type", 
+    y = "Percent"
+  ) +
+  ggplot2::scale_fill_brewer(
+    name = "How satisfied\nwith advance\nof science?",
+    palette = "Purples",
+     direction = -1) +
+  ggplot2::scale_y_continuous(labels = scales::percent)
+```
+
+Job satisfaction by advance of science
+:::
+
+::::
+:::::
+
+###### job-salary-age
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-job-satisfaction-salary-age}
+: Job satisfaction with salary by age
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-job-satisfaction-salary-age}
+```{r}
+#| label: job-satisfaction-salary-age
+
+# job satisfaction by age (Figure 11.15)
+tbl11.3  |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+      y = age, 
+      x = job_cat, 
+      fill = satis_salary
+      )
+  ) +
+  ggplot2::geom_jitter(
+    ggplot2::aes(
+      color = satis_salary
+      ), 
+    alpha = .6
+  ) +
+  ggplot2::geom_boxplot(
+    ggplot2::aes (
+      fill = satis_salary), 
+    alpha = .4
+  ) +
+  ggplot2::scale_fill_brewer(
+    name = "How satisfied\nwith salary\nby age?",
+    palette = "Purples",
+    direction = -1) +
+  ggplot2::scale_color_brewer(
+    name = "How satisfied\nwith salary\nby age?",
+    palette = "Purples",
+    direction = -1
+  ) +
+  ggplot2::labs(
+    x = "Job type", 
+    y = "Age in years"
+  )
+```
+
+Job satisfaction with salary by age
+:::
+
+::::
+:::::
+
+###### ordered
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-ordered-factors}
+: Create Likert-scale with ordered factors
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-ordered-factors}
+```{r}
+#| label: ordered-factors
+
+OrderSatis <- function(x){
+  return(ordered(x, levels = c("Very dissatisfied",
+                               "Somewhat dissatisfied",
+                               "Somewhat satisfied",
+                               "Very satisfied")
+                 )
+         )
+}
+
+# use function to order 3 satisfaction variables
+tbl11.4 <- tbl11.3 |> 
+  dplyr::mutate(satis_advance = OrderSatis(x = satis_advance))  |> 
+  dplyr::mutate(satis_salary = OrderSatis(x = satis_salary))  |> 
+  dplyr::mutate(satis_contrib = OrderSatis(x = satis_contrib))
+
+save_data_file("chap11", tbl11.4, "tbl11.4.rds")
+
+# check the data
+skimr::skim(tbl11.4)
+```
+
+{**skimr**} shows that the satisfaction factors are now ordered factors.
+:::
+
+***
+
+
+With this change I had some troubles, because I haven't had any
+experience how to do and also to check if the levels are ordered or not. The check in the book with `base::summary` does not reveal if the factors are ordered or not. The `summary()` reports the sequence of the levels but not if they are ordered.
+
+You can't use the function `base::levels()` neither, because it also prints out only the  chronological sequence but not if this sequence consists of ordered factor levels.
+
+::: {#imp-chap11-ordered-factor-levels .callout-important}
+##### No possibility found in {forcats} to create factor with ordered levels
+
+I could manipulate the (chronological) *appearance* of levels in many
+ways but I did not find an option to create the class
+`"ordered" "factor"`.
+
+Therefore I have to use one of the following base R options options:
+
+-   `base::as.ordered()`
+-   `base::factor(x = c("A", "Z", "M"), levels = c("A", "B", "M", "Z"), ordered = TRUE)`
+-   `base::ordered(c("A", "Z", "M"), level = c("Z", "M", "A"))`
+:::
+
+The following examples uses in the first line with
+`tbl11.1$satis_advance` an ordered factor, and with the second line
+(after the '---' line) with `tbl11.1$sex` a factor without order.
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap11-checking-levels-order}
+: How to check the order of factor levels?
+:::
+:::
+
+::: my-r-code-container
+::: {#lst-chap11-checking-levels-orderD}
+```{r}
+#| label: checking-levels-order
+#| results: hold
+
+tbl11.4 <- base::readRDS("data/chap11/tbl11.4.rds")
+
+glue::glue("##########################################################################")
+glue::glue("base::levels() does not reveal if theres is an order in the factor levels")
+base::levels(tbl11.4$satis_advance)
+glue::glue("--------------------------------------------------------------------------")
+base::levels(tbl11.4$sex)
+
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("If you display a value of an ordered factor, it reveals the order with '<'")
+head(tbl11.4$satis_advance, 1)
+glue::glue(" ")
+glue::glue("To prevent showing one value one can use forcats::fct_unique()")
+forcats::fct_unique(tbl11.4$satis_advance)
+glue::glue("--------------------------------------------------------------------------")
+head(tbl11.4$sex, 1)
+
+
+glue::glue("How to check if a factor has ordered levels, but not the order itself?")
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("utils::str()")
+utils::str(tbl11.4)
+
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("base::class()")
+base::class(tbl11.4$satis_advance)
+glue::glue("--------------------------------------------------------------------------")
+base::class(tbl11.4$sex)
+
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("base::is.ordered()")
+base::is.ordered(tbl11.4$satis_advance)
+glue::glue("--------------------------------------------------------------------------")
+base::is.ordered(tbl11.4$sex)
+
+glue::glue(" ")
+glue::glue("##########################################################################")
+glue::glue("skimr::skim()) has a column 'ordered' about the status of the factor variable")
+tbl11_temp <- tbl11.4 |> dplyr::select(satis_advance, sex)
+skimr::skim(tbl11_temp)
+```
+
+Several options to check the order of factor levels
+:::
+:::
+:::
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
+### Examine satisfaction by job type for females
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap11-satisfaction-jobtype}
+: Examine satisfaction by job type for females with the Kruskal-Wallis test
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### salary
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-kruskal-wallis}
+: Examine salary satisfaction by job type for females with the `r glossary("Kruskal-Wallis")` test
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-kruskal-wallis}
+```{r}
+#| label: kruskal-wallis
+
+# examine salary satisfaction by job type for females
+sat_salary_kw <- stats::kruskal.test(
+  formula = as.integer(x = satis_salary) ~ job_cat,
+  data = tbl11.4
+  )
+sat_salary_kw
+
+#examine salary satisfaction by age
+sat_salary_rho <- cor.test(
+  formula = ~ as.integer(x = satis_salary) + age,
+  method = "spearman",
+  data = tbl11.4)
+sat_salary_rho
+```
+
+Salary satisfaction by job type for females
+:::
+
+***
+
+I got a warning, that the test cannot compute exact p-values with ties. I didn't see this warning in the book example.
+
+Remember that I got different figures after the sampling procedure, but all in all the results are the sames: **The satisfaction with salary was significantly associated with job type but not with age.**
+
+::: {.callout #rep-chap11-salary-satisfaction-jobtype}
+##### Salary satisfaction by job type for females
+
+The satisfaction with salary was significantly associated with job type but not with age. Specifically, there was a statistically significant relationship between job type and satisfaction with salary $\chi^2_{KW}(2)21.46, p< 0.01$. In addition, there was a non-significant and weak positive correlation between age and salary satisfaction (rs = 0.07; p = 0.025).
+:::
+
+::::
+:::::
+
+
+###### society contribution
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-satisfaction-contribution}
+: Examine society contribution satisfaction by job type for females with the `r glossary("Kruskal-Wallis")` test
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-satisfaction-contribution}  
+```{r}
+#| label: satisfaction-contribution
+
+# examine society contribution satisfaction by job type for females
+sat_contrib_kw <- stats::kruskal.test(
+  formula = as.integer(x = satis_contrib) ~ job_cat,
+  data = tbl11.4
+  )
+sat_contrib_kw
+
+#examine society contribution satisfaction by age
+sat_contrib_rho <- cor.test(
+  formula = ~ as.integer(x = satis_contrib) + age,
+  method = "spearman",
+  data = tbl11.4)
+sat_contrib_rho
+```
+
+Society contribution satisfaction by job type for females
+:::
+
+::: {.callout #rep-chap11-salary-satisfaction-jobtype}
+##### Society contribution satisfaction by job type for females
+
+The satisfaction with society contribution was significantly associated with job type and also with age. Specifically, there was a statistically significant relationship between job type and satisfaction with society contribution $\chi^2_{KW}(2)10.52, p< 0.01$. In addition, there was also a significant and a weak positive correlation between age and society contribution satisfaction (rs = 0.12; p < .001).
+:::
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+## Avchievement 5: Estimating an ordinal logistic regression model {#sec-chap11-achievement5}
+
+For ordinal categorical variables, a model is needed that can account for the order of the outcome variable.
+
+### NHST Step 1
+
+Write the null and alternate hypotheses:
+
+::: {.callout-note}
+- **H0**: Job type and age are not helpful in explaining satisfaction with salary for female college graduates.
+- **HA**: Job type and age are helpful in explaining satisfaction with salary for female college graduates.
+:::
+
+### NHST Step 2
+
+Compute the test statistic. 
+
+The ordinal regression model is estimated using the `polr()` function from the {**MASS**} package (see: @pak-MASS).
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-statistics-ordinal-regression}
+: Compute the statistics for the ordinal logistic regression model
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-statistics-ordinal-regression}
+```{r}
+#| label: statistics-ordinal-regression
+
+# ordinal logistic regression for salary satisfaction
+# model salary satisfaction based on job type and age
+olm11.1 <- MASS::polr(
+  formula = satis_salary ~ job_cat + age,
+  data = tbl11.4)
+
+save_data_file("chap11", olm11.1, "olm11.1.rds")
+
+summary(object = olm11.1)
+
+# estimate null model
+olm11.0 <- MASS::polr(
+  formula = satis_salary ~ 1,
+  data = tbl11.4)
+
+# job model chi-squared
+salary_chisq <- olm11.0$deviance - olm11.1$deviance
+
+# degrees of freedom for chi-squared
+salary_df <- 
+  base::length(x = olm11.1$coefficients) - 
+  base::length(x = olm11.0$coefficients)
+
+# pvalue for chi-squared
+salary_p <- stats::pchisq(
+  q = salary_chisq, 
+  df = salary_df, 
+  lower.tail = FALSE
+  )
+
+# put together and print
+modelsig_salary <- 
+  base::round(x = c(salary_chisq, salary_df, salary_p), 3)
+
+base::names(x = modelsig_salary) <- c("Chi-squared", "d.f.", "p")
+
+modelsig_salary
+```
+
+Computing the ordinal logistic regression model
+:::
+
+***
+
+Similar to the multinomial model, the model summary includes the residual deviance but not the null deviance to compute the model `r glossary("chi-squared")`. Following the strategy used for the multinomial model, we had to compute the null deviance by estimating a model with no predictors and computing the chi-squared using the deviance values from the two models.
+
+::::
+:::::
+
+The model chi-squared is 26.79 with 3 degrees of freedom.
+
+### NHST Step 3
+
+Review and interpret the test statistics: 
+Calculate the probability that your test statistic is at least as big as it is if there is no relationship (i.e., the null is true).
+
+The p-value for $χ^2(3) = 26.79$ is less than .001.
+
+### NHST Step 4
+
+Conclude and write report.
+
+We reject the null hypothesis. Job type and age statistically significantly help to predict satisfaction with salary for female college graduates [$χ2(3) = 26.79; p < .001$].
+
+
+### Ordinal logistic regression model fit
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-ID-text}
+: Numbered Example Title
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### fit model
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-olm-model-fit}
+: Ordinal logistic regression model fit
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-olm-model-fit}
+```{r}
+#| label: olm-model-fit
+
+# observed vs. predicted category for each observation
+fit_salary_abs <- table(
+  observed = olm11.1$model$satis_salary,
+  predicted = stats::predict(object = olm11.1)
+  )
+fit_salary_abs
+
+# observed vs. predicted category for each observation
+fit_salary_perc <- prop.table(x = table(
+    observed = olm11.1$model$satis_salary,
+    predicted = predict(object = olm11.1)
+              ),
+  margin = 1
+  )
+fit_salary_perc
+
+
+```
+
+Ordinal logistic regression model fit
+:::
+
+***
+
+::: {.callout-warning  #wrn-chap11-wrong-predict-calculation}
+##### Predicted values wrong!
+
+With the exception of two values all predicted values are "Somewhat satisfied". That seems strange! But the result is that the model predicted 455 (45,5%) of the observations in contrast to 267 (26.7%). That is much better than the figures from the book.
+
+But I still think that there may be something wrong in my computation.
+:::
+
+::::
+:::::
+
+###### odds & confint
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-odds-ratio-confint}
+: Compute odds ratios and confidence intervals
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-odds-ratio-confint}  
+```{r}
+#| label: odds-ratio-confint
+
+# odds ratios and confidence intervals
+or_sal <- data.frame(OR = exp(x = olm11.1$coefficients),
+                     CI = exp(x = confint(object = olm11.1)))
+or_sal
+```
+
+Odds ratios and confidence intervals
+:::
+
+***
+Besides that I get different numbers because of different case distribution from the sampling procedures, the values here are --- in contrast to the predict values --- plausible.
+
+For ordinal models, the odds ratios are called `r glossary("proportional-odds-ratios", "proportional odds ratios")` and are the increases or decreases in odds of being in a higher group or groups versus all the lower groups for each one-unit increase in the predictor. 
+
+As an example follows the other sciences predictor: 
+
+- Compared to females with computer science, math, or engineering jobs, females with non-science jobs have 52% lower odds of being very satisfied compared to the other satisfaction categories (OR = 0.48; 95% CI: 0.35–0.65). 
+- Compared to females with computer science, math, or engineering jobs, females with non-science jobs have 52% lower odds of being very or somewhat satisfied compared to the other satisfaction categories (OR = 0.48; 95% CI: 0.35–0.65). 
+- Compared to females with computer science, math, or engineering jobs, females with non-science jobs have 52% lower odds of being very or somewhat satisfied or somewhat dissatisfied compared to very dissatisfied (OR = 0.48; 95% CI: 0.35–0.65).
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+## Achievement 6: Checking assumptions {#sec-chap11-achievement6}
+
+Besides the assumption of independent observations that was already several times met, the proportional odds is another assumption for ordered logistic regression models.
+
+The proportional odds assumption requires that the odds for every shift from category to category of the outcome are the same for each level of the predictors. For example, say the odds of someone being in the very dissatisfied group compared to the somewhat dissatisfied group were 2.5 times higher in the non-science group compared to the computer science, math, or engineering group. The proportional odds assumption would require that the odds of someone being in the somewhat dissatisfied group compared to the somewhat satisfied group would also need to be 2.5 times higher in the non-science compared to computer science, math, and engineering group.
+
+In the {**ordinal**} package, the `nominal_test()` function tests the proportional odds assumption. The null hypothesis for this is that the proportional odds assumption is met; the alternate hypothesis is that the proportional odds assumption is not met. The assumption is checked for each predictor in the model. 
+
+Unfortunately, `nominal_test()` does not like `polr` objects, so the model has to be re-estimated using `clm()` from the ordinal package. 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap11-proportional-odds-test}
+: Checking proportional odds assumption for an ordered logistic regression model
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap11-proportional-odds-test}
+```{r}
+#| label: proportional-odds-test
+
+# check proportional odds assumption
+
+ordinal::nominal_test(
+  object = ordinal::clm(
+    formula = satis_salary ~ job_cat + age,
+    data = tbl11.4
+    )
+  )
+```
+
+Test proportional odds assumption with `ordinal::nominal_test()`
+:::
+
+***
+The p-values are .16 and .93, so the null hypothesis is retained for the job type predictor and for the age predictor. The proportional odds assumption is met for this model.
+
+::::
+:::::
+
+### Summary
+
+::: {.callout #rep-chap11-olm11.1-report}
+An ordinal logistic regression using job type and age was better at predicting satisfaction with salary among female college graduates than a baseline model including no predictors [χ2(3) = 28.89; p < .001]. 
+- The model met its assumptions and correctly predicted 455 of the 1,000 (45,5%) observations.
+- Female college graduates in non-science careers have 49% lower odds than those in computer science, math, or engineering of being very satisfied with their salary compared to being in another satisfaction group. 
+- Likewise, female college graduates in other sciences had 52% lower odds than those in computer science, math, or engineering of being very satisfied with their salary compared to being in another satisfaction group. 
+- There was no significant relationship between age and salary satisfaction.
+:::
 
 
 
